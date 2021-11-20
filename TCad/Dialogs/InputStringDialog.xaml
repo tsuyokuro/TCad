@@ -1,0 +1,100 @@
+﻿<Window
+    x:Class="TCad.Dialogs.InputStringDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Figure name"
+    Width="389.618"
+    Height="95.156"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Colors.xaml" />
+                <ResourceDictionary Source="../Resources/ButtonStyle.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid
+        x:Name="LayoutRoot"
+        Width="Auto"
+        Height="Auto"
+        Background="{StaticResource BaseColor}"
+        >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.Row="0"
+            Height="4"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="#FF007ACC" />
+
+        <Border
+            Grid.Row="1"
+            Padding="8,4,8,4"
+            Background="{StaticResource BaseColor}">
+            <StackPanel
+                Height="Auto"
+                HorizontalAlignment="Stretch"
+                Orientation="Vertical">
+                <Label
+                    x:Name="message"
+                    Height="24"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch" Content="" Margin="0,0,0,4"/>
+
+                <TextBox
+                    x:Name="input"
+                    Background="{StaticResource TextBoxBGColor}"                    
+                    Foreground="{StaticResource TextBoxFGColor}"
+                    Height="Auto"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="Black"
+                    />
+
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Padding="4,4,4,4" Background="{StaticResource BaseColor}">
+
+            <StackPanel Height="24" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button
+                    x:Name="cancel_button"
+                    Style="{StaticResource DialogButton}"                    
+                    Width="75"
+                    Height="Auto"
+                    Margin="0,0,8,0"
+                    Padding="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    Content="Cancel" />
+
+                <Button
+                    x:Name="ok_button"
+                    Style="{StaticResource DialogButton}"                    
+                    Width="75"
+                    Height="Auto"
+                    Margin="0,0,0,0"
+                    Padding="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    Content="OK" />
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

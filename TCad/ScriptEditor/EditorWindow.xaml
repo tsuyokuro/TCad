@@ -1,0 +1,228 @@
+﻿<Window
+    x:Class="TCad.ScriptEditor.EditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TCad"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Script editor"
+    Width="442.5"
+    Height="440"
+    Icon="/Resources/Images/script_icon.png"
+    ResizeMode="CanResizeWithGrip"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/ToggleAndRadioStyle.xaml" />
+                <ResourceDictionary Source="/Resources/Colors.xaml" />
+                <ResourceDictionary Source="/Resources/Images.xaml" />
+                <ResourceDictionary Source="/Resources/ButtonStyle.xaml" />
+                <ResourceDictionary Source="/Resources/ImageCheckBoxs.xaml" />
+                <ResourceDictionary Source="/Resources/MenuStyle.xaml" />
+                <ResourceDictionary Source="/Resources/ScrollBarStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <Style x:Key="MyMenu" TargetType="Menu">
+                <Setter Property="Foreground" Value="{StaticResource MenuTextColor}" />
+                <Setter Property="Background" Value="{StaticResource MenuBGColor}" />
+            </Style>
+
+            <Style
+                x:Key="MyMenuItem"
+                BasedOn="{StaticResource MLB_MenuItem}"
+                TargetType="MenuItem">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Background" Value="{StaticResource MenuBGColor}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{StaticResource MenuBGColor}" />
+                <Setter Property="Padding" Value="0,0,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Name="MaineContainer">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Style="{StaticResource MyMenu}">
+            <MenuItem Header="File" Style="{StaticResource MyMenuItem}">
+                <MenuItem
+                    Click="MenuItem_Click"
+                    Header="Load"
+                    Style="{StaticResource MyMenuItem}"
+                    Tag="load_script" />
+                <MenuItem
+                    Click="MenuItem_Click"
+                    Header="Save"
+                    Style="{StaticResource MyMenuItem}"
+                    Tag="save_script" />
+            </MenuItem>
+            <MenuItem Header="Edit" Style="{StaticResource MyMenuItem}">
+                <MenuItem
+                    Click="MenuItem_Click"
+                    Header="Search"
+                    Style="{StaticResource MyMenuItem}"
+                    Tag="search_text" />
+            </MenuItem>
+        </Menu>
+
+        <avalonEdit:TextEditor
+            x:Name="textEditor"
+            Grid.Row="1"
+            Margin="0"
+            Background="#FF1E1E1E"
+            BorderBrush="Black"
+            BorderThickness="1"
+            FontFamily="Consolas"
+            FontSize="10pt"
+            Foreground="#FFE6E6E6"
+            ShowLineNumbers="True"
+            SyntaxHighlighting="python">
+            <avalonEdit:TextEditor.Resources>
+                <!--<Style BasedOn="{StaticResource CustomScrollViewerStyle}" TargetType="ScrollViewer" />-->
+                <Style BasedOn="{StaticResource CustomScrollBarStyle}" TargetType="ScrollBar" />
+            </avalonEdit:TextEditor.Resources>
+            <avalonEdit:TextEditor.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Click="MenuItem_Click"
+                        Header="Copy"
+                        Tag="copy_text" />
+                    <MenuItem
+                        Click="MenuItem_Click"
+                        Header="Paste"
+                        Tag="paste_text" />
+                </ContextMenu>
+            </avalonEdit:TextEditor.ContextMenu>
+        </avalonEdit:TextEditor>
+
+        <Border Grid.Row="2" Background="#FF1E1E1E">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="120" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    x:Name="BtnRun"
+                    Grid.Column="0"
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="8,2,2,2"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left">
+                    <Button.Template>
+
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Name="border"
+                                Padding="0,0,8,0"
+                                Background="#FF333333"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="3">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label
+                                        Name="label"
+                                        Padding="4,2,4,2"
+                                        Foreground="White">
+                                        Run
+                                    </Label>
+                                    <Polygon
+                                        VerticalAlignment="Center"
+                                        Fill="YellowGreen"
+                                        Points="0,0 8,5, 0,10"
+                                        Stroke="Black" />
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Orange" />
+                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Orange" />
+                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="Gray" />
+                                    <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+
+                    </Button.Template>
+                </Button>
+                <Button
+                    x:Name="BtnStop"
+                    Grid.Column="1"
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="2,2,2,2"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left">
+                    <!--  Visibility="Hidden"  -->
+                    <!--  停止の方法がわかったら上のHiddenを消す  -->
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Name="border"
+                                Padding="0,0,8,0"
+                                Background="#FF333333"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="3">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label
+                                        Name="label"
+                                        Padding="4,2,4,2"
+                                        Foreground="White">
+                                        Stop
+                                    </Label>
+                                    <Polygon
+                                        VerticalAlignment="Center"
+                                        Fill="Red"
+                                        Points="0,0 0,10 10,10 10,0"
+                                        Stroke="Black" />
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Orange" />
+                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Orange" />
+                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="Gray" />
+                                    <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+
+                    </Button.Template>
+                </Button>
+
+                <Label Grid.Column="2" />
+
+                <Label
+                    x:Name="LblCaretPos"
+                    Grid.Column="3"
+                    Content=""
+                    Foreground="#FFE6E6E6" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

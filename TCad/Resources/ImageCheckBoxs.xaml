@@ -1,0 +1,76 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+        <ResourceDictionary Source="Images.xaml" />
+        <ResourceDictionary Source="Dimen.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="VisibleCheckBox" TargetType="{x:Type CheckBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <BulletDecorator>
+                        <BulletDecorator.Bullet>
+                            <Border Padding="{StaticResource LayoutListIconPadding}">
+                                <Image
+                                    Name="TickImage"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{StaticResource baseline_visible_off_DrawingImage}" />
+                            </Border>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <!--  on image  -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="TickImage" Property="Source" Value="{StaticResource baseline_visible_DrawingImage}" />
+                        </Trigger>
+                        <!--  other image  -->
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="TickImage" Property="Source" Value="{StaticResource baseline_visible_DrawingImage}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LockedCheckBox" TargetType="{x:Type CheckBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <BulletDecorator>
+                        <BulletDecorator.Bullet>
+                            <!--  off image  -->
+                            <Border Padding="{StaticResource LayoutListIconPadding}">
+                                <Image
+                                    Name="TickImage"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{StaticResource baseline_lock_open_DrawingImage}" />
+                            </Border>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <!--  on image  -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="TickImage" Property="Source" Value="{StaticResource baseline_lock_DrawingImage}" />
+                        </Trigger>
+                        <!--  other image  -->
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="TickImage" Property="Source" Value="{StaticResource baseline_lock_open_DrawingImage}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

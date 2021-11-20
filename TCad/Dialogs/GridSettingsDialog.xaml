@@ -1,0 +1,129 @@
+﻿<Window x:Class="TCad.GridSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TCad"
+        mc:Ignorable="d"
+        Title="Grid settings"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="ToolWindow" Height="214.667" Width="256.333"
+        >
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Colors.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Width="Auto" Height="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="16" Background="{StaticResource DialogBaseColor}">
+            <StackPanel Orientation="Vertical" Height="Auto" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+
+                    <Label
+                        Content="X"
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="0,0,8,0"
+                        />
+
+                    <TextBox
+                        x:Name="grid_x_size"
+                        Width="100"
+                        Height="Auto"
+                        VerticalContentAlignment="Center"                        
+                        />
+
+                    <Label
+                        Width="Auto"
+                        Height="Auto"
+                        Content="mm"
+                        />
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Label
+                        Content="Y"
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="0,0,8,0"
+                        />
+
+                    <TextBox
+                        x:Name="grid_y_size"
+                        Width="100"
+                        Height="Auto"
+                        VerticalContentAlignment="Center"                        
+                        />
+
+                    <Label
+                        Width="Auto"
+                        Height="Auto"
+                        Content="mm"
+                        />
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <Label
+                        Content="Z"
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="0,0,8,0"
+                        />
+
+                    <TextBox
+                        x:Name="grid_z_size"
+                        Width="100"
+                        Height="Auto"
+                        VerticalContentAlignment="Center"                        
+                        />
+
+                    <Label
+                        Width="Auto"
+                        Height="Auto"
+                        Content="mm"
+                        />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Padding="8,8,8,8">
+
+            <StackPanel HorizontalAlignment="Right"  Orientation="Horizontal">
+                <Button x:Name="cancel_button" 
+                    Content="Cancel"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="75"
+                    Height="Auto"
+                    Margin="0,0,8,0"
+                    Padding="4"
+                    BorderThickness="0"
+                    />
+
+
+                <Button x:Name="ok_button" 
+                    Content="OK"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Width="75"
+                    Height="Auto"
+                    Margin="0,0,0,0"
+                    Padding="4"
+                    BorderThickness="0"
+                    />
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

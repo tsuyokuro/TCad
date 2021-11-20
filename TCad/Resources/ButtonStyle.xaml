@@ -1,0 +1,210 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style
+        x:Key="ToolButton"
+        BasedOn="{StaticResource {x:Type Button}}"
+        TargetType="{x:Type Button}">
+
+        <Setter Property="Foreground" Value="White"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        Name="CustomBorder"
+                        Background="{StaticResource ButtonColor}"
+                        BorderBrush="{StaticResource ButtonColor}"
+                        BorderThickness="0"
+                        CornerRadius="4">
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CustomBorder" Property="BorderBrush" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+                            <Setter TargetName="CustomBorder" Property="Background" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="CustomBorder" Property="BorderBrush" Value="{StaticResource ToggleButtonCheckedBGColor}" />
+                            <Setter TargetName="CustomBorder" Property="Background" Value="{StaticResource ToggleButtonCheckedBGColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="ToolButton2"
+        BasedOn="{StaticResource {x:Type Button}}"
+        TargetType="{x:Type Button}">
+
+        <Setter Property="Foreground" Value="White"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        Name="CustomBorder"
+                        Background="{StaticResource ButtonColor}"
+                        BorderBrush="{StaticResource ButtonColor}"
+                        BorderThickness="0">
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CustomBorder" Property="BorderBrush" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+                            <Setter TargetName="CustomBorder" Property="Background" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="CustomBorder" Property="BorderBrush" Value="{StaticResource ToggleButtonCheckedBGColor}" />
+                            <Setter TargetName="CustomBorder" Property="Background" Value="{StaticResource ToggleButtonCheckedBGColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="DialogButton"
+        BasedOn="{StaticResource ToolButton}"
+        TargetType="{x:Type Button}"/>
+
+    <Style
+        x:Key="CircleToolButton"
+        BasedOn="{StaticResource {x:Type Button}}"
+        TargetType="{x:Type Button}">
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Canvas Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Ellipse x:Name="BG" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{StaticResource ButtonColor}">
+                        </Ellipse>
+                        <Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Canvas>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BG" Property="Fill" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BG" Property="Fill" Value="{StaticResource ToggleButtonCheckedBGColor}" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<DataTemplate x:Key="ButtonMouseOverBG">
+        <Grid Background="{StaticResource ToggleButtonMouseOverBGColor}">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{Binding}"
+                TextAlignment="Center" />
+        </Grid>
+    </DataTemplate>-->
+
+    <!--<Style x:Key="ButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource BaseColor}" />
+        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="{StaticResource BaseColor}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="ContentTemplate" Value="{StaticResource ButtonMouseOverBG}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
+
+    <!--  Button  -->
+
+    <!--<DataTemplate x:Key="MyButtonCheckedStyle">
+        <Grid Background="{StaticResource ToggleButtonCheckedBGColor}">
+            <ContentPresenter
+                Content="{Binding}"
+                TextBlock.Foreground="{StaticResource TextColor}"
+                TextBlock.TextAlignment="Center" />
+        </Grid>
+    </DataTemplate>-->
+
+    <!--<DataTemplate x:Key="MyButtonMouseOverStyle">
+        <Grid Background="{StaticResource ToggleButtonMouseOverBGColor}">
+            <ContentPresenter
+                Content="{Binding}"
+                TextBlock.Foreground="{StaticResource TextColor}"
+                TextBlock.TextAlignment="Center" />
+        </Grid>
+    </DataTemplate>-->
+
+    <!--<ControlTemplate x:Key="MyButtonTemplate" TargetType="{x:Type Button}">
+        <Border
+            x:Name="MyBorder"
+            Background="{StaticResource ButtonColor}"
+            BorderBrush="{StaticResource BaseColor}"
+            BorderThickness="1">
+            <ContentPresenter TextBlock.Foreground="{StaticResource TextColor}" TextBlock.TextAlignment="Center" />
+
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="ContentTemplate" Value="{StaticResource MyButtonMouseOverStyle}" />
+                <Setter TargetName="MyBorder" Property="Background" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+            </Trigger>
+
+        </ControlTemplate.Triggers>
+
+    </ControlTemplate>-->
+
+    <!--<ControlTemplate x:Key="MyButtonTemplateR" TargetType="{x:Type Button}">
+        <Border
+            x:Name="MyBorder"
+            Background="{StaticResource ButtonColor}"
+            BorderBrush="{StaticResource BaseColor}"
+            BorderThickness="1"
+            CornerRadius="4">
+            <ContentPresenter
+                TextBlock.Foreground="{StaticResource TextColor}"
+                TextBlock.TextAlignment="Center"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center" />
+
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="ContentTemplate" Value="{StaticResource MyButtonMouseOverStyle}" />
+                <Setter TargetName="MyBorder" Property="Background" Value="{StaticResource ToggleButtonMouseOverBGColor}" />
+            </Trigger>
+
+        </ControlTemplate.Triggers>
+
+    </ControlTemplate>-->
+
+</ResourceDictionary>

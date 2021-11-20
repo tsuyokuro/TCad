@@ -1,0 +1,117 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Fonts\mplus-1m-light.ttf" />
+    <None Remove="Fonts\mplus-1m-regular.ttf" />
+    <None Remove="Fonts\mplus-1m-thin.ttf" />
+    <None Remove="Resources\BaseScript.py" />
+    <None Remove="Resources\Cursors\dot.cur" />
+    <None Remove="Resources\Cursors\mini_cross.cur" />
+    <None Remove="Resources\Cursors\null.cur" />
+    <None Remove="Resources\Images\script_icon.png" />
+    <None Remove="Resources\Images\triangle2.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\mplus-1m-light.ttf" />
+    <Resource Include="Fonts\mplus-1m-regular.ttf" />
+    <Resource Include="Fonts\mplus-1m-thin.ttf" />
+    <Resource Include="Resources\Cursors\dot.cur" />
+    <Resource Include="Resources\Cursors\mini_cross.cur" />
+    <Resource Include="Resources\Cursors\null.cur" />
+    <Resource Include="Resources\Images\script_icon.png" />
+    <Resource Include="Resources\Images\triangle2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.1.1" />
+    <PackageReference Include="IronPython" Version="2.7.11" />
+    <PackageReference Include="MessagePack" Version="2.2.85" />
+    <PackageReference Include="MessagePack.Annotations" Version="2.2.85" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OpenTK" Version="3.1.0" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CadDataTypes\CadDataTypes.csproj" />
+    <ProjectReference Include="..\GeoLibWrapper\GeoLibWrapper.vcxproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\BaseScript.py">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpFont">
+      <HintPath>..\packages\SharpFont.4.0.1\lib\net45\SharpFont.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\Python-Mode.xshd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if &quot;$(PlatformName)&quot; == &quot;x64&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x64\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)&#xD;&#xA;if &quot;$(PlatformName)&quot; == &quot;x86&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x86\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
+  </Target>
+
+</Project>
