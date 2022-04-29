@@ -2,6 +2,7 @@
 
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 

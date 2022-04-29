@@ -6,6 +6,7 @@ using CadDataTypes;
 using SplineCurve;
 using System.Drawing.Printing;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Plotter.Serializer.v1001
 {

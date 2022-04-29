@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Plotter
 {

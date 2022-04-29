@@ -3,6 +3,7 @@
 
 using GLUtil;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;

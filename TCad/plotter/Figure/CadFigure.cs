@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
 
 namespace Plotter

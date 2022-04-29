@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace TCad.ViewModel
 {

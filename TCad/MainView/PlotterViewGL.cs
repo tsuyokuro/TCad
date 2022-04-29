@@ -2,8 +2,10 @@
 //#define VSYNC
 
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
+
 using Plotter.Controller;
 using Plotter.Settings;
 using System;
@@ -50,30 +52,28 @@ namespace Plotter
 
         private DrawContextGLPers mDrawContextPers;
 
+
         public static PlotterViewGL Create()
         {
-            GraphicsMode mode = GraphicsMode.Default;
-            return Create(mode);
-        }
-
-        public static PlotterViewGL Create(GraphicsMode mode)
-        {
             DOut.pl("in PlotterViewGL Create");
-            PlotterViewGL v = new PlotterViewGL(mode);
+            PlotterViewGL v = new PlotterViewGL();
             v.MakeCurrent();
             DOut.pl("out PlotterViewGL Create");
             return v;
         }
 
-        private PlotterViewGL(GraphicsMode mode) : base(mode)
+        private PlotterViewGL()
         {
             SetupContextMenu();
 
 #if VSYNC
             VSync = true;
 #else
-            VSync = false;
+            //VSync = false;
 #endif
+
+            base.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            base.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
 
             Load += OnLoad;
             SizeChanged += OnResize;

@@ -4,6 +4,7 @@ using HalfEdgeNS;
 using MeshMakerNS;
 using MyCollections;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;

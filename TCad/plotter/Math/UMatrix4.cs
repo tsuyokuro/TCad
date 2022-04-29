@@ -1,5 +1,6 @@
 ﻿// 4行4列の行列
 using OpenTK;
+using OpenTK.Mathematics;
 using CadDataTypes;
 
 namespace Plotter
@@ -177,7 +178,7 @@ namespace Plotter
 
         public static Vector4d product(Vector4d p, UMatrix4 m)
         {
-            Vector4d v = Vector4d.Transform(p, m.Matrix);
+            Vector4d v = Vector4d.TransformRow(p, m.Matrix);
             return v;
         }
 

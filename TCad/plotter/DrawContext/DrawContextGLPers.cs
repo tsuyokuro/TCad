@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 
 namespace Plotter

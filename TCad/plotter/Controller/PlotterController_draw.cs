@@ -2,6 +2,7 @@
 using CadDataTypes;
 using MyCollections;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Settings;
 
 namespace Plotter.Controller

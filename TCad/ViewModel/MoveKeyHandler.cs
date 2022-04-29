@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter;
 using Plotter.Controller;
 using Plotter.Settings;

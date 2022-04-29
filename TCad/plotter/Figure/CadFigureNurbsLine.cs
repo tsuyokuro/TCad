@@ -3,6 +3,7 @@ using SplineCurve;
 using Plotter.Serializer;
 using Newtonsoft.Json.Linq;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
 
 namespace Plotter

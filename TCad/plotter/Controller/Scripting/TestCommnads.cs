@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using System.Drawing;
 using OpenTK.Graphics;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.svg;
 using System.Xml.Linq;
 

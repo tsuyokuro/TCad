@@ -7,6 +7,7 @@ using System.Windows.Resources;
 using CadDataTypes;
 using TCad;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Controller;
 
 namespace Plotter

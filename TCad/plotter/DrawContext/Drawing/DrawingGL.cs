@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using HalfEdgeNS;
@@ -447,8 +448,8 @@ namespace Plotter
         {
             Vector4d wv = pt.ToVector4d(1.0);
 
-            Vector4d sv = Vector4d.Transform(wv, modelV);
-            Vector4d pv = Vector4d.Transform(sv, projV);
+            Vector4d sv = Vector4d.TransformRow(wv, modelV);
+            Vector4d pv = Vector4d.TransformRow(sv, projV);
 
             Vector4d dv;
 

@@ -9,14 +9,15 @@ from System import UInt32 as uint
 
 import clr
 clr.AddReference('CadDataTypes')
-clr.AddReference('OpenTK')
+clr.AddReference('OpenTK.Mathematics')
+
 
 import CadDataTypes.CadVertex as CadVertex
 import CadDataTypes.VertexList as VertexList
 import CadDataTypes.CadMesh as CadMesh
 import CadDataTypes.CadFace as CadFace
 
-import OpenTK.Vector3d as Vector3d
+import OpenTK.Mathematics.Vector3d as Vector3d
 
 #version 1.0
 

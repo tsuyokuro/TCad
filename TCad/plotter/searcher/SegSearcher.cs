@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using static Plotter.Controller.PlotterController;
 
 namespace Plotter

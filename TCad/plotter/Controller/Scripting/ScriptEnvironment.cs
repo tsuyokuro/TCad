@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TCad.Controls;
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Threading;
 using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
@@ -64,18 +65,18 @@ namespace Plotter.Controller
         {
             string script;
 
-            //string path = AppDomain.CurrentDomain.BaseDirectory;
-            //string filePath = path + "BaseScript.py";
-            //if (File.Exists(filePath))
-            //{
-            //    script = File.ReadAllText(filePath);
-            //}
-            //else
-            //{
-            //    script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
-            //}
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = path + "BaseScript.py";
+            if (File.Exists(filePath))
+            {
+                script = File.ReadAllText(filePath);
+            }
+            else
+            {
+                script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
+            }
 
-            script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
+            //script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
 
             return script;
         }

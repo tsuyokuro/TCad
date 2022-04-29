@@ -172,7 +172,7 @@ namespace TCad
 
             ThreadUtil.Init();
 
-            OpenTK.Toolkit.Init();
+            //OpenTK.Toolkit.Init();
 
             // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
             // 紛れさせる

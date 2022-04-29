@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CadDataTypes;
 using MessagePack;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Serializer;
 using Plotter.Serializer.v1001;
 
