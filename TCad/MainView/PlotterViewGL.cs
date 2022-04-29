@@ -1,5 +1,4 @@
 ﻿#define MOUSE_THREAD
-//#define VSYNC
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -65,12 +64,6 @@ namespace Plotter
         private PlotterViewGL()
         {
             SetupContextMenu();
-
-#if VSYNC
-            VSync = true;
-#else
-            //VSync = false;
-#endif
 
             base.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
             base.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
