@@ -195,6 +195,9 @@
   <data name="menu_script" xml:space="preserve">
     <value>スクリプト</value>
   </data>
+  <data name="menu_settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
   <data name="menu_show_script_editor" xml:space="preserve">
     <value>スクリプトエディタを表示</value>
   </data>
@@ -224,9 +227,6 @@
   </data>
   <data name="menu_snap_to_zero" xml:space="preserve">
     <value>原点にスナップ</value>
-  </data>
-  <data name="menu_sttings" xml:space="preserve">
-    <value>設定</value>
   </data>
   <data name="menu_to_loop" xml:space="preserve">
     <value>ループ</value>

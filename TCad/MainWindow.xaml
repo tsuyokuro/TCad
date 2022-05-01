@@ -348,7 +348,7 @@
                                     Header="Select all"
                                     Tag="select_all" />
                             </MenuItem>
-                            <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_sttings}">
+                            <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_settings}">
                                 <MenuItem
                                     Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_grid_settings}"

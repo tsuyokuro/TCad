@@ -66,7 +66,7 @@ namespace Plotter.Controller
             string script;
 
             string path = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = path + "BaseScript.py";
+            string filePath = path + @"Resources\BaseScript.py";
             if (File.Exists(filePath))
             {
                 script = File.ReadAllText(filePath);

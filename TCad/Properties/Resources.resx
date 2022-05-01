@@ -205,6 +205,9 @@
   <data name="menu_script" xml:space="preserve">
     <value>Script</value>
   </data>
+  <data name="menu_settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="menu_show_script_editor" xml:space="preserve">
     <value>Show script editor</value>
   </data>
@@ -234,9 +237,6 @@
   </data>
   <data name="menu_snap_to_zero" xml:space="preserve">
     <value>Snap to zero</value>
-  </data>
-  <data name="menu_sttings" xml:space="preserve">
-    <value>Settings</value>
   </data>
   <data name="menu_to_loop" xml:space="preserve">
     <value>To loop</value>
