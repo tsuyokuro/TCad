@@ -17,13 +17,13 @@ namespace GLFont
 
         private Dictionary<char, FontTex> Cache = new Dictionary<char, FontTex>();
 
-        public FontFaceW()
+        private FontFaceW()
         {
             mLib = new Library();
             Size = 8.25f;
         }
 
-        public void SetFont(string filename, int face_index = 0)
+        private void SetFont(string filename, int face_index = 0)
         {
             FontFace = new Face(mLib, filename, face_index);
             SetSize(this.Size);
@@ -31,7 +31,7 @@ namespace GLFont
             Cache.Clear();
         }
 
-        public void SetFont(byte[] data, int face_index = 0)
+        private void SetFont(byte[] data, int face_index = 0)
         {
             FontFace = new Face(mLib, data, face_index);
             SetSize(this.Size);
@@ -40,7 +40,7 @@ namespace GLFont
         }
 
         // url e.g. "/Fonts/mplus-1m-thin.ttf"
-        public void SetResourceFont(string url, int face_index = 0)
+        private void SetResourceFont(string url, int face_index = 0)
         {
             Uri fileUri = new Uri(url, UriKind.Relative);
             StreamResourceInfo info = Application.GetResourceStream(fileUri);
@@ -55,7 +55,7 @@ namespace GLFont
             SetFont(data, face_index);
         }
 
-        public void SetSize(float size)
+        private void SetSize(float size)
         {
             Size = size;
             if (FontFace != null)
@@ -153,6 +153,56 @@ namespace GLFont
             //Console.WriteLine("");
 
             return mft;
+        }
+
+        public class Provider
+        {
+            private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
+
+            public static FontFaceW GetFromFile(string fname, float size)
+            {
+                string key = GetKey(fname, size);
+
+                FontFaceW face;
+
+                if (FaceMap.TryGetValue(key, out face)) {
+                    return face;
+                }
+
+                face = new FontFaceW();
+                face.SetFont(fname);
+                face.SetSize(size);
+
+                FaceMap.Add(key, face);
+
+                return face;
+            }
+
+            public static FontFaceW GetFromResource(string uri, float size)
+            {
+                string key = GetKey(uri, size);
+
+                FontFaceW face;
+
+                if (FaceMap.TryGetValue(key, out face))
+                {
+                    return face;
+                }
+
+                face = new FontFaceW();
+                face.SetResourceFont(uri);
+                face.SetSize(size);
+
+                FaceMap.Add(key, face);
+
+                return face;
+            }
+
+
+            private static string GetKey(string name, float size)
+            {
+                return name + "_" + size.ToString();
+            }
         }
     }
 }
