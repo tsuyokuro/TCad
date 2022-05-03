@@ -40,7 +40,12 @@ void main()
             get => mInitialized;
         }
 
-        public void Init()
+        private FontRenderer()
+        {
+
+        }
+
+        private void Init()
         {
             Dispose();
 
@@ -51,7 +56,7 @@ void main()
             mInitialized = true;
         }
 
-        public void Dispose()
+        private void Dispose()
         {
             if (mInitialized)
             {
@@ -167,6 +172,42 @@ void main()
             GL.End();
 
             GL.UseProgram(0);
+        }
+
+        public class Provider
+        {
+            private static FontRenderer sFontRenderer;
+
+            private static int RefCnt = 0;
+
+            public static FontRenderer get()
+            {
+                RefCnt++;
+
+                if (sFontRenderer == null)
+                {
+                    sFontRenderer = new FontRenderer();
+                }
+
+                if (!sFontRenderer.Initialized)
+                {
+                    sFontRenderer.Init();
+                }
+
+                return sFontRenderer;
+            }
+
+            public static void Release()
+            {
+                if (RefCnt > 1)
+                {
+                    RefCnt--;
+                    return;
+                }
+
+                sFontRenderer.Dispose();
+                RefCnt = 0;
+            }
         }
     }
 }

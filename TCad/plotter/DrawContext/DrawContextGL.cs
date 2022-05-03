@@ -41,13 +41,11 @@ namespace Plotter
 
         public DrawContextGL()
         {
-            Init(null);
             mUnitPerMilli = 1;
         }
 
         public DrawContextGL(Control control)
         {
-            Init(control);
             mUnitPerMilli = 1;
         }
 

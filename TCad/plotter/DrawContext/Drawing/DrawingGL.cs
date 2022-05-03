@@ -30,8 +30,7 @@ namespace Plotter
             mFontFaceW.SetResourceFont("/Fonts/mplus-1m-regular.ttf");
             mFontFaceW.SetSize(24);
 
-            mFontRenderer = new FontRenderer();
-            mFontRenderer.Init();
+            mFontRenderer = FontRenderer.Provider.get();
 
             FontTex tex = mFontFaceW.CreateTexture("X");
             FontTexW = tex.ImgW;
@@ -40,7 +39,7 @@ namespace Plotter
 
         public void Dispose()
         {
-            mFontRenderer.Dispose();
+            FontRenderer.Provider.Release();
         }
 
         public void Clear(DrawBrush brush)
