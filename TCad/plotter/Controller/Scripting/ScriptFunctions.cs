@@ -728,6 +728,23 @@ namespace Plotter.Controller
             return fig;
         }
 
+        public CadFigure AddPicture(Vector3d pos, string fname)
+        {
+            CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(CadFigure.Types.PICTURE);
+
+            fig.Setup(Controller.PageSize, pos, fname);
+
+
+            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+            Session.AddOpe(ope);
+            Controller.CurrentLayer.AddFigure(fig);
+
+            Session.PostRemakeObjectTree();
+
+            return fig;
+        }
+
+
         public void MakeRotatingBody(uint baseFigID, Vector3d org, Vector3d axis, bool topCap, bool btmCap)
         {
             CadFigure baseFig = GetFigure(baseFigID);

@@ -191,6 +191,10 @@ def add_tetra(pos, size_x, size_y, size_z):
 def add_octa(pos, size_x, size_y, size_z):
     return SE.AddOctahedron(pos, size_x, size_y, size_z)
 
+#[AC] add_picture(last_down(), "F:\\work4\\test.png")
+def add_picture(pos, fname):
+    return SE.AddPicture(pos, fname)
+
 
 ###############################################################################
 # Edit

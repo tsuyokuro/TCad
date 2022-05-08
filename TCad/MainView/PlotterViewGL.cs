@@ -11,6 +11,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
+using GLFont;
 
 namespace Plotter
 {
@@ -88,12 +89,18 @@ namespace Plotter
 
         private void OnDisposed(object sender, EventArgs e)
         {
+            FontShader.GetInstance().Dispose();
+            ImageShader.GetInstance().Dispose();
+
             mDrawContext.Dispose();
         }
 
         private void OnLoad(object sender, EventArgs e)
         {
             DOut.pl("in PlotterViewGL#OnLoad");
+
+            FontShader.GetInstance();
+            ImageShader.GetInstance();
 
             GL.ClearColor(Color4.Black);
             GL.Enable(EnableCap.DepthTest);

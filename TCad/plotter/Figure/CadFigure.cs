@@ -25,6 +25,7 @@ namespace Plotter
             MESH,
             NURBS_LINE,
             NURBS_SURFACE,
+            PICTURE,
             MAX,
         }
         #endregion
@@ -189,6 +190,10 @@ namespace Plotter
 
                 case Types.NURBS_SURFACE:
                     fig = new CadFigureNurbsSurface();
+                    break;
+
+                case Types.PICTURE:
+                    fig = new CadFigurePicture();
                     break;
 
                 default:
