@@ -1010,9 +1010,12 @@ namespace Plotter.Controller
                 Vector3d p0 = dc.DevPointToWorldPoint(MoveOrgScrnPoint);
                 Vector3d p1 = dc.DevPointToWorldPoint(CrossCursor.Pos);
 
+                //p0.dump("p0");
+                //p1.dump("p1");
+
                 Vector3d delta = p1 - p0;
 
-                MoveSelectedPoints(dc, delta);
+                MoveSelectedPoints(dc, new MoveInfo(p0, p1, MoveOrgScrnPoint, CrossCursor.Pos));
 
                 ObjDownPoint = StoredObjDownPoint + delta;
             }

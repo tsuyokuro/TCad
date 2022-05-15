@@ -14,12 +14,14 @@ namespace Plotter
 {
     public class FigUtil
     {
-        public static void MoveSelectedPointsFromStored(CadFigure fig, DrawContext dc, Vector3d delta)
+        public static void MoveSelectedPointsFromStored(CadFigure fig, DrawContext dc, MoveInfo moveInfo)
         {
             if (fig.StoreList == null)
             {
                 return;
             }
+
+            Vector3d delta = moveInfo.Delta;
 
             for (int i = 0; i < fig.StoreList.Count; i++)
             {

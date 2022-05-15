@@ -36,7 +36,7 @@ namespace Plotter
 
 
         #region Point Move
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
             //base.MoveSelectedPoints(dc, delta);
 
@@ -44,6 +44,7 @@ namespace Plotter
 
             Vector3d d;
 
+            Vector3d delta = moveInfo.Delta;
 
             if (!IsSelectedAll() && mPointList.Count > 2 && RestrictionByNormal)
             {
@@ -68,11 +69,11 @@ namespace Plotter
                 d = delta;
             }
 
-            FigUtil.MoveSelectedPointsFromStored(this, dc, d);
+            FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
 
             mChildList.ForEach(c =>
             {
-                c.MoveSelectedPointsFromStored(dc, delta);
+                c.MoveSelectedPointsFromStored(dc, moveInfo);
             });
         }
 

@@ -72,11 +72,15 @@ namespace TCad.ViewModel
                 Delta += wy;
             }
 
+            MoveInfo moveInfo = new MoveInfo();
+            moveInfo.Delta = Delta;
+
+
             if (Controller.State == PlotterController.States.SELECT)
             {
                 if (EditFigList != null && EditFigList.Count > 0)
                 {
-                    Controller.MovePointsFromStored(EditFigList, Delta);
+                    Controller.MovePointsFromStored(EditFigList, moveInfo);
                     Controller.Redraw();
                 }
                 else

@@ -42,9 +42,9 @@ namespace Plotter
         }
 
 
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
-            base.MoveSelectedPointsFromStored(dc, delta);
+            base.MoveSelectedPointsFromStored(dc, moveInfo);
 
             NeedsEval = true;
         }

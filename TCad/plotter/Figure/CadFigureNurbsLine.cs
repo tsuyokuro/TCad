@@ -37,9 +37,9 @@ namespace Plotter
 
 
         #region Point Move
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
-            base.MoveSelectedPointsFromStored(dc, delta);
+            base.MoveSelectedPointsFromStored(dc, moveInfo);
         }
 
         public override void MoveAllPoints(Vector3d delta)

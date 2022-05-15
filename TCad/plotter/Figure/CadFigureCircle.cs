@@ -152,9 +152,11 @@ namespace Plotter
             return;
         }
 
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
             CadVertex cp = StoreList[0];
+
+            Vector3d delta = moveInfo.Delta;
 
             if (cp.Selected)
             {

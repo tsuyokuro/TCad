@@ -145,7 +145,7 @@ namespace Plotter.Controller
             CurrentFigure = fig;
         }
 
-        public void MovePointsFromStored(List<CadFigure> figList, Vector3d d)
+        public void MovePointsFromStored(List<CadFigure> figList, MoveInfo moveInfo)
         {
             if (figList == null)
             {
@@ -159,7 +159,7 @@ namespace Plotter.Controller
 
             foreach (CadFigure fig in figList)
             {
-                fig.MoveSelectedPointsFromStored(DC, d);
+                fig.MoveSelectedPointsFromStored(DC, moveInfo);
             }
         }
 

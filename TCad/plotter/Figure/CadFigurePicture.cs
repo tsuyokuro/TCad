@@ -185,10 +185,20 @@ namespace Plotter
             PointList.Add(seg.P0);
         }
 
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
-            if (PointList[0].Selected && PointList[1].Selected &&
-                PointList[2].Selected && PointList[3].Selected)
+            int cnt = 0;
+            foreach (CadVertex vertex in PointList)
+            {
+                if (vertex.Selected)
+                {
+                    cnt++;
+                }
+            }
+
+            Vector3d delta = moveInfo.Delta;
+
+            if (cnt >= 3)
             {
                 PointList[0] = StoreList[0] + delta;
                 PointList[1] = StoreList[1] + delta;
@@ -197,83 +207,23 @@ namespace Plotter
                 return;
             }
 
-            if (PointList[2].Selected || PointList[3].Selected)
+            if (cnt == 1)
             {
-                Vector3d v0 = StoreList[3].vector - StoreList[0].vector;
-
-                if (v0.IsZero())
+                if (PointList[0].Selected)
                 {
-                    // 移動方向が不定の場合
-                    MoveSelectedPointWithHeight(dc, delta);
+
+
                     return;
                 }
 
-                Vector3d v0u = v0.UnitVector();
-
-                double d = CadMath.InnerProduct(v0u, delta);
-
-                Vector3d vd = v0u * d;
-
-                CadVertex nv3 = StoreList[3] + vd;
-                CadVertex nv2 = StoreList[2] + vd;
-
-                if (nv3.EqualsThreshold(StoreList[0], 0.001) ||
-                    nv2.EqualsThreshold(StoreList[1], 0.001))
+                if (PointList[1].Selected)
                 {
                     return;
                 }
-
-                PointList[3] = nv3;
-                PointList[2] = nv2;
-
-                return;
             }
-
-            if (PointList[0].Selected || PointList[1].Selected)
+            else if (cnt == 2)
             {
-                Vector3d v0 = StoreList[0].vector;
-                Vector3d v1 = StoreList[1].vector;
-                Vector3d v2 = StoreList[2].vector;
-                Vector3d v3 = StoreList[3].vector;
 
-                Vector3d lv = v3 - v0;
-                double h = lv.Norm();
-
-                Vector3d planeNormal = CadMath.Normal(v0, v1, v2);
-
-                Vector3d cp0 = v0;
-                Vector3d cp1 = v1;
-
-                if (PointList[0].Selected)
-                {
-                    cp0 = CadMath.CrossPlane(v0 + delta, v0, planeNormal);
-                }
-
-                if (PointList[1].Selected)
-                {
-                    cp1 = CadMath.CrossPlane(v1 + delta, v1, planeNormal);
-                }
-
-                if (cp0.EqualsThreshold(cp1, 0.001))
-                {
-                    return;
-                }
-
-                if (PointList[0].Selected)
-                {
-                    PointList[0] = PointList[0].SetVector(cp0);
-                }
-
-                if (PointList[1].Selected)
-                {
-                    PointList[1] = PointList[1].SetVector(cp1);
-                }
-
-                Vector3d normal = CadMath.Normal(cp0, cp0 + planeNormal, cp1);
-                Vector3d d = normal * h;
-
-                PointList[3] = PointList[3].SetVector(PointList[0] + d);
-                PointList[2] = PointList[2].SetVector(PointList[1] + d);
             }
         }
 

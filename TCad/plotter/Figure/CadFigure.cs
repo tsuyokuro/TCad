@@ -566,7 +566,7 @@ namespace Plotter
 
         #endregion
 
-        public virtual void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public virtual void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
             if (Locked) return;
 
@@ -576,11 +576,11 @@ namespace Plotter
             //    " dz=" + delta.z.ToString()
             //    );
 
-            FigUtil.MoveSelectedPointsFromStored(this, dc, delta);
+            FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
 
             mChildList.ForEach(c =>
             {
-               c.MoveSelectedPointsFromStored(dc, delta);
+               c.MoveSelectedPointsFromStored(dc, moveInfo);
             });
         }
 
