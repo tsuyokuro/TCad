@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 
 namespace Plotter
 {
@@ -151,6 +153,17 @@ namespace Plotter
             RecalcNormal();
         }
 
+
+        public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
+        {
+        }
+
+        public override void DrawSelected(DrawContext dc)
+        {
+        }
+
+
+        #region Serialize
         public override MpGeometricData_v1001 GeometricDataToMp_v1001()
         {
             MpNurbsLineGeometricData_v1001 geo = new MpNurbsLineGeometricData_v1001();
@@ -197,12 +210,29 @@ namespace Plotter
             NurbsPointList = new VertexList(Nurbs.OutCnt);
         }
 
-        public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
+
+        public override MpGeometricData_v1003 GeometricDataToMp_v1003()
         {
+            MpNurbsLineGeometricData_v1003 geo = new MpNurbsLineGeometricData_v1003();
+            geo.Nurbs = MpNurbsLine_v1003.Create(Nurbs);
+            return geo;
         }
 
-        public override void DrawSelected(DrawContext dc)
+        public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
         {
+            if (!(geo is MpNurbsLineGeometricData_v1003))
+            {
+                return;
+            }
+
+            MpNurbsLineGeometricData_v1003 g = (MpNurbsLineGeometricData_v1003)geo;
+
+            Nurbs = g.Nurbs.Restore();
+
+            mPointList = Nurbs.CtrlPoints;
+
+            NurbsPointList = new VertexList(Nurbs.OutCnt);
         }
+        #endregion
     }
 }

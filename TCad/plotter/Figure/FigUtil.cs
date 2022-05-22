@@ -9,6 +9,8 @@ using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer;
 using Plotter.Serializer.v1001;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 
 namespace Plotter
 {
@@ -192,29 +194,13 @@ namespace Plotter
 
         public static CadFigure Clone(CadFigure src)
         {
-            byte[] data = MpUtil.FigToBin(src, false);
+            byte[] data = CopyUtil.FigToBin(src, false);
 
-            CadFigure fig = MpUtil.BinToFig(data);
+            CadFigure fig = CopyUtil.BinToFig(data);
 
             fig.ID = 0;
 
             return fig;
-        }
-
-
-        public static void CopyTo(CadFigure src, CadFigure dst)
-        {
-            MpFigure_v1002 mpf = MpFigure_v1002.Create(src, false);
-
-            byte[] data = MessagePackSerializer.Serialize(mpf);
-
-            MpFigure_v1002 mpfCopy = MessagePackSerializer.Deserialize<MpFigure_v1002>(data);
-
-            uint id = dst.ID;
-
-            mpfCopy.RestoreTo(dst);
-
-            dst.ID = id;
         }
     }
 }

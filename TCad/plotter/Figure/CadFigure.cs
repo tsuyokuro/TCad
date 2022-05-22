@@ -6,6 +6,8 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 
 namespace Plotter
 {
@@ -803,6 +805,7 @@ namespace Plotter
             RecalcNormal();
         }
 
+        #region Serialize
         public virtual MpGeometricData_v1001 GeometricDataToMp_v1001()
         {
             MpSimpleGeometricData_v1001 geo = new MpSimpleGeometricData_v1001();
@@ -841,5 +844,25 @@ namespace Plotter
             mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
         }
 
+
+        public virtual MpGeometricData_v1003 GeometricDataToMp_v1003()
+        {
+            MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
+            geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+            return geo;
+        }
+
+        public virtual void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+        {
+            if (!(geo is MpSimpleGeometricData_v1003))
+            {
+                return;
+            }
+
+            MpSimpleGeometricData_v1003 g = (MpSimpleGeometricData_v1003)geo;
+
+            mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        }
+        #endregion
     } // End of class CadFigure
 }

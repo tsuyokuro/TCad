@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using Plotter.Serializer.v1001;
+using Plotter.Serializer.v1002;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,14 +24,12 @@ namespace Plotter.Serializer
 
     public class MpCadFile
     {
-        private static byte[] Sign;
+        private static byte[] Sign = Encoding.ASCII.GetBytes("KCAD_BIN");
         private static byte[] Version = { 1, 0, 0, 2 };
         private static string JsonSign = "KCAD_JSON";
-        private static string JsonVersion = "1002";
 
         static MpCadFile()
         {
-            Sign = Encoding.ASCII.GetBytes("KCAD_BIN");
         }
 
         public static CadData? Load(string fname)
@@ -59,16 +58,12 @@ namespace Plotter.Serializer
 
             DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
-            if (IsVersion(version, 1, 0, 0, 0))
-            {
-                return null;
-            }
-            else if (IsVersion(version, 1, 0, 0, 1))
+            if (VersionIs(version, VersionCode_v1001.Code))
             {
                 MpCadData_v1001 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1001>(data);
                 return MpUtil_v1001.CreateCadData_v1001(mpdata);
             }
-            else if (IsVersion(version, 1, 0, 0, 2))
+            else if (VersionIs(version, VersionCode_v1002.Code))
             {
                 MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
                 return MpUtil_v1002.CreateCadData_v1002(mpdata);
@@ -77,14 +72,14 @@ namespace Plotter.Serializer
             return null;
         }
 
-        private static bool IsVersion(byte[] v, int v0, int v1, int v2, int v3)
+        private static bool VersionIs(byte[] l, byte[] r)
         {
-            return v[0] == v0 && v[1] == v1 && v[2] == v2 && v[3] == v3;
+            return l[0] == r[0] && l[1] == r[1] && l[2] == r[2] && l[3] == r[3];
         }
 
         private static string VersionStr(byte[] v)
         {
-            return $"MpCadFile.Load {v[0]}.{v[1]}.{v[2]}.{v[3]}";
+            return $"{v[0]}.{v[1]}.{v[2]}.{v[3]}";
         }
 
         public static CadData? LoadJson(string fname)
@@ -93,7 +88,7 @@ namespace Plotter.Serializer
 
             reader.ReadLine(); // skip "{\n"
             string header = reader.ReadLine();
-            Regex headerPtn = new Regex(@"version=([0-9a-fA-F]+)");
+            Regex headerPtn = new Regex(@"version=([0-9a-fA-F\.]+)");
 
             Match m = headerPtn.Match(header);
 
@@ -113,7 +108,7 @@ namespace Plotter.Serializer
 
             byte[] bin = MessagePackSerializer.ConvertFromJson(js);
 
-            if (version == "1001")
+            if (version == VersionCode_v1001.Str)
             {
                 MpCadData_v1001 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1001>(bin);
 
@@ -125,7 +120,7 @@ namespace Plotter.Serializer
 
                 return cd;
             }
-            else if (version == "1002")
+            else if (version == VersionCode_v1002.Str)
             {
                 MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
 
@@ -168,7 +163,7 @@ namespace Plotter.Serializer
             s = s.Substring(1, s.Length - 2);
 
             string ss = @"{" + "\n" +
-                        @"""header"":""" + "type=" + JsonSign + "," + "version=" + JsonVersion + @"""," + "\n" +
+                        @"""header"":""" + "type=" + JsonSign + "," + "version=" + VersionCode_v1002.Str + @"""," + "\n" +
                         s + "\n" +
                         @"}";
 

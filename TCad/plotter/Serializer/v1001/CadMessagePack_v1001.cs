@@ -10,6 +10,15 @@ using OpenTK.Mathematics;
 
 namespace Plotter.Serializer.v1001
 {
+    public static class VersionCode_v1001
+    {
+        public static readonly byte[] Code = { 1, 0, 0, 1 };
+        public static string Str
+        {
+            get => $"{Code[0]}.{Code[1]}.{Code[2]}.{Code[3]}";
+        }
+    }
+
     [MessagePackObject]
     public class MpCadData_v1001
     {

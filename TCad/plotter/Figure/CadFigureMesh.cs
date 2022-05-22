@@ -4,6 +4,8 @@ using MyCollections;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
@@ -223,49 +225,6 @@ namespace Plotter
             mHeModel.InvertAllFace();
         }
 
-        public override MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpMeshGeometricData_v1001 mpGeo = new MpMeshGeometricData_v1001();
-            mpGeo.HeModel = MpHeModel_v1001.Create(mHeModel);
-
-            return mpGeo;
-        }
-
-        public override void GeometricDataFromMp_v1001(MpGeometricData_v1001 mpGeo)
-        {
-            if (!(mpGeo is MpMeshGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpMeshGeometricData_v1001 meshGeo = (MpMeshGeometricData_v1001)mpGeo;
-
-            //mHeModel = meshGeo.HeModel.Restore();
-            //mPointList = mHeModel.VertexStore;
-            SetMesh(meshGeo.HeModel.Restore());
-        }
-
-        public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-        {
-            MpMeshGeometricData_v1002 mpGeo = new MpMeshGeometricData_v1002();
-            mpGeo.HeModel = MpHeModel_v1002.Create(mHeModel);
-
-            return mpGeo;
-        }
-
-        public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 mpGeo)
-        {
-            if (!(mpGeo is MpMeshGeometricData_v1002))
-            {
-                return;
-            }
-
-            MpMeshGeometricData_v1002 meshGeo = (MpMeshGeometricData_v1002)mpGeo;
-
-            //mHeModel = meshGeo.HeModel.Restore();
-            //mPointList = mHeModel.VertexStore;
-            SetMesh(meshGeo.HeModel.Restore());
-        }
 
         public override void RemoveSelected()
         {
@@ -337,5 +296,74 @@ namespace Plotter
         public override void EndCreate(DrawContext dc)
         {
         }
+
+
+        #region Serialize
+        public override MpGeometricData_v1001 GeometricDataToMp_v1001()
+        {
+            MpMeshGeometricData_v1001 mpGeo = new MpMeshGeometricData_v1001();
+            mpGeo.HeModel = MpHeModel_v1001.Create(mHeModel);
+
+            return mpGeo;
+        }
+
+        public override void GeometricDataFromMp_v1001(MpGeometricData_v1001 mpGeo)
+        {
+            if (!(mpGeo is MpMeshGeometricData_v1001))
+            {
+                return;
+            }
+
+            MpMeshGeometricData_v1001 meshGeo = (MpMeshGeometricData_v1001)mpGeo;
+
+            //mHeModel = meshGeo.HeModel.Restore();
+            //mPointList = mHeModel.VertexStore;
+            SetMesh(meshGeo.HeModel.Restore());
+        }
+
+        public override MpGeometricData_v1002 GeometricDataToMp_v1002()
+        {
+            MpMeshGeometricData_v1002 mpGeo = new MpMeshGeometricData_v1002();
+            mpGeo.HeModel = MpHeModel_v1002.Create(mHeModel);
+
+            return mpGeo;
+        }
+
+        public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 mpGeo)
+        {
+            if (!(mpGeo is MpMeshGeometricData_v1002))
+            {
+                return;
+            }
+
+            MpMeshGeometricData_v1002 meshGeo = (MpMeshGeometricData_v1002)mpGeo;
+
+            //mHeModel = meshGeo.HeModel.Restore();
+            //mPointList = mHeModel.VertexStore;
+            SetMesh(meshGeo.HeModel.Restore());
+        }
+
+        public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+        {
+            MpMeshGeometricData_v1003 mpGeo = new MpMeshGeometricData_v1003();
+            mpGeo.HeModel = MpHeModel_v1003.Create(mHeModel);
+
+            return mpGeo;
+        }
+
+        public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 mpGeo)
+        {
+            if (!(mpGeo is MpMeshGeometricData_v1003))
+            {
+                return;
+            }
+
+            MpMeshGeometricData_v1003 meshGeo = (MpMeshGeometricData_v1003)mpGeo;
+
+            //mHeModel = meshGeo.HeModel.Restore();
+            //mPointList = mHeModel.VertexStore;
+            SetMesh(meshGeo.HeModel.Restore());
+        }
+        #endregion
     }
 }
