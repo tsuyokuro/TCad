@@ -164,28 +164,6 @@ namespace Plotter
 
 
         #region Serialize
-        public override MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpNurbsLineGeometricData_v1001 geo = new MpNurbsLineGeometricData_v1001();
-            geo.Nurbs = MpNurbsLine_v1001.Create(Nurbs);
-            return geo;
-        }
-
-        public override void GeometricDataFromMp_v1001(MpGeometricData_v1001 geo)
-        {
-            if (!(geo is MpNurbsLineGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpNurbsLineGeometricData_v1001 g = (MpNurbsLineGeometricData_v1001)geo;
-
-            Nurbs = g.Nurbs.Restore();
-
-            mPointList = Nurbs.CtrlPoints;
-
-            NurbsPointList = new VertexList(Nurbs.OutCnt);
-        }
 
         public override MpGeometricData_v1002 GeometricDataToMp_v1002()
         {

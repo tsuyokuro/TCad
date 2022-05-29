@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 
@@ -806,24 +805,6 @@ namespace Plotter
         }
 
         #region Serialize
-        public virtual MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpSimpleGeometricData_v1001 geo = new MpSimpleGeometricData_v1001();
-            geo.PointList = MpUtil_v1001.VertexListToMp(PointList);
-            return geo;
-        }
-
-        public virtual void GeometricDataFromMp_v1001(MpGeometricData_v1001 geo)
-        {
-            if (!(geo is MpSimpleGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpSimpleGeometricData_v1001 g = (MpSimpleGeometricData_v1001)geo;
-
-            mPointList = MpUtil_v1001.VertexListFromMp(g.PointList);
-        }
 
         public virtual MpGeometricData_v1002 GeometricDataToMp_v1002()
         {

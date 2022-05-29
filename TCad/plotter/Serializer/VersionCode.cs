@@ -8,7 +8,9 @@ namespace Plotter.Serializer
 {
     public class VersionCode
     {
-        private byte[] Code_ = new byte[4];
+        public const int CodeLength = 4;
+
+        private byte[] Code_ = new byte[CodeLength];
 
         public byte[] Code
         {

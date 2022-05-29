@@ -254,36 +254,11 @@ namespace Plotter
             RecalcNormal();
         }
 
-        public override MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpNurbsSurfaceGeometricData_v1001 geo = new MpNurbsSurfaceGeometricData_v1001();
-            geo.Nurbs = MpNurbsSurface_v1001.Create(Nurbs);
-            return geo;
-        }
-
         public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
         {
         }
 
         #region Serialize
-        public override void GeometricDataFromMp_v1001(MpGeometricData_v1001 geo)
-        {
-            if (!(geo is MpNurbsSurfaceGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpNurbsSurfaceGeometricData_v1001 g = (MpNurbsSurfaceGeometricData_v1001)geo;
-
-            Nurbs = g.Nurbs.Restore();
-
-            mPointList = Nurbs.CtrlPoints;
-
-            NurbsPointList = new VertexList(Nurbs.UOutCnt * Nurbs.VOutCnt);
-
-            NeedsEval = true;
-        }
-
         public override MpGeometricData_v1002 GeometricDataToMp_v1002()
         {
             MpNurbsSurfaceGeometricData_v1002 geo = new MpNurbsSurfaceGeometricData_v1002();

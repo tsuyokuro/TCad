@@ -299,27 +299,6 @@ namespace Plotter
 
 
         #region Serialize
-        public override MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpMeshGeometricData_v1001 mpGeo = new MpMeshGeometricData_v1001();
-            mpGeo.HeModel = MpHeModel_v1001.Create(mHeModel);
-
-            return mpGeo;
-        }
-
-        public override void GeometricDataFromMp_v1001(MpGeometricData_v1001 mpGeo)
-        {
-            if (!(mpGeo is MpMeshGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpMeshGeometricData_v1001 meshGeo = (MpMeshGeometricData_v1001)mpGeo;
-
-            //mHeModel = meshGeo.HeModel.Restore();
-            //mPointList = mHeModel.VertexStore;
-            SetMesh(meshGeo.HeModel.Restore());
-        }
 
         public override MpGeometricData_v1002 GeometricDataToMp_v1002()
         {
