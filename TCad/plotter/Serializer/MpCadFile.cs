@@ -24,9 +24,10 @@ namespace Plotter.Serializer
 
     public class MpCadFile
     {
-        private static byte[] Sign = Encoding.ASCII.GetBytes("KCAD_BIN");
+        private static byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
+        private static byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
         private static byte[] Version = { 1, 0, 0, 2 };
-        private static string JsonSign = "KCAD_JSON";
+        private static string JsonSign = "TCAD_JSON";
 
         static MpCadFile()
         {
@@ -40,7 +41,7 @@ namespace Plotter.Serializer
 
             fs.Read(sign, 0, Sign.Length);
 
-            if (!Sign.SequenceEqual<byte>(sign))
+            if (!Sign.SequenceEqual<byte>(sign) && !SignOld.SequenceEqual<byte>(sign))
             {
                 fs.Close();
                 return null;
