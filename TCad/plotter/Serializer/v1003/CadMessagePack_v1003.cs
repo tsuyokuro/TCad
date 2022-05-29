@@ -10,13 +10,11 @@ using OpenTK.Mathematics;
 
 namespace Plotter.Serializer.v1003
 {
-    public static class VersionCode_v1003
+    public class VersionCode_v1003
     {
-        public static readonly byte[] Code = { 1, 0, 0, 3 };
-        public static string Str
-        {
-            get => $"{Code[0]}.{Code[1]}.{Code[2]}.{Code[3]}";
-        }
+        private static VersionCode Version_ = new VersionCode(1, 0, 0, 3);
+
+        public static VersionCode Version => Version_;
     }
 
     [MessagePackObject]

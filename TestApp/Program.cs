@@ -6,7 +6,6 @@ using Plotter.Serializer.v1002;
 
 namespace TestApp
 {
-    [MessagePackObject]
     public class MpTest : IMessagePackSerializationCallbackReceiver
     {
         [Key("X")]
@@ -14,6 +13,43 @@ namespace TestApp
 
         [Key("Y")]
         public double Y;
+
+        [IgnoreMember]
+        public double L = 0;
+
+        public void OnBeforeSerialize()
+        {
+        }
+
+        public void OnAfterDeserialize()
+        {
+            L = Math.Sqrt(X * X + Y * Y);
+        }
+    }
+
+
+    [MessagePackObject]
+    public class MpTest1
+    {
+        [Key("X")]
+        public double X;
+
+        [Key("Y")]
+        public double Y;
+    }
+
+    [MessagePackObject]
+    public class MpTest2 : IMessagePackSerializationCallbackReceiver
+    {
+        [Key("X")]
+        public double X;
+
+        [Key("Y")]
+        public double Y;
+
+        [Key("Version")]
+        public byte[] Version = { 1, 0, 0, 2 };
+
 
         [IgnoreMember]
         public double L = 0;
@@ -30,12 +66,11 @@ namespace TestApp
     }
 
 
-
     internal class Program
     {
         static void Main(string[] args)
         {
-            MpTest mpt = new MpTest();
+            MpTest1 mpt = new MpTest1();
 
             mpt.X = 10;
             mpt.Y = 5;
@@ -44,24 +79,9 @@ namespace TestApp
             byte[] data = MessagePackSerializer.Serialize(mpt);
 
 
-            MpTest re = MessagePackSerializer.Deserialize<MpTest>(data);
+            MpTest2 re = MessagePackSerializer.Deserialize<MpTest2>(data);
 
 
-            Console.WriteLine("re.L:" + re.L);
-
-            CadFigurePolyLines polyLines = new CadFigurePolyLines();
-
-            polyLines.AddPoint(new CadVertex(1, 1, 1));
-
-            MpFigure_v1002 mpFig = MpFigure_v1002.Create(polyLines);
-
-            data = MessagePackSerializer.Serialize(mpFig);
-
-            MpFigure_v1002 mpFigR = MessagePackSerializer.Deserialize<MpFigure_v1002>(data);
-
-            CadFigurePolyLines polyLinesR = new CadFigurePolyLines();
-
-            mpFigR.RestoreTo(polyLinesR);
 
             Console.WriteLine("end");
         }

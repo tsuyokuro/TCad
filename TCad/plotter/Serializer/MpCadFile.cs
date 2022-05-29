@@ -59,12 +59,12 @@ namespace Plotter.Serializer
 
             DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
-            if (VersionIs(version, VersionCode_v1001.Code))
+            if (VersionIs(version, VersionCode_v1001.Version.Code))
             {
                 MpCadData_v1001 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1001>(data);
                 return MpUtil_v1001.CreateCadData_v1001(mpdata);
             }
-            else if (VersionIs(version, VersionCode_v1002.Code))
+            else if (VersionIs(version, VersionCode_v1002.Version.Code))
             {
                 MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
                 return MpUtil_v1002.CreateCadData_v1002(mpdata);
@@ -109,7 +109,7 @@ namespace Plotter.Serializer
 
             byte[] bin = MessagePackSerializer.ConvertFromJson(js);
 
-            if (version == VersionCode_v1001.Str)
+            if (version == VersionCode_v1001.Version.Str)
             {
                 MpCadData_v1001 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1001>(bin);
 
@@ -121,7 +121,7 @@ namespace Plotter.Serializer
 
                 return cd;
             }
-            else if (version == VersionCode_v1002.Str)
+            else if (version == VersionCode_v1002.Version.Str)
             {
                 MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
 
@@ -164,7 +164,7 @@ namespace Plotter.Serializer
             s = s.Substring(1, s.Length - 2);
 
             string ss = @"{" + "\n" +
-                        @"""header"":""" + "type=" + JsonSign + "," + "version=" + VersionCode_v1002.Str + @"""," + "\n" +
+                        @"""header"":""" + "type=" + JsonSign + "," + "version=" + VersionCode_v1002.Version.Str + @"""," + "\n" +
                         s + "\n" +
                         @"}";
 
