@@ -115,7 +115,6 @@ namespace Plotter.Serializer
             if (!jheader.RootElement.TryGetProperty("version", out je)) return null;
             string version = jheader.RootElement.GetProperty("version").GetString();
             
-
             string body = GetJsonObject(data, ref jsonReader, "body");
             if (body == null) return null;
 
@@ -157,9 +156,7 @@ namespace Plotter.Serializer
         {
             int state = 0;
             int startIdx = 0;
-            int endIdx = 0;
-            int depth = 0;
-
+            int len = 0;
 
             while (true)
             {
@@ -172,8 +169,7 @@ namespace Plotter.Serializer
                 {
                     if (jsonReader.TokenType == JsonTokenType.PropertyName)
                     {
-                        string name = jsonReader.GetString();
-                        if (name != null && name == pname)
+                        if (jsonReader.GetString() == pname)
                         {
                             state = 1;
                         }
@@ -185,26 +181,23 @@ namespace Plotter.Serializer
                     if (jsonReader.TokenType == JsonTokenType.StartObject)
                     {
                         startIdx = (int)jsonReader.TokenStartIndex;
-                        depth = jsonReader.CurrentDepth;
-                        state = 2;
-                    }
-                }
-                else if (state == 2)
-                {
-                    if (jsonReader.TokenType == JsonTokenType.EndObject && jsonReader.CurrentDepth == depth)
-                    {
-                        endIdx = (int)jsonReader.TokenStartIndex;
+                        int scount = (int)jsonReader.BytesConsumed;
+                        
+                        jsonReader.Skip(); // Skip all members
+                        
+                        len = (int)jsonReader.BytesConsumed - scount + 1;
+
                         break;
                     }
                 }
             }
 
-            if (startIdx >= endIdx)
+            if (len == 0)
             {
                 return null;
             }
 
-            string str = Encoding.UTF8.GetString(data, startIdx, (endIdx - startIdx + 1));
+            string str = Encoding.UTF8.GetString(data, startIdx, len);
 
             return str;
         }
