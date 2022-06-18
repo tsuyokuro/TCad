@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Plotter.Serializer
 {
@@ -89,6 +91,126 @@ namespace Plotter.Serializer
 
         public static CadData? LoadJson(string fname)
         {
+            FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
+
+            byte[] data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            fs.Close();
+
+
+            Utf8JsonReader jsonReader = new Utf8JsonReader(data);
+
+            string header = GetJsonObject(data, ref jsonReader, "header");
+            if (header == null) return null;
+
+            JsonDocument jheader = JsonDocument.Parse(header);
+
+            JsonElement je;
+
+            if (!jheader.RootElement.TryGetProperty("type", out je)) return null;
+            string type = je.GetString();
+
+            if (type != JsonSign) return null;
+
+            if (!jheader.RootElement.TryGetProperty("version", out je)) return null;
+            string version = jheader.RootElement.GetProperty("version").GetString();
+            
+
+            string body = GetJsonObject(data, ref jsonReader, "body");
+            if (body == null) return null;
+
+            byte[] bin = MessagePackSerializer.ConvertFromJson(body);
+
+            if (version == VersionCode_v1001.Version.Str)
+            {
+                return null;
+            }
+            else if (version == VersionCode_v1002.Version.Str)
+            {
+                MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
+
+                CadData cd = new CadData(
+                    mpcd.GetDB(),
+                    mpcd.ViewInfo.WorldScale,
+                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
+                    );
+
+                return cd;
+            }
+            else if (version == VersionCode_v1003.Version.Str)
+            {
+                MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
+
+                CadData cd = new CadData(
+                    mpcd.GetDB(),
+                    mpcd.ViewInfo.WorldScale,
+                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
+                    );
+
+                return cd;
+            }
+
+            return null;
+        }
+
+        public static string GetJsonObject(byte[] data, ref Utf8JsonReader jsonReader, string pname)
+        {
+            int state = 0;
+            int startIdx = 0;
+            int endIdx = 0;
+            int depth = 0;
+
+
+            while (true)
+            {
+                if (!jsonReader.Read())
+                {
+                    return null;
+                }
+
+                if (state == 0)
+                {
+                    if (jsonReader.TokenType == JsonTokenType.PropertyName)
+                    {
+                        string name = jsonReader.GetString();
+                        if (name != null && name == pname)
+                        {
+                            state = 1;
+                        }
+
+                    }
+                }
+                else if (state == 1)
+                {
+                    if (jsonReader.TokenType == JsonTokenType.StartObject)
+                    {
+                        startIdx = (int)jsonReader.TokenStartIndex;
+                        depth = jsonReader.CurrentDepth;
+                        state = 2;
+                    }
+                }
+                else if (state == 2)
+                {
+                    if (jsonReader.TokenType == JsonTokenType.EndObject && jsonReader.CurrentDepth == depth)
+                    {
+                        endIdx = (int)jsonReader.TokenStartIndex;
+                        break;
+                    }
+                }
+            }
+
+            if (startIdx >= endIdx)
+            {
+                return null;
+            }
+
+            string str = Encoding.UTF8.GetString(data, startIdx, (endIdx - startIdx + 1));
+
+            return str;
+        }
+
+        public static CadData? LoadJson_OLD(string fname)
+        {
             StreamReader reader = new StreamReader(fname);
 
             reader.ReadLine(); // skip "{\n"
@@ -164,17 +286,26 @@ namespace Plotter.Serializer
 
         public static void SaveAsJson(string fname, CadData cd)
         {
+            JsonObject n = new JsonObject();
+            JsonObject header = new JsonObject();
+
+            header.Add("type", MpCadFile.JsonSign);
+            header.Add("version", MpCadFile.CurrentVersion.Str);
+            n.Add("header", header);
+
+            string headerJs = n.ToString();
+            headerJs = headerJs.Substring(1, headerJs.Length - 2);
+
+
             var data = MpUtil_v1003.CreateMpCadData_v1003(cd);
-            string s = MessagePackSerializer.SerializeToJson(data);
+            string dbJs = MessagePackSerializer.SerializeToJson(data);
+            dbJs = dbJs.Trim();
+            dbJs = dbJs.Substring(1, dbJs.Length - 2);
 
-            s = s.Trim();
-
-            s = s.Substring(1, s.Length - 2);
-
-            string ss = @"{" + "\n" +
-                        @"""header"":""" + "type=" + JsonSign + "," + "version=" + VersionCode_v1003.Version.Str + @"""," + "\n" +
-                        s + "\n" +
-                        @"}";
+            string ss = @"{" +
+                        headerJs + "," +
+                        @"""body"":" + "{" + dbJs + "}" +
+                        "}";
 
             StreamWriter writer = new StreamWriter(fname);
 

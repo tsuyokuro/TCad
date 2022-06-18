@@ -85,8 +85,10 @@ namespace TCad.ViewModel
 
             if (cd == null)
             {
-                return;
+                cd = MpCadFile.LoadJson_OLD(fname);
             }
+
+            if (cd == null) return;
 
             CadData rcd = cd.Value;
 
