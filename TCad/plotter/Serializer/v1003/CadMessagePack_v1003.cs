@@ -7,6 +7,7 @@ using SplineCurve;
 using System.Drawing.Printing;
 using OpenTK;
 using OpenTK.Mathematics;
+using Plotter.Serializer.v1002;
 
 namespace Plotter.Serializer.v1003
 {
@@ -20,6 +21,9 @@ namespace Plotter.Serializer.v1003
     [MessagePackObject]
     public class MpCadData_v1003
     {
+        [Key("Version")]
+        public VersionCode Version = VersionCode_v1003.Version;
+
         [Key("DB")]
         public MpCadObjectDB_v1003 MpDB;
 

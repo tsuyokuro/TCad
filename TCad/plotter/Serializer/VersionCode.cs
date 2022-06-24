@@ -1,30 +1,95 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Plotter.Serializer
 {
-    public class VersionCode
+    [MessagePackObject]
+    [StructLayout(LayoutKind.Explicit)]
+    public struct VersionCode
     {
-        public const int CodeLength = 4;
+        public static int CodeLength = 4;
 
-        private byte[] Code_ = new byte[CodeLength];
+        [Key(0)]
+        [FieldOffset(0)]
+        public byte C_0 = 0;
 
-        public byte[] Code
-        {
-            get { return Code_; }
-        }
+        [Key(1)]
+        [FieldOffset(1)]
+        public byte C_1 = 0;
 
+        [Key(2)]
+        [FieldOffset(2)]
+        public byte C_2 = 0;
+
+        [Key(3)]
+        [FieldOffset(3)]
+        public byte C_3 = 0;
+
+
+        [IgnoreMember]
         public string Str
         {
-            get => $"{Code_[0]}.{Code_[1]}.{Code_[2]}.{Code_[3]}";
+            get
+            {
+                StringBuilder sb = new StringBuilder(32);
+                sb.Append(C_0.ToString("x")); sb.Append(".");
+                sb.Append(C_1.ToString("x")); sb.Append(".");
+                sb.Append(C_2.ToString("x")); sb.Append(".");
+                sb.Append(C_3.ToString("x"));
+
+                return sb.ToString();
+            }
         }
 
-        public VersionCode(byte f0, byte f1, byte f2, byte f3 )
+        [IgnoreMember]
+        public byte[] Bytes
         {
-            Code_[0] = f0; Code_[1] = f1; Code_[2] = f2; Code_[3] = f3;
+            get
+            {
+                return new byte[] { C_0, C_1, C_2, C_3 };
+            }
+        }
+
+        public VersionCode(byte f0, byte f1, byte f2, byte f3)
+        {
+            C_0 = f0; C_1 = f1; C_2 = f2; C_3 = f3;
+        }
+        public VersionCode(string v)
+        {
+            string[] vt = v.Split('.');
+            if (vt.Length != 4)
+            {
+                return;
+            }
+
+            try
+            {
+                C_0 = byte.Parse(vt[0], NumberStyles.HexNumber);
+                C_1 = byte.Parse(vt[1], NumberStyles.HexNumber);
+                C_2 = byte.Parse(vt[2], NumberStyles.HexNumber);
+                C_3 = byte.Parse(vt[3], NumberStyles.HexNumber);
+
+            } catch (FormatException e) {
+                C_0 = 0xFF;
+                C_1 = 0xFF;
+                C_2 = 0xFF;
+                C_3 = 0xFF;
+            }
+        }
+
+        public VersionCode()
+        {
+        }
+
+        public bool Equals(byte[] bytes)
+        {
+            return bytes[0] == C_0 && bytes[1] == C_1 && bytes[2] == C_2 && bytes[3] == C_3;
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Plotter;
 using CadDataTypes;
 using Plotter.Serializer.v1002;
+using Plotter.Serializer;
 
 namespace TestApp
 {
@@ -81,6 +82,8 @@ namespace TestApp
 
             MpTest2 re = MessagePackSerializer.Deserialize<MpTest2>(data);
 
+
+            VersionCode vc = new VersionCode("1.0.1a.b0");
 
 
             Console.WriteLine("end");

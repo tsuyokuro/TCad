@@ -62,10 +62,10 @@ namespace Plotter.Serializer
 
             DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
-            if (VersionIs(version, VersionCode_v1001.Version.Code))
+            if (VersionCode_v1001.Version.Equals(version))
             {
             }
-            else if (VersionIs(version, VersionCode_v1002.Version.Code))
+            else if (VersionCode_v1002.Version.Equals(version))
             {
                 MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
                 return MpUtil_v1002.CreateCadData_v1002(mpdata);
@@ -79,10 +79,6 @@ namespace Plotter.Serializer
             return null;
         }
 
-        private static bool VersionIs(byte[] l, byte[] r)
-        {
-            return l[0] == r[0] && l[1] == r[1] && l[2] == r[2] && l[3] == r[3];
-        }
 
         private static string VersionStr(byte[] v)
         {
@@ -271,7 +267,7 @@ namespace Plotter.Serializer
             FileStream fs = new FileStream(fname, FileMode.Create, FileAccess.Write);
 
             fs.Write(Sign, 0, Sign.Length);
-            fs.Write(CurrentVersion.Code, 0, VersionCode.CodeLength);
+            fs.Write(CurrentVersion.Bytes, 0, VersionCode.CodeLength);
             fs.Write(data, 0, data.Length);
 
             fs.Close();
