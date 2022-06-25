@@ -1,13 +1,10 @@
 ﻿
-using MyCollections;
 using CadDataTypes;
-using Newtonsoft.Json.Linq;
+using MyCollections;
+using OpenTK.Mathematics;
 using Plotter;
-using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Mathematics;
 
 namespace HalfEdgeNS
 {

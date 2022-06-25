@@ -79,7 +79,6 @@
     <PackageReference Include="IronPython" Version="2.7.11" />
     <PackageReference Include="MessagePack" Version="2.3.85" />
     <PackageReference Include="MessagePackAnalyzer" Version="2.3.85" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OpenTK" Version="4.7.1" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />

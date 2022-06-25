@@ -1,10 +1,6 @@
 ﻿using CadDataTypes;
 using SplineCurve;
-using Plotter.Serializer;
-using Newtonsoft.Json.Linq;
-using OpenTK;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 

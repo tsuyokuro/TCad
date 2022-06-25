@@ -1,16 +1,8 @@
-﻿using OpenTK;
+﻿using CadDataTypes;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using static Plotter.CadFigure;
-using CadDataTypes;
-using SplineCurve;
-using Plotter.Serializer;
-using Newtonsoft.Json.Linq;
-using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
+using SplineCurve;
 
 namespace Plotter
 {
