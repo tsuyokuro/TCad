@@ -57,8 +57,6 @@ namespace Plotter
             p1.Y = 0;
             p1.Z = 0;
 
-            p0 /= DC.WorldScale;
-            p1 /= DC.WorldScale;
 
             DrawLine(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1);
 
@@ -71,9 +69,6 @@ namespace Plotter
             p1.Y = len;
             p1.Z = 0;
 
-            p0 /= DC.WorldScale;
-            p1 /= DC.WorldScale;
-
             DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1);
 
             // Z軸
@@ -84,9 +79,6 @@ namespace Plotter
             p1.X = 0;
             p1.Y = 0;
             p1.Z = len;
-
-            p0 /= DC.WorldScale;
-            p1 /= DC.WorldScale;
 
             DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1);
         }
@@ -390,7 +382,7 @@ namespace Plotter
             DC.GdiGraphics.DrawLine(pen.GdiPen, (float)p0.X, (float)p0.Y, (float)p1.X, (float)p1.Y);
         }
 
-        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, string s)
+        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
         {
             Vector3d pa = DC.WorldPointToDevPoint(a);
             Vector3d d = DC.WorldVectorToDevVector(xdir);
@@ -595,7 +587,7 @@ namespace Plotter
 
         public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
         {
-            DrawUtil.DrawArrow(DrawLine, pen, pt0, pt1, type, pos, len / DC.WorldScale, width / DC.WorldScale);
+            DrawUtil.DrawArrow(DrawLine, pen, pt0, pt1, type, pos, len, width);
         }
 
         public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)

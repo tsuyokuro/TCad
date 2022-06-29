@@ -130,9 +130,13 @@ namespace Plotter
 
             if (SettingsHolder.Settings.DrawNormal && !Normal.IsZero())
             {
+                double len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
+                double arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
+                double arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+
                 Vector3d np0 = PointList[0].vector;
-                Vector3d np1 = np0 + (Normal * 10);
-                dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, 3, 3);
+                Vector3d np1 = np0 + (Normal * len);
+                dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
             }
         }
 

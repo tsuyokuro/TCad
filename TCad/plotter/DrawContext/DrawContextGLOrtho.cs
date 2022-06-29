@@ -110,8 +110,6 @@ namespace Plotter
             DrawContextGLOrtho dc = new DrawContextGLOrtho();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(deviceSize.Width, deviceSize.Height);
 
@@ -131,8 +129,6 @@ namespace Plotter
             DrawContextGLOrtho dc = new DrawContextGLOrtho();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 

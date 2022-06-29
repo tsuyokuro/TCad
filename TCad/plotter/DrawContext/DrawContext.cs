@@ -105,7 +105,19 @@ namespace Plotter
         }
 
         // 縮尺
-        public double WorldScale = 1.0;
+        public double WorldScale_ = 1.0;
+
+        public double WorldScale
+        {
+            get => WorldScale_;
+
+            set
+            {
+                WorldScale_ = value;
+                CalcViewMatrix();
+            }
+
+        }
 
         // 画面に描画する際の係数
         public double DeviceScaleX = 1.0;
@@ -200,8 +212,6 @@ namespace Plotter
 
         public virtual Vector3d WorldVectorToDevVector(Vector3d pt)
         {
-            pt *= WorldScale;
-
             Vector4d wv = pt.ToVector4d(1.0);
 
             Vector4d sv = wv * mViewMatrix;
@@ -216,7 +226,7 @@ namespace Plotter
 
             dv.X = dv.X * DeviceScaleX;
             dv.Y = dv.Y * DeviceScaleY;
-            dv.Z = 0;
+            //dv.Z = 0;
 
             return dv.ToVector3d();
         }
@@ -236,8 +246,6 @@ namespace Plotter
 
             wv = wv * mProjectionMatrixInv;
             wv = wv * mViewMatrixInv;
-
-            wv /= WorldScale;
 
             return wv.ToVector3d();
         }
@@ -272,7 +280,7 @@ namespace Plotter
 
         protected void CalcViewMatrix()
         {
-            mViewMatrix = Matrix4d.LookAt(mEye, mLookAt, mUpVector);
+            mViewMatrix = Matrix4d.Scale(WorldScale_) * Matrix4d.LookAt(mEye, mLookAt, mUpVector);
             mViewMatrixInv = mViewMatrix.Invert();
         }
 
@@ -286,6 +294,7 @@ namespace Plotter
 
         public void CopyCamera(DrawContext dc)
         {
+            WorldScale_ = dc.WorldScale_;
             SetCamera(dc.mEye, dc.mLookAt, dc.mUpVector);
         }
 

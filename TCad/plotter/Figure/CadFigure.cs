@@ -98,6 +98,8 @@ namespace Plotter
 
         public string Name { get; set; } = null;
 
+        public LocalCoordinate LocalCoord = new LocalCoordinate();
+
         #endregion
 
         protected VertexList mPointList = new VertexList(4);

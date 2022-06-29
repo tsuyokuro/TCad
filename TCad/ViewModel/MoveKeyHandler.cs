@@ -46,8 +46,8 @@ namespace TCad.ViewModel
             Vector3d wx = Controller.DC.DevVectorToWorldVector(Vector3d.UnitX);
             Vector3d wy = Controller.DC.DevVectorToWorldVector(Vector3d.UnitY);
 
-            wx = wx.UnitVector() / Controller.DC.WorldScale;
-            wy = wy.UnitVector() / Controller.DC.WorldScale;
+            wx = wx.UnitVector();
+            wy = wy.UnitVector();
 
             wx *= SettingsHolder.Settings.KeyMoveUnit;
             wy *= SettingsHolder.Settings.KeyMoveUnit;

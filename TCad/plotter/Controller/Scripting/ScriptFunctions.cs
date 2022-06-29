@@ -964,6 +964,7 @@ namespace Plotter.Controller
             });
         }
 
+        // TODO GDIを使わない方法を検討する
         public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
         {
             DrawContext dc = Controller.DC;

@@ -64,21 +64,6 @@ namespace Plotter
 
         public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
         {
-            a *= DC.WorldScale;
-            b *= DC.WorldScale;
-
-            GL.Color4(pen.Color4());
-
-            GL.Begin(PrimitiveType.LineStrip);
-
-            GL.Vertex3(a);
-            GL.Vertex3(b);
-
-            GL.End();
-        }
-
-        private void DrawLineRaw(DrawPen pen, Vector3d a, Vector3d b)
-        {
             GL.Color4(pen.Color4());
 
             GL.Begin(PrimitiveType.LineStrip);
@@ -129,7 +114,7 @@ namespace Plotter
 
                 for (; ; )
                 {
-                    GL.Vertex3((model.VertexStore.Ref(c.Vertex).vector * DC.WorldScale));
+                    GL.Vertex3((model.VertexStore.Ref(c.Vertex).vector));
 
                     c = c.Next;
 
@@ -148,6 +133,10 @@ namespace Plotter
         private void DrawHeFacesNormal(HeModel model)
         {
             DisableLight();
+
+            double len = DC.DevSizeToWoldSize(DrawingConst.NormalLen);
+            double arrowLen = DC.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
+            double arrowW = DC.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
 
             for (int i = 0; i < model.FaceStore.Count; i++)
             {
@@ -168,9 +157,9 @@ namespace Plotter
                     {
                         Vector3d nv = model.NormalStore[c.Normal];
                         Vector3d np0 = p;
-                        Vector3d np1 = p + (nv * 10);
+                        Vector3d np1 = p + (nv * len);
 
-                        DrawArrow(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, 3, 3);
+                        DrawArrow(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
                     }
 
                     c = next;
@@ -217,7 +206,7 @@ namespace Plotter
 
                 HalfEdge pair;
 
-                p0 = model.VertexStore.Ref(c.Vertex).vector * DC.WorldScale + shift;
+                p0 = model.VertexStore.Ref(c.Vertex).vector + shift;
 
                 for (; ; )
                 {
@@ -245,7 +234,7 @@ namespace Plotter
                         }
                     }
 
-                    p1 = model.VertexStore.Ref(c.Next.Vertex).vector * DC.WorldScale + shift;
+                    p1 = model.VertexStore.Ref(c.Next.Vertex).vector + shift;
 
                     if (drawAsEdge)
                     {
@@ -280,26 +269,25 @@ namespace Plotter
         }
 
         private const double AXIS_MARGIN = 24;
+        private double AxisLength()
+        {
+            double viewMax = Math.Min(DC.ViewWidth, DC.ViewHeight) / 2;
+            double len = DC.DevSizeToWoldSize(viewMax - AXIS_MARGIN);
+            return len;
+        }
 
         public void DrawAxis()
         {
             Vector3d p0;
             Vector3d p1;
 
-            double wh = Math.Min(DC.ViewWidth, DC.ViewHeight)/2;
-
-
-            //double len = DrawingConst.AxisLength;
-            //double arrowLen = 4.0 / DC.WorldScale;
-            //double arrowW2 = 2.0 / DC.WorldScale;
-
-            double len = DC.DevSizeToWoldSize(wh - AXIS_MARGIN) * DC.WorldScale;
-            double arrowLen = DC.DevSizeToWoldSize(16) * DC.WorldScale;
-            double arrowW2 = DC.DevSizeToWoldSize(8) * DC.WorldScale;
+            double len = AxisLength();
+            double arrowLen = DC.DevSizeToWoldSize(16);
+            double arrowW2 = DC.DevSizeToWoldSize(8);
 
             // X軸
-            p0 = new Vector3d(-len, 0, 0) / DC.WorldScale;
-            p1 = new Vector3d(len, 0, 0) / DC.WorldScale;
+            p0 = new Vector3d(-len, 0, 0);
+            p1 = new Vector3d(len, 0, 0);
 
             if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
             {
@@ -307,8 +295,8 @@ namespace Plotter
             }
 
             // Y軸
-            p0 = new Vector3d(0, -len, 0) / DC.WorldScale;
-            p1 = new Vector3d(0, len, 0) / DC.WorldScale;
+            p0 = new Vector3d(0, -len, 0);
+            p1 = new Vector3d(0, len, 0);
 
             if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
             {
@@ -316,8 +304,8 @@ namespace Plotter
             }
 
             // Z軸
-            p0 = new Vector3d(0, 0, -len) / DC.WorldScale;
-            p1 = new Vector3d(0, 0, len) / DC.WorldScale;
+            p0 = new Vector3d(0, 0, -len);
+            p1 = new Vector3d(0, 0, len);
 
             if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
             {
@@ -327,32 +315,43 @@ namespace Plotter
 
         public void DrawAxisLabel()
         {
+            Vector3d p;
             Vector3d p1;
             Vector3d pp;
 
-            //double len = DrawingConst.AxisLength;
-            double wh = Math.Min(DC.ViewWidth, DC.ViewHeight) / 2;
-            double len = DC.DevSizeToWoldSize(wh - AXIS_MARGIN) * DC.WorldScale;
+            double len = AxisLength();
+
+            double fontScale = 0.6;
+            double fw = FontTexW * fontScale;
+            double fh = FontTexH * fontScale;
 
             DrawTextOption opt = default;
 
-            // X軸
-            p1 = new Vector3d(len, 0, 0) / DC.WorldScale;
+            double labelOffset = DC.DevSizeToWoldSize(12);
 
-            pp = DC.WorldPointToDevPoint(p1);
-            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_X), pp, Vector3d.UnitX, -Vector3d.UnitY, "X", 0.6, opt);
+            // X軸
+            p = Vector3d.UnitX * len;
+            p.X += labelOffset;
+            p = DC.WorldPointToDevPoint(p);
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2 - 2;
+            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_X), p, Vector3d.UnitX, -Vector3d.UnitY, "X", fontScale, opt);
 
             // Y軸
-            p1 = new Vector3d(0, len, 0) / DC.WorldScale;
-
-            pp = DC.WorldPointToDevPoint(p1);
-            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Y), pp, Vector3d.UnitX, -Vector3d.UnitY, "Y", 0.6, opt);
+            p = Vector3d.UnitY * len;
+            p.Y += labelOffset;
+            p = DC.WorldPointToDevPoint(p);
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2;
+            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Y), p, Vector3d.UnitX, -Vector3d.UnitY, "Y", fontScale, opt);
 
             // Z軸
-            p1 = new Vector3d(0, 0, len) / DC.WorldScale;
-
-            pp = DC.WorldPointToDevPoint(p1);
-            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Z), pp, Vector3d.UnitX, -Vector3d.UnitY, "Z", 0.6, opt);
+            p = Vector3d.UnitZ * len;
+            p.Z += labelOffset;
+            p = DC.WorldPointToDevPoint(p);
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2 - 2;
+            DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Z), p, Vector3d.UnitX, -Vector3d.UnitY, "Z", fontScale, opt);
         }
 
         public void DrawCompass()
@@ -401,15 +400,15 @@ namespace Plotter
 
             p0 = Vector3d.UnitX * -size;
             p1 = Vector3d.UnitX * size;
-            DrawArrowRaw(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
 
             p0 = Vector3d.UnitY * -size;
             p1 = Vector3d.UnitY * size;
-            DrawArrowRaw(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
 
             p0 = Vector3d.UnitZ * -size;
             p1 = Vector3d.UnitZ * size;
-            DrawArrowRaw(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
 
             GL.LineWidth(1);
 
@@ -418,29 +417,32 @@ namespace Plotter
 
             double fw = FontTexW * fontScale;
             double fh = FontTexH * fontScale;
-            double fw2 = fw/2;
-            double fh2 = fh/2;
 
             Vector3d p;
 
+            double labelOffset = 20;
+
             p = Vector3d.UnitX * size;
+            p.X += labelOffset;
             p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
-            p.X = p.X - fw2;
-            p.Y = p.Y + fh2 - 2;
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2 - 2;
             DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X),
                 p, Vector3d.UnitX, -Vector3d.UnitY, "X", fontScale, opt);
 
             p = Vector3d.UnitY * size;
+            p.Y += labelOffset;
             p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
-            p.X = p.X - fw2;
-            p.Y = p.Y + fh2 - 2;
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2 - 2;
             DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y),
                 p, Vector3d.UnitX, -Vector3d.UnitY, "Y", fontScale, opt);
 
             p = Vector3d.UnitZ * size;
+            p.Z += labelOffset;
             p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
-            p.X = p.X - fw2;
-            p.Y = p.Y + fh2 - 2;
+            p.X = p.X - fw / 2;
+            p.Y = p.Y + fh / 2 - 2;
             DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z),
                 p, Vector3d.UnitX, -Vector3d.UnitY, "Z", fontScale, opt);
 
@@ -690,14 +692,12 @@ namespace Plotter
             return vv;
         }
 
-        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, string s)
+        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
         {
-            a *= DC.WorldScale;
-
             FontTex tex = mFontFaceW.CreateTexture(s);
 
-            Vector3d xv = xdir.UnitVector() * tex.ImgW * 0.15;
-            Vector3d yv = ydir.UnitVector() * tex.ImgH * 0.15;
+            Vector3d xv = xdir.UnitVector() * tex.ImgW * 0.15 * scale;
+            Vector3d yv = ydir.UnitVector() * tex.ImgH * 0.15 * scale;
 
             if (xv.IsZero() || yv.IsZero())
             {
@@ -1208,12 +1208,7 @@ namespace Plotter
 
         public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
         {
-            DrawUtil.DrawArrow(DrawLine, pen, pt0, pt1, type, pos, len/ DC.WorldScale, width / DC.WorldScale);
-        }
-
-        private void DrawArrowRaw(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
-        {
-            DrawUtil.DrawArrow(DrawLineRaw, pen, pt0, pt1, type, pos, len, width);
+            DrawUtil.DrawArrow(DrawLine, pen, pt0, pt1, type, pos, len, width);
         }
 
         public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)

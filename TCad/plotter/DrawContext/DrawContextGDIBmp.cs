@@ -109,8 +109,6 @@ namespace Plotter
             DrawContextGDIBmp dc = new DrawContextGDIBmp();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 

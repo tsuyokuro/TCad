@@ -877,7 +877,7 @@ namespace TCad.ViewModel
 
             dlg.Owner = mMainWindow.GetWindow();
 
-            dlg.WorldScale = mViewManager.DrawContext.WorldScale;
+            dlg.WorldScale = mViewManager.DrawContext.WorldScale_;
 
             bool? result = dlg.ShowDialog();
 
