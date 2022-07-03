@@ -15,7 +15,7 @@ using GLFont;
 
 namespace Plotter
 {
-    class PlotterViewGL : GLControl, IPlotterView
+    class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         private DrawContextGL mDrawContext = null;
 
@@ -113,8 +113,8 @@ namespace Plotter
 
             mDrawContext = mDrawContextOrtho;
 
-            mDrawContextOrtho.PushToViewAction = PushToFront;
-            mDrawContextPers.PushToViewAction = PushToFront;
+            mDrawContextOrtho.PlotterView = this;
+            mDrawContextPers.PlotterView = this;
 
             SwapBuffers();
 
@@ -576,6 +576,11 @@ namespace Plotter
             {
                 mDrawContextPers.SetupTools(mode);
             }
+        }
+
+        public void GLMakeCurrent()
+        {
+            base.MakeCurrent();
         }
 
         class MyEvent : EventSequencer<MyEvent>.Event

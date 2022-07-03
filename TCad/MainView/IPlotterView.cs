@@ -24,4 +24,10 @@ namespace Plotter
 
         void DrawModeUpdated(DrawTools.DrawMode mode);
     }
+
+    public interface IPlotterViewForDC
+    {
+        void GLMakeCurrent();
+        void PushToFront(DrawContext dc);
+    }
 }

@@ -9,7 +9,7 @@ namespace Plotter.Controller
 {
     public partial class PlotterController
     {
-        public void ReflectToView()
+        public void PushToView()
         {
             DC.PushToView();
         }

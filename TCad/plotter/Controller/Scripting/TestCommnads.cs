@@ -587,7 +587,7 @@ namespace Plotter.Controller
             RunOnMainThread(() => {
                 Controller.Clear();
                 Controller.DrawAll();
-                Controller.ReflectToView();
+                Controller.PushToView();
             });
         }
 

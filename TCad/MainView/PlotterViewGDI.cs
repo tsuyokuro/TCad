@@ -12,7 +12,7 @@ using Plotter.Controller;
 
 namespace Plotter
 {
-    public partial class PlotterViewGDI : PictureBox, IPlotterView
+    public partial class PlotterViewGDI : PictureBox, IPlotterView, IPlotterViewForDC
     {
         private PlotterController mController = null;
 
@@ -57,7 +57,7 @@ namespace Plotter
 
             mEventSequencer.Start();
 
-            mDrawContext.PushToViewAction = PushToFront;
+            mDrawContext.PlotterView = this;
 
             MouseMove += OnMouseMove;
             MouseDown += OnMouseDown;
@@ -333,6 +333,11 @@ namespace Plotter
             {
                 mDrawContext.SetupTools(mode);
             }
+        }
+
+        public void GLMakeCurrent()
+        {
+            // NOP
         }
 
         class MyEvent : EventSequencer<MyEvent>.Event

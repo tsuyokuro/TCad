@@ -13,11 +13,18 @@ namespace Plotter
             Perspective,
         }
 
-        protected Action<DrawContext> mPushToViewAction;
-        public Action<DrawContext> PushToViewAction
+        //protected Action<DrawContext> mPushToViewAction;
+        //public Action<DrawContext> PushToViewAction
+        //{
+        //    set => mPushToViewAction = value;
+        //    get => mPushToViewAction;
+        //}
+
+        IPlotterViewForDC mPlotterView;
+        public IPlotterViewForDC PlotterView
         {
-            set => mPushToViewAction = value;
-            get => mPushToViewAction;
+            set => mPlotterView = value;
+            get => mPlotterView;
         }
 
         // 画素/Milli
@@ -143,7 +150,7 @@ namespace Plotter
             mViewOrg = org;
         }
 
-        public void SetupTools(DrawTools.DrawMode type, int penW=0)
+        public void SetupTools(DrawTools.DrawMode type, int penW = 0)
         {
             Tools.Setup(type, penW);
         }
@@ -167,7 +174,12 @@ namespace Plotter
 
         public void PushToView()
         {
-            mPushToViewAction?.Invoke(this);
+            mPlotterView?.PushToFront(this);
+        }
+
+        public void MakeCurrent()
+        {
+            mPlotterView?.GLMakeCurrent();
         }
 
         #region Point converter
@@ -328,7 +340,7 @@ namespace Plotter
 
         public abstract void CalcProjectionMatrix();
         public abstract void Dispose();
-        
+
         public abstract DrawContext Clone();
         public abstract DrawPen GetPen(int idx);
         public abstract DrawBrush GetBrush(int idx);

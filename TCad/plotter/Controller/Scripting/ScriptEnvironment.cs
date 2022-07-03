@@ -146,7 +146,7 @@ namespace Plotter.Controller
 
             Controller.Clear();
             Controller.DrawAll();
-            Controller.ReflectToView();
+            Controller.PushToView();
         }
 
         public dynamic RunScript(string s)
@@ -214,7 +214,7 @@ namespace Plotter.Controller
 
             Controller.Clear();
             Controller.DrawAll();
-            Controller.ReflectToView();
+            Controller.PushToView();
 
             if (callback != null)
             {

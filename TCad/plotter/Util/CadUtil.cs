@@ -349,8 +349,8 @@ namespace Plotter
                 maxz = Math.Max(maxz, p.Z);
             }
 
-            rect.p0 = default(CadVertex);
-            rect.p1 = default(CadVertex);
+            rect.p0 = default;
+            rect.p1 = default;
 
             rect.p0.X = minx;
             rect.p0.Y = miny;
@@ -424,8 +424,8 @@ namespace Plotter
                 maxy = Math.Max(maxy, fr.p1.Y);
             }
 
-            rect.p0 = default(CadVertex);
-            rect.p1 = default(CadVertex);
+            rect.p0 = default;
+            rect.p1 = default;
 
             rect.p0.X = minx;
             rect.p0.Y = miny;
@@ -459,8 +459,8 @@ namespace Plotter
                 maxy = Math.Max(maxy, v.Y);
             });
 
-            rect.p0 = default(CadVertex);
-            rect.p1 = default(CadVertex);
+            rect.p0 = default;
+            rect.p1 = default;
 
             rect.p0.X = minx;
             rect.p0.Y = miny;

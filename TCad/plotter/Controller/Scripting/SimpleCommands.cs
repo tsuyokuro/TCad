@@ -40,7 +40,7 @@ namespace Plotter.Controller
             {
                 ThreadUtil.RunOnMainThread(() =>
                 {
-                    Controller.ReflectToView();
+                    Controller.PushToView();
                 }, true);
                 i++;
             }

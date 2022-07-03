@@ -16,6 +16,9 @@ using OpenTK;
 using OpenTK.Mathematics;
 using System.Security.Cryptography;
 using Microsoft.Scripting.Hosting;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
+using OpenTK.Platform;
 
 namespace Plotter.Controller
 {
@@ -1049,6 +1052,113 @@ namespace Plotter.Controller
             }));
         }
 
+        public void CreateBitmapGL(int w, int h, uint argb, int lineW, string fname)
+        {
+            Env.RunOnMainThread((Action)(() =>
+            {
+                CreateBitmapGL_(w, h, argb, lineW, fname);
+            }));
+        }
+
+        private void CreateBitmapGL_(int w, int h, uint argb, int lineW, string fname)
+        {
+            //fname = @"F:\work\test.bmp";
+
+            GLControl tmpGLControl = new GLControl();
+            tmpGLControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            tmpGLControl.MakeCurrent();
+
+            int paddingX = 4;
+            int paddingY = 4;
+
+            DrawContext orgDC = Controller.DC;
+
+            CadObjectDB db = Controller.DB;
+
+            
+            // Create figure list
+            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
+
+            var figList = new List<CadFigure>();
+
+            idlist.ForEach(id =>
+            {
+                figList.Add(db.GetFigure(id));
+            });
+
+
+
+            DrawContextGLOrtho tdc = new DrawContextGLOrtho();
+
+            tdc.CopyCamera(orgDC);
+            tdc.SetViewSize(w, h);
+            tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
+
+            CadRect r2 = CadUtil.GetContainsRectScrn(tdc, figList);
+
+            double ow = Math.Abs(r2.p1.X - r2.p0.X);
+            double oh = Math.Abs(r2.p1.Y - r2.p0.Y);
+
+            double scale = Math.Min((w - paddingX) / ow, (h -paddingY) / oh);
+
+            tdc.WorldScale = scale;
+
+            CadRect r3 = CadUtil.GetContainsRectScrn(tdc, figList);
+
+            Vector3d center = r3.Center();
+            ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
+
+
+            DrawPen drawPen = new DrawPen(Color.FromArgb((int)argb), lineW);
+
+            DrawParams ddrawParams = default;
+            ddrawParams.LinePen = drawPen;
+            ddrawParams.EdgePen = drawPen;
+
+
+            FrameBufferW fb = new FrameBufferW();
+            fb.Create(w, h);
+
+            fb.Begin();
+
+            tdc.StartDraw();
+
+            GL.Enable(EnableCap.LineSmooth);
+
+            tdc.Drawing.Clear(new DrawBrush(Color.Blue));
+            //tdc.Drawing.Clear(tdc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
+
+            foreach (CadFigure fig in figList)
+            {
+                fig.Draw(tdc, ddrawParams);
+            }
+
+            tdc.EndDraw();
+
+            Bitmap bmp = fb.GetBitmap();
+
+            fb.End();
+            fb.Dispose();
+
+            if (fname.Length > 0)
+            {
+                bmp.Save(fname);
+            }
+            else
+            {
+                BitmapUtil.BitmapToClipboardAsPNG(bmp);
+            }
+
+            tdc.Dispose();
+            drawPen.Dispose();
+
+            orgDC.MakeCurrent();
+
+            tmpGLControl.Dispose();
+        }
+
+
         public void FaceToDirection(Vector3d dir)
         {
             DrawContext dc = Controller.DC;
@@ -1761,15 +1871,17 @@ namespace Plotter.Controller
             });
         }
 
+        /*
         public void Redraw()
         {
             Env.RunOnMainThread(() =>
             {
                 Controller.Clear();
                 Controller.DrawAll();
-                Controller.ReflectToView();
+                Controller.PushToView();
             });
         }
+        */
 
         public CadFigure CreatePolyLines()
         {
