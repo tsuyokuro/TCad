@@ -138,13 +138,13 @@ namespace Plotter
 
             if (SettingsHolder.Settings.DrawMeshEdge)
             {
-                dp.LinePen = dc.GetPen(DrawTools.PEN_MESH_LINE);
-                dp.EdgePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+                dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MESH_LINE);
+                dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
             }
             else
             {
-                dp.LinePen = DrawPen.NullPen;
-                dp.EdgePen = DrawPen.NullPen;
+                dp.MeshLinePen = DrawPen.NullPen;
+                dp.MeshEdgePen = DrawPen.NullPen;
             }
 
             dp.FillBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
@@ -168,8 +168,8 @@ namespace Plotter
             DrawPen borderPen;
             DrawPen edgePen;
 
-            borderPen = dp.LinePen;
-            edgePen = dp.EdgePen;
+            borderPen = dp.MeshLinePen;
+            edgePen = dp.MeshEdgePen;
 
             dc.Drawing.DrawHarfEdgeModel(
                 brush,

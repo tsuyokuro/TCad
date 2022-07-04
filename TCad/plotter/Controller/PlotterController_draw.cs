@@ -130,22 +130,26 @@ namespace Plotter.Controller
             empty_dp.Empty = true;
 
             pale_dp.LinePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
-            pale_dp.EdgePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
+            pale_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
+            pale_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
             pale_dp.FillBrush = DrawBrush.NullBrush;
             pale_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_PALE_TEXT);
 
             test_dp.LinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
-            test_dp.EdgePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
+            test_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
+            test_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
             test_dp.FillBrush = DrawBrush.NullBrush;
             test_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
 
             current_dp.LinePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
-            current_dp.EdgePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
+            current_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
+            current_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
             current_dp.FillBrush = DrawBrush.NullBrush;
             current_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
 
             measure_dp.LinePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
-            measure_dp.EdgePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
+            measure_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
+            measure_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
             measure_dp.FillBrush = DrawBrush.NullBrush;
             measure_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
 

@@ -4,7 +4,10 @@
     {
         public bool Empty;
         public DrawPen LinePen;
-        public DrawPen EdgePen;
+
+        public DrawPen MeshLinePen;
+        public DrawPen MeshEdgePen;
+
         public DrawBrush FillBrush;
         public DrawBrush TextBrush;
     }

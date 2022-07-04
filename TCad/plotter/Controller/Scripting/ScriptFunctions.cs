@@ -967,8 +967,7 @@ namespace Plotter.Controller
             });
         }
 
-        // TODO GDIを使わない方法を検討する
-        public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
+        public void CreateBitmapGDI(int w, int h, uint argb, int lineW, string fname)
         {
             DrawContext dc = Controller.DC;
 
@@ -1025,7 +1024,8 @@ namespace Plotter.Controller
             DrawParams dp = default;
 
             dp.LinePen = drawPen;
-            dp.EdgePen = drawPen;
+            dp.MeshEdgePen = drawPen;
+            dp.MeshLinePen = drawPen;
 
             Env.RunOnMainThread((Action)(() =>
             {
@@ -1052,15 +1052,15 @@ namespace Plotter.Controller
             }));
         }
 
-        public void CreateBitmapGL(int w, int h, uint argb, int lineW, string fname)
+        public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
         {
             Env.RunOnMainThread((Action)(() =>
             {
-                CreateBitmapGL_(w, h, argb, lineW, fname);
+                CreateBitmapGLOrtho(w, h, argb, lineW, fname);
             }));
         }
 
-        private void CreateBitmapGL_(int w, int h, uint argb, int lineW, string fname)
+        private void CreateBitmapGLOrtho(int w, int h, uint argb, int lineW, string fname)
         {
             //fname = @"F:\work\test.bmp";
 
@@ -1091,6 +1091,7 @@ namespace Plotter.Controller
 
             DrawContextGLOrtho tdc = new DrawContextGLOrtho();
 
+            tdc.SetupTools(DrawTools.DrawMode.LIGHT);
             tdc.CopyCamera(orgDC);
             tdc.SetViewSize(w, h);
             tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
@@ -1112,9 +1113,10 @@ namespace Plotter.Controller
 
             DrawPen drawPen = new DrawPen(Color.FromArgb((int)argb), lineW);
 
-            DrawParams ddrawParams = default;
-            ddrawParams.LinePen = drawPen;
-            ddrawParams.EdgePen = drawPen;
+            DrawParams drawParams = default;
+            drawParams.LinePen = drawPen;
+            drawParams.MeshLinePen = DrawPen.NullPen;
+            drawParams.MeshEdgePen = drawPen;
 
 
             FrameBufferW fb = new FrameBufferW();
@@ -1131,7 +1133,7 @@ namespace Plotter.Controller
 
             foreach (CadFigure fig in figList)
             {
-                fig.Draw(tdc, ddrawParams);
+                fig.Draw(tdc, drawParams);
             }
 
             tdc.EndDraw();

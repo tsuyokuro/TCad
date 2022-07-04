@@ -387,7 +387,7 @@ def centroid_of_selected():
 #[AC] to_bmp(64, 64, 0xffffffff, 1, r"")
 #[AC] to_bmp(128, 128, 0xffffffff, 1, r"")
 def to_bmp(bw, bh, argb=0xffffffff, linew=1, fname=r""):
-    SE.CreateBitmapGL(bw, bh, argb, linew, fname)
+    SE.CreateBitmap(bw, bh, argb, linew, fname)
 
 #[AC] dev_p_to_world_p(p)
 def dev_p_to_world_p(p):
