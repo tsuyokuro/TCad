@@ -19,6 +19,8 @@ using Microsoft.Scripting.Hosting;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.WinForms;
 using OpenTK.Platform;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.Common;
 
 namespace Plotter.Controller
 {
@@ -1054,20 +1056,27 @@ namespace Plotter.Controller
 
         public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
         {
-            Env.RunOnMainThread((Action)(() =>
+            ThreadUtil.RunOnMainThread(() =>
             {
                 CreateBitmapGLOrtho(w, h, argb, lineW, fname);
-            }));
+            }, true);
         }
 
         private void CreateBitmapGLOrtho(int w, int h, uint argb, int lineW, string fname)
         {
             //fname = @"F:\work\test.bmp";
 
-            GLControl tmpGLControl = new GLControl();
-            tmpGLControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
-            tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
-            tmpGLControl.MakeCurrent();
+            //GLControl tmpGLControl = new GLControl();
+            //tmpGLControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            //tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            //tmpGLControl.MakeCurrent();
+
+            NativeWindowSettings settings = new NativeWindowSettings();
+            settings.Profile = ContextProfile.Compatability;
+            settings.Flags = ContextFlags.Default;
+
+            NativeWindow window = new NativeWindow(settings);
+            window.MakeCurrent();
 
             int paddingX = 4;
             int paddingY = 4;
@@ -1086,8 +1095,6 @@ namespace Plotter.Controller
             {
                 figList.Add(db.GetFigure(id));
             });
-
-
 
             DrawContextGLOrtho tdc = new DrawContextGLOrtho();
 
@@ -1126,7 +1133,7 @@ namespace Plotter.Controller
 
             tdc.StartDraw();
 
-            GL.Enable(EnableCap.LineSmooth);
+            GL.Disable(EnableCap.LineSmooth);
 
             tdc.Drawing.Clear(new DrawBrush(Color.Blue));
             //tdc.Drawing.Clear(tdc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
@@ -1157,7 +1164,8 @@ namespace Plotter.Controller
 
             orgDC.MakeCurrent();
 
-            tmpGLControl.Dispose();
+            //tmpGLControl.Dispose();
+            window.Dispose();
         }
 
 
