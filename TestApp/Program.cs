@@ -4,6 +4,9 @@ using Plotter;
 using CadDataTypes;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer;
+using TCad;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace TestApp
 {
@@ -71,21 +74,33 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            MpTest1 mpt = new MpTest1();
-
-            mpt.X = 10;
-            mpt.Y = 5;
-
-
-            byte[] data = MessagePackSerializer.Serialize(mpt);
+            Win32Window wnd = new Win32Window();
+            wnd.Create("Test");
+            wnd.ShowWindow();
+            wnd.StartMessageLoop();
 
 
-            MpTest2 re = MessagePackSerializer.Deserialize<MpTest2>(data);
+            //Task task1 = Task.Run(() =>
+            //{
+            //    Win32Window wnd = new Win32Window();
+            //    wnd.Create("Test");
+            //    wnd.ShowWindow();
+            //    wnd.StartMessageLoop();
+            //});
 
 
-            VersionCode vc = new VersionCode("1.0.1a.b0");
+            //Win32Window wnd2 = new Win32Window();
 
+            //Task task2 = Task.Run(() =>
+            //{
+            //    Win32Window wnd2 = new Win32Window();
+            //    wnd2.Create("Test2");
+            //    wnd2.ShowWindow();
+            //    wnd2.StartMessageLoop();
+            //});
 
+            Console.WriteLine("press enter");
+            Console.ReadLine();
             Console.WriteLine("end");
         }
     }
