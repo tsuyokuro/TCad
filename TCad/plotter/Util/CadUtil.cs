@@ -562,35 +562,5 @@ namespace Plotter
 
         //    return new PointPair(CadVertex.Create(lx, ty, 0), CadVertex.Create(rx, by, 0));
         //}
-
-        public static void Dump(Vector4d v, string prefix)
-        {
-            DOut.Begin();
-
-            DOut.p(prefix);
-            DOut.pl("{");
-            DOut.Indent++;
-            DOut.pl("x:" + v.X.ToString());
-            DOut.pl("y:" + v.Y.ToString());
-            DOut.pl("z:" + v.Z.ToString());
-            DOut.pl("w:" + v.W.ToString());
-            DOut.Indent--;
-            DOut.pl("}");
-
-            DOut.End();
-        }
-
-        public static void Dump(UMatrix4 m, string prefix)
-        {
-            DOut.p(prefix);
-            DOut.pl("{");
-            DOut.Indent++;
-            DOut.pl(m.M11.ToString() + "," + m.M12.ToString() + "," + m.M13.ToString() + "," + m.M14.ToString());
-            DOut.pl(m.M21.ToString() + "," + m.M22.ToString() + "," + m.M23.ToString() + "," + m.M24.ToString());
-            DOut.pl(m.M31.ToString() + "," + m.M32.ToString() + "," + m.M33.ToString() + "," + m.M34.ToString());
-            DOut.pl(m.M41.ToString() + "," + m.M42.ToString() + "," + m.M43.ToString() + "," + m.M44.ToString());
-            DOut.Indent--;
-            DOut.pl("}");
-        }
     }
 }

@@ -15,5 +15,10 @@ namespace Plotter
         {
             Matrix = Matrix4d.Scale(1.0);
         }
+
+        Vector3d Conv(Vector3d vector)
+        {
+            return (vector.ToVector4d(1.0) * Matrix).ToVector3d();
+        }
     }
 }

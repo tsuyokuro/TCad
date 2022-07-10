@@ -47,13 +47,13 @@ namespace Plotter
 
             #region ModelView
             GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref mViewMatrix.Matrix);
+            GL.LoadMatrix(ref mViewMatrix);
             #endregion
 
             #region Projection            
             GL.MatrixMode(MatrixMode.Projection);
 
-            Matrix4d proj = mProjectionMatrix.Matrix;
+            Matrix4d proj = mProjectionMatrix;
 
             double dx = ViewOrg.X - (ViewWidth / 2.0);
             double dy = ViewOrg.Y - (ViewHeight / 2.0);
@@ -102,7 +102,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)

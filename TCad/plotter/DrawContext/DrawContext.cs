@@ -62,26 +62,26 @@ namespace Plotter
         public Vector3d UpVector => mUpVector;
 
         // 投影スクリーンの向き
-        protected Vector3d mViewDir = default(Vector3d);
+        protected Vector3d mViewDir = default;
         public virtual Vector3d ViewDir => mViewDir;
 
         // ワールド座標系から視点座標系への変換(ビュー変換)行列
-        protected UMatrix4 mViewMatrix = new UMatrix4();
-        protected UMatrix4 ViewMatrix => mViewMatrix;
-        protected ref Matrix4d ViewMatrixRef => ref mViewMatrix.Matrix;
+        protected Matrix4d mViewMatrix = default;
+        protected Matrix4d ViewMatrix => mViewMatrix;
+        protected ref Matrix4d ViewMatrixRef => ref mViewMatrix;
 
         // 視点座標系からワールド座標系への変換行列
-        protected UMatrix4 mViewMatrixInv = new UMatrix4();
-        protected UMatrix4 ViewMatrixInv => mViewMatrixInv;
+        protected Matrix4d mViewMatrixInv = default;
+        protected Matrix4d ViewMatrixInv => mViewMatrixInv;
 
         // 視点座標系から投影座標系への変換行列
-        protected UMatrix4 mProjectionMatrix = new UMatrix4();
-        protected UMatrix4 ProjectionMatrix => mProjectionMatrix;
-        protected ref Matrix4d ProjectionMatrixRef => ref mProjectionMatrix.Matrix;
+        protected Matrix4d mProjectionMatrix = default;
+        protected Matrix4d ProjectionMatrix => mProjectionMatrix;
+        protected ref Matrix4d ProjectionMatrixRef => ref mProjectionMatrix;
 
         // 投影座標系から視点座標系への変換行列
-        protected UMatrix4 mProjectionMatrixInv = new UMatrix4();
-        protected UMatrix4 ProjectionMatrixInv => mProjectionMatrixInv;
+        protected Matrix4d mProjectionMatrixInv = default;
+        protected Matrix4d ProjectionMatrixInv => mProjectionMatrixInv;
 
         protected double mProjectionW = 1.0;
         protected double ProjectionW => mProjectionW;
@@ -293,7 +293,8 @@ namespace Plotter
         protected void CalcViewMatrix()
         {
             mViewMatrix = Matrix4d.Scale(WorldScale_) * Matrix4d.LookAt(mEye, mLookAt, mUpVector);
-            mViewMatrixInv = mViewMatrix.Invert();
+            //mViewMatrixInv = mViewMatrix.Invert();
+            mViewMatrixInv = mViewMatrix.Inv();
         }
 
         public void CopyProjectionMetrics(DrawContext dc)

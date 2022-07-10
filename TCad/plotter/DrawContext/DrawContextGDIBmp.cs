@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using OpenTK.Mathematics;
+using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace Plotter
@@ -26,8 +27,8 @@ namespace Plotter
             mViewOrg.X = 0;
             mViewOrg.Y = 0;
 
-            mProjectionMatrix = UMatrix4.Unit;
-            mProjectionMatrixInv = UMatrix4.Unit;
+            mProjectionMatrix = Matrix4d.Identity;
+            mProjectionMatrixInv = Matrix4d.Identity;
 
             CalcProjectionMatrix();
             CalcProjectionZW();

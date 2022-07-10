@@ -35,10 +35,10 @@ namespace Plotter
 
 
             GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref mViewMatrix.Matrix);
+            GL.LoadMatrix(ref mViewMatrix);
 
             GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref mProjectionMatrix.Matrix);
+            GL.LoadMatrix(ref mProjectionMatrix);
 
             SetupLight();
         }
@@ -78,7 +78,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)

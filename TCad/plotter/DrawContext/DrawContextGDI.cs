@@ -119,7 +119,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public Pen Pen(int id)
