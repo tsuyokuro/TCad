@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 
 namespace Plotter
 {
-    public class LocalCoordinate
+    public struct LocalCoordinate
     {
-        public Matrix4d Matrix;
+        public Vector3d BasePoint = default;
 
         public LocalCoordinate()
         {
-            Matrix = Matrix4d.Scale(1.0);
         }
 
-        Vector3d Conv(Vector3d vector)
+        Vector3d Trans(Vector3d vector)
         {
-            return (vector.ToVector4d(1.0) * Matrix).ToVector3d();
+            return vector + BasePoint;
         }
     }
 }

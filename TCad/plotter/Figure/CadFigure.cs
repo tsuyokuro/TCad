@@ -75,7 +75,7 @@ namespace Plotter
 
         public Types Type {
             get;
-            protected set;
+            set;
         }
 
         public bool IsLoop { get; set; }

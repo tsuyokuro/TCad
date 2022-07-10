@@ -969,20 +969,9 @@ namespace Plotter.Controller
             });
         }
 
-        public void CreateBitmapGDI(int w, int h, uint argb, int lineW, string fname)
+        public void CreateBitmapGDI(List<CadFigure> figList, int w, int h, uint argb, int lineW, string fname)
         {
             DrawContext dc = Controller.DC;
-
-            CadObjectDB db = Controller.DB;
-
-            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
-
-            var figList = new List<CadFigure>();
-
-            idlist.ForEach(id =>
-            {
-                figList.Add(db.GetFigure(id));
-            });
 
             CadRect r = CadUtil.GetContainsRectScrn(dc, figList);
 
@@ -1056,13 +1045,33 @@ namespace Plotter.Controller
 
         public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
         {
+            CadObjectDB db = Controller.DB;
+
+
+            // Create figure list
+            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
+
+            if (idlist.Count == 0)
+            {
+                ItConsole.println("No Objects selected");
+                return;
+            }
+
+            var figList = new List<CadFigure>();
+
+            idlist.ForEach(id =>
+            {
+                figList.Add(db.GetFigure(id));
+            });
+
+
             ThreadUtil.RunOnMainThread(() =>
             {
-                CreateBitmapGLOrtho(w, h, argb, lineW, fname);
+                CreateBitmapGLOrtho(figList, w, h, argb, lineW, fname);
             }, true);
         }
 
-        private void CreateBitmapGLOrtho(int w, int h, uint argb, int lineW, string fname)
+        private void CreateBitmapGLOrtho(List<CadFigure> figList, int w, int h, uint argb, int lineW, string fname)
         {
             //fname = @"F:\work\test.bmp";
 
@@ -1083,18 +1092,6 @@ namespace Plotter.Controller
 
             DrawContext orgDC = Controller.DC;
 
-            CadObjectDB db = Controller.DB;
-
-            
-            // Create figure list
-            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
-
-            var figList = new List<CadFigure>();
-
-            idlist.ForEach(id =>
-            {
-                figList.Add(db.GetFigure(id));
-            });
 
             DrawContextGLOrtho tdc = new DrawContextGLOrtho();
 

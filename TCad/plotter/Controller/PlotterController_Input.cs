@@ -420,7 +420,7 @@ namespace Plotter.Controller
 
                         CadFigure fig = mDB.NewFigure(CreatingFigType);
 
-                        mFigureCreator = CadFigure.Creator.Get(CreatingFigType, fig);
+                        mFigureCreator = FigCreator.Get(CreatingFigType, fig);
 
                         State = States.CREATING;
 
@@ -1033,9 +1033,9 @@ namespace Plotter.Controller
         {
             FigureCreator.AddPointInCreating(dc, p);
 
-            CadFigure.Creator.State state = FigureCreator.GetCreateState();
+            FigCreator.State state = FigureCreator.GetCreateState();
 
-            if (state == CadFigure.Creator.State.FULL)
+            if (state == FigCreator.State.FULL)
             {
                 FigureCreator.EndCreate(dc);
 
@@ -1045,13 +1045,13 @@ namespace Plotter.Controller
 
                 NextState();
             }
-            else if (state == CadFigure.Creator.State.ENOUGH)
+            else if (state == FigCreator.State.ENOUGH)
             {
                 CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
                 HistoryMan.foward(ope);
                 CurrentLayer.AddFigure(FigureCreator.Figure);
             }
-            else if (state == CadFigure.Creator.State.WAIT_NEXT_POINT)
+            else if (state == FigCreator.State.WAIT_NEXT_POINT)
             {
                 CadOpe ope = new CadOpeAddPoint(
                     CurrentLayer.ID,
