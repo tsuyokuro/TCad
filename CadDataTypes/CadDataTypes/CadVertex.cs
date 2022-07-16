@@ -461,7 +461,7 @@ namespace CadDataTypes
         #region Cast operator
         public static explicit operator Vector3d(CadVertex p)
         {
-            return new Vector3d(p.vector);
+            return p.vector;
         }
 
         public static explicit operator CadVertex(Vector3d v)

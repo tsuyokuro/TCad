@@ -7,6 +7,10 @@ using Plotter.Serializer;
 using TCad;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
+using System.Collections;
+using MyCollections;
+using OpenTK.Mathematics;
 
 namespace TestApp
 {
@@ -69,39 +73,170 @@ namespace TestApp
         }
     }
 
+    public class FlexArrayW<T> : IEnumerable<T>
+    {
+        private FlexArray<T> Data;
+
+        public Func<T, T> GetFunc = (v) => v;
+        public Func<T, T> SetFunc = (v) => v;
+
+        public FlexArrayW(FlexArray<T> data)
+        {
+            Data = data;
+        }
+
+        public int Add(T v)
+        {
+            Data.Add(v);
+            return Data.Count - 1;
+        }
+
+        public void Clear()
+        {
+            Data.Clear();
+        }
+
+        public T this[int idx]
+        {
+            get
+            {
+                return GetFunc(Data[idx]);
+            }
+            set
+            {
+                Data[idx] = SetFunc(value);
+            }
+        }
+
+        public ref T Ref(int idx)
+        {
+            return ref Data.Ref(idx);
+        }
+
+        public T End()
+        {
+            return GetFunc(Data.End());
+        }
+
+        public void RemoveAt(int idx)
+        {
+            Data.RemoveAt(idx);
+        }
+
+        public void ForEach(Action<T> d)
+        {
+            for (int i = 0; i < Data.Count; i++)
+            {
+                d(GetFunc(Data[i]));
+            }
+        }
+
+        public void RemoveAll(Predicate<T> match)
+        {
+            Data.RemoveAll(match);
+        }
+
+        public void AddRange(FlexArrayW<T> src)
+        {
+            Data.AddRange(src.Data);
+        }
+
+        public void AddRange(List<T> src)
+        {
+            Data.AddRange(src);
+        }
+
+        public void AddRange(IEnumerable<T> src)
+        {
+            Data.AddRange(src);
+        }
+
+        public void AddRange(IList<T> src)
+        {
+            Data.AddRange(src);
+        }
+
+        public void Insert(int idx, T val)
+        {
+            Data.Insert(idx, val);
+        }
+
+        public void RemoveRange(int s, int cnt)
+        {
+            Data.RemoveRange(s, cnt);
+        }
+
+        public void InsertRange(int idx, FlexArrayW<T> src)
+        {
+            Data.InsertRange(idx, src.Data);
+        }
+
+        public T Find(Predicate<T> match)
+        {
+            return Data.Find(match);
+        }
+
+        public void Reverse()
+        {
+            Data.Reverse();
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            int i = 0;
+
+            for (; i < Data.Count; i++)
+            {
+                yield return GetFunc(Data[i]);
+            }
+
+            yield break;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            int i = 0;
+
+            for (; i < Data.Count; i++)
+            {
+                yield return GetFunc(Data[i]);
+            }
+
+            yield break;
+        }
+    }
 
     internal class Program
     {
         static void Main(string[] args)
         {
-            Win32Window wnd = new Win32Window();
-            wnd.Create("Test");
-            wnd.ShowWindow();
-            wnd.StartMessageLoop();
+            VertexList list = new VertexList();
+
+            CadVertex v = default;
+
+            CadVertex v1 = new CadVertex(4, 5, 6);
+
+            list.Add(new CadVertex(1, 2, 3));
+            list.Add(new CadVertex(1, 2, 3));
+            list.Add(new CadVertex(1, 2, 3));
+
+            list[1].Selected = true;
+
+            list[1] = v1;
+
+            v = list[2];
+
+            ref CadVertex vx = ref list[2];
+
+            v.X = 100;
+
+            vx.Z = 100;
 
 
-            //Task task1 = Task.Run(() =>
-            //{
-            //    Win32Window wnd = new Win32Window();
-            //    wnd.Create("Test");
-            //    wnd.ShowWindow();
-            //    wnd.StartMessageLoop();
-            //});
+            Vector3d tv = (Vector3d)vx;
 
 
-            //Win32Window wnd2 = new Win32Window();
-
-            //Task task2 = Task.Run(() =>
-            //{
-            //    Win32Window wnd2 = new Win32Window();
-            //    wnd2.Create("Test2");
-            //    wnd2.ShowWindow();
-            //    wnd2.StartMessageLoop();
-            //});
-
-            Console.WriteLine("press enter");
-            Console.ReadLine();
-            Console.WriteLine("end");
+            Console.WriteLine("End");
         }
     }
 }
