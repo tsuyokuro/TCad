@@ -7,6 +7,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -120,7 +122,11 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if &quot;$(PlatformName)&quot; == &quot;x64&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x64\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)&#xD;&#xA;if &quot;$(PlatformName)&quot; == &quot;x86&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x86\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
+    <Exec Command="if &quot;$(PlatformName)&quot; == &quot;x64&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x64\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)&#xD;&#xA;if &quot;$(PlatformName)&quot; == &quot;x86&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x86\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)&#xD;&#xA;if &quot;$(PlatformName)&quot; == &quot;AnyCPU&quot; (&#xA;  copy /Y /V &quot;$(SolutionDir)packages\SharpFont.Dependencies.2.6\bin\msvc12\x86\freetype6.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
+  </Target>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="echo PlatformName=$(PlatformName)" />
   </Target>
 
 </Project>

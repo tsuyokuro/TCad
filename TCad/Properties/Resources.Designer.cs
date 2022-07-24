@@ -61,16 +61,6 @@ namespace TCad.Properties {
         }
         
         /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        public static byte[] BaseScript {
-            get {
-                object obj = ResourceManager.GetObject("BaseScript", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Drawing settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string dialog_title_drawing_settings {

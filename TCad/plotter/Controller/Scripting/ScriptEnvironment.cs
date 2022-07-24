@@ -15,6 +15,7 @@ using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using System.Diagnostics;
+using System.Windows;
 
 namespace Plotter.Controller
 {
@@ -63,7 +64,7 @@ namespace Plotter.Controller
 
         private string getBaseSacript()
         {
-            string script;
+            string script = "";
 
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = path + @"Resources\BaseScript.py";
@@ -73,7 +74,11 @@ namespace Plotter.Controller
             }
             else
             {
-                script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
+                MessageBox.Show(
+                    "BaseScript.py is not found",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
 
             //script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
