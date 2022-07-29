@@ -65,7 +65,8 @@ namespace Plotter.Settings
 
         #region Print
         public bool PrintWithBitmap = true;
-        public double MagnificationBitmapPrinting = 0.96;
+        public double MagnificationBitmapPrinting = 0.962;
+        public bool PrintLineSmooth = false;
         #endregion
 
         public PlotterSettings()

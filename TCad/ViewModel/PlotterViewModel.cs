@@ -17,6 +17,7 @@ using Plotter;
 using Plotter.Settings;
 using System.IO;
 using TCad.ScriptEditor;
+using System.Runtime.Versioning;
 
 namespace TCad.ViewModel
 {
@@ -564,6 +565,7 @@ namespace TCad.ViewModel
 
             dlg.PrintWithBitmap = Settings.PrintWithBitmap;
             dlg.MagnificationBitmapPrinting = Settings.MagnificationBitmapPrinting;
+            dlg.PrintLineSmooth = Settings.PrintLineSmooth;
 
             bool? result = dlg.ShowDialog();
 
@@ -571,6 +573,7 @@ namespace TCad.ViewModel
             {
                 Settings.PrintWithBitmap = dlg.PrintWithBitmap;
                 Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
+                Settings.PrintLineSmooth = dlg.PrintLineSmooth;
             }
         }
 
@@ -846,8 +849,8 @@ namespace TCad.ViewModel
 
             Controller.PrintPage(g, pageSize, deviceSize);
         }
-#endregion print
-
+        #endregion print
+        [SupportedOSPlatform("windows")]
         public void PageSetting()
         {
             System.Windows.Forms.PageSetupDialog pageDlg = new System.Windows.Forms.PageSetupDialog();

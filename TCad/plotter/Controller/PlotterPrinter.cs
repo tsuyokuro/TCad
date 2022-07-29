@@ -73,7 +73,14 @@ namespace Plotter.Controller
 
             dc.StartDraw();
 
-            GL.Enable(EnableCap.LineSmooth);
+            if (SettingsHolder.Settings.PrintLineSmooth)
+            {
+                GL.Enable(EnableCap.LineSmooth);
+            }
+            else
+            {
+                GL.Disable(EnableCap.LineSmooth);
+            }
 
             dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 

@@ -303,6 +303,7 @@ namespace MeshUtilNS
             }
             catch (Exception e)
             {
+                DOut.pl(e.Message);
                 return (null, null);
             }
 

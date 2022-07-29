@@ -337,6 +337,18 @@ namespace TCad.ViewModel
             get => SettingsHolder.Settings.MagnificationBitmapPrinting;
         }
 
+        [UserSettingData]
+        public bool PrintLineSmooth
+        {
+            set
+            {
+                SettingsHolder.Settings.PrintLineSmooth = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PrintLineSmooth)));
+            }
+
+            get => SettingsHolder.Settings.PrintLineSmooth;
+        }
+
         public SettingsVeiwModel(ViewModelContext context)
         {
             mContext = context;

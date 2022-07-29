@@ -44,9 +44,10 @@ namespace TCad
 
         private TaskScheduler mMainThreadScheduler;
 
+#if USE_CONSOL_INPUT
         private DebugInputThread InputThread = null;
-
-        private DebugClient DClient;
+#endif
+        //private DebugClient DClient;
 
         public static App GetCurrent()
         {

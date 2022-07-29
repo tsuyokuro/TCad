@@ -585,7 +585,7 @@ namespace Plotter
 
         class MyEvent : EventSequencer<MyEvent>.Event
         {
-            public MouseEventArgs EventArgs;
+            public new MouseEventArgs EventArgs;
         }
 
         class MyEventSequencer : EventSequencer<MyEvent>
