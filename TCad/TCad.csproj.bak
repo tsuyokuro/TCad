@@ -100,8 +100,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CadDataTypes\CadDataTypes.csproj" />
-    <ProjectReference Include="..\GeoLibWrapper\GeoLibWrapper.vcxproj" />
+    <ProjectReference Include="..\CadDataTypes\CadDataTypes.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\GeoLibWrapper\GeoLibWrapper.vcxproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
