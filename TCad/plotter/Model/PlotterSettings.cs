@@ -4,7 +4,9 @@ using System.IO;
 using System.Reflection;
 using OpenTK.Mathematics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+//using JObj = System.Text.Json.Nodes.JsonObject;
+using JObj = Newtonsoft.Json.Linq.JObject;
+
 
 namespace Plotter.Settings
 {
@@ -91,45 +93,45 @@ namespace Plotter.Settings
         {
             string fileName = FileName();
 
-            JsonObject root = new JsonObject();
+            JObj root = new JObj();
 
-            JsonObject jo;
+            JObj jo;
 
             root.Add("ContinueCreateFigure", ContinueCreateFigure);
             root.Add("LastDataDir", LastDataDir);
             root.Add("LastScriptDir", LastScriptDir);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToPoint);
             jo.Add("range", PointSnapRange);
             root.Add("PointSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToSegment);
             root.Add("SegmentSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToLine);
             jo.Add("range", LineSnapRange);
             root.Add("LineSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("unit", KeyMoveUnit);
             root.Add("KeyMove", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToZero);
             root.Add("ZeroSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToLastDownPoint);
             root.Add("LastDownSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToSelfPoint);
             root.Add("SelfPointSnap", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("enable", SnapToGrid);
             jo.Add("size_x", GridSize.X);
             jo.Add("size_y", GridSize.Y);
@@ -137,7 +139,7 @@ namespace Plotter.Settings
             root.Add("GridInfo", jo);
 
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("DrawMode", (int)DrawMode);
             jo.Add("DrawFaceOutline", DrawMeshEdge);
             jo.Add("FillFace", FillMesh);
@@ -147,7 +149,7 @@ namespace Plotter.Settings
             jo.Add("DrawCompass", DrawCompass);
             root.Add("DrawSettings", jo);
 
-            jo = new JsonObject();
+            jo = new JObj();
             jo.Add("PrintWithBitmap", PrintWithBitmap);
             jo.Add("MagnificationBitmapPrinting", MagnificationBitmapPrinting);
             root.Add("PrintSettings", jo);

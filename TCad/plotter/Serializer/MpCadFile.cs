@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+//using JObj = System.Text.Json.Nodes.JsonObject;
+using JObj = Newtonsoft.Json.Linq.JObject;
 
 namespace Plotter.Serializer
 {
@@ -275,8 +276,8 @@ namespace Plotter.Serializer
 
         public static void SaveAsJson(string fname, CadData cd)
         {
-            JsonObject n = new JsonObject();
-            JsonObject header = new JsonObject();
+            JObj n = new JObj();
+            JObj header = new JObj();
 
             header.Add("type", MpCadFile.JsonSign);
             header.Add("version", MpCadFile.CurrentVersion.Str);
