@@ -27,14 +27,5 @@ namespace Plotter
             CursorScrnPoint = cursorPos;
             Delta = Moved - start;
         }
-        public MoveInfo()
-        {
-            Start = VectorExt.InvalidVector3d;
-            Moved = VectorExt.InvalidVector3d;
-            MoveOrgScrnPoint = VectorExt.InvalidVector3d;
-            CursorScrnPoint = VectorExt.InvalidVector3d;
-
-            Delta = Vector3d.Zero;
-        }
     }
 }

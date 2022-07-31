@@ -17,19 +17,19 @@ namespace Plotter.Serializer
 
         [Key(0)]
         [FieldOffset(0)]
-        public byte C_0 = 0;
+        public byte C_0;
 
         [Key(1)]
         [FieldOffset(1)]
-        public byte C_1 = 0;
+        public byte C_1;
 
         [Key(2)]
         [FieldOffset(2)]
-        public byte C_2 = 0;
+        public byte C_2;
 
         [Key(3)]
         [FieldOffset(3)]
-        public byte C_3 = 0;
+        public byte C_3;
 
 
         [IgnoreMember]
@@ -62,6 +62,11 @@ namespace Plotter.Serializer
         }
         public VersionCode(string v)
         {
+            C_0 = 0;
+            C_1 = 0;
+            C_2 = 0;
+            C_3 = 0;
+
             string[] vt = v.Split('.');
             if (vt.Length != 4)
             {
@@ -81,10 +86,6 @@ namespace Plotter.Serializer
                 C_2 = 0xFF;
                 C_3 = 0xFF;
             }
-        }
-
-        public VersionCode()
-        {
         }
 
         public bool Equals(byte[] bytes)
