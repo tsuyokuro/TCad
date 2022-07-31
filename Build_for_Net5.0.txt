@@ -1,0 +1,3 @@
+patch -p1 < build_for_net5.0.patch
+
+
