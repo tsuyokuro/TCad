@@ -7,11 +7,12 @@ using System.Windows.Resources;
 using CadDataTypes;
 using TCad;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Controller;
 
 namespace Plotter
 {
-    public partial class PlotterViewGDI : PictureBox, IPlotterView
+    public partial class PlotterViewGDI : PictureBox, IPlotterView, IPlotterViewForDC
     {
         private PlotterController mController = null;
 
@@ -56,7 +57,7 @@ namespace Plotter
 
             mEventSequencer.Start();
 
-            mDrawContext.PushToViewAction = PushToFront;
+            mDrawContext.PlotterView = this;
 
             MouseMove += OnMouseMove;
             MouseDown += OnMouseDown;
@@ -334,11 +335,15 @@ namespace Plotter
             }
         }
 
+        public void GLMakeCurrent()
+        {
+            // NOP
+        }
+
         class MyEvent : EventSequencer<MyEvent>.Event
         {
-            public int x;
-            public int y;
-            public MouseEventArgs EventArgs;
+            public int x = 0;
+            public int y = 0;
         }
 
         class MyEventSequencer : EventSequencer<MyEvent>

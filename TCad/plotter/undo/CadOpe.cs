@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
 
 namespace Plotter
@@ -42,23 +43,23 @@ namespace Plotter
 
         public void StoreBefore(CadFigure fig)
         {
-            Before = MpUtil.FigToLz4Bin(fig);
+            Before = CopyUtil.FigToLz4Bin(fig);
             FigureID = fig.ID;
         }
 
         public void StoreAfter(CadFigure fig)
         {
-            After = MpUtil.FigToLz4Bin(fig);
+            After = CopyUtil.FigToLz4Bin(fig);
         }
 
         public override void Undo(CadObjectDB db)
         {
-            MpUtil.Lz4BinRestoreFig(Before, db);
+            CopyUtil.Lz4BinRestoreFig(Before, db);
         }
 
         public override void Redo(CadObjectDB db)
         {
-            MpUtil.Lz4BinRestoreFig(After, db);
+            CopyUtil.Lz4BinRestoreFig(After, db);
         }
     }
 

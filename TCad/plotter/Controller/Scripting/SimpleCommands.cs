@@ -36,11 +36,17 @@ namespace Plotter.Controller
             Stopwatch sw = new Stopwatch();
             sw.Start();
             int i = 0;
-            while (i<120)
+            while (i < 240)
             {
                 ThreadUtil.RunOnMainThread(() =>
                 {
-                    Controller.ReflectToView();
+                    //Controller.Redraw();
+
+                    Controller.DC.StartDraw();
+                    Controller.Clear(Controller.DC);
+                    Controller.DrawAll(Controller.DC);
+                    Controller.DC.EndDraw();
+
                 }, true);
                 i++;
             }

@@ -82,13 +82,13 @@ namespace Plotter.Controller
             get => mMeasureMode;
         }
 
-        private CadFigure.Creator mFigureCreator = null;
-        public CadFigure.Creator FigureCreator
+        private FigCreator mFigureCreator = null;
+        public FigCreator FigureCreator
         {
             get => mFigureCreator;
         }
 
-        public CadFigure.Creator MeasureFigureCreator = null;
+        public FigCreator MeasureFigureCreator = null;
 
 
         public HistoryManager HistoryMan = null;
@@ -243,7 +243,7 @@ namespace Plotter.Controller
             State = States.MEASURING;
             mMeasureMode = mode;
             MeasureFigureCreator =
-                CadFigure.Creator.Get(
+                FigCreator.Get(
                     CadFigure.Types.POLY_LINES,
                     CadFigure.Create(CadFigure.Types.POLY_LINES)
                     );

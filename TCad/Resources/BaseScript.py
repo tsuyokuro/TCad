@@ -1,4 +1,6 @@
 # coding: cp932
+
+
 from datetime import datetime as dt
 import time
 import math
@@ -9,14 +11,15 @@ from System import UInt32 as uint
 
 import clr
 clr.AddReference('CadDataTypes')
-clr.AddReference('OpenTK')
+clr.AddReference('OpenTK.Mathematics')
+
 
 import CadDataTypes.CadVertex as CadVertex
 import CadDataTypes.VertexList as VertexList
 import CadDataTypes.CadMesh as CadMesh
 import CadDataTypes.CadFace as CadFace
 
-import OpenTK.Vector3d as Vector3d
+import OpenTK.Mathematics.Vector3d as Vector3d
 
 #version 1.0
 
@@ -187,6 +190,10 @@ def add_tetra(pos, size_x, size_y, size_z):
 #[AC] add_octa(last_down(), size_x=20, size_y=20, size_z=20)
 def add_octa(pos, size_x, size_y, size_z):
     return SE.AddOctahedron(pos, size_x, size_y, size_z)
+
+#[AC] add_picture(last_down(), r"F:\work4\test.png")
+def add_picture(pos, fname):
+    return SE.AddPicture(pos, fname)
 
 
 ###############################################################################
@@ -377,9 +384,9 @@ def centroid_of_selected():
 
 ###############################################################################
 
-#[AC] to_bmp(32, 32)
-#[AC] to_bmp(32, 32, 0xffffffff, 1, "")
-def to_bmp(bw, bh, argb=0xffffffff, linew=1, fname=""):
+#[AC] to_bmp(64, 64, 0xffffffff, 1, r"")
+#[AC] to_bmp(128, 128, 0xffffffff, 1, r"")
+def to_bmp(bw, bh, argb=0xffffffff, linew=1, fname=r""):
     SE.CreateBitmap(bw, bh, argb, linew, fname)
 
 #[AC] dev_p_to_world_p(p)

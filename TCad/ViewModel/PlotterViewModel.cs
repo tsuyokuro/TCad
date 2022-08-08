@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ using Plotter;
 using Plotter.Settings;
 using System.IO;
 using TCad.ScriptEditor;
+using System.Runtime.Versioning;
 
 namespace TCad.ViewModel
 {
@@ -239,22 +241,22 @@ namespace TCad.ViewModel
             KeyMap = new Dictionary<string, KeyAction>
             {
                 { "ctrl+z", new KeyAction(Undo , null, "Undo")},
-                { "ctrl+y", new KeyAction(Redo , null, "Rendo")},
+                { "ctrl+y", new KeyAction(Redo , null, "Redo")},
                 { "ctrl+c", new KeyAction(Copy , null, "Copy")},
                 { "ctrl+insert", new KeyAction(Copy , null, "Copy")},
                 { "ctrl+v", new KeyAction(Paste ,null, "Paste")},
                 { "shift+insert", new KeyAction(Paste , null, "Paste")},
-                { "delete", new KeyAction(Remove , null)},
+                { "delete", new KeyAction(Remove , null, "Delete object")},
                 { "ctrl+s", new KeyAction(Save , null, "Save")},
                 { "ctrl+a", new KeyAction(SelectAll , null, "Select All")},
                 { "escape", new KeyAction(Cancel , null)},
                 { "ctrl+p", new KeyAction(InsPoint , null, "Inser Point")},
                 { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
                 { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
-                { "left", new KeyAction(MoveKeyDown, MoveKeyUp)},
-                { "right", new KeyAction(MoveKeyDown, MoveKeyUp)},
-                { "up", new KeyAction(MoveKeyDown, MoveKeyUp)},
-                { "down", new KeyAction(MoveKeyDown, MoveKeyUp)},
+                { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left 1 milli")},
+                { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right 1 milli")},
+                { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up 1 milli")},
+                { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down 1 milli")},
                 { "m", new KeyAction(AddMark, null, " Add snap point")},
                 { "ctrl+m", new KeyAction(CleanMark, null, " Clear snap points")},
             };
@@ -563,6 +565,7 @@ namespace TCad.ViewModel
 
             dlg.PrintWithBitmap = Settings.PrintWithBitmap;
             dlg.MagnificationBitmapPrinting = Settings.MagnificationBitmapPrinting;
+            dlg.PrintLineSmooth = Settings.PrintLineSmooth;
 
             bool? result = dlg.ShowDialog();
 
@@ -570,6 +573,7 @@ namespace TCad.ViewModel
             {
                 Settings.PrintWithBitmap = dlg.PrintWithBitmap;
                 Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
+                Settings.PrintLineSmooth = dlg.PrintLineSmooth;
             }
         }
 
@@ -845,8 +849,8 @@ namespace TCad.ViewModel
 
             Controller.PrintPage(g, pageSize, deviceSize);
         }
-#endregion print
-
+        #endregion print
+        [SupportedOSPlatform("windows")]
         public void PageSetting()
         {
             System.Windows.Forms.PageSetupDialog pageDlg = new System.Windows.Forms.PageSetupDialog();
@@ -876,7 +880,7 @@ namespace TCad.ViewModel
 
             dlg.Owner = mMainWindow.GetWindow();
 
-            dlg.WorldScale = mViewManager.DrawContext.WorldScale;
+            dlg.WorldScale = mViewManager.DrawContext.WorldScale_;
 
             bool? result = dlg.ShowDialog();
 

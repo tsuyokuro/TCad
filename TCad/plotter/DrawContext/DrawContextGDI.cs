@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -118,7 +119,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public Pen Pen(int id)
@@ -173,8 +174,6 @@ namespace Plotter
             DrawContextGDI dc = new DrawContextGDI();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 

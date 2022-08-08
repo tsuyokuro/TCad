@@ -2,11 +2,12 @@
     x:Class="TCad.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:TCad.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:TCad"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cc="clr-namespace:TCad.Controls"
     xmlns:properties="clr-namespace:TCad.Properties"
+    xmlns:local="clr-namespace:TCad"
+    xmlns:ext="clr-namespace:TCad.MarkupExtensions"
     xmlns:vm="clr-namespace:TCad.ViewModel"
     Title="TCad"
     Width="1177.667"
@@ -348,7 +349,7 @@
                                     Header="Select all"
                                     Tag="select_all" />
                             </MenuItem>
-                            <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_sttings}">
+                            <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_settings}">
                                 <MenuItem
                                     Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_grid_settings}"

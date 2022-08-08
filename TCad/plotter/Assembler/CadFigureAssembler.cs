@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Plotter
 {

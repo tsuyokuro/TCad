@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Plotter.Controller
 {
@@ -79,12 +80,12 @@ namespace Plotter.Controller
 
         private static byte[] FigListToBin(List<CadFigure> figList)
         {
-            return MpUtil.FigListToBin(figList);
+            return CopyUtil.FigListToBin(figList);
         }
 
         private static List<CadFigure> BinToFigList(byte[] bin)
         {
-            return MpUtil.BinToFigList(bin);
+            return CopyUtil.BinToFigList(bin);
         }
 
         public static List<CadFigure> CopyFigures(List<CadFigure> src)

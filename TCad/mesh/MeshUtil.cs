@@ -4,6 +4,7 @@ using HalfEdgeNS;
 using MeshMakerNS;
 using MyCollections;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
@@ -302,6 +303,7 @@ namespace MeshUtilNS
             }
             catch (Exception e)
             {
+                DOut.pl(e.Message);
                 return (null, null);
             }
 

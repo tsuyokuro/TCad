@@ -6,9 +6,17 @@ using CadDataTypes;
 using SplineCurve;
 using System.Drawing.Printing;
 using OpenTK;
+using OpenTK.Mathematics;
 
-namespace Plotter.Serializer.v1001
+namespace Plotter.Serializer.v1002
 {
+    public class VersionCode_v1002
+    {
+        private static VersionCode Version_ = new VersionCode(1, 0, 0, 2);
+
+        public static VersionCode Version => Version_;
+    }
+
     [MessagePackObject]
     public class MpCadData_v1002
     {
@@ -491,6 +499,7 @@ namespace Plotter.Serializer.v1001
         public List<MpVertex_v1002> PointList;
     }
 
+    // CadFigureMesh    
     [MessagePackObject]
     public class MpMeshGeometricData_v1002 : MpGeometricData_v1002
     {
@@ -498,6 +507,7 @@ namespace Plotter.Serializer.v1001
         public MpHeModel_v1002 HeModel;
     }
 
+    // CadFigureNurbsLine
     [MessagePackObject]
     public class MpNurbsLineGeometricData_v1002 : MpGeometricData_v1002
     {
@@ -505,6 +515,7 @@ namespace Plotter.Serializer.v1001
         public MpNurbsLine_v1002 Nurbs;
     }
 
+    // CadFigureNurbsSurface
     [MessagePackObject]
     public class MpNurbsSurfaceGeometricData_v1002 : MpGeometricData_v1002
     {

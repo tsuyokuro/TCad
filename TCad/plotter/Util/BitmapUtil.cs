@@ -1,11 +1,13 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using CadDataTypes;
 
 namespace Plotter
 {
+    [SupportedOSPlatform("windows")]
     public class BitmapUtil
     {
         public static void BitmapToClipboardAsPNG(Bitmap bmp)
@@ -21,11 +23,10 @@ namespace Plotter
             Clipboard.SetDataObject(dataObject);
         }
 
-
         public static Bitmap CreateAABitmap2x2(Bitmap src, Color color)
         {
-            int dw = (int)src.Width / 2;
-            int dh = (int)src.Height / 2;
+            int dw = src.Width / 2;
+            int dh = src.Height / 2;
 
             Bitmap dest = new Bitmap(dw, dh);
 

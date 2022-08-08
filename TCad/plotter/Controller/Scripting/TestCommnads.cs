@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,12 +11,7 @@ using CarveWapper;
 using MeshMakerNS;
 using SplineCurve;
 using TCad.Controls;
-using Plotter.Serializer;
-using MessagePack;
-using Newtonsoft.Json.Linq;
-using System.Drawing;
-using OpenTK.Graphics;
-using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.svg;
 using System.Xml.Linq;
 
@@ -593,7 +587,7 @@ namespace Plotter.Controller
             RunOnMainThread(() => {
                 Controller.Clear();
                 Controller.DrawAll();
-                Controller.ReflectToView();
+                Controller.PushToView();
             });
         }
 

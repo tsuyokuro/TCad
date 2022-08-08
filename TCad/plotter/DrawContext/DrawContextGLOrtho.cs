@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using CadDataTypes;
 using System.Windows.Forms;
@@ -46,13 +47,13 @@ namespace Plotter
 
             #region ModelView
             GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref mViewMatrix.Matrix);
+            GL.LoadMatrix(ref mViewMatrix);
             #endregion
 
             #region Projection            
             GL.MatrixMode(MatrixMode.Projection);
 
-            Matrix4d proj = mProjectionMatrix.Matrix;
+            Matrix4d proj = mProjectionMatrix;
 
             double dx = ViewOrg.X - (ViewWidth / 2.0);
             double dy = ViewOrg.Y - (ViewHeight / 2.0);
@@ -101,7 +102,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
@@ -109,8 +110,6 @@ namespace Plotter
             DrawContextGLOrtho dc = new DrawContextGLOrtho();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(deviceSize.Width, deviceSize.Height);
 
@@ -130,8 +129,6 @@ namespace Plotter
             DrawContextGLOrtho dc = new DrawContextGLOrtho();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 

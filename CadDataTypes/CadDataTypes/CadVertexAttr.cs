@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics;
+﻿using OpenTK.Mathematics;
+
 
 namespace CadDataTypes
 {

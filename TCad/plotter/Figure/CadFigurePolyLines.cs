@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,7 +36,7 @@ namespace Plotter
 
 
         #region Point Move
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
             //base.MoveSelectedPoints(dc, delta);
 
@@ -43,6 +44,7 @@ namespace Plotter
 
             Vector3d d;
 
+            Vector3d delta = moveInfo.Delta;
 
             if (!IsSelectedAll() && mPointList.Count > 2 && RestrictionByNormal)
             {
@@ -67,11 +69,11 @@ namespace Plotter
                 d = delta;
             }
 
-            FigUtil.MoveSelectedPointsFromStored(this, dc, d);
+            FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
 
             mChildList.ForEach(c =>
             {
-                c.MoveSelectedPointsFromStored(dc, delta);
+                c.MoveSelectedPointsFromStored(dc, moveInfo);
             });
         }
 
@@ -128,9 +130,13 @@ namespace Plotter
 
             if (SettingsHolder.Settings.DrawNormal && !Normal.IsZero())
             {
+                double len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
+                double arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
+                double arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+
                 Vector3d np0 = PointList[0].vector;
-                Vector3d np1 = np0 + (Normal * 10);
-                dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, 3, 3);
+                Vector3d np1 = np0 + (Normal * len);
+                dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
             }
         }
 

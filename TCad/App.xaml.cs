@@ -44,9 +44,10 @@ namespace TCad
 
         private TaskScheduler mMainThreadScheduler;
 
+#if USE_CONSOL_INPUT
         private DebugInputThread InputThread = null;
-
-        private DebugClient DClient;
+#endif
+        //private DebugClient DClient;
 
         public static App GetCurrent()
         {
@@ -172,7 +173,7 @@ namespace TCad
 
             ThreadUtil.Init();
 
-            OpenTK.Toolkit.Init();
+            //OpenTK.Toolkit.Init();
 
             // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
             // 紛れさせる

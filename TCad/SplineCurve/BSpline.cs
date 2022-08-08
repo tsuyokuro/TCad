@@ -1,5 +1,6 @@
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace SplineCurve
 {

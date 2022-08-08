@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms;
 
 namespace Plotter
 {
@@ -11,6 +12,7 @@ namespace Plotter
         {
             public int What = 0;
             public long ExpireTime = 0;
+            public MouseEventArgs EventArgs = null;
 
             public virtual void Clean()
             {
@@ -38,7 +40,7 @@ namespace Plotter
 
         private int QueueSize = 5;
 
-        private Timer CheckTimer;
+        private System.Timers.Timer CheckTimer;
 
         private Object LockObj = new Object();
 

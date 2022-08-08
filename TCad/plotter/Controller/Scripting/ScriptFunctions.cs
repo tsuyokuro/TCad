@@ -13,8 +13,14 @@ using static Plotter.CadFigure;
 using LibiglWrapper;
 using GLUtil;
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Security.Cryptography;
 using Microsoft.Scripting.Hosting;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
+using OpenTK.Platform;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.Common;
 
 namespace Plotter.Controller
 {
@@ -727,6 +733,23 @@ namespace Plotter.Controller
             return fig;
         }
 
+        public CadFigure AddPicture(Vector3d pos, string fname)
+        {
+            CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(CadFigure.Types.PICTURE);
+
+            fig.Setup(Controller.PageSize, pos, fname);
+
+
+            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+            Session.AddOpe(ope);
+            Controller.CurrentLayer.AddFigure(fig);
+
+            Session.PostRemakeObjectTree();
+
+            return fig;
+        }
+
+
         public void MakeRotatingBody(uint baseFigID, Vector3d org, Vector3d axis, bool topCap, bool btmCap)
         {
             CadFigure baseFig = GetFigure(baseFigID);
@@ -946,20 +969,9 @@ namespace Plotter.Controller
             });
         }
 
-        public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
+        public void CreateBitmapGDI(List<CadFigure> figList, int w, int h, uint argb, int lineW, string fname)
         {
             DrawContext dc = Controller.DC;
-
-            CadObjectDB db = Controller.DB;
-
-            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
-
-            var figList = new List<CadFigure>();
-
-            idlist.ForEach(id =>
-            {
-                figList.Add(db.GetFigure(id));
-            });
 
             CadRect r = CadUtil.GetContainsRectScrn(dc, figList);
 
@@ -1003,7 +1015,8 @@ namespace Plotter.Controller
             DrawParams dp = default;
 
             dp.LinePen = drawPen;
-            dp.EdgePen = drawPen;
+            dp.MeshEdgePen = drawPen;
+            dp.MeshLinePen = drawPen;
 
             Env.RunOnMainThread((Action)(() =>
             {
@@ -1029,6 +1042,129 @@ namespace Plotter.Controller
                 drawPen.Dispose();
             }));
         }
+
+        public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
+        {
+            CadObjectDB db = Controller.DB;
+
+
+            // Create figure list
+            List<uint> idlist = Controller.DB.GetSelectedFigIDList();
+
+            if (idlist.Count == 0)
+            {
+                ItConsole.println("No Objects selected");
+                return;
+            }
+
+            var figList = new List<CadFigure>();
+
+            idlist.ForEach(id =>
+            {
+                figList.Add(db.GetFigure(id));
+            });
+
+
+            ThreadUtil.RunOnMainThread(() =>
+            {
+                CreateBitmapGLOrtho(figList, w, h, argb, lineW, fname);
+            }, true);
+        }
+
+        private void CreateBitmapGLOrtho(List<CadFigure> figList, int w, int h, uint argb, int lineW, string fname)
+        {
+            //fname = @"F:\work\test.bmp";
+
+            //GLControl tmpGLControl = new GLControl();
+            //tmpGLControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            //tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            //tmpGLControl.MakeCurrent();
+
+            NativeWindowSettings settings = new NativeWindowSettings();
+            settings.Profile = ContextProfile.Compatability;
+            settings.Flags = ContextFlags.Default;
+
+            NativeWindow window = new NativeWindow(settings);
+            window.MakeCurrent();
+
+            int paddingX = 4;
+            int paddingY = 4;
+
+            DrawContext orgDC = Controller.DC;
+
+
+            DrawContextGLOrtho tdc = new DrawContextGLOrtho();
+
+            tdc.SetupTools(DrawTools.DrawMode.LIGHT);
+            tdc.CopyCamera(orgDC);
+            tdc.SetViewSize(w, h);
+            tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
+
+            CadRect r2 = CadUtil.GetContainsRectScrn(tdc, figList);
+
+            double ow = Math.Abs(r2.p1.X - r2.p0.X);
+            double oh = Math.Abs(r2.p1.Y - r2.p0.Y);
+
+            double scale = Math.Min((w - paddingX) / ow, (h -paddingY) / oh);
+
+            tdc.WorldScale = scale;
+
+            CadRect r3 = CadUtil.GetContainsRectScrn(tdc, figList);
+
+            Vector3d center = r3.Center();
+            ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
+
+
+            DrawPen drawPen = new DrawPen(Color.FromArgb((int)argb), lineW);
+
+            DrawParams drawParams = default;
+            drawParams.LinePen = drawPen;
+            drawParams.MeshLinePen = DrawPen.NullPen;
+            drawParams.MeshEdgePen = drawPen;
+
+
+            FrameBufferW fb = new FrameBufferW();
+            fb.Create(w, h);
+
+            fb.Begin();
+
+            tdc.StartDraw();
+
+            GL.Disable(EnableCap.LineSmooth);
+
+            tdc.Drawing.Clear(new DrawBrush(Color.Blue));
+            //tdc.Drawing.Clear(tdc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
+
+            foreach (CadFigure fig in figList)
+            {
+                fig.Draw(tdc, drawParams);
+            }
+
+            tdc.EndDraw();
+
+            Bitmap bmp = fb.GetBitmap();
+
+            fb.End();
+            fb.Dispose();
+
+            if (fname.Length > 0)
+            {
+                bmp.Save(fname);
+            }
+            else
+            {
+                BitmapUtil.BitmapToClipboardAsPNG(bmp);
+            }
+
+            tdc.Dispose();
+            drawPen.Dispose();
+
+            orgDC.MakeCurrent();
+
+            //tmpGLControl.Dispose();
+            window.Dispose();
+        }
+
 
         public void FaceToDirection(Vector3d dir)
         {
@@ -1742,15 +1878,17 @@ namespace Plotter.Controller
             });
         }
 
+        /*
         public void Redraw()
         {
             Env.RunOnMainThread(() =>
             {
                 Controller.Clear();
                 Controller.DrawAll();
-                Controller.ReflectToView();
+                Controller.PushToView();
             });
         }
+        */
 
         public CadFigure CreatePolyLines()
         {

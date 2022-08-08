@@ -1,6 +1,7 @@
 ﻿using HalfEdgeNS;
 using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using CadDataTypes;
 
@@ -23,7 +24,14 @@ namespace Plotter
         public const float HighlightPointLineWidth = 2;
         public const float HighlightPointLineLength = 6;
 
-        public const double AxisLength = 100;
+        public const double AxisLength = 100; // DrawingGDIでしか使っていない
+
+        public const double NormalLen = 20;
+        public const double NormalArrowLen = 10;
+        public const double NormalArrowWidth = 5;
+
+        public const double AxisArrowLen = 16;
+        public const double AxisArrowWidth = 8;
     }
 
     public interface IDrawing : IDisposable
@@ -65,7 +73,7 @@ namespace Plotter
         void DrawHarfEdgeModel(
             DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model);
 
-        void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, string s);
+        void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s);
 
         void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width);
 

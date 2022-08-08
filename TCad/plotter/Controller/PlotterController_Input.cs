@@ -1,6 +1,7 @@
 ﻿using CadDataTypes;
 using TCad.Controls;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
@@ -419,7 +420,7 @@ namespace Plotter.Controller
 
                         CadFigure fig = mDB.NewFigure(CreatingFigType);
 
-                        mFigureCreator = CadFigure.Creator.Get(CreatingFigType, fig);
+                        mFigureCreator = FigCreator.Get(CreatingFigType, fig);
 
                         State = States.CREATING;
 
@@ -1009,9 +1010,12 @@ namespace Plotter.Controller
                 Vector3d p0 = dc.DevPointToWorldPoint(MoveOrgScrnPoint);
                 Vector3d p1 = dc.DevPointToWorldPoint(CrossCursor.Pos);
 
+                //p0.dump("p0");
+                //p1.dump("p1");
+
                 Vector3d delta = p1 - p0;
 
-                MoveSelectedPoints(dc, delta);
+                MoveSelectedPoints(dc, new MoveInfo(p0, p1, MoveOrgScrnPoint, CrossCursor.Pos));
 
                 ObjDownPoint = StoredObjDownPoint + delta;
             }
@@ -1029,9 +1033,9 @@ namespace Plotter.Controller
         {
             FigureCreator.AddPointInCreating(dc, p);
 
-            CadFigure.Creator.State state = FigureCreator.GetCreateState();
+            FigCreator.State state = FigureCreator.GetCreateState();
 
-            if (state == CadFigure.Creator.State.FULL)
+            if (state == FigCreator.State.FULL)
             {
                 FigureCreator.EndCreate(dc);
 
@@ -1041,13 +1045,13 @@ namespace Plotter.Controller
 
                 NextState();
             }
-            else if (state == CadFigure.Creator.State.ENOUGH)
+            else if (state == FigCreator.State.ENOUGH)
             {
                 CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
                 HistoryMan.foward(ope);
                 CurrentLayer.AddFigure(FigureCreator.Figure);
             }
-            else if (state == CadFigure.Creator.State.WAIT_NEXT_POINT)
+            else if (state == FigCreator.State.WAIT_NEXT_POINT)
             {
                 CadOpe ope = new CadOpeAddPoint(
                     CurrentLayer.ID,

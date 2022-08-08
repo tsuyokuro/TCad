@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 
 namespace Plotter
@@ -34,10 +35,10 @@ namespace Plotter
 
 
             GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref mViewMatrix.Matrix);
+            GL.LoadMatrix(ref mViewMatrix);
 
             GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref mProjectionMatrix.Matrix);
+            GL.LoadMatrix(ref mProjectionMatrix);
 
             SetupLight();
         }
@@ -77,7 +78,7 @@ namespace Plotter
                                             mProjectionFar
                                             );
 
-            mProjectionMatrixInv = mProjectionMatrix.Invert();
+            mProjectionMatrixInv = mProjectionMatrix.Inv();
         }
 
         public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
@@ -85,8 +86,6 @@ namespace Plotter
             DrawContextGL dc = new DrawContextGLPers();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(deviceSize.Width, deviceSize.Height);
 
@@ -193,8 +192,6 @@ namespace Plotter
             DrawContextGLPers dc = new DrawContextGLPers();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 
@@ -249,8 +246,6 @@ namespace Plotter
 
         public override Vector3d WorldVectorToDevVector(Vector3d pt)
         {
-            pt *= WorldScale;
-
             Vector4d wv = pt.ToVector4d(1.0);
 
             Vector4d sv = wv * mViewMatrix;
@@ -285,8 +280,6 @@ namespace Plotter
 
             wv = wv * mProjectionMatrixInv;
             wv = wv * mViewMatrixInv;
-
-            wv /= WorldScale;
 
             return wv.ToVector3d();
         }

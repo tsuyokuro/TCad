@@ -1,5 +1,6 @@
 ﻿using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 
 namespace Plotter
@@ -119,8 +120,10 @@ namespace Plotter
             PointList.Add(seg.P0);
         }
 
-        public override void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
+            Vector3d delta = moveInfo.Delta;
+
             if (PointList[0].Selected && PointList[1].Selected &&
                 PointList[2].Selected && PointList[3].Selected)
             {
@@ -256,8 +259,8 @@ namespace Plotter
 
             Vector3d cp = CadMath.CenterPoint(seg.P0.vector, seg.P1.vector);
 
-            double arrowW = ARROW_W;
-            double arrowL = ARROW_LEN;
+            double arrowW = ARROW_W / dc.WorldScale;
+            double arrowL = ARROW_LEN / dc.WorldScale;
 
             dc.Drawing.DrawArrow(pen, cp, seg.P0.vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
             dc.Drawing.DrawArrow(pen, cp, seg.P1.vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
@@ -270,8 +273,8 @@ namespace Plotter
 
             Vector3d cp = CadMath.CenterPoint(PointList[3].vector, PointList[2].vector);
 
-            double arrowW = ARROW_W;
-            double arrowL = ARROW_LEN;
+            double arrowW = ARROW_W / dc.WorldScale;
+            double arrowL = ARROW_LEN / dc.WorldScale;
 
             double ww = (PointList[1] - PointList[0]).Norm() / 4.0;
 
@@ -324,7 +327,7 @@ namespace Plotter
             // up 0                            1 
             // 
             dc.Drawing.DrawText(FontID, textBrush, p.vector, lineV.vector, up.vector,
-                new DrawTextOption(DrawTextOption.H_CENTER),
+                new DrawTextOption(DrawTextOption.H_CENTER), 1.0 / dc.WorldScale,
                 lenStr);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Windows.Forms;
@@ -40,13 +41,11 @@ namespace Plotter
 
         public DrawContextGL()
         {
-            Init(null);
             mUnitPerMilli = 1;
         }
 
         public DrawContextGL(Control control)
         {
-            Init(control);
             mUnitPerMilli = 1;
         }
 

@@ -1,56 +1,56 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
+using System.Text.Json;
+
 
 namespace Plotter.Serializer
 {
-    public static class JsonExtends
+    public static class JsonElementExtends
     {
-        public static double GetDouble(this JObject jo, string key, double defaultValue)
+        public static bool GetBool(this JsonElement jo, string key, bool defaultValue)
         {
-            JToken jt = jo[key];
+            JsonElement prop;
 
-            if (jt == null)
+            if (!jo.TryGetProperty(key, out prop))
             {
                 return defaultValue;
             }
 
-            return (double)jt;
+            return prop.GetBoolean();
         }
 
-        public static bool GetBool(this JObject jo, string key, bool defaultValue)
+        public static double GetDouble(this JsonElement jo, string key, double defaultValue)
         {
-            JToken jt = jo[key];
+            JsonElement prop;
 
-            if (jt == null)
+            if (!jo.TryGetProperty(key, out prop))
             {
                 return defaultValue;
             }
 
-            return (bool)jt;
+            return prop.GetDouble();
+        }
+        public static string GetString(this JsonElement jo, string key, string defaultValue)
+        {
+            JsonElement prop;
+
+            if (!jo.TryGetProperty(key, out prop))
+            {
+                return defaultValue;
+            }
+
+            return prop.GetString();
         }
 
-        public static string GetString(this JObject jo, string key, string defaultValue)
+        public static T GetEnum<T>(this JsonElement jo, string key, T defaultValue)
         {
-            JToken jt = jo[key];
+            JsonElement prop;
 
-            if (jt == null)
+            if (!jo.TryGetProperty(key, out prop))
             {
                 return defaultValue;
             }
 
-            return (string)jt;
-        }
-
-        public static T GetEnum<T>(this JObject jo, string key, T defaultValue)
-        {
-            JToken jt = jo[key];
-
-            if (jt == null)
-            {
-                return defaultValue;
-            }
-
-            int num = (int)jt;
+            int num = prop.GetInt32();
 
             try
             {

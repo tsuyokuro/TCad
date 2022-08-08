@@ -1,19 +1,21 @@
 ﻿#define MOUSE_THREAD
-//#define VSYNC
 
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
+
 using Plotter.Controller;
 using Plotter.Settings;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
+using GLFont;
 
 namespace Plotter
 {
-    class PlotterViewGL : GLControl, IPlotterView
+    class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         private DrawContextGL mDrawContext = null;
 
@@ -50,30 +52,22 @@ namespace Plotter
 
         private DrawContextGLPers mDrawContextPers;
 
+
         public static PlotterViewGL Create()
         {
-            GraphicsMode mode = GraphicsMode.Default;
-            return Create(mode);
-        }
-
-        public static PlotterViewGL Create(GraphicsMode mode)
-        {
             DOut.pl("in PlotterViewGL Create");
-            PlotterViewGL v = new PlotterViewGL(mode);
+            PlotterViewGL v = new PlotterViewGL();
             v.MakeCurrent();
             DOut.pl("out PlotterViewGL Create");
             return v;
         }
 
-        private PlotterViewGL(GraphicsMode mode) : base(mode)
+        private PlotterViewGL()
         {
             SetupContextMenu();
 
-#if VSYNC
-            VSync = true;
-#else
-            VSync = false;
-#endif
+            base.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            base.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
 
             Load += OnLoad;
             SizeChanged += OnResize;
@@ -95,12 +89,18 @@ namespace Plotter
 
         private void OnDisposed(object sender, EventArgs e)
         {
+            FontShader.GetInstance().Dispose();
+            ImageShader.GetInstance().Dispose();
+
             mDrawContext.Dispose();
         }
 
         private void OnLoad(object sender, EventArgs e)
         {
             DOut.pl("in PlotterViewGL#OnLoad");
+
+            FontShader.GetInstance();
+            ImageShader.GetInstance();
 
             GL.ClearColor(Color4.Black);
             GL.Enable(EnableCap.DepthTest);
@@ -113,8 +113,8 @@ namespace Plotter
 
             mDrawContext = mDrawContextOrtho;
 
-            mDrawContextOrtho.PushToViewAction = PushToFront;
-            mDrawContextPers.PushToViewAction = PushToFront;
+            mDrawContextOrtho.PlotterView = this;
+            mDrawContextPers.PlotterView = this;
 
             SwapBuffers();
 
@@ -578,9 +578,14 @@ namespace Plotter
             }
         }
 
+        public void GLMakeCurrent()
+        {
+            base.MakeCurrent();
+        }
+
         class MyEvent : EventSequencer<MyEvent>.Event
         {
-            public MouseEventArgs EventArgs;
+            public new MouseEventArgs EventArgs;
         }
 
         class MyEventSequencer : EventSequencer<MyEvent>

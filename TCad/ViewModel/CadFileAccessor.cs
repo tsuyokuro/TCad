@@ -7,7 +7,7 @@ namespace TCad.ViewModel
     {
         public static void SaveFile(string fname, PlotterViewModel vm)
         {
-            if (fname.EndsWith(".kjs") || fname.EndsWith(".txt"))
+            if (fname.EndsWith(".txt"))
             {
                 SaveToMsgPackJsonFile(fname, vm);
             }
@@ -19,7 +19,7 @@ namespace TCad.ViewModel
 
         public static void LoadFile(string fname, PlotterViewModel vm)
         {
-            if (fname.EndsWith(".kjs") || fname.EndsWith(".txt"))
+            if (fname.EndsWith(".txt"))
             {
                 LoadFromMsgPackJsonFile(fname, vm);
             }
@@ -85,8 +85,10 @@ namespace TCad.ViewModel
 
             if (cd == null)
             {
-                return;
+                cd = MpCadFile.LoadJson_OLD(fname);
             }
+
+            if (cd == null) return;
 
             CadData rcd = cd.Value;
 

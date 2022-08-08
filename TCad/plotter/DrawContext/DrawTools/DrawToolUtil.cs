@@ -1,5 +1,5 @@
 ﻿
-using OpenTK.Graphics;
+using OpenTK.Mathematics;
 using System.Runtime.InteropServices;
 
 namespace Plotter

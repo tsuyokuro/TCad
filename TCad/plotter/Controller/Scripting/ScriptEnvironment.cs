@@ -9,11 +9,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TCad.Controls;
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Threading;
 using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using System.Diagnostics;
+using System.Windows;
 
 namespace Plotter.Controller
 {
@@ -62,20 +64,24 @@ namespace Plotter.Controller
 
         private string getBaseSacript()
         {
-            string script;
+            string script = "";
 
-            //string path = AppDomain.CurrentDomain.BaseDirectory;
-            //string filePath = path + "BaseScript.py";
-            //if (File.Exists(filePath))
-            //{
-            //    script = File.ReadAllText(filePath);
-            //}
-            //else
-            //{
-            //    script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
-            //}
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = path + @"Resources\BaseScript.py";
+            if (File.Exists(filePath))
+            {
+                script = File.ReadAllText(filePath);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "BaseScript.py is not found",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
 
-            script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
+            //script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
 
             return script;
         }
@@ -145,7 +151,7 @@ namespace Plotter.Controller
 
             Controller.Clear();
             Controller.DrawAll();
-            Controller.ReflectToView();
+            Controller.PushToView();
         }
 
         public dynamic RunScript(string s)
@@ -213,7 +219,7 @@ namespace Plotter.Controller
 
             Controller.Clear();
             Controller.DrawAll();
-            Controller.ReflectToView();
+            Controller.PushToView();
 
             if (callback != null)
             {

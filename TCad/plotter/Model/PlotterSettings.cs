@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
-using Plotter.Serializer;
+﻿using Plotter.Serializer;
 using System;
 using System.IO;
 using System.Reflection;
-using OpenTK;
+using OpenTK.Mathematics;
+using System.Text.Json;
+//using JObj = System.Text.Json.Nodes.JsonObject;
+using JObj = Newtonsoft.Json.Linq.JObject;
+
 
 namespace Plotter.Settings
 {
@@ -64,7 +67,8 @@ namespace Plotter.Settings
 
         #region Print
         public bool PrintWithBitmap = true;
-        public double MagnificationBitmapPrinting = 0.96;
+        public double MagnificationBitmapPrinting = 0.962;
+        public bool PrintLineSmooth = false;
         #endregion
 
         public PlotterSettings()
@@ -89,45 +93,45 @@ namespace Plotter.Settings
         {
             string fileName = FileName();
 
-            JObject root = new JObject();
+            JObj root = new JObj();
 
-            JObject jo;
+            JObj jo;
 
             root.Add("ContinueCreateFigure", ContinueCreateFigure);
             root.Add("LastDataDir", LastDataDir);
             root.Add("LastScriptDir", LastScriptDir);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToPoint);
             jo.Add("range", PointSnapRange);
             root.Add("PointSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToSegment);
             root.Add("SegmentSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToLine);
             jo.Add("range", LineSnapRange);
             root.Add("LineSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("unit", KeyMoveUnit);
             root.Add("KeyMove", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToZero);
             root.Add("ZeroSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToLastDownPoint);
             root.Add("LastDownSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToSelfPoint);
             root.Add("SelfPointSnap", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("enable", SnapToGrid);
             jo.Add("size_x", GridSize.X);
             jo.Add("size_y", GridSize.Y);
@@ -135,7 +139,7 @@ namespace Plotter.Settings
             root.Add("GridInfo", jo);
 
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("DrawMode", (int)DrawMode);
             jo.Add("DrawFaceOutline", DrawMeshEdge);
             jo.Add("FillFace", FillMesh);
@@ -145,7 +149,7 @@ namespace Plotter.Settings
             jo.Add("DrawCompass", DrawCompass);
             root.Add("DrawSettings", jo);
 
-            jo = new JObject();
+            jo = new JObj();
             jo.Add("PrintWithBitmap", PrintWithBitmap);
             jo.Add("MagnificationBitmapPrinting", MagnificationBitmapPrinting);
             root.Add("PrintSettings", jo);
@@ -173,61 +177,66 @@ namespace Plotter.Settings
 
             reader.Close();
 
-            JObject root = JObject.Parse(js);
+            JsonDocument jdoc = JsonDocument.Parse(js);
 
-            JObject jo;
+            JsonElement root = jdoc.RootElement;
+
+            JsonElement jo;
 
             ContinueCreateFigure = root.GetBool("ContinueCreateFigure", ContinueCreateFigure);
 
             LastDataDir = root.GetString("LastDataDir", LastDataDir);
             LastScriptDir = root.GetString("LastScriptDir", LastScriptDir);
 
-            jo = (JObject)root["PointSnap"];
-            SnapToPoint = jo.GetBool("enable", SnapToPoint);
-            PointSnapRange = jo.GetDouble("range", PointSnapRange);
+            if (root.TryGetProperty("PointSnap", out jo))
+            {
+                SnapToPoint = jo.GetBool("enable", SnapToPoint);
+                PointSnapRange = jo.GetDouble("range", PointSnapRange);
+            }
 
-            jo = (JObject)root["SegmentSnap"];
-            SnapToSegment = jo.GetBool("enable", SnapToSegment);
+            if (root.TryGetProperty("SegmentSnap", out jo))
+            {
+                SnapToSegment = jo.GetBool("enable", SnapToSegment);
+            }
 
-            jo = (JObject)root["LineSnap"];
-            SnapToLine = jo.GetBool("enable", SnapToLine);
-            LineSnapRange = jo.GetDouble("range", LineSnapRange);
+            if (root.TryGetProperty("LineSnap", out jo))
+            {
+                SnapToLine = jo.GetBool("enable", SnapToLine);
+                LineSnapRange = jo.GetDouble("range", LineSnapRange);
+            }
 
-            jo = (JObject)root["KeyMove"];
-            if (jo != null)
+            if (root.TryGetProperty("KeyMove", out jo))
             {
                 KeyMoveUnit = jo.GetDouble("unit", KeyMoveUnit);
             }
 
-            jo = (JObject)root["ZeroSnap"];
-            if (jo != null)
+            if (root.TryGetProperty("ZeroSnap", out jo))
             {
                 SnapToZero = jo.GetBool("enable", SnapToZero);
             }
 
-            jo = (JObject)root["LastDownSnap"];
-            if (jo != null)
+            if (root.TryGetProperty("LastDownSnap", out jo))
             {
                 SnapToLastDownPoint = jo.GetBool("enable", SnapToLastDownPoint);
             }
 
-            jo = (JObject)root["SelfPointSnap"];
-            if (jo != null)
+            if (root.TryGetProperty("SelfPointSnap", out jo))
             {
                 SnapToSelfPoint = jo.GetBool("enable", SnapToSelfPoint);
             }
 
-            jo = (JObject)root["DrawSettings"];
-            DrawMode = jo.GetEnum<DrawTools.DrawMode>("DrawMode", DrawMode);
-            DrawMeshEdge = jo.GetBool("DrawFaceOutline", DrawMeshEdge);
-            FillMesh = jo.GetBool("FillFace", FillMesh);
-            DrawNormal = jo.GetBool("DrawNormal", DrawNormal);
-            DrawAxis = jo.GetBool("DrawAxis", DrawAxis);
-            DrawAxisLabel = jo.GetBool("DrawAxisLabel", DrawAxisLabel);
-            DrawCompass = jo.GetBool("DrawCompass", DrawCompass);
+            if (root.TryGetProperty("DrawSettings", out jo))
+            {
+                DrawMode = jo.GetEnum<DrawTools.DrawMode>("DrawMode", DrawMode);
+                DrawMeshEdge = jo.GetBool("DrawFaceOutline", DrawMeshEdge);
+                FillMesh = jo.GetBool("FillFace", FillMesh);
+                DrawNormal = jo.GetBool("DrawNormal", DrawNormal);
+                DrawAxis = jo.GetBool("DrawAxis", DrawAxis);
+                DrawAxisLabel = jo.GetBool("DrawAxisLabel", DrawAxisLabel);
+                DrawCompass = jo.GetBool("DrawCompass", DrawCompass);
+            }
 
-            jo = (JObject)root["GridInfo"];
-            if (jo != null)
+            if (root.TryGetProperty("GridInfo", out jo))
             {
                 SnapToGrid = jo.GetBool("enable", SnapToSelfPoint);
                 GridSize.X = jo.GetDouble("size_x", 10);
@@ -235,8 +244,7 @@ namespace Plotter.Settings
                 GridSize.Z = jo.GetDouble("size_z", 10);
             }
 
-            jo = (JObject)root["PrintSettings"];
-            if (jo != null)
+            if (root.TryGetProperty("PrintSettings", out jo))
             {
                 PrintWithBitmap = jo.GetBool("PrintWithBitmap", PrintWithBitmap);
                 MagnificationBitmapPrinting = jo.GetDouble("MagnificationBitmapPrinting", MagnificationBitmapPrinting);

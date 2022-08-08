@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using CadDataTypes;
 using OpenTK;
-using Plotter.Serializer.v1001;
+using OpenTK.Mathematics;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 
 namespace Plotter
 {
@@ -24,6 +26,7 @@ namespace Plotter
             MESH,
             NURBS_LINE,
             NURBS_SURFACE,
+            PICTURE,
             MAX,
         }
         #endregion
@@ -72,7 +75,7 @@ namespace Plotter
 
         public Types Type {
             get;
-            protected set;
+            set;
         }
 
         public bool IsLoop { get; set; }
@@ -94,6 +97,8 @@ namespace Plotter
         public bool IsSelected { get; set; } = false;
 
         public string Name { get; set; } = null;
+
+        public LocalCoordinate LocalCoord = new LocalCoordinate();
 
         #endregion
 
@@ -188,6 +193,10 @@ namespace Plotter
 
                 case Types.NURBS_SURFACE:
                     fig = new CadFigureNurbsSurface();
+                    break;
+
+                case Types.PICTURE:
+                    fig = new CadFigurePicture();
                     break;
 
                 default:
@@ -560,7 +569,7 @@ namespace Plotter
 
         #endregion
 
-        public virtual void MoveSelectedPointsFromStored(DrawContext dc, Vector3d delta)
+        public virtual void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
             if (Locked) return;
 
@@ -570,11 +579,11 @@ namespace Plotter
             //    " dz=" + delta.z.ToString()
             //    );
 
-            FigUtil.MoveSelectedPointsFromStored(this, dc, delta);
+            FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
 
             mChildList.ForEach(c =>
             {
-               c.MoveSelectedPointsFromStored(dc, delta);
+               c.MoveSelectedPointsFromStored(dc, moveInfo);
             });
         }
 
@@ -797,24 +806,7 @@ namespace Plotter
             RecalcNormal();
         }
 
-        public virtual MpGeometricData_v1001 GeometricDataToMp_v1001()
-        {
-            MpSimpleGeometricData_v1001 geo = new MpSimpleGeometricData_v1001();
-            geo.PointList = MpUtil_v1001.VertexListToMp(PointList);
-            return geo;
-        }
-
-        public virtual void GeometricDataFromMp_v1001(MpGeometricData_v1001 geo)
-        {
-            if (!(geo is MpSimpleGeometricData_v1001))
-            {
-                return;
-            }
-
-            MpSimpleGeometricData_v1001 g = (MpSimpleGeometricData_v1001)geo;
-
-            mPointList = MpUtil_v1001.VertexListFromMp(g.PointList);
-        }
+        #region Serialize
 
         public virtual MpGeometricData_v1002 GeometricDataToMp_v1002()
         {
@@ -835,5 +827,25 @@ namespace Plotter
             mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
         }
 
+
+        public virtual MpGeometricData_v1003 GeometricDataToMp_v1003()
+        {
+            MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
+            geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+            return geo;
+        }
+
+        public virtual void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+        {
+            if (!(geo is MpSimpleGeometricData_v1003))
+            {
+                return;
+            }
+
+            MpSimpleGeometricData_v1003 g = (MpSimpleGeometricData_v1003)geo;
+
+            mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        }
+        #endregion
     } // End of class CadFigure
 }

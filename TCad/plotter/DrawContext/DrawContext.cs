@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using CadDataTypes;
 
@@ -12,11 +13,18 @@ namespace Plotter
             Perspective,
         }
 
-        protected Action<DrawContext> mPushToViewAction;
-        public Action<DrawContext> PushToViewAction
+        //protected Action<DrawContext> mPushToViewAction;
+        //public Action<DrawContext> PushToViewAction
+        //{
+        //    set => mPushToViewAction = value;
+        //    get => mPushToViewAction;
+        //}
+
+        IPlotterViewForDC mPlotterView;
+        public IPlotterViewForDC PlotterView
         {
-            set => mPushToViewAction = value;
-            get => mPushToViewAction;
+            set => mPlotterView = value;
+            get => mPlotterView;
         }
 
         // 画素/Milli
@@ -54,26 +62,26 @@ namespace Plotter
         public Vector3d UpVector => mUpVector;
 
         // 投影スクリーンの向き
-        protected Vector3d mViewDir = default(Vector3d);
+        protected Vector3d mViewDir = default;
         public virtual Vector3d ViewDir => mViewDir;
 
         // ワールド座標系から視点座標系への変換(ビュー変換)行列
-        protected UMatrix4 mViewMatrix = new UMatrix4();
-        protected UMatrix4 ViewMatrix => mViewMatrix;
-        protected ref Matrix4d ViewMatrixRef => ref mViewMatrix.Matrix;
+        protected Matrix4d mViewMatrix = default;
+        protected Matrix4d ViewMatrix => mViewMatrix;
+        protected ref Matrix4d ViewMatrixRef => ref mViewMatrix;
 
         // 視点座標系からワールド座標系への変換行列
-        protected UMatrix4 mViewMatrixInv = new UMatrix4();
-        protected UMatrix4 ViewMatrixInv => mViewMatrixInv;
+        protected Matrix4d mViewMatrixInv = default;
+        protected Matrix4d ViewMatrixInv => mViewMatrixInv;
 
         // 視点座標系から投影座標系への変換行列
-        protected UMatrix4 mProjectionMatrix = new UMatrix4();
-        protected UMatrix4 ProjectionMatrix => mProjectionMatrix;
-        protected ref Matrix4d ProjectionMatrixRef => ref mProjectionMatrix.Matrix;
+        protected Matrix4d mProjectionMatrix = default;
+        protected Matrix4d ProjectionMatrix => mProjectionMatrix;
+        protected ref Matrix4d ProjectionMatrixRef => ref mProjectionMatrix;
 
         // 投影座標系から視点座標系への変換行列
-        protected UMatrix4 mProjectionMatrixInv = new UMatrix4();
-        protected UMatrix4 ProjectionMatrixInv => mProjectionMatrixInv;
+        protected Matrix4d mProjectionMatrixInv = default;
+        protected Matrix4d ProjectionMatrixInv => mProjectionMatrixInv;
 
         protected double mProjectionW = 1.0;
         protected double ProjectionW => mProjectionW;
@@ -104,7 +112,19 @@ namespace Plotter
         }
 
         // 縮尺
-        public double WorldScale = 1.0;
+        public double WorldScale_ = 1.0;
+
+        public double WorldScale
+        {
+            get => WorldScale_;
+
+            set
+            {
+                WorldScale_ = value;
+                CalcViewMatrix();
+            }
+
+        }
 
         // 画面に描画する際の係数
         public double DeviceScaleX = 1.0;
@@ -130,7 +150,7 @@ namespace Plotter
             mViewOrg = org;
         }
 
-        public void SetupTools(DrawTools.DrawMode type, int penW=0)
+        public void SetupTools(DrawTools.DrawMode type, int penW = 0)
         {
             Tools.Setup(type, penW);
         }
@@ -154,7 +174,12 @@ namespace Plotter
 
         public void PushToView()
         {
-            mPushToViewAction?.Invoke(this);
+            mPlotterView?.PushToFront(this);
+        }
+
+        public void MakeCurrent()
+        {
+            mPlotterView?.GLMakeCurrent();
         }
 
         #region Point converter
@@ -199,8 +224,6 @@ namespace Plotter
 
         public virtual Vector3d WorldVectorToDevVector(Vector3d pt)
         {
-            pt *= WorldScale;
-
             Vector4d wv = pt.ToVector4d(1.0);
 
             Vector4d sv = wv * mViewMatrix;
@@ -215,7 +238,7 @@ namespace Plotter
 
             dv.X = dv.X * DeviceScaleX;
             dv.Y = dv.Y * DeviceScaleY;
-            dv.Z = 0;
+            //dv.Z = 0;
 
             return dv.ToVector3d();
         }
@@ -235,8 +258,6 @@ namespace Plotter
 
             wv = wv * mProjectionMatrixInv;
             wv = wv * mViewMatrixInv;
-
-            wv /= WorldScale;
 
             return wv.ToVector3d();
         }
@@ -271,8 +292,9 @@ namespace Plotter
 
         protected void CalcViewMatrix()
         {
-            mViewMatrix = Matrix4d.LookAt(mEye, mLookAt, mUpVector);
-            mViewMatrixInv = mViewMatrix.Invert();
+            mViewMatrix = Matrix4d.Scale(WorldScale_) * Matrix4d.LookAt(mEye, mLookAt, mUpVector);
+            //mViewMatrixInv = mViewMatrix.Invert();
+            mViewMatrixInv = mViewMatrix.Inv();
         }
 
         public void CopyProjectionMetrics(DrawContext dc)
@@ -285,6 +307,7 @@ namespace Plotter
 
         public void CopyCamera(DrawContext dc)
         {
+            WorldScale_ = dc.WorldScale_;
             SetCamera(dc.mEye, dc.mLookAt, dc.mUpVector);
         }
 
@@ -318,7 +341,7 @@ namespace Plotter
 
         public abstract void CalcProjectionMatrix();
         public abstract void Dispose();
-        
+
         public abstract DrawContext Clone();
         public abstract DrawPen GetPen(int idx);
         public abstract DrawBrush GetBrush(int idx);

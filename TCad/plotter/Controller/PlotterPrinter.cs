@@ -3,6 +3,7 @@
 
 using GLUtil;
 using OpenTK;
+using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
@@ -51,7 +52,7 @@ namespace Plotter.Controller
             }
 
             DrawContext dc = pc.DC.CreatePrinterContext(pageSize, deviceSize);
-            dc.SetupTools(DrawTools.DrawMode.PRINTER);
+            dc.SetupTools(DrawTools.DrawMode.PRINTER, 2);
 
             // Bitmapを印刷すると大きさが変わるので、補正
             double f = SettingsHolder.Settings.MagnificationBitmapPrinting;
@@ -72,7 +73,14 @@ namespace Plotter.Controller
 
             dc.StartDraw();
 
-            GL.Disable(EnableCap.LineSmooth);
+            if (SettingsHolder.Settings.PrintLineSmooth)
+            {
+                GL.Enable(EnableCap.LineSmooth);
+            }
+            else
+            {
+                GL.Disable(EnableCap.LineSmooth);
+            }
 
             dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 

@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 namespace Plotter.Controller
@@ -124,14 +125,14 @@ namespace Plotter.Controller
             return opeList;
         }
 
-        public void MoveSelectedPoints(Vector3d delta)
+        public void MoveSelectedPoints(MoveInfo moveInfo)
         {
             StartEdit();
-            MoveSelectedPoints(null, delta);
+            MoveSelectedPoints(null, moveInfo);
             EndEdit();
         }
 
-        private void MoveSelectedPoints(DrawContext dc, Vector3d delta)
+        private void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
         {
             List<uint> figIDList = DB.GetSelectedFigIDList();
 
@@ -142,7 +143,7 @@ namespace Plotter.Controller
                 CadFigure fig = mDB.GetFigure(id);
                 if (fig != null)
                 {
-                    fig.MoveSelectedPointsFromStored(dc, delta);
+                    fig.MoveSelectedPointsFromStored(dc, moveInfo);
                 }
             }
         }

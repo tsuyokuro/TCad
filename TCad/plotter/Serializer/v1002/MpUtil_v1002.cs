@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace Plotter.Serializer.v1001
+namespace Plotter.Serializer.v1002
 {
     public partial class MpUtil_v1002
     {

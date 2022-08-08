@@ -3,6 +3,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.Versioning;
 using OpenTK.Graphics.OpenGL;
 
 namespace GLUtil
@@ -11,6 +12,7 @@ namespace GLUtil
      * OpenGLで描画可能なFrame buffer
      * Frame buffer that can be drawn with OpenGL 
      */
+    [SupportedOSPlatform("windows")]
     class FrameBufferW
     {
         private int mWidth = 0;

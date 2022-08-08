@@ -21,6 +21,7 @@ namespace TCad
     {
         public bool PrintWithBitmap;
         public double MagnificationBitmapPrinting;
+        public bool PrintLineSmooth;
 
         public PrintSettingsDialog()
         {
@@ -46,6 +47,7 @@ namespace TCad
         {
             print_with_bitmap.IsChecked = PrintWithBitmap;
             magnification_for_bitmap_printing.Text = MagnificationBitmapPrinting.ToString();
+            print_line_smooth.IsChecked = PrintLineSmooth;
 
             ok_button.Click += Ok_button_Click;
             cancel_button.Click += Cancel_button_Click;
@@ -76,6 +78,8 @@ namespace TCad
 
             ret &= Double.TryParse(magnification_for_bitmap_printing.Text, out v);
             MagnificationBitmapPrinting = v;
+
+            PrintLineSmooth = print_line_smooth.IsChecked.Value;
 
             DialogResult = ret;
         }

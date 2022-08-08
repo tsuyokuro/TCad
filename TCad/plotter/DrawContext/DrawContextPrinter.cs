@@ -2,6 +2,7 @@
 using System.Drawing.Drawing2D;
 using CadDataTypes;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Plotter
 {
@@ -16,7 +17,6 @@ namespace Plotter
 
             if (currentDC.GetType() == typeof(DrawContextGLPers))
             {
-                WorldScale = currentDC.WorldScale;
                 mUnitPerMilli = deviceSize.Width / pageSize.Width;
                 CopyCamera(currentDC);
                 CopyProjectionMatrix(currentDC);
@@ -28,7 +28,6 @@ namespace Plotter
             {
                 CopyProjectionMetrics(currentDC);
                 CopyCamera(currentDC);
-                WorldScale = currentDC.WorldScale;
                 UnitPerMilli = deviceSize.Width / pageSize.Width;
                 SetViewSize(deviceSize.Width, deviceSize.Height);
             }
@@ -62,8 +61,6 @@ namespace Plotter
             DrawContextPrinter dc = new DrawContextPrinter();
 
             dc.CopyProjectionMetrics(this);
-            dc.WorldScale = WorldScale;
-
             dc.CopyCamera(this);
             dc.SetViewSize(ViewWidth, ViewHeight);
 

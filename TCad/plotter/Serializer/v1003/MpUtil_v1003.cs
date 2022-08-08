@@ -1,17 +1,17 @@
-﻿using HalfEdgeNS;
+﻿using CadDataTypes;
+using HalfEdgeNS;
 using MyCollections;
 using System;
 using System.Collections.Generic;
-using CadDataTypes;
 
 
-namespace Plotter.Serializer.v1001
+namespace Plotter.Serializer.v1003
 {
-    public partial class MpUtil_v1001
+    public partial class MpUtil_v1003
     {
-        public static MpCadData_v1001 CreateMpCadData_v1001(CadData cd)
+        public static MpCadData_v1003 CreateMpCadData_v1003(CadData cd)
         {
-            MpCadData_v1001 data = MpCadData_v1001.Create(cd.DB);
+            MpCadData_v1003 data = MpCadData_v1003.Create(cd.DB);
 
             data.ViewInfo.WorldScale = cd.WorldScale;
 
@@ -20,11 +20,11 @@ namespace Plotter.Serializer.v1001
             return data;
         }
 
-        public static CadData CreateCadData_v1001(MpCadData_v1001 mpcd)
+        public static CadData CreateCadData_v1003(MpCadData_v1003 mpcd)
         {
             CadData cd = new CadData();
 
-            MpViewInfo_v1001 viewInfo = mpcd.ViewInfo;
+            MpViewInfo_v1003 viewInfo = mpcd.ViewInfo;
 
             double worldScale = 0;
 
@@ -61,12 +61,12 @@ namespace Plotter.Serializer.v1001
             return cd;
         }
 
-        public static List<MpVertex_v1001> VertexListToMp(VertexList v)
+        public static List<MpVertex_v1003> VertexListToMp(VertexList v)
         {
-            List<MpVertex_v1001> ret = new List<MpVertex_v1001>();
+            List<MpVertex_v1003> ret = new List<MpVertex_v1003>();
             for (int i=0; i<v.Count; i++)
             {
-                ret.Add(MpVertex_v1001.Create(v[i]));
+                ret.Add(MpVertex_v1003.Create(v[i]));
             }
 
             return ret;
@@ -83,7 +83,7 @@ namespace Plotter.Serializer.v1001
             return ret;
         }
 
-        public static VertexList VertexListFromMp(List<MpVertex_v1001> list)
+        public static VertexList VertexListFromMp(List<MpVertex_v1003> list)
         {
             VertexList ret = new VertexList(list.Count);
             for (int i = 0; i < list.Count; i++)
@@ -94,18 +94,18 @@ namespace Plotter.Serializer.v1001
             return ret;
         }
 
-        public static List<MpVector3d_v1001> Vector3dListToMp(Vector3dList v)
+        public static List<MpVector3d_v1003> Vector3dListToMp(Vector3dList v)
         {
-            List<MpVector3d_v1001> ret = new List<MpVector3d_v1001>();
+            List<MpVector3d_v1003> ret = new List<MpVector3d_v1003>();
             for (int i = 0; i < v.Count; i++)
             {
-                ret.Add(MpVector3d_v1001.Create(v[i]));
+                ret.Add(MpVector3d_v1003.Create(v[i]));
             }
 
             return ret;
         }
 
-        public static Vector3dList Vector3dListFromMp(List<MpVector3d_v1001> list)
+        public static Vector3dList Vector3dListFromMp(List<MpVector3d_v1003> list)
         {
             Vector3dList ret = new Vector3dList(list.Count);
             for (int i = 0; i < list.Count; i++)
@@ -116,18 +116,18 @@ namespace Plotter.Serializer.v1001
             return ret;
         }
 
-        public static List<MpFigure_v1001> FigureListToMp_v1001(List<CadFigure> figList, bool withChild = false)
+        public static List<MpFigure_v1003> FigureListToMp_v1003(List<CadFigure> figList, bool withChild = false)
         {
-            List<MpFigure_v1001> ret = new List<MpFigure_v1001>();
+            List<MpFigure_v1003> ret = new List<MpFigure_v1003>();
             for (int i = 0; i < figList.Count; i++)
             {
-                ret.Add(MpFigure_v1001.Create(figList[i], withChild));
+                ret.Add(MpFigure_v1003.Create(figList[i], withChild));
             }
 
             return ret;
         }
 
-        public static List<CadFigure> FigureListFromMp_v1001(List<MpFigure_v1001> list)
+        public static List<CadFigure> FigureListFromMp_v1003(List<MpFigure_v1003> list)
         {
             List<CadFigure> ret = new List<CadFigure>();
             for (int i = 0; i < list.Count; i++)
@@ -138,43 +138,43 @@ namespace Plotter.Serializer.v1001
             return ret;
         }
 
-        public static List<MpFigure_v1001> FigureMapToMp_v1001(
+        public static List<MpFigure_v1003> FigureMapToMp_v1003(
             Dictionary<uint, CadFigure> figMap, bool withChild = false)
         {
-            List<MpFigure_v1001> ret = new List<MpFigure_v1001>();
+            List<MpFigure_v1003> ret = new List<MpFigure_v1003>();
             foreach (CadFigure fig in figMap.Values)
             {
-                ret.Add(MpFigure_v1001.Create(fig, withChild));
+                ret.Add(MpFigure_v1003.Create(fig, withChild));
             }
 
             return ret;
         }
 
-        public static List<MpHeFace_v1001> HeFaceListToMp(FlexArray<HeFace> list)
+        public static List<MpHeFace_v1003> HeFaceListToMp(FlexArray<HeFace> list)
         {
-            List<MpHeFace_v1001> ret = new List<MpHeFace_v1001>();
+            List<MpHeFace_v1003> ret = new List<MpHeFace_v1003>();
             for (int i = 0; i < list.Count; i++)
             {
-                ret.Add(MpHeFace_v1001.Create(list[i]));
+                ret.Add(MpHeFace_v1003.Create(list[i]));
             }
 
             return ret;
         }
 
 
-        public static List<MpLayer_v1001> LayerListToMp(List<CadLayer> src)
+        public static List<MpLayer_v1003> LayerListToMp(List<CadLayer> src)
         {
-            List<MpLayer_v1001> ret = new List<MpLayer_v1001>();
+            List<MpLayer_v1003> ret = new List<MpLayer_v1003>();
             for (int i = 0; i < src.Count; i++)
             {
-                ret.Add(MpLayer_v1001.Create(src[i]));
+                ret.Add(MpLayer_v1003.Create(src[i]));
             }
 
             return ret;
         }
 
         public static List<CadLayer> LayerListFromMp(
-            List<MpLayer_v1001> src, Dictionary<uint, CadFigure> dic)
+            List<MpLayer_v1003> src, Dictionary<uint, CadFigure> dic)
         {
             List<CadLayer> ret = new List<CadLayer>();
             for (int i = 0; i < src.Count; i++)
@@ -186,7 +186,7 @@ namespace Plotter.Serializer.v1001
         }
 
         public static FlexArray<HeFace> HeFaceListFromMp(
-            List<MpHeFace_v1001> list,
+            List<MpHeFace_v1003> list,
             Dictionary<uint, HalfEdge> dic
             )
         {
@@ -199,12 +199,12 @@ namespace Plotter.Serializer.v1001
             return ret;
         }
 
-        public static List<MpHalfEdge_v1001> HalfEdgeListToMp(List<HalfEdge> list)
+        public static List<MpHalfEdge_v1003> HalfEdgeListToMp(List<HalfEdge> list)
         {
-            List<MpHalfEdge_v1001> ret = new List<MpHalfEdge_v1001>();
+            List<MpHalfEdge_v1003> ret = new List<MpHalfEdge_v1003>();
             for (int i=0; i<list.Count; i++)
             {
-                ret.Add(MpHalfEdge_v1001.Create(list[i]));
+                ret.Add(MpHalfEdge_v1003.Create(list[i]));
             }
 
             return ret;
