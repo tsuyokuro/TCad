@@ -11,7 +11,7 @@ namespace Plotter.Controller
     {
         public enum States
         {
-            SELECT,
+            SELECT = 1,
             RUBBER_BAND_SELECT,
             START_DRAGING_POINTS,
             DRAGING_POINTS,
@@ -19,6 +19,7 @@ namespace Plotter.Controller
             START_CREATE,
             CREATING,
             MEASURING,
+            EOD,
         }
 
         private CadObjectDB mDB = new CadObjectDB();
@@ -124,6 +125,8 @@ namespace Plotter.Controller
 
         public PlotterController()
         {
+            InitState();
+
             CadLayer layer = mDB.NewLayer();
             mDB.LayerList.Add(layer);
             CurrentLayer = layer;
