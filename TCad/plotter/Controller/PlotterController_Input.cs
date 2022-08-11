@@ -389,84 +389,7 @@ namespace Plotter.Controller
                 return;
             }
 
-            switch (State)
-            {
-                case States.SELECT:
-                    if (SelectNearest(dc, (Vector3d)CrossCursor.Pos))
-                    {
-                        if (!CursorLocked)
-                        {
-                            State = States.START_DRAGING_POINTS;
-                        }
-
-                        OffsetScreen = pixp - CrossCursor.Pos;
-
-                        StoredObjDownPoint = ObjDownPoint;
-                    }
-                    else
-                    {
-                        State = States.RUBBER_BAND_SELECT;
-                    }
-
-                    break;
-
-                case States.RUBBER_BAND_SELECT:
-
-                    break;
-
-                case States.START_CREATE:
-                    {
-                        LastDownPoint = SnapPoint;
-
-                        CadFigure fig = mDB.NewFigure(CreatingFigType);
-
-                        mFigureCreator = FigCreator.Get(CreatingFigType, fig);
-
-                        State = States.CREATING;
-
-                        FigureCreator.StartCreate(dc);
-
-
-                        CadVertex p = (CadVertex)dc.DevPointToWorldPoint(CrossCursor.Pos);
-
-                        SetPointInCreating(dc, (CadVertex)SnapPoint);
-                    }
-                    break;
-
-                case States.CREATING:
-                    {
-                        LastDownPoint = SnapPoint;
-
-                        CadVertex p = (CadVertex)dc.DevPointToWorldPoint(CrossCursor.Pos);
-
-                        SetPointInCreating(dc, (CadVertex)SnapPoint);
-                    }
-                    break;
-
-                case States.MEASURING:
-                    {
-                        LastDownPoint = SnapPoint;
-
-                        CadVertex p;
-
-                        if (mSnapInfo.IsPointMatch)
-                        {
-                            p = new CadVertex(SnapPoint);
-                        }
-                        else
-                        {
-                            p = (CadVertex)dc.DevPointToWorldPoint(CrossCursor.Pos);
-                        }
-
-                        SetPointInMeasuring(dc, p);
-                        PutMeasure();
-                    }
-                    break;
-
-                default:
-                    break;
-
-            }
+            CurrentState.LButtonDown(pointer, dc, x, y);
 
             if (CursorLocked)
             {
@@ -627,32 +550,7 @@ namespace Plotter.Controller
 
         private void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
         {
-            switch (State)
-            {
-                case States.SELECT:
-                    break;
-
-                case States.RUBBER_BAND_SELECT:
-                    RubberBandSelect(RubberBandScrnPoint0, RubberBandScrnPoint1);
-
-                    State = States.SELECT;
-                    break;
-
-                case States.START_DRAGING_POINTS:
-                case States.DRAGING_POINTS:
-
-                    //mPointSearcher.SetIgnoreList(null);
-                    //mSegSearcher.SetIgnoreList(null);
-                    //mSegSearcher.SetIgnoreSeg(null);
-
-                    if (State == States.DRAGING_POINTS)
-                    {
-                        EndEdit();
-                    }
-
-                    State = States.SELECT;
-                    break;
-            }
+            CurrentState.LButtonUp(pointer, dc, x, y);
 
             UpdateObjectTree(false);
 
@@ -966,7 +864,8 @@ namespace Plotter.Controller
         {
             if (State == States.DRAGING_VIEW_ORG)
             {
-                ViewOrgDrag(pointer, dc, x, y);
+                //ViewOrgDrag(pointer, dc, x, y);
+                CurrentState.MouseMove(pointer, dc, x, y);
                 return;
             }
 
@@ -979,22 +878,6 @@ namespace Plotter.Controller
             Vector3d pixp = new Vector3d(x, y, 0) - OffsetScreen;
             Vector3d cp = dc.DevPointToWorldPoint(pixp);
 
-            if (State == States.START_DRAGING_POINTS)
-            {
-                //
-                // 選択時に思わずずらしてしまうことを防ぐため、
-                // 最初だけある程度ずらさないと移動しないようにする
-                //
-                CadVertex v = CadVertex.Create(x, y, 0);
-                double d = (RawDownPoint - v).Norm();
-
-                if (d > SettingsHolder.Settings.InitialMoveLimit)
-                {
-                    State = States.DRAGING_POINTS;
-                    StartEdit();
-                }
-            }
-
             RubberBandScrnPoint1 = pixp;
 
             CrossCursor.Pos = pixp;
@@ -1005,19 +888,9 @@ namespace Plotter.Controller
                 SnapCursor(dc);
             }
 
-            if (State == States.DRAGING_POINTS)
+            if (CurrentState.State == States.DRAGING_POINTS)
             {
-                Vector3d p0 = dc.DevPointToWorldPoint(MoveOrgScrnPoint);
-                Vector3d p1 = dc.DevPointToWorldPoint(CrossCursor.Pos);
-
-                //p0.dump("p0");
-                //p1.dump("p1");
-
-                Vector3d delta = p1 - p0;
-
-                MoveSelectedPoints(dc, new MoveInfo(p0, p1, MoveOrgScrnPoint, CrossCursor.Pos));
-
-                ObjDownPoint = StoredObjDownPoint + delta;
+                CurrentState.MouseMove(pointer, dc, x, y);
             }
 
             Callback.CursorPosChanged(this, SnapPoint, CursorType.TRACKING);

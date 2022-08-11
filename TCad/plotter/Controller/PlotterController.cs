@@ -11,38 +11,28 @@ namespace Plotter.Controller
     {
         public enum States
         {
-            SELECT = 1,
+            SELECT,
             RUBBER_BAND_SELECT,
-            START_DRAGING_POINTS,
             DRAGING_POINTS,
             DRAGING_VIEW_ORG,
-            START_CREATE,
             CREATING,
             MEASURING,
-            EOD,
         }
 
         private CadObjectDB mDB = new CadObjectDB();
         public CadObjectDB DB => mDB;
 
-        private States mState = States.SELECT;
         public States State
         {
             private set
             {
-                mState = value;
-
-                if (mInteractCtrl.IsActive)
-                {
-                    mInteractCtrl.Cancel();
-                }
+                ChangeState(value);
             }
 
-            get => mState;
+            get => CurrentState.State;
         }
 
         private States mBackState;
-
 
         private PaperPageSize mPageSize = new PaperPageSize(PaperKind.A4, false);
         public PaperPageSize PageSize
@@ -189,7 +179,7 @@ namespace Plotter.Controller
         #region Start and End creating figure
         public void StartCreateFigure(CadFigure.Types type)
         {
-            State = States.START_CREATE;
+            State = States.CREATING;
             CreatingFigType = type;
         }
 
