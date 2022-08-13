@@ -11,8 +11,9 @@
  * Visual studio 2017 15.8.4では、Windowsアプリケーションのまま、普通にコンソールに出力される
  * Visual studio 2017 15.9.4では、またこの手順が必要になった
  **/
-#define USE_CONSOLE
-//#define USE_CONSOL_INPUT
+//#define USE_CONSOLE
+#define USE_DEBUG_SERVER
+
 
 // 強制的にリソース文字列をUSにする
 // Force resource string to US
@@ -35,19 +36,24 @@ namespace TCad
 {
     public partial class App : Application
     {
-#if USE_CONSOLE
-        public const bool UseConsole = true;
-#else
-        public const bool UseConsole = false;
-#endif
+        enum DebugOutTarget
+        {
+            None,
+            Console,
+            DebugServer,
+        }
+
+        //DebugOutTarget DOutTarget = DebugOutTarget.Console;
+        DebugOutTarget DOutTarget = DebugOutTarget.DebugServer;
+        //DebugOutTarget DOutTarget = DebugOutTarget.None;
+
         private MySplashWindow SplashWindow = null;
 
         private TaskScheduler mMainThreadScheduler;
 
-#if USE_CONSOL_INPUT
-        private DebugInputThread InputThread = null;
+#if USE_DEBUG_SERVER
+        private DebugServer DServer;
 #endif
-        //private DebugClient DClient;
 
         public static App GetCurrent()
         {
@@ -161,14 +167,11 @@ namespace TCad
 
 #if USE_CONSOLE
             WinAPI.AllocConsole();
-            Console.WriteLine("App OnStartup USE_CONSOLE");
 #endif
-
-#if USE_CONSOL_INPUT
-            InputThread = new DebugInputThread();
-            InputThread.start();
+#if USE_DEBUG_SERVER
+            DServer = new DebugServer();
+            DServer.Start("127.0.0.1", 2300);
 #endif
-
             mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             ThreadUtil.Init();
@@ -187,7 +190,7 @@ namespace TCad
 
             sw.Stop();
 
-            Console.WriteLine($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
+            DOut.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
 
             SplashWindow.Close();
             SplashWindow = null;
@@ -195,31 +198,21 @@ namespace TCad
 
         private void SetupDebugConsole()
         {
-            if (UseConsole)
+            if (DOutTarget == DebugOutTarget.Console)
             {
                 DOut.PrintF = Console.Write;
                 DOut.PrintLn = Console.WriteLine;
 
                 DOut.pl("DOut's output setting is Console");
-
-                //DClient = new DebugClient();
-
-                ////if (DClient.IsValid)
-                //{
-                //    DOut.PrintFunc = DClient.Write;
-                //    DOut.PrintLnFunc = DClient.WriteLine;
-
-                //    DOut.pl("DOut's output setting is DebugServer");
-                //}
             }
-            else
+            else if (DOutTarget == DebugOutTarget.DebugServer)
             {
-                //MainWindow wnd = (MainWindow)MainWindow;
-                //DOut.PrintF = wnd.GetBuiltinConsole().Print;
-                //DOut.PrintLn = wnd.GetBuiltinConsole().PrintLn;
+                DOut.PrintF = DServer.Write;
+                DOut.PrintLn = DServer.WriteLn;
+
+                DOut.pl("DOut's output setting is DebugServer");
             }
         }
-
 
         // e.g. ReadResourceText("/Shader/font_fragment.shader")
         public static string ReadResourceText(string path)
@@ -239,6 +232,14 @@ namespace TCad
 #if USE_CONSOLE
             WinAPI.FreeConsole();
 #endif
+
+#if USE_DEBUG_SERVER
+            if (DServer != null)
+            {
+                DServer.Stop();
+            }
+#endif
+
             base.OnExit(e);
         }
     }

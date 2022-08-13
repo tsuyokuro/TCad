@@ -57,8 +57,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TCad\TCad.csproj" />
-  </ItemGroup>
-
 </Project>

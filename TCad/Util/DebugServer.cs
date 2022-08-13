@@ -1,23 +1,19 @@
-﻿using MessagePack;
-using System;
-using System.Threading.Tasks;
-using System.Threading;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Net.Sockets;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
-namespace TestApp
+namespace TCad.Util
 {
     internal class DebugServer
     {
         private TcpListener mlistener = null;
+        private IPEndPoint mLocalEndPoint;
 
         private List<ClientWrapper> mClientList = new List<ClientWrapper>();
-
-        private IPEndPoint mLocalEndPoint;
 
         private RingBuffer<string> mPool;
 
@@ -35,8 +31,6 @@ namespace TestApp
             Thread t = new Thread(Listening);
 
             t.Start();
-
-            Console.WriteLine("Start end");
         }
 
         public void Stop()
@@ -84,7 +78,7 @@ namespace TestApp
         {
             lock (mClientList)
             {
-                mClientList.RemoveAll((item)=>
+                mClientList.RemoveAll((item) =>
                 {
                     if (!item.Connected)
                     {
@@ -101,8 +95,6 @@ namespace TestApp
         {
             mlistener = new TcpListener(mLocalEndPoint);
 
-            Console.WriteLine("StartListening tid:" + Thread.CurrentThread.ManagedThreadId);
-
             try
             {
                 mlistener.Start();
@@ -110,8 +102,6 @@ namespace TestApp
                 while (true)
                 {
                     var tcpClient = mlistener.AcceptTcpClient();
-
-                    Console.WriteLine("Accept client");
 
                     ClientWrapper client = new ClientWrapper(tcpClient);
 
@@ -125,12 +115,13 @@ namespace TestApp
             }
             catch (SocketException e)
             {
-                Console.WriteLine("SocketException " + e);
             }
             catch
             {
-
             }
+
+            WriteLn("Server stopped");
+            Write("\n\n");
         }
 
         private void SendPoolToClient(ClientWrapper client)
@@ -165,7 +156,7 @@ namespace TestApp
                 {
                     return;
                 }
-                
+
                 try
                 {
                     mWriter.WriteLine(s);
@@ -214,11 +205,8 @@ namespace TestApp
         public class RingBuffer<T>
         {
             private T[] Data;
-
             private int Top = 0;
-
             private int Bottom = 0;
-
             private int Mask;
 
             public T this[int i] => Data[(i + Top) & Mask];
@@ -279,34 +267,6 @@ namespace TestApp
                 {
                     Top = (Top + 1) & Mask;
                 }
-            }
-        }
-    }
-
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            DebugServer server = new DebugServer();
-
-            server.Start("127.0.0.1", 2300);
-
-            Console.ReadLine();
-
-            int cnt = 0;
-
-            server.Write("123");
-            server.Write("456");
-            server.Write("789\n");
-
-            while (true)
-            {
-                string s = "Test " + cnt++;
-
-                Console.WriteLine("write " + s);
-
-                server.WriteLn(s);
-                Thread.Sleep(1000);
             }
         }
     }
