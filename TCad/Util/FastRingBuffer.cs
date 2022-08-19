@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace TCad.Controls
+namespace TCad.Util
 {
-    public class RingBuffer<T>
+    /// <summary>
+    /// 
+    /// Fast Ring buffer
+    /// Buffer size Adjusted to power of 2.
+    /// e.g. 2, 4, 8, 16, 32 ....
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class FastRingBuffer<T>
     {
         private T[] Data;
-
         private int Top = 0;
-
         private int Bottom = 0;
-
         private int Mask;
 
-        public T this[int i]
-        {
-            get
-            {
-                return Data[(i + Top) & Mask];
-            }
-        }
+        public T this[int i] => Data[(Top + i) & Mask];
 
         public int Count
         {
@@ -32,35 +31,13 @@ namespace TCad.Controls
             private set;
         }
 
-        public RingBuffer(int size)
+        public FastRingBuffer(int size)
         {
             CreateBuffer(size);
         }
 
-        public RingBuffer()
+        public FastRingBuffer()
         {
-        }
-
-        private void ShallowCopyFrom(RingBuffer<T> src)
-        {
-            BufferSize = src.BufferSize;
-            Top = src.Top;
-            Bottom = src.Bottom;
-            Mask = src.Mask;
-            Count = src.Count;
-            Data = src.Data;
-        }
-
-        private void DeepCopyFrom(RingBuffer<T> src)
-        {
-            BufferSize = src.BufferSize;
-            Top = src.Top;
-            Bottom = src.Bottom;
-            Mask = src.Mask;
-            Count = src.Count;
-
-            Data = new T[src.BufferSize];
-            Array.Copy(src.Data, Data, src.Data.Length);
         }
 
         public void CreateBuffer(int size)
@@ -68,20 +45,6 @@ namespace TCad.Controls
             BufferSize = Pow2((uint)size);
             Data = new T[BufferSize];
             Mask = BufferSize - 1;
-        }
-
-        public void ResizeBuffer(int size)
-        {
-            RingBuffer<T> tmp = new RingBuffer<T>();
-            tmp.ShallowCopyFrom(this);
-
-            CreateBuffer(size);
-            Clear();
-
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                Add(tmp[i]);
-            }
         }
 
         public void Clear()

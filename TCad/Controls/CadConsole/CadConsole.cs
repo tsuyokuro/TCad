@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TCad.Controls.CadConsole;
+using TCad.Util;
 
 namespace TCad.Controls
 {
@@ -93,7 +94,7 @@ namespace TCad.Controls
 
         protected ScrollViewer Scroll;
 
-        protected RingBuffer<TextLine> mList = new RingBuffer<TextLine>(); 
+        protected FastRingBuffer<TextLine> mList = new FastRingBuffer<TextLine>(); 
 
         protected AnsiPalette Palette = new AnsiPalette();
 

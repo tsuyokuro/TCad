@@ -15,11 +15,11 @@ namespace TCad.Util
 
         private List<ClientWrapper> mClientList = new List<ClientWrapper>();
 
-        private RingBuffer<string> mPool;
+        private FastRingBuffer<string> mPool;
 
         public DebugServer()
         {
-            mPool = new RingBuffer<string>(20);
+            mPool = new FastRingBuffer<string>(20);
         }
 
         public void Start(string strIpAddr, int port)
@@ -199,74 +199,6 @@ namespace TCad.Util
                 mClient.Dispose();
                 mStream.Dispose();
                 mWriter.Dispose();
-            }
-        }
-
-        public class RingBuffer<T>
-        {
-            private T[] Data;
-            private int Top = 0;
-            private int Bottom = 0;
-            private int Mask;
-
-            public T this[int i] => Data[(i + Top) & Mask];
-
-            public int Count
-            {
-                get;
-                private set;
-            }
-
-            public int BufferSize
-            {
-                get;
-                private set;
-            }
-
-            public RingBuffer(int size)
-            {
-                CreateBuffer(size);
-            }
-
-            public void CreateBuffer(int size)
-            {
-                BufferSize = Pow2((uint)size);
-                Data = new T[BufferSize];
-                Mask = BufferSize - 1;
-            }
-
-            public void Clear()
-            {
-                Top = 0;
-                Bottom = 0;
-                Count = 0;
-            }
-
-            static int Pow2(uint n)
-            {
-                --n;
-                int p = 0;
-                for (; n != 0; n >>= 1)
-                {
-                    p = (p << 1) + 1;
-                }
-
-                return p + 1;
-            }
-
-            public void Add(T elem)
-            {
-                Data[Bottom] = elem;
-                Bottom = (Bottom + 1) & Mask;
-
-                if (Count < BufferSize)
-                {
-                    Count++;
-                }
-                else
-                {
-                    Top = (Top + 1) & Mask;
-                }
             }
         }
     }
