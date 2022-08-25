@@ -1,7 +1,8 @@
-﻿//#define LOG_DEBUG
+//#define LOG_DEBUG
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.Arm;
 using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
@@ -73,7 +74,8 @@ namespace Plotter
         #region  "public properties"
         public uint ID { get; set; }
 
-        public Types Type {
+        public Types Type
+        {
             get;
             set;
         }
@@ -88,10 +90,10 @@ namespace Plotter
 
         public VertexList StoreList => mStoreList;
 
-        public bool Locked  { set; get; } = false;
+        public bool Locked { set; get; } = false;
 
         public uint LayerID { set; get; } = 0;
-        
+
         public bool Current { set; get; } = false;
 
         public bool IsSelected { get; set; } = false;
@@ -291,7 +293,7 @@ namespace Plotter
         public virtual bool HasSelectedPoint()
         {
             int i;
-            for (i=0; i<mPointList.Count; i++)
+            for (i = 0; i < mPointList.Count; i++)
             {
                 if (mPointList[i].Selected)
                 {
@@ -318,7 +320,7 @@ namespace Plotter
                 return false;
             }
 
-            for (i=0; i<ChildList.Count; i++)
+            for (i = 0; i < ChildList.Count; i++)
             {
                 CadFigure c = ChildList[i];
                 if (c.HasSelectedPointInclueChild())
@@ -583,7 +585,7 @@ namespace Plotter
 
             mChildList.ForEach(c =>
             {
-               c.MoveSelectedPointsFromStored(dc, moveInfo);
+                c.MoveSelectedPointsFromStored(dc, moveInfo);
             });
         }
 
@@ -707,7 +709,7 @@ namespace Plotter
         public virtual bool IsSelectedAll()
         {
             int i;
-            for (i=0; i<mPointList.Count; i++)
+            for (i = 0; i < mPointList.Count; i++)
             {
                 if (!mPointList[i].Selected)
                 {
@@ -807,6 +809,13 @@ namespace Plotter
         }
 
         #region Serialize
+        public virtual void SaveExternalFiles(string fname)
+        {
+        }
+
+        public virtual void LoadExternalFiles(string fname)
+        {
+        }
 
         public virtual MpGeometricData_v1002 GeometricDataToMp_v1002()
         {

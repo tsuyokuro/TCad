@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;

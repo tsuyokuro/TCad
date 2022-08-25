@@ -1,4 +1,4 @@
-﻿using HalfEdgeNS;
+using HalfEdgeNS;
 using MessagePack;
 using System;
 using System.Collections.Generic;
@@ -492,6 +492,7 @@ namespace Plotter.Serializer.v1003
     [MessagePack.Union(1, typeof(MpMeshGeometricData_v1003))]
     [MessagePack.Union(2, typeof(MpNurbsLineGeometricData_v1003))]
     [MessagePack.Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
+    [MessagePack.Union(4, typeof(MpPictureGeometricData_v1003))]
     public interface MpGeometricData_v1003
     {
     }
@@ -501,6 +502,16 @@ namespace Plotter.Serializer.v1003
     [MessagePackObject]
     public class MpSimpleGeometricData_v1003 : MpGeometricData_v1003
     {
+        [Key("PointList")]
+        public List<MpVertex_v1003> PointList;
+    }
+
+    [MessagePackObject]
+    public class MpPictureGeometricData_v1003 : MpGeometricData_v1003
+    {
+        [Key("FilePathName")]
+        public string FilePathName;
+
         [Key("PointList")]
         public List<MpVertex_v1003> PointList;
     }

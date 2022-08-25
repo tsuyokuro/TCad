@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using Plotter.Settings;
 using System.Collections.Generic;
@@ -332,7 +332,7 @@ namespace Plotter.Controller
 
             UpdateObjectTree(true);
 
-            Redraw();
+            //Redraw();
         }
 
         public void SetCurrentLayer(uint id)

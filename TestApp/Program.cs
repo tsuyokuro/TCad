@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -83,27 +83,26 @@ namespace TestApp
         }
     }
 
+    public class FileUtil
+    {
+        public static string GetExternalDataDir(string fname)
+        {
+            string path = fname + "_external";
+            return path;
+        }
+    }
+
     internal class Program
     {
         static void Main(string[] args)
         {
-            FastRingBuffer<string> rb = new(4);
-            rb.Add("1");
-            rb.Add("2");
-            rb.Add("3");
-            rb.Add("4");
-            rb.Add("5");
-            rb.Add("6");
-            rb.Add("7");
-            rb.Add("8");
-            rb.Add("9");
-            rb.Add("10");
+            string fname = @"F:\work\test.tcad";
 
-            for (int i = 0; i < rb.Count; i++)
-            {
-                Console.WriteLine(rb[i]);
-            }
+            string epath =  FileUtil.GetExternalDataDir(fname);
 
+            Directory.CreateDirectory(epath);
+
+            string dname = Path.GetFileName(epath);
         }
     }
 }

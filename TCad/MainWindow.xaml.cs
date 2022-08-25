@@ -1,4 +1,4 @@
-﻿using TCad.Util;
+using TCad.Util;
 using Plotter;
 using Plotter.Controller;
 using System;
@@ -88,7 +88,7 @@ namespace TCad
 
             return dlg.InputString;
         }
-        
+
         private void SetupDataContext()
         {
             LayerListView.DataContext = ViewModel.LayerListVM;
@@ -185,6 +185,7 @@ namespace TCad
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             ViewModel.Close();
+            ImageRenderer.Provider.Release();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -196,6 +197,8 @@ namespace TCad
 
             System.Drawing.Color c = ViewModel.DC.Tools.BrushColor(DrawTools.BRUSH_BACKGROUND);
             viewRoot.Background = new SolidColorBrush(Color.FromRgb(c.R, c.G, c.B));
+
+            ImageRenderer.Provider.Get();
 
             DOut.pl("out MainWindow_Loaded");
         }
@@ -250,7 +253,7 @@ namespace TCad
         {
             if (!textCommand.IsFocused && !MyConsole.IsFocused)
             {
-               e.Handled = ViewModel.OnKeyUp(sender, e);
+                e.Handled = ViewModel.OnKeyUp(sender, e);
             }
             else
             {
@@ -277,7 +280,7 @@ namespace TCad
                         wnd.viewContainer.Visibility = Visibility.Hidden;
                     }
                     break;
-                
+
                 case WinAPI.WM_EXITSIZEMOVE:
                     {
                         MainWindow wnd = (MainWindow)Application.Current.MainWindow;
@@ -288,7 +291,7 @@ namespace TCad
                         }
                     }
                     break;
-                
+
                 case WinAPI.WM_MOVE:
                     {
                         // キャプションの上端でResizeすると画面崩れするのでコメントアウト
@@ -335,7 +338,7 @@ namespace TCad
         public void ClosePopupMessage()
         {
             if (Application.Current.Dispatcher.Thread.ManagedThreadId ==
-                System.Threading.Thread.CurrentThread.ManagedThreadId)
+                Thread.CurrentThread.ManagedThreadId)
             {
                 PopupMessage.IsOpen = false;
                 return;
