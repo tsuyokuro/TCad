@@ -1,4 +1,4 @@
-﻿using Plotter.Controller;
+using Plotter.Controller;
 
 namespace Plotter
 {

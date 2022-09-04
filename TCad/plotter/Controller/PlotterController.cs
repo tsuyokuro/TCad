@@ -4,6 +4,7 @@ using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -113,8 +114,21 @@ namespace Plotter.Controller
             get => mContextMenuMan;
         }
 
-        public PlotterController()
+        public string CurrentFileName
         {
+            get => PlotterVM?.CurrentFileName;
+        }
+
+        public IPlotterViewModel PlotterVM
+        {
+            get;
+            set;
+        }
+
+        public PlotterController(IPlotterViewModel vm)
+        {
+            PlotterVM = vm;
+
             InitState();
 
             CadLayer layer = mDB.NewLayer();

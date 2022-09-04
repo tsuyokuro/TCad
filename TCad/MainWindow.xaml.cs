@@ -33,6 +33,8 @@ namespace TCad
             ViewModel = new PlotterViewModel(this);
             ViewModel.Open();
 
+            PlotterViewModelProvider.Instance.Set(ViewModel);
+
             viewContainer.Focusable = true;
 
             ViewModel.ObjTreeVM.ObjectTree = ObjTree;

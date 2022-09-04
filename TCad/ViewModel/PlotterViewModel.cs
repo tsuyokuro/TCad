@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,20 @@ using Plotter.Settings;
 using System.IO;
 using TCad.ScriptEditor;
 using System.Runtime.Versioning;
+using Plotter.Serializer;
 
 namespace TCad.ViewModel
 {
+    public interface IPlotterViewModel
+    {
+        string CurrentFileName
+        {
+            get;
+            set;
+        }
+    }
 
-    public class PlotterViewModel : ViewModelContext, INotifyPropertyChanged
+    public class PlotterViewModel : ViewModelContext, IPlotterViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -114,12 +123,11 @@ namespace TCad.ViewModel
 
         private MoveKeyHandler mMoveKeyHandler;
 
-        private string mCurrentFileName = null;
+        public string mCurrentFileName;
         public string CurrentFileName
         {
             get => mCurrentFileName;
-
-            private set
+            set
             {
                 mCurrentFileName = value;
                 ChangeCurrentFileName(mCurrentFileName);
@@ -128,7 +136,7 @@ namespace TCad.ViewModel
 
         public PlotterViewModel(ICadMainWindow mainWindow)
         {
-            mController = new PlotterController();
+            mController = new PlotterController(this);
 
             SettingsVM = new SettingsVeiwModel(this);
 
@@ -139,6 +147,9 @@ namespace TCad.ViewModel
             mViewManager = new ViewManager(this);
 
             mMainWindow = mainWindow;
+
+            CurrentFileName = null;
+
 
             InitCommandMap();
             InitKeyMap();
@@ -491,8 +502,20 @@ namespace TCad.ViewModel
             {
                 SettingsHolder.Settings.LastDataDir = Path.GetDirectoryName(ofd.FileName);
 
-                CadFileAccessor.LoadFile(ofd.FileName, this);
-                CurrentFileName = ofd.FileName;
+                try
+                {
+                    CadFileAccessor.LoadFile(ofd.FileName, this);
+                    CurrentFileName = ofd.FileName;
+                }
+                catch (CadFileException cadFileException)
+                {
+                    string text = cadFileException.getMessage(); ;
+                    string caption = "Load error";
+                    MessageBoxButton button = MessageBoxButton.OK;
+                    MessageBoxImage icon = MessageBoxImage.Error;
+
+                    MessageBox.Show(text, caption, button, icon);
+                }
             }
         }
 

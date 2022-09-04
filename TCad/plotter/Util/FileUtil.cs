@@ -1,4 +1,5 @@
 using System.IO;
+using TCad.ViewModel;
 
 namespace Plotter
 {
@@ -29,8 +30,12 @@ namespace Plotter
         public static void DirectoryCopy(string sourcePath, string destinationPath)
         {
             DirectoryInfo sourceDirectory = new DirectoryInfo(sourcePath);
-            DirectoryInfo destinationDirectory = new DirectoryInfo(destinationPath);
+            if (sourceDirectory.Exists == false)
+            {
+                return;
+            }
 
+            DirectoryInfo destinationDirectory = new DirectoryInfo(destinationPath);
             if (destinationDirectory.Exists == false)
             {
                 destinationDirectory.Create();
