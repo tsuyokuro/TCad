@@ -328,7 +328,7 @@ namespace Plotter.Controller
 
             layer.FigureList = newFigList;
 
-            Callback.UpdateTreeView(true);
+            ViewIF.UpdateTreeView(true);
         }
 
         #endregion

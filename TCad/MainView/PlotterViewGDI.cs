@@ -9,6 +9,7 @@ using TCad;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Controller;
+using TCad.ViewModel;
 
 namespace Plotter
 {
@@ -301,17 +302,17 @@ namespace Plotter
             }
         }
 
-        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
         {
             switch (cursorType)
             {
-                case PlotterCallback.MouseCursorType.CROSS:
+                case UITypes.MouseCursorType.CROSS:
                     base.Cursor = PointCursor;
                     break;
-                case PlotterCallback.MouseCursorType.NORMAL_ARROW:
+                case UITypes.MouseCursorType.NORMAL_ARROW:
                     base.Cursor = Cursors.Arrow;
                     break;
-                case PlotterCallback.MouseCursorType.HAND:
+                case UITypes.MouseCursorType.HAND:
                     base.Cursor = Cursors.Hand;
                     break;
             }

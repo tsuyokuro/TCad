@@ -123,7 +123,7 @@ namespace Plotter.Controller
 
         private void HelpOfKey(string keyword)
         {
-            List<string> res = Controller.Callback.HelpOfKey(keyword);
+            List<string> res = Controller.ViewIF.HelpOfKey(keyword);
 
             res.ForEach((s) =>
             {

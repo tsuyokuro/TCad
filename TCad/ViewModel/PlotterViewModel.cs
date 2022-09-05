@@ -22,39 +22,6 @@ using Plotter.Serializer;
 
 namespace TCad.ViewModel
 {
-    public interface IPlotterViewModel
-    {
-        string CurrentFileName
-        {
-            get;
-            set;
-        }
-
-        void StateChanged(PlotterController sender, PlotterStateInfo si);
-
-        void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo);
-
-        void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type);
-
-        void UpdateTreeView(bool remakeTree);
-
-        void SetTreeViewPos(int index);
-
-        int FindTreeViewItemIndex(uint id);
-
-        void OpenPopupMessage(string text, PlotterCallback.MessageType messageType);
-
-        void ClosePopupMessage();
-
-        void CursorLocked(bool locked);
-
-        void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType);
-
-        List<string> HelpOfKey(string keyword);
-
-        void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y);
-    }
-
     public class PlotterViewModel : ViewModelContext, IPlotterViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -200,7 +167,7 @@ namespace TCad.ViewModel
             }
         }
 
-        public void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
+        public void OpenPopupMessage(string text, UITypes.MessageType messageType)
         {
             mMainWindow.OpenPopupMessage(text, messageType);
         }
@@ -746,7 +713,7 @@ namespace TCad.ViewModel
             }, true);
         }
 
-        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
         {
             ThreadUtil.RunOnMainThread(() =>
             {

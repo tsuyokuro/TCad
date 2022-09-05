@@ -1,4 +1,5 @@
 using Plotter.Controller;
+using TCad.ViewModel;
 
 namespace Plotter
 {
@@ -18,7 +19,7 @@ namespace Plotter
 
         void CursorLocked(bool locked);
 
-        void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType);
+        void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
 
         void SetWorldScale(double scale);
 

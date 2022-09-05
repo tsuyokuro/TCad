@@ -8,7 +8,7 @@ namespace TCad.ViewModel
     {
         Window GetWindow();
         void SetCurrentFileName(string file_name);
-        void OpenPopupMessage(string text, PlotterCallback.MessageType messageType);
+        void OpenPopupMessage(string text, UITypes.MessageType messageType);
         void ClosePopupMessage();
         void SetPlotterView(IPlotterView view);
         void DrawModeUpdated(DrawTools.DrawMode drawMode);

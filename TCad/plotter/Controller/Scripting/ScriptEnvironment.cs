@@ -16,6 +16,7 @@ using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -264,14 +265,14 @@ namespace Plotter.Controller
             ThreadUtil.RunOnMainThread(action, true);
         }
 
-        public void OpenPopupMessage(string text, PlotterCallback.MessageType type)
+        public void OpenPopupMessage(string text, UITypes.MessageType type)
         {
-            Controller.Callback.OpenPopupMessage(text, type);
+            Controller.ViewIF.OpenPopupMessage(text, type);
         }
 
         public void ClosePopupMessage()
         {
-            Controller.Callback.ClosePopupMessage();
+            Controller.ViewIF.ClosePopupMessage();
         }
     }
 }

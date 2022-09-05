@@ -21,6 +21,7 @@ using OpenTK.WinForms;
 using OpenTK.Platform;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -1739,7 +1740,7 @@ namespace Plotter.Controller
 
         public Vector3d InputPoint()
         {
-            Env.OpenPopupMessage("Input point", PlotterCallback.MessageType.INPUT);
+            Env.OpenPopupMessage("Input point", UITypes.MessageType.INPUT);
 
             InteractCtrl ctrl = Controller.InteractCtrl;
 

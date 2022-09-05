@@ -68,7 +68,7 @@ namespace Plotter.Controller
 
             if (mContextMenuInfo.Items.Count > 0)
             {
-                mController.Callback.ShowContextMenu(mController, mContextMenuInfo, (int)x, (int)y);
+                mController.ViewIF.ShowContextMenu(mController, mContextMenuInfo, (int)x, (int)y);
             }
         }
 

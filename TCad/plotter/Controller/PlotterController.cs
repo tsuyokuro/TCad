@@ -89,9 +89,12 @@ namespace Plotter.Controller
 
         public bool ContinueCreate { set; get; } = true;
 
-
-        public PlotterCallback Callback;
-
+        private IPlotterViewModel mPlotterVM = IPlotterViewModel.Dummy;
+        public IPlotterViewModel ViewIF
+        {
+            get => mPlotterVM;
+            private set => mPlotterVM = value;
+        }
 
         public List<CadFigure> TempFigureList = new List<CadFigure>();
 
@@ -116,20 +119,17 @@ namespace Plotter.Controller
 
         public string CurrentFileName
         {
-            get => PlotterVM?.CurrentFileName;
-        }
-
-        public IPlotterViewModel PlotterVM
-        {
-            get;
-            set;
+            get => ViewIF?.CurrentFileName;
         }
 
         public PlotterController(IPlotterViewModel vm)
         {
-            PlotterVM = vm;
+            if (vm == null)
+            {
+                throw new System.ArgumentNullException(nameof(vm));
+            }
 
-            Callback = new PlotterCallback(vm);
+            ViewIF = vm;
 
             InitState();
 
@@ -153,17 +153,17 @@ namespace Plotter.Controller
         #region ObjectTree handling
         public void UpdateObjectTree(bool remakeTree)
         {
-            Callback.UpdateTreeView(remakeTree);
+            ViewIF.UpdateTreeView(remakeTree);
         }
 
         public void SetObjectTreePos(int index)
         {
-            Callback.SetTreeViewPos(index);
+            ViewIF.SetTreeViewPos(index);
         }
 
         public int FindObjectTreeItem(uint id)
         {
-            return Callback.FindTreeViewItemIndex(id);
+            return ViewIF.FindTreeViewItemIndex(id);
         }
         #endregion ObjectTree handling
 
@@ -171,7 +171,7 @@ namespace Plotter.Controller
         #region Notify
         public void UpdateLayerList()
         {
-            Callback.LayerListChanged(this, GetLayerListInfo());
+            ViewIF.LayerListChanged(this, GetLayerListInfo());
         }
 
         private LayerListInfo GetLayerListInfo()
@@ -188,7 +188,7 @@ namespace Plotter.Controller
             PlotterStateInfo si = default(PlotterStateInfo);
             si.set(this);
 
-            Callback.StateChanged(this, si);
+            ViewIF.StateChanged(this, si);
         }
         #endregion Notify
 

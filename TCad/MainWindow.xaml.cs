@@ -33,8 +33,6 @@ namespace TCad
             ViewModel = new PlotterViewModel(this);
             ViewModel.Open();
 
-            PlotterViewModelProvider.Instance.Set(ViewModel);
-
             viewContainer.Focusable = true;
 
             ViewModel.ObjTreeVM.ObjectTree = ObjTree;
@@ -134,13 +132,13 @@ namespace TCad
 
         private void InitPopupMessageIcons()
         {
-            PopupMessageIcons[(int)PlotterCallback.MessageType.INFO] =
+            PopupMessageIcons[(int)UITypes.MessageType.INFO] =
                 (ImageSource)TryFindResource("infoIconDrawingImage");
 
-            PopupMessageIcons[(int)PlotterCallback.MessageType.INPUT] =
+            PopupMessageIcons[(int)UITypes.MessageType.INPUT] =
                 (ImageSource)TryFindResource("inputIconDrawingImage");
 
-            PopupMessageIcons[(int)PlotterCallback.MessageType.ERROR] =
+            PopupMessageIcons[(int)UITypes.MessageType.ERROR] =
                 (ImageSource)TryFindResource("errorIconDrawingImage");
         }
 
@@ -158,7 +156,7 @@ namespace TCad
             return ttplaces;
         }
 
-        ImageSource SelectPopupMessageIcon(PlotterCallback.MessageType type)
+        ImageSource SelectPopupMessageIcon(UITypes.MessageType type)
         {
             return PopupMessageIcons[(int)type];
         }
@@ -322,7 +320,7 @@ namespace TCad
             FileName.Content = file_name;
         }
 
-        public void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
+        public void OpenPopupMessage(string text, UITypes.MessageType messageType)
         {
             Application.Current.Dispatcher.Invoke(() => {
                 if (PopupMessage.IsOpen)
