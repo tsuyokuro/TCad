@@ -23,6 +23,8 @@ namespace Plotter
         void SetWorldScale(double scale);
 
         void DrawModeUpdated(DrawTools.DrawMode mode);
+
+        void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y);
     }
 
     public interface IPlotterViewForDC

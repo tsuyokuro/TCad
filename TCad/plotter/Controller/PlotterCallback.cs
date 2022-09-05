@@ -1,8 +1,9 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -22,30 +23,78 @@ namespace Plotter.Controller
             HAND,
         }
 
-        public Action<PlotterController, PlotterStateInfo> StateChanged = (controller, state) => { };
+        private IPlotterViewModel VM;
 
-        public Action<PlotterController, MenuInfo, int, int> RequestContextMenu = (controller, state, x, y) => { };
+        public string CurrentFileName
+        {
+            get => VM.CurrentFileName;
+            set => VM.CurrentFileName = value;
+        }
 
-        public Action<PlotterController, LayerListInfo> LayerListChanged = (controller, layerListInfo) => { };
+        public PlotterCallback(IPlotterViewModel vm)
+        {
+            VM = vm;
+        }
 
-        //public Action<PlotterController, bool> DataChanged = (controller, redraw) => { };
+        public void StateChanged(PlotterController sender, PlotterStateInfo si)
+        {
+            VM?.StateChanged(sender, si);
+        }
 
-        public Action<PlotterController, Vector3d, CursorType> CursorPosChanged = (controller, pos, cursorType) => { };
+        public void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo)
+        {
+            VM?.LayerListChanged(sender, layerListInfo);
+        }
 
-        public Action<bool> UpdateObjectTree = (remakeTree) => { };
+        public void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type)
+        {
+            VM?.CursorPosChanged(sender, pt, type);
+        }
 
-        public Action<int> SetObjectTreePos = (index) => { };
+        public void UpdateTreeView(bool remakeTree)
+        {
+            VM?.UpdateTreeView(remakeTree);
+        }
 
-        public Func<uint, int> FindObjectTreeItemIndex = (id) => { return 0; };
+        public void SetTreeViewPos(int index)
+        {
+            VM?.SetTreeViewPos(index);
+        }
 
-        public Action<string, MessageType> OpenPopupMessage = (text, messageType) => { };
+        public int FindTreeViewItemIndex(uint id)
+        {
+            if (VM == null) return -1;
+            return VM.FindTreeViewItemIndex(id);
+        }
 
-        public Action ClosePopupMessage = () => { };
+        public void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
+        {
+            VM?.OpenPopupMessage(text, messageType);
+        }
 
-        public Action<bool> CursorLocked = (locked) => {}; 
+        public void ClosePopupMessage()
+        {
+            VM?.ClosePopupMessage();
+        }
 
-        public Action<MouseCursorType> ChangeMouseCursor = (cursorType) => {};
+        public void CursorLocked(bool locked)
+        {
+            VM?.CursorLocked(locked);
+        }
 
-        public Func<string, List<string>> HelpOfKey = (keyword) => { return null; };
+        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        {
+            VM?.ChangeMouseCursor(cursorType);
+        }
+
+        public List<string> HelpOfKey(string keyword)
+        {
+            return VM?.HelpOfKey(keyword);
+        }
+
+        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        {
+            VM?.ShowContextMenu(sender, menuInfo, x, y);
+        }
     }
 }

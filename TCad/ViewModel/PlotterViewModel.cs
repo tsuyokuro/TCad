@@ -29,6 +29,30 @@ namespace TCad.ViewModel
             get;
             set;
         }
+
+        void StateChanged(PlotterController sender, PlotterStateInfo si);
+
+        void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo);
+
+        void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type);
+
+        void UpdateTreeView(bool remakeTree);
+
+        void SetTreeViewPos(int index);
+
+        int FindTreeViewItemIndex(uint id);
+
+        void OpenPopupMessage(string text, PlotterCallback.MessageType messageType);
+
+        void ClosePopupMessage();
+
+        void CursorLocked(bool locked);
+
+        void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType);
+
+        List<string> HelpOfKey(string keyword);
+
+        void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y);
     }
 
     public class PlotterViewModel : ViewModelContext, IPlotterViewModel, INotifyPropertyChanged
@@ -157,21 +181,6 @@ namespace TCad.ViewModel
             SelectMode = mController.SelectMode;
             CreatingFigureType = mController.CreatingFigType;
 
-            mController.Callback.StateChanged = StateChanged;
-
-            mController.Callback.CursorPosChanged = CursorPosChanged;
-
-            mController.Callback.OpenPopupMessage = OpenPopupMessage;
-
-            mController.Callback.ClosePopupMessage = ClosePopupMessage;
-
-            mController.Callback.CursorLocked = CursorLocked;
-
-            mController.Callback.ChangeMouseCursor = ChangeMouseCursor;
-
-            mController.Callback.HelpOfKey = HelpOfKey;
-
-
             mController.UpdateLayerList();
 
             mMoveKeyHandler = new MoveKeyHandler(Controller);
@@ -191,12 +200,12 @@ namespace TCad.ViewModel
             }
         }
 
-        private void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
+        public void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
         {
             mMainWindow.OpenPopupMessage(text, messageType);
         }
 
-        private void ClosePopupMessage()
+        public void ClosePopupMessage()
         {
             mMainWindow.ClosePopupMessage();
         }
@@ -287,44 +296,6 @@ namespace TCad.ViewModel
                 t = ss[i];
                 p = Char.ToUpper(t[0]) + t.Substring(1);
                 ret += "+" + p;
-            }
-
-            return ret;
-        }
-
-        public List<string> HelpOfKey(string keyword)
-        {
-            List<string> ret = new List<string>();
-
-            if (keyword == null)
-            {
-                foreach (String s in KeyMap.Keys)
-                {
-                    KeyAction k = KeyMap[s];
-
-                    if (k.Description == null) continue;
-
-                    string t = GetDisplayKeyString(s);
-
-                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
-                }
-
-                return ret;
-            }
-
-            Regex re = new Regex(keyword, RegexOptions.IgnoreCase);
-
-            foreach (String s in KeyMap.Keys)
-            {
-                KeyAction k = KeyMap[s];
-
-                if (k.Description == null) continue;
-
-                if (re.Match(k.Description).Success)
-                {
-                    string t = GetDisplayKeyString(s);
-                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
-                }
             }
 
             return ret;
@@ -740,7 +711,7 @@ namespace TCad.ViewModel
 #endregion
 
         // Handle events from PlotterController
-#region Event From PlotterController
+        #region Event From PlotterController
 
         public void StateChanged(PlotterController sender, PlotterStateInfo si)
         {
@@ -755,7 +726,7 @@ namespace TCad.ViewModel
             }
         }
 
-        private void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type)
+        public void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type)
         {
             if (type == Plotter.Controller.CursorType.TRACKING)
             {
@@ -767,7 +738,7 @@ namespace TCad.ViewModel
             }
         }
 
-        private void CursorLocked(bool locked)
+        public void CursorLocked(bool locked)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
@@ -775,7 +746,7 @@ namespace TCad.ViewModel
             }, true);
         }
 
-        private void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
@@ -783,11 +754,73 @@ namespace TCad.ViewModel
             }, true);
         }
 
-#endregion Event From PlotterController
+        public List<string> HelpOfKey(string keyword)
+        {
+            List<string> ret = new List<string>();
 
+            if (keyword == null)
+            {
+                foreach (String s in KeyMap.Keys)
+                {
+                    KeyAction k = KeyMap[s];
+
+                    if (k.Description == null) continue;
+
+                    string t = GetDisplayKeyString(s);
+
+                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
+                }
+
+                return ret;
+            }
+
+            Regex re = new Regex(keyword, RegexOptions.IgnoreCase);
+
+            foreach (String s in KeyMap.Keys)
+            {
+                KeyAction k = KeyMap[s];
+
+                if (k.Description == null) continue;
+
+                if (re.Match(k.Description).Success)
+                {
+                    string t = GetDisplayKeyString(s);
+                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
+                }
+            }
+
+            return ret;
+        }
+
+        public void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo)
+        {
+            LayerListVM.LayerListChanged(sender, layerListInfo);
+        }
+
+        public void UpdateTreeView(bool remakeTree)
+        {
+            ObjTreeVM?.UpdateTreeView(remakeTree);
+        }
+
+        public void SetTreeViewPos(int index)
+        {
+            ObjTreeVM.SetTreeViewPos(index);
+        }
+
+        public int FindTreeViewItemIndex(uint id)
+        {
+            return ObjTreeVM.FindTreeViewItemIndex(id);
+        }
+
+        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        {
+            mViewManager.PlotterView.ShowContextMenu(sender, menuInfo, x, y);
+        }
+
+        #endregion Event From PlotterController
 
         // Keyboard handling
-#region Keyboard handling
+        #region Keyboard handling
         private string GetModifyerKeysString()
         {
             ModifierKeys modifierKeys = Keyboard.Modifiers;

@@ -1,4 +1,4 @@
-﻿using TCad.Controls;
+using TCad.Controls;
 using TCad.Dialogs;
 using Plotter;
 using Plotter.Settings;
@@ -36,12 +36,6 @@ namespace TCad.ViewModel
         public ObjectTreeViewModel(ViewModelContext context)
         {
             mVMContext = context;
-
-            mVMContext.Controller.Callback.UpdateObjectTree = UpdateTreeView;
-
-            mVMContext.Controller.Callback.SetObjectTreePos = SetTreeViewPos;
-
-            mVMContext.Controller.Callback.FindObjectTreeItemIndex = FindTreeViewItemIndex;
         }
 
         private void CheckChanged(CadObjTreeItem item)
@@ -52,7 +46,7 @@ namespace TCad.ViewModel
             mVMContext.Redraw();
         }
 
-        private void UpdateTreeView(bool remakeTree)
+        public void UpdateTreeView(bool remakeTree)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
@@ -70,7 +64,7 @@ namespace TCad.ViewModel
             mObjectTree.Update(remakeTree, SettingsHolder.Settings.FilterObjectTree, mVMContext.Controller.CurrentLayer);
         }
 
-        private void SetTreeViewPos(int index)
+        public void SetTreeViewPos(int index)
         {
             if (mObjectTree == null)
             {
@@ -82,7 +76,7 @@ namespace TCad.ViewModel
             }, true);
         }
 
-        private int FindTreeViewItemIndex(uint id)
+        public int FindTreeViewItemIndex(uint id)
         {
             if (mObjectTree == null)
             {

@@ -90,7 +90,7 @@ namespace Plotter.Controller
         public bool ContinueCreate { set; get; } = true;
 
 
-        public PlotterCallback Callback = new PlotterCallback();
+        public PlotterCallback Callback;
 
 
         public List<CadFigure> TempFigureList = new List<CadFigure>();
@@ -129,6 +129,8 @@ namespace Plotter.Controller
         {
             PlotterVM = vm;
 
+            Callback = new PlotterCallback(vm);
+
             InitState();
 
             CadLayer layer = mDB.NewLayer();
@@ -151,17 +153,17 @@ namespace Plotter.Controller
         #region ObjectTree handling
         public void UpdateObjectTree(bool remakeTree)
         {
-            Callback.UpdateObjectTree(remakeTree);
+            Callback.UpdateTreeView(remakeTree);
         }
 
         public void SetObjectTreePos(int index)
         {
-            Callback.SetObjectTreePos(index);
+            Callback.SetTreeViewPos(index);
         }
 
         public int FindObjectTreeItem(uint id)
         {
-            return Callback.FindObjectTreeItemIndex(id);
+            return Callback.FindTreeViewItemIndex(id);
         }
         #endregion ObjectTree handling
 

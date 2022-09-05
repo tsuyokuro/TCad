@@ -1,4 +1,4 @@
-﻿using Plotter;
+using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.ObjectModel;
@@ -65,7 +65,6 @@ namespace TCad.ViewModel
         public LayerListViewModel(ViewModelContext context)
         {
             mContext = context;
-            mContext.Controller.Callback.LayerListChanged = LayerListChanged;
         }
 
         public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)

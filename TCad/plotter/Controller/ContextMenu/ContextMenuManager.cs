@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using TCad.Properties;
 
 namespace Plotter.Controller
@@ -68,7 +68,7 @@ namespace Plotter.Controller
 
             if (mContextMenuInfo.Items.Count > 0)
             {
-                mController.Callback.RequestContextMenu(mController, mContextMenuInfo, (int)x, (int)y);
+                mController.Callback.ShowContextMenu(mController, mContextMenuInfo, (int)x, (int)y);
             }
         }
 

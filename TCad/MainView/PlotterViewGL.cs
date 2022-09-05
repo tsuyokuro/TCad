@@ -1,4 +1,4 @@
-﻿#define MOUSE_THREAD
+#define MOUSE_THREAD
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -278,17 +278,7 @@ namespace Plotter
 
         public void SetController(PlotterController controller)
         {
-            if (mController != null)
-            {
-                mController.Callback.RequestContextMenu -= ShowContextMenu;
-            }
-
             mController = controller;
-
-            if (controller != null)
-            {
-                mController.Callback.RequestContextMenu += ShowContextMenu;
-            }
         }
 
         public void PushToFront(DrawContext dc)

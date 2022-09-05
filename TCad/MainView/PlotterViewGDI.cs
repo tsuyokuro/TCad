@@ -1,4 +1,4 @@
-﻿//#define MOUSE_THREAD
+//#define MOUSE_THREAD
 
 using System;
 using System.Drawing;
@@ -286,17 +286,7 @@ namespace Plotter
 
         public void SetController(PlotterController controller)
         {
-            if (mController != null)
-            {
-                mController.Callback.RequestContextMenu -= ShowContextMenu;
-            }
-
             mController = controller;
-
-            if (controller != null)
-            {
-                mController.Callback.RequestContextMenu += ShowContextMenu;
-            }
         }
 
         public void CursorLocked(bool locked)
