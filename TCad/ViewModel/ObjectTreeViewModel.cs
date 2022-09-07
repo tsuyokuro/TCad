@@ -7,7 +7,7 @@ namespace TCad.ViewModel
 {
     public class ObjectTreeViewModel
     {
-        ViewModelContext mVMContext;
+        IPlotterViewModel mVMContext;
 
         ICadObjectTree mObjectTree;
 
@@ -33,7 +33,7 @@ namespace TCad.ViewModel
             get => mObjectTree;
         }
 
-        public ObjectTreeViewModel(ViewModelContext context)
+        public ObjectTreeViewModel(IPlotterViewModel context)
         {
             mVMContext = context;
         }

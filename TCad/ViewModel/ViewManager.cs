@@ -1,4 +1,4 @@
-﻿//#define USE_GDI_VIEW
+//#define USE_GDI_VIEW
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -12,7 +12,7 @@ namespace TCad.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModelContext mContext;
+        public IPlotterViewModel mContext;
 
         private IPlotterView mPlotterView = null;
         public IPlotterView PlotterView
@@ -50,7 +50,7 @@ namespace TCad.ViewModel
             get => mViewMode;
         }
 
-        public ViewManager(ViewModelContext context)
+        public ViewManager(IPlotterViewModel context)
         {
             mContext = context;
         }

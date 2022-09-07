@@ -60,9 +60,9 @@ namespace TCad.ViewModel
             }
         }
 
-        private ViewModelContext mContext;
+        private IPlotterViewModel mContext;
 
-        public LayerListViewModel(ViewModelContext context)
+        public LayerListViewModel(IPlotterViewModel context)
         {
             mContext = context;
         }
@@ -73,7 +73,7 @@ namespace TCad.ViewModel
             mContext.Redraw();
         }
 
-        public void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo)
+        public void LayerListChanged(LayerListInfo layerListInfo)
         {
             foreach (LayerHolder lh in LayerList)
             {

@@ -171,7 +171,7 @@ namespace Plotter.Controller
         #region Notify
         public void UpdateLayerList()
         {
-            ViewIF.LayerListChanged(this, GetLayerListInfo());
+            ViewIF.LayerListChanged(GetLayerListInfo());
         }
 
         private LayerListInfo GetLayerListInfo()
@@ -188,7 +188,7 @@ namespace Plotter.Controller
             PlotterStateInfo si = default(PlotterStateInfo);
             si.set(this);
 
-            ViewIF.StateChanged(this, si);
+            ViewIF.StateChanged(si);
         }
         #endregion Notify
 

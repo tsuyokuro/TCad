@@ -22,7 +22,7 @@ using Plotter.Serializer;
 
 namespace TCad.ViewModel
 {
-    public class PlotterViewModel : ViewModelContext, IPlotterViewModel, INotifyPropertyChanged
+    public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,6 +38,18 @@ namespace TCad.ViewModel
                 Up = up;
                 Description = description;
             }
+        }
+
+        protected PlotterController mController;
+        public PlotterController Controller
+        {
+            get => mController;
+        }
+
+        protected ICadMainWindow mMainWindow;
+        public ICadMainWindow MainWindow
+        {
+            get => mMainWindow;
         }
 
         private Dictionary<string, Action> CommandMap;
@@ -680,7 +692,7 @@ namespace TCad.ViewModel
         // Handle events from PlotterController
         #region Event From PlotterController
 
-        public void StateChanged(PlotterController sender, PlotterStateInfo si)
+        public void StateChanged(PlotterStateInfo si)
         {
             if (CreatingFigureType != si.CreatingFigureType)
             {
@@ -693,7 +705,7 @@ namespace TCad.ViewModel
             }
         }
 
-        public void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type)
+        public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type)
         {
             if (type == Plotter.Controller.CursorType.TRACKING)
             {
@@ -759,9 +771,9 @@ namespace TCad.ViewModel
             return ret;
         }
 
-        public void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo)
+        public void LayerListChanged(LayerListInfo layerListInfo)
         {
-            LayerListVM.LayerListChanged(sender, layerListInfo);
+            LayerListVM.LayerListChanged(layerListInfo);
         }
 
         public void UpdateTreeView(bool remakeTree)
@@ -779,9 +791,9 @@ namespace TCad.ViewModel
             return ObjTreeVM.FindTreeViewItemIndex(id);
         }
 
-        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
         {
-            mViewManager.PlotterView.ShowContextMenu(sender, menuInfo, x, y);
+            mViewManager.PlotterView.ShowContextMenu(menuInfo, x, y);
         }
 
         #endregion Event From PlotterController
@@ -1010,10 +1022,15 @@ namespace TCad.ViewModel
             }
         }
 
-        public override void DrawModeUpdated(DrawTools.DrawMode mode)
+        public void DrawModeUpdated(DrawTools.DrawMode mode)
         {
             mViewManager.DrawModeUpdated(mode);
             mMainWindow.DrawModeUpdated(mode);
+        }
+
+        public void Redraw()
+        {
+            ThreadUtil.RunOnMainThread(mController.Redraw, true);
         }
     }
 }

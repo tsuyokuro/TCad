@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.ComponentModel;
 using OpenTK;
 using OpenTK.Mathematics;
@@ -15,7 +15,7 @@ namespace TCad.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModelContext mContext;
+        public IPlotterViewModel mContext;
 
         [UserSettingData]
         public bool ContinueCreateFigure
@@ -349,7 +349,7 @@ namespace TCad.ViewModel
             get => SettingsHolder.Settings.PrintLineSmooth;
         }
 
-        public SettingsVeiwModel(ViewModelContext context)
+        public SettingsVeiwModel(IPlotterViewModel context)
         {
             mContext = context;
         }

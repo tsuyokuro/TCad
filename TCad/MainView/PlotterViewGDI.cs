@@ -240,14 +240,14 @@ namespace Plotter
             };
         }
 
-        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
         {
             ThreadUtil.RunOnMainThread(() => {
-                ShowContextMenuProc(sender, menuInfo, x, y);
+                ShowContextMenuProc(menuInfo, x, y);
             }, true);
         }
 
-        private void ShowContextMenuProc(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        private void ShowContextMenuProc(MenuInfo menuInfo, int x, int y)
         {
             mContextMenu.Items.Clear();
 

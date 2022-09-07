@@ -1,6 +1,7 @@
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 using Plotter.Controller;
+using Plotter;
 
 namespace TCad.ViewModel
 {
@@ -29,11 +30,26 @@ namespace TCad.ViewModel
             set;
         }
 
-        void StateChanged(PlotterController sender, PlotterStateInfo si);
+        PlotterController Controller
+        {
+            get;
+        }
 
-        void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo);
+        ICadMainWindow MainWindow
+        {
+            get;
+        }
 
-        void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type);
+        void Redraw();
+
+        void DrawModeUpdated(DrawTools.DrawMode mode);
+
+
+        void StateChanged(PlotterStateInfo si);
+
+        void LayerListChanged(LayerListInfo layerListInfo);
+
+        void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type);
 
         void UpdateTreeView(bool remakeTree);
 
@@ -51,28 +67,39 @@ namespace TCad.ViewModel
 
         List<string> HelpOfKey(string keyword);
 
-        void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y);
+        void ShowContextMenu(MenuInfo menuInfo, int x, int y);
 
 
         public static readonly IPlotterViewModel Dummy = new DummyPlotterViewModel();
+    }
 
-        public class DummyPlotterViewModel : IPlotterViewModel
+
+    public class DummyPlotterViewModel : IPlotterViewModel
+    {
+        private static List<string> EmptyList = new List<string>();
+
+        public string CurrentFileName { get => null; set { } }
+
+        public PlotterController Controller
         {
-            private static List<string> EmptyList = new List<string>();
-
-            public string CurrentFileName { get => null; set { } }
-            public void ChangeMouseCursor(UITypes.MouseCursorType cursorType) {}
-            public void ClosePopupMessage() {}
-            public void CursorLocked(bool locked) {}
-            public void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type) {}
-            public int FindTreeViewItemIndex(uint id) { return -1; }
-            public List<string> HelpOfKey(string keyword) { return EmptyList; }
-            public void LayerListChanged(PlotterController sender, LayerListInfo layerListInfo) {}
-            public void OpenPopupMessage(string text, UITypes.MessageType messageType) {}
-            public void SetTreeViewPos(int index) { }
-            public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y) { }
-            public void StateChanged(PlotterController sender, PlotterStateInfo si) { }
-            public void UpdateTreeView(bool remakeTree) { }
+            get => null;
         }
+
+        public ICadMainWindow MainWindow => throw new System.NotImplementedException();
+
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType) { }
+        public void ClosePopupMessage() { }
+        public void CursorLocked(bool locked) { }
+        public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type) { }
+        public void DrawModeUpdated(DrawTools.DrawMode mode) { }
+        public int FindTreeViewItemIndex(uint id) { return -1; }
+        public List<string> HelpOfKey(string keyword) { return EmptyList; }
+        public void LayerListChanged(LayerListInfo layerListInfo) { }
+        public void OpenPopupMessage(string text, UITypes.MessageType messageType) { }
+        public void Redraw() { }
+        public void SetTreeViewPos(int index) { }
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y) { }
+        public void StateChanged(PlotterStateInfo si) { }
+        public void UpdateTreeView(bool remakeTree) { }
     }
 }
