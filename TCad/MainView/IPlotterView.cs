@@ -1,4 +1,5 @@
 using Plotter.Controller;
+using System;
 using TCad.ViewModel;
 
 namespace Plotter
@@ -14,8 +15,6 @@ namespace Plotter
         {
             get;
         }
-
-        void SetController(PlotterController controller);
 
         void CursorLocked(bool locked);
 

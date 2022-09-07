@@ -22,6 +22,8 @@ namespace Plotter
 
         private PlotterController mController = null;
 
+        private IPlotterViewModel mVM;
+
         private Vector3d PrevMousePos = default;
 
         private MouseButtons DownButton = MouseButtons.None;
@@ -33,38 +35,31 @@ namespace Plotter
 
         private Cursor PointCursor;
 
-        public DrawContext DrawContext
-        {
-            get
-            {
-                return mDrawContext;
-            }
-        }
 
-        public Control FormsControl
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public DrawContext DrawContext => mDrawContext;
+
+        public Control FormsControl => this;
+
 
         private DrawContextGLOrtho mDrawContextOrtho;
 
         private DrawContextGLPers mDrawContextPers;
 
 
-        public static PlotterViewGL Create()
+        public static PlotterViewGL Create(IPlotterViewModel vm)
         {
             DOut.pl("in PlotterViewGL Create");
-            PlotterViewGL v = new PlotterViewGL();
+            PlotterViewGL v = new PlotterViewGL(vm);
             v.MakeCurrent();
             DOut.pl("out PlotterViewGL Create");
             return v;
         }
 
-        private PlotterViewGL()
+        private PlotterViewGL(IPlotterViewModel vm)
         {
+            mVM = vm;
+            mController = mVM.Controller;
+
             SetupContextMenu();
 
             base.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
@@ -207,8 +202,7 @@ namespace Plotter
         public void Redraw()
         {
 #if MOUSE_THREAD
-            ThreadUtil.RunOnMainThread(
-                mController.Redraw, wait: false);
+            Invoke(mController.Redraw);
 #else
             mController.Redraw(mController.DC);
 #endif
@@ -275,11 +269,6 @@ namespace Plotter
             }
 
             mDrawContext.SetViewSize(Size.Width, Size.Height);
-        }
-
-        public void SetController(PlotterController controller)
-        {
-            mController = controller;
         }
 
         public void PushToFront(DrawContext dc)

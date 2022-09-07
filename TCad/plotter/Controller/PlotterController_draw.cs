@@ -1,4 +1,4 @@
-﻿
+
 using CadDataTypes;
 using MyCollections;
 using OpenTK;

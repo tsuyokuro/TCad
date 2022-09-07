@@ -17,6 +17,8 @@ namespace Plotter
     {
         private PlotterController mController = null;
 
+        private IPlotterViewModel mVM;
+
         private bool firstSizeChange = true;
 
         ContextMenuEx mCurrentContextMenu = null;
@@ -28,23 +30,21 @@ namespace Plotter
 
         private Cursor PointCursor;
 
-        public DrawContext DrawContext
+        public DrawContext DrawContext => mDrawContext;
+
+        public Control FormsControl => this;
+
+        public static PlotterViewGDI Create(IPlotterViewModel vm)
         {
-            get => mDrawContext;
+            return new PlotterViewGDI(vm);
         }
 
-        public Control FormsControl
+        private PlotterViewGDI(IPlotterViewModel vm)
         {
-            get => this;
-        }
+            mVM = vm;
 
-        public static PlotterViewGDI Create()
-        {
-            return new PlotterViewGDI();
-        }
+            mController = vm.Controller;
 
-        private PlotterViewGDI()
-        {
             mDrawContext = new DrawContextGDI(this);
             mDrawContext.SetupTools(DrawTools.DrawMode.DARK);
 
@@ -283,11 +283,6 @@ namespace Plotter
             // PushDraw is called to redraw
             // PushDrawが呼ばれて再描画が行われる
             mController.Redraw();
-        }
-
-        public void SetController(PlotterController controller)
-        {
-            mController = controller;
         }
 
         public void CursorLocked(bool locked)
