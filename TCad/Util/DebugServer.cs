@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -10,6 +10,9 @@ namespace TCad.Util
 {
     internal class DebugServer
     {
+        public const int DefaultPort = 2300;
+        public const string DefaultAddr = "127.0.0.1";
+
         private TcpListener mlistener = null;
         private IPEndPoint mLocalEndPoint;
 
@@ -20,6 +23,11 @@ namespace TCad.Util
         public DebugServer()
         {
             mPool = new FastRingBuffer<string>(20);
+        }
+
+        public void Start()
+        {
+            Start(DefaultAddr, DefaultPort);
         }
 
         public void Start(string strIpAddr, int port)

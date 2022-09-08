@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace Plotter
@@ -78,9 +78,11 @@ namespace Plotter
         {
             DateTime dt = DateTime.Now;
 
+            int tid = Thread.CurrentThread.ManagedThreadId;
+
             Begin();
             PutCount++;
-            PrintLn(dt.ToString("HH:mm:ss.fff") + " " + space + s);
+            PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " + space + s);
             End();
         }
     }

@@ -202,7 +202,7 @@ namespace Plotter
         public void Redraw()
         {
 #if MOUSE_THREAD
-            Invoke(mController.Redraw);
+            ThreadUtil.RunOnMainThread(mController.Redraw, false);
 #else
             mController.Redraw(mController.DC);
 #endif

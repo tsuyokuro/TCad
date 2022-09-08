@@ -1,4 +1,4 @@
-﻿using TCad.Properties;
+using TCad.Properties;
 using Microsoft.Scripting.Hosting;
 using System;
 using System.Collections.Generic;
@@ -221,6 +221,7 @@ namespace Plotter.Controller
             Controller.Clear();
             Controller.DrawAll();
             Controller.PushToView();
+            Controller.UpdateObjectTree(true);
 
             if (callback != null)
             {

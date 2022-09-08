@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -1879,7 +1879,6 @@ namespace Plotter.Controller
             });
         }
 
-        /*
         public void Redraw()
         {
             Env.RunOnMainThread(() =>
@@ -1889,7 +1888,6 @@ namespace Plotter.Controller
                 Controller.PushToView();
             });
         }
-        */
 
         public CadFigure CreatePolyLines()
         {

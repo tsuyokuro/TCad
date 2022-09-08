@@ -170,11 +170,9 @@ namespace TCad
 #endif
 #if USE_DEBUG_SERVER
             DServer = new DebugServer();
-            DServer.Start("127.0.0.1", 2300);
+            DServer.Start();
 #endif
             mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
-            ThreadUtil.Init();
 
             //OpenTK.Toolkit.Init();
 
