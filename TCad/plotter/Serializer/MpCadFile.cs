@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
-//using JObj = System.Text.Json.Nodes.JsonObject;
-using JObj = Newtonsoft.Json.Linq.JObject;
+using JObj = System.Text.Json.Nodes.JsonObject;
+//using JObj = Newtonsoft.Json.Linq.JObject;
 using System;
 
 namespace Plotter.Serializer

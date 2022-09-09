@@ -1,11 +1,11 @@
-﻿using Plotter.Serializer;
+using Plotter.Serializer;
 using System;
 using System.IO;
 using System.Reflection;
 using OpenTK.Mathematics;
 using System.Text.Json;
-//using JObj = System.Text.Json.Nodes.JsonObject;
-using JObj = Newtonsoft.Json.Linq.JObject;
+using JObj = System.Text.Json.Nodes.JsonObject;
+//using JObj = Newtonsoft.Json.Linq.JObject;
 
 
 namespace Plotter.Settings
