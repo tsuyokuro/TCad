@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="TCad.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -842,14 +842,14 @@
                                 Background="{StaticResource MsgBGColor}"
                                 BorderBrush="{StaticResource BoarderColor}"
                                 BorderThickness="1,1,1,1"
-                                CandidateListItemContainerStyle="{StaticResource AutoCompListBoxItem}"
-                                CandidateListStyle="{StaticResource AutoCompListBoxStyle}"
-                                CandidateScrollViewerStyle="{StaticResource AutoCompScrollViewerStyle}"
+                                CandidateListBorderStyle="{StaticResource CandidateListBorderStyle}"
+                                CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"
+                                CandidateListBoxStyle="{StaticResource CandidateListBoxStyle}"
+                                CandidateListItemContainerStyle="{StaticResource CandidateListItemContainerStyle}"
                                 FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                 FontSize="16"
                                 FontWeight="Thin"
                                 Foreground="{StaticResource TextColor}" />
-
                         </Grid>
                     </Grid>
                 </Grid>

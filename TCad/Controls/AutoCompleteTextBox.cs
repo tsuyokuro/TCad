@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -32,22 +32,29 @@ namespace TCad.Controls
 
         private ScrollViewer mCandidateScrollViewer = new ScrollViewer();
 
-        public Style CandidateListItemContainerStyle
+
+        public Style CandidateListBorderStyle
         {
-            get => mCandidateListBox.ItemContainerStyle;
-            set => mCandidateListBox.ItemContainerStyle = value;
+            get => mCandidateBorder.Style;
+            set => mCandidateBorder.Style = value;
         }
 
-        public Style CandidateListStyle
+        public Style CandidateListScrollViewerStyle
+        {
+            get => mCandidateScrollViewer.Style;
+            set => mCandidateScrollViewer.Style = value;
+        }
+
+        public Style CandidateListBoxStyle
         {
             get => mCandidateListBox.Style;
             set => mCandidateListBox.Style = value;
         }
 
-        public Style CandidateScrollViewerStyle
+        public Style CandidateListItemContainerStyle
         {
-            get => mCandidateScrollViewer.Style;
-            set => mCandidateScrollViewer.Style = value;
+            get => mCandidateListBox.ItemContainerStyle;
+            set => mCandidateListBox.ItemContainerStyle = value;
         }
 
         private bool DisableCandidateList = false;
@@ -194,6 +201,7 @@ namespace TCad.Controls
                 }
 
                 mCandidatePopup.PlacementTarget = this;
+                mCandidatePopup.MinWidth = ActualWidth;
                 mCandidatePopup.IsOpen = true;
             }
             else
@@ -275,7 +283,8 @@ namespace TCad.Controls
             return true;
         }
 
-        Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+[\(]*");
+        //Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+[\(]*");
+        Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+");
 
         int mReplacePos = -1;
 
@@ -330,8 +339,8 @@ namespace TCad.Controls
 
             foreach (string text in CandidateList)
             {
-                //if (text.IndexOf(targetWord, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                if (text.StartsWith(targetWord))
+                if (text.IndexOf(targetWord, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                //if (text.StartsWith(targetWord))
                 {
                     tempList.Add(text);
                 }

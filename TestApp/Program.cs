@@ -8,101 +8,50 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TestApp
 {
-    public class FastRingBuffer<T>
-    {
-        public T[] Data;
-        public int Top = 0;
-        public int Bottom = 0;
-        public int Mask;
-
-        public T this[int i] => Data[(i + Top) & Mask];
-
-        public int Count
-        {
-            get;
-            private set;
-        }
-
-        public int BufferSize
-        {
-            get;
-            private set;
-        }
-
-        public FastRingBuffer(int size)
-        {
-            CreateBuffer(size);
-        }
-
-        public FastRingBuffer()
-        {
-        }
-
-        public void CreateBuffer(int size)
-        {
-            BufferSize = Pow2((uint)size);
-            Data = new T[BufferSize];
-            Mask = BufferSize - 1;
-        }
-
-        public void Clear()
-        {
-            Top = 0;
-            Bottom = 0;
-            Count = 0;
-        }
-
-        public static int Pow2(uint n)
-        {
-            --n;
-            int p = 0;
-            for (; n != 0; n >>= 1)
-            {
-                p = (p << 1) + 1;
-            }
-
-            return p + 1;
-        }
-
-        public void Add(T elem)
-        {
-            Data[Bottom] = elem;
-            Bottom = (Bottom + 1) & Mask;
-
-            if (Count < BufferSize)
-            {
-                Count++;
-            }
-            else
-            {
-                Top = (Top + 1) & Mask;
-            }
-        }
-    }
-
-    public class FileUtil
-    {
-        public static string GetExternalDataDir(string fname)
-        {
-            string path = fname + "_external";
-            return path;
-        }
-    }
 
     internal class Program
     {
+        static void test001()
+        {
+            string src1 = "x=abc123";
+            string src2 = "x=abc123(456), ";
+            //Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+[\(]*");
+
+            //Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+");
+            Regex WordPattern = new Regex(@"[@a-zA-Z_0-9\(\)]+");
+
+            int cpos = 2;
+
+            MatchCollection mc = WordPattern.Matches(src2);
+
+            int replacePos;
+            int replaceLen;
+            string targetWord = "";
+
+            foreach (Match m in mc)
+            {
+                if (cpos >= m.Index && cpos <= m.Index + m.Length)
+                {
+                    replacePos = m.Index;
+                    replaceLen = m.Length;
+                    targetWord = m.Value;
+
+                    break;
+                }
+            }
+
+            Console.WriteLine(targetWord);
+        }
+
         static void Main(string[] args)
         {
-            string fname = @"F:\work\test.tcad";
-
-            string epath =  FileUtil.GetExternalDataDir(fname);
-
-            Directory.CreateDirectory(epath);
-
-            string dname = Path.GetFileName(epath);
+            test001();
+            Console.WriteLine("<<< END >>>");
+            Console.ReadLine();
         }
     }
 }
