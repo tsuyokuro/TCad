@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter;
@@ -43,14 +43,19 @@ namespace TCad.ViewModel
                 IsStarted = true;
             }
 
+            bool moveLittle = CadKeyboard.IsKeyPressed(System.Windows.Forms.Keys.ShiftKey);
+            double a = moveLittle ? 0.1 : 1.0;
+
+            //DOut.pl("MoveKeyDown a:" + a);
+
             Vector3d wx = Controller.DC.DevVectorToWorldVector(Vector3d.UnitX);
             Vector3d wy = Controller.DC.DevVectorToWorldVector(Vector3d.UnitY);
 
             wx = wx.UnitVector();
             wy = wy.UnitVector();
 
-            wx *= SettingsHolder.Settings.KeyMoveUnit;
-            wy *= SettingsHolder.Settings.KeyMoveUnit;
+            wx *= (SettingsHolder.Settings.MoveKeyUnitX * a);
+            wy *= (SettingsHolder.Settings.MoveKeyUnitY * a);
 
             if (CadKeyboard.IsKeyPressed(System.Windows.Forms.Keys.Left))
             {

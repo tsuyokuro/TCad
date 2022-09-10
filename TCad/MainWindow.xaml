@@ -359,6 +359,10 @@
                                     Header="{x:Static properties:Resources.menu_snap_settings}"
                                     Tag="snap_settings" />
                                 <MenuItem
+                                    Click="Command_Clicked"
+                                    Header="Move Key settings"
+                                    Tag="move_key_settings" />
+                                <MenuItem
                                     Header="{x:Static properties:Resources.menu_continue_create_figure}"
                                     IsCheckable="True"
                                     IsChecked="{Binding ContinueCreateFigure}" />

@@ -287,15 +287,27 @@ namespace TCad.ViewModel
         }
 
         [UserSettingData]
-        public double KeyMoveUnit
+        public double MoveKeyUnitX
         {
             set
             {
-                SettingsHolder.Settings.KeyMoveUnit = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(KeyMoveUnit)));
+                SettingsHolder.Settings.MoveKeyUnitX = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MoveKeyUnitX)));
             }
 
-            get => SettingsHolder.Settings.KeyMoveUnit;
+            get => SettingsHolder.Settings.MoveKeyUnitX;
+        }
+
+        [UserSettingData]
+        public double MoveKeyUnitY
+        {
+            set
+            {
+                SettingsHolder.Settings.MoveKeyUnitY = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MoveKeyUnitY)));
+            }
+
+            get => SettingsHolder.Settings.MoveKeyUnitY;
         }
 
         [UserSettingData]

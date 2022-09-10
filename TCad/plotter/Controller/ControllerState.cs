@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System;
@@ -30,6 +30,7 @@ namespace Plotter.Controller
         {
             if (CurrentState != null)
             {
+                //DOut.pl(CurrentState.GetType().Name + " Exit");
                 CurrentState.Exit();
             }
 
@@ -37,6 +38,7 @@ namespace Plotter.Controller
             
             if (CurrentState != null)
             {
+                //DOut.pl(CurrentState.GetType().Name + " Enter");
                 CurrentState.Enter();
             }
 
@@ -51,7 +53,7 @@ namespace Plotter.Controller
         {
             public virtual States State
             {
-                get => States.SELECT;
+                get => States.NONE;
             }
 
             protected PlotterController Ctrl;
@@ -95,13 +97,11 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
                 isStart = true;
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)
@@ -172,12 +172,10 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)
@@ -224,12 +222,10 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)
@@ -283,13 +279,11 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
                 isStart = true;
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)
@@ -306,7 +300,7 @@ namespace Plotter.Controller
                 //Ctrl.mSegSearcher.SetIgnoreList(null);
                 //Ctrl.mSegSearcher.SetIgnoreSeg(null);
 
-                DOut.pl("LButtonUp isStart:" + isStart);
+                //DOut.pl("LButtonUp isStart:" + isStart);
                 if (!isStart)
                 {
                     Ctrl.EndEdit();
@@ -329,7 +323,7 @@ namespace Plotter.Controller
                     if (d > SettingsHolder.Settings.InitialMoveLimit)
                     {
                         isStart = false;
-                        DOut.pl("MouseMove change isStart:" + isStart);
+                        //DOut.pl("MouseMove change isStart:" + isStart);
                         Ctrl.StartEdit();
                     }
                 }
@@ -371,12 +365,10 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)
@@ -438,12 +430,10 @@ namespace Plotter.Controller
 
             public override void Enter()
             {
-                DOut.pl(GetType().Name + " Enter");
             }
 
             public override void Exit()
             {
-                DOut.pl(GetType().Name + " Exit");
             }
 
             public override void Draw(DrawContext dc)

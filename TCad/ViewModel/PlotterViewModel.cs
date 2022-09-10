@@ -223,6 +223,7 @@ namespace TCad.ViewModel
                 { "centroid", AddCentroid },
                 { "select_all", SelectAll },
                 { "snap_settings", SnapSettings },
+                { "move_key_settings", MoveKeySettings },
                 { "show_editor", ShowEditor },
                 { "export_svg", ExportSVG },
                 { "obj_order_down", ObjOrderDown },
@@ -252,10 +253,14 @@ namespace TCad.ViewModel
                 { "ctrl+p", new KeyAction(InsPoint , null, "Inser Point")},
                 { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
                 { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
-                { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left 1 milli")},
-                { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right 1 milli")},
-                { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up 1 milli")},
-                { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down 1 milli")},
+                { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
+                { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right")},
+                { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up")},
+                { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down")},
+                { "shift+left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left with 1/10 unit")},
+                { "shift+right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right with 1/10 unit")},
+                { "shift+up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up with 1/10 unit")},
+                { "shift+down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down with 1/10 unit")},
                 { "m", new KeyAction(AddMark, null, " Add snap point")},
                 { "ctrl+m", new KeyAction(CleanMark, null, " Clear snap points")},
             };
@@ -547,6 +552,24 @@ namespace TCad.ViewModel
                 Settings.PrintWithBitmap = dlg.PrintWithBitmap;
                 Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
                 Settings.PrintLineSmooth = dlg.PrintLineSmooth;
+            }
+        }
+
+        public void MoveKeySettings()
+        {
+            MoveKeySettingsDialog dlg = new MoveKeySettingsDialog();
+
+            dlg.Owner = mMainWindow.GetWindow();
+
+            dlg.MoveX = Settings.MoveKeyUnitX;
+            dlg.MoveY = Settings.MoveKeyUnitY;
+
+            bool? result = dlg.ShowDialog();
+
+            if (result.Value)
+            {
+                Settings.MoveKeyUnitX = dlg.MoveX;
+                Settings.MoveKeyUnitY = dlg.MoveY;
             }
         }
 

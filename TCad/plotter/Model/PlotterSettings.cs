@@ -33,7 +33,9 @@ namespace Plotter.Settings
 
         public double LineSnapRange = 8;
 
-        public double KeyMoveUnit = 1.0;
+        public double MoveKeyUnitX = 1.0;
+
+        public double MoveKeyUnitY = 1.0;
 
         public bool FilterObjectTree = false;
 
@@ -116,8 +118,9 @@ namespace Plotter.Settings
             root.Add("LineSnap", jo);
 
             jo = new JObj();
-            jo.Add("unit", KeyMoveUnit);
-            root.Add("KeyMove", jo);
+            jo.Add("unit_x", MoveKeyUnitX);
+            jo.Add("unit_y", MoveKeyUnitY);
+            root.Add("MoveKey", jo);
 
             jo = new JObj();
             jo.Add("enable", SnapToZero);
@@ -205,9 +208,10 @@ namespace Plotter.Settings
                 LineSnapRange = jo.GetDouble("range", LineSnapRange);
             }
 
-            if (root.TryGetProperty("KeyMove", out jo))
+            if (root.TryGetProperty("MoveKey", out jo))
             {
-                KeyMoveUnit = jo.GetDouble("unit", KeyMoveUnit);
+                MoveKeyUnitX = jo.GetDouble("unit_x", MoveKeyUnitX);
+                MoveKeyUnitY = jo.GetDouble("unit_y", MoveKeyUnitY);
             }
 
             if (root.TryGetProperty("ZeroSnap", out jo))

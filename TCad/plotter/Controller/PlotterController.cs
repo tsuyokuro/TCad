@@ -12,6 +12,7 @@ namespace Plotter.Controller
     {
         public enum States
         {
+            NONE,
             SELECT,
             RUBBER_BAND_SELECT,
             DRAGING_POINTS,
