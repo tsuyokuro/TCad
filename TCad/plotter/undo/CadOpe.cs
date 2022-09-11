@@ -173,6 +173,7 @@ namespace Plotter
         {
             foreach (CadOpe ope in OpeList.Reverse<CadOpe>())
             {
+                DOut.pl("aaaa " + ope.GetType().Name);
                 ope.Undo(pc);
             }
         }

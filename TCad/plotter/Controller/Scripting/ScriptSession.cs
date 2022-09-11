@@ -24,11 +24,6 @@ namespace Plotter.Controller
             mCadOpeList = new CadOpeList();
         }
 
-        public CadOpeList OpeList
-        {
-            get => mCadOpeList;
-        }
-
         public void AddOpe(CadOpe ope)
         {
             if (ope == null)
@@ -41,13 +36,12 @@ namespace Plotter.Controller
                 return;
             }
 
+            DOut.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
             mCadOpeList.Add(ope);
         }
 
         public void Start(bool snapshotDB = false)
         {
-            mCadOpeList.Clear();
-
             ResetFlags();
 
             StartWithSnapshotDB = snapshotDB;
@@ -56,6 +50,10 @@ namespace Plotter.Controller
             {
                 SnapShot = new CadOpeDBSnapShot();
                 SnapShot.StoreBefore(Env.Controller.DB);
+            }
+            else
+            {
+                mCadOpeList = new CadOpeList();
             }
         }
 
@@ -76,9 +74,9 @@ namespace Plotter.Controller
                 SnapShot.StoreAfter(Env.Controller.DB);
                 Env.Controller.HistoryMan.foward(SnapShot);
             } else {
-                if (OpeList.Count() > 0)
+                if (mCadOpeList?.Count() > 0)
                 {
-                    Env.Controller.HistoryMan.foward(OpeList);
+                    Env.Controller.HistoryMan.foward(mCadOpeList);
                 }
             }
         }

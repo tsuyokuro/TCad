@@ -24,6 +24,10 @@ namespace Plotter
         public void foward(CadOpe ope)
         {
             DOut.pl(this.GetType().Name + " " + ope.GetType().Name);
+            if (ope is null)
+            {
+                return;
+            }
 
             mUndoStack.Push(ope);
 
@@ -85,19 +89,44 @@ namespace Plotter
             mUndoStack.Push(ope);
         }
 
-        public void dump()
+        public void dumpUndoStack()
         {
-            DOut.pl(GetType().Name);
+            DOut.pl(GetType().Name + " UndoStack");
             DOut.pl("{");
             DOut.Indent++;
-            DOut.pl("UndoStack [");
-            DOut.Indent++;
-
-
-
-            DOut.Indent--;
+            foreach (CadOpe ope in mUndoStack)
+            {
+                dumpCadOpe(ope);
+            }
             DOut.Indent--;
             DOut.pl("}");
+        }
+
+        public static void dumpCadOpe(CadOpe ope)
+        {
+            DOut.pl(ope.GetType().Name);
+
+            if (ope is CadOpeList)
+            {
+                DOut.pl("{");
+                DOut.Indent++;
+                foreach (CadOpe item in ((CadOpeList)ope).OpeList) {
+                    dumpCadOpe(item);
+                }
+                DOut.Indent--;
+                DOut.pl("}");
+            }
+            else if (ope is CadOpeFigureSnapShotList)
+            {
+                DOut.pl("{");
+                DOut.Indent++;
+                foreach (CadOpe item in ((CadOpeFigureSnapShotList)ope).SnapShotList)
+                {
+                    dumpCadOpe(item);
+                }
+                DOut.Indent--;
+                DOut.pl("}");
+            }
         }
     }
 }

@@ -24,6 +24,7 @@ namespace Plotter.Controller
             autoComps.Add("@dump dc");
             autoComps.Add("@dump fig");
             autoComps.Add("@dump layer");
+            autoComps.Add("@dump undo");
             autoComps.Add("@bench draw");
 
             return autoComps;
@@ -97,6 +98,10 @@ namespace Plotter.Controller
                     {
                         Controller.CurrentLayer.dump();
                     }
+                }
+                else if (ss[1] == "undo")
+                {
+                    Controller.HistoryMan?.dumpUndoStack();
                 }
             }
             else if (cmd == "@help")

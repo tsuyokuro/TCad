@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
@@ -68,7 +68,10 @@ namespace Plotter.Controller
 
             CadOpeList rmOpeList = RemoveInvalidFigure();
 
-            root.Add(rmOpeList);
+            if (rmOpeList.OpeList.Count > 0)
+            {
+                root.Add(rmOpeList);
+            }
 
             mSnapShotList.StoreAfter(DB);
             root.Add(mSnapShotList);
