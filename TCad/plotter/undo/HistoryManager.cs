@@ -1,26 +1,18 @@
-﻿using System.Collections.Generic;
+using Plotter.Controller;
+using System.Collections.Generic;
 
 namespace Plotter
 {
     public class HistoryManager
     {
-        private CadObjectDB mDB;
-
-        public CadObjectDB DB
-        {
-            set
-            {
-                Clear();
-                mDB = value;
-            }
-        }
+        private PlotterController mPC;
 
         public Stack<CadOpe> mUndoStack = new Stack<CadOpe>();
         public Stack<CadOpe> mRedoStack = new Stack<CadOpe>();
 
-        public HistoryManager(CadObjectDB db)
+        public HistoryManager(PlotterController pc)
         {
-            mDB = db;
+            mPC = pc;
         }
 
         public void Clear()
@@ -31,6 +23,8 @@ namespace Plotter
 
         public void foward(CadOpe ope)
         {
+            DOut.pl(this.GetType().Name + " " + ope.GetType().Name);
+
             mUndoStack.Push(ope);
 
             DisposeStackItems(mRedoStack);
@@ -42,7 +36,7 @@ namespace Plotter
         {
             foreach (CadOpe ope in stack)
             {
-                ope.Dispose(mDB);
+                ope.Dispose(mPC);
             }
         }
 
@@ -67,7 +61,9 @@ namespace Plotter
                 return;
             }
 
-            ope.Undo(mDB);
+            DOut.pl(this.GetType().Name + " " + "Undo ope:" + ope.GetType().Name);
+
+            ope.Undo(mPC);
 
             mRedoStack.Push(ope);
         }
@@ -83,13 +79,15 @@ namespace Plotter
                 return;
             }
 
-            ope.Redo(mDB);
+            DOut.pl(this.GetType().Name + " " + "Redo ope:" + ope.GetType().Name);
+
+            ope.Redo(mPC);
             mUndoStack.Push(ope);
         }
 
         public void dump()
         {
-            DOut.pl(this.GetType().Name);
+            DOut.pl(GetType().Name);
             DOut.pl("{");
             DOut.Indent++;
             DOut.pl("UndoStack [");

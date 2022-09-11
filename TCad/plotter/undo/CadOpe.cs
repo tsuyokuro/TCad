@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
+using Plotter.Controller;
 
 namespace Plotter
 {
@@ -20,14 +21,45 @@ namespace Plotter
         {
         }
 
-        public abstract void Undo(CadObjectDB db);
-        public abstract void Redo(CadObjectDB db);
+        public abstract void Undo(PlotterController pc);
+        public abstract void Redo(PlotterController pc);
 
-        public virtual void Dispose(CadObjectDB db)
+        public virtual void Dispose(PlotterController pc)
         {
         }
     }
 
+    public class CadOpeDBSnapShot : CadOpe
+    {
+        public byte[] Before;
+        public byte[] After;
+
+        public CadOpeDBSnapShot() { }
+
+        public void StoreBefore(CadObjectDB db)
+        {
+            Before = CopyUtil.DBToLz4(db);
+            DOut.pl(nameof(CadOpeDBSnapShot) + " StoreBefore data size:" + Before.Length);
+        }
+
+        public void StoreAfter(CadObjectDB db)
+        {
+            After = CopyUtil.DBToLz4(db);
+            DOut.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
+        }
+
+        public override void Undo(PlotterController pc)
+        {
+            CadObjectDB db = CopyUtil.Lz4BinRestoreDB(Before);
+            pc.SetDB(db, false);
+        }
+
+        public override void Redo(PlotterController pc)
+        {
+            CadObjectDB db = CopyUtil.Lz4BinRestoreDB(After);
+            pc.SetDB(db, false);
+        }
+    }
 
     public class CadOpeFigureSnapShot : CadOpe
     {
@@ -36,10 +68,7 @@ namespace Plotter
 
         public uint FigureID = 0;
 
-        public CadOpeFigureSnapShot()
-        {
-
-        }
+        public CadOpeFigureSnapShot() { }
 
         public void StoreBefore(CadFigure fig)
         {
@@ -52,14 +81,14 @@ namespace Plotter
             After = CopyUtil.FigToLz4Bin(fig);
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CopyUtil.Lz4BinRestoreFig(Before, db);
+            CopyUtil.Lz4BinRestoreFig(Before, pc.DB);
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CopyUtil.Lz4BinRestoreFig(After, db);
+            CopyUtil.Lz4BinRestoreFig(After, pc.DB);
         }
     }
 
@@ -93,19 +122,19 @@ namespace Plotter
             }
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
             for (int i=0; i< SnapShotList.Count; i++)
             {
-                SnapShotList[i].Undo(db);
+                SnapShotList[i].Undo(pc);
             }
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
             for (int i = 0; i < SnapShotList.Count; i++)
             {
-                SnapShotList[i].Redo(db);
+                SnapShotList[i].Redo(pc);
             }
         }
     }
@@ -140,19 +169,19 @@ namespace Plotter
             OpeList.Add(ope);
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
             foreach (CadOpe ope in OpeList.Reverse<CadOpe>())
             {
-                ope.Undo(db);
+                ope.Undo(pc);
             }
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
             foreach (CadOpe ope in OpeList)
             {
-                ope.Redo(db);
+                ope.Redo(pc);
             }
         }
     }
@@ -189,15 +218,15 @@ namespace Plotter
             Point = pt;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.RemovePointAt(PointIndex);
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.AddPoint(Point);
         }
     }
@@ -219,10 +248,10 @@ namespace Plotter
             InsertNum = insertNum;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            CadFigure fig = db.GetFigure(FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
 
             if (fig == null)
             {
@@ -247,10 +276,10 @@ namespace Plotter
             fig.RemovePointsRange(idx, InsertNum);
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            CadFigure fig = db.GetFigure(FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.InsertPointsRange(PointIndex, mPointList);
         }
     }
@@ -283,15 +312,15 @@ namespace Plotter
             Close = on;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.IsLoop = !Close;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.IsLoop = Close;
         }
     }
@@ -303,22 +332,22 @@ namespace Plotter
         {
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            layer.RemoveFigureByID(db, FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            layer.RemoveFigureByID(pc.DB, FigureID);
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            CadFigure fig = db.GetFigure(FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             layer.AddFigure(fig);
         }
 
-        public override void Dispose(CadObjectDB db)
+        public override void Dispose(PlotterController pc)
         {
-            db.RelaseFigure(FigureID);
+            pc.DB.RelaseFigure(FigureID);
         }
     }
 
@@ -333,17 +362,17 @@ namespace Plotter
             mFigureIndex = figIndex;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            CadFigure fig = db.GetFigure(FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             layer.InsertFigure(mFigureIndex, fig);
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadLayer layer = db.GetLayer(LayerID);
-            layer.RemoveFigureByID(db, FigureID);
+            CadLayer layer = pc.DB.GetLayer(LayerID);
+            layer.RemoveFigureByID(pc.DB, FigureID);
         }
     }
     #endregion
@@ -363,25 +392,25 @@ namespace Plotter
             });
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
 
             foreach (uint childID in ChildIDList)
             {
                 parent.ChildList.RemoveAll( a => a.ID == childID);
-                CadFigure fig = db.GetFigure(childID);
+                CadFigure fig = pc.DB.GetFigure(childID);
                 fig.Parent = null;
             }
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
 
             foreach (uint childID in ChildIDList)
             {
-                CadFigure fig = db.GetFigure(childID);
+                CadFigure fig = pc.DB.GetFigure(childID);
                 parent.AddChild(fig);
             }
         }
@@ -402,25 +431,25 @@ namespace Plotter
             });
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
 
             foreach (uint childID in ChildIDList)
             {
-                CadFigure fig = db.GetFigure(childID);
+                CadFigure fig = pc.DB.GetFigure(childID);
                 parent.AddChild(fig);
             }
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
 
             foreach (uint childID in ChildIDList)
             {
                 parent.ChildList.RemoveAll(a => a.ID == childID);
-                CadFigure fig = db.GetFigure(childID);
+                CadFigure fig = pc.DB.GetFigure(childID);
                 fig.Parent = null;
             }
         }
@@ -439,18 +468,18 @@ namespace Plotter
             Index = index;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
-            CadFigure child = db.GetFigure(ChildID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
+            CadFigure child = pc.DB.GetFigure(ChildID);
             parent.ChildList.Remove(child);
             child.Parent = null;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
-            CadFigure child = db.GetFigure(ChildID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
+            CadFigure child = pc.DB.GetFigure(ChildID);
             parent.ChildList.Insert(Index, child);
             child.Parent = parent;
         }
@@ -469,18 +498,18 @@ namespace Plotter
             Index = index;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
-            CadFigure child = db.GetFigure(ChildID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
+            CadFigure child = pc.DB.GetFigure(ChildID);
             parent.ChildList.Insert(Index, child);
             child.Parent = parent;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure parent = db.GetFigure(ParentID);
-            CadFigure child = db.GetFigure(ChildID);
+            CadFigure parent = pc.DB.GetFigure(ParentID);
+            CadFigure child = pc.DB.GetFigure(ChildID);
             parent.ChildList.Remove(child);
             child.Parent = null;
         }
@@ -499,15 +528,15 @@ namespace Plotter
             NewNormal = newNormal;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.Normal = OldNormal;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.Normal = NewNormal;
         }
     }
@@ -521,15 +550,15 @@ namespace Plotter
             FigureID = figID;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.InvertDir();
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            CadFigure fig = db.GetFigure(FigureID);
+            CadFigure fig = pc.DB.GetFigure(FigureID);
             fig.InvertDir();
         }
     }
@@ -545,14 +574,14 @@ namespace Plotter
             Index = index;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
-            db.RemoveLayer(Layer.ID);
+            pc.DB.RemoveLayer(Layer.ID);
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
-            db.InserLayer(Layer, Index);
+            pc.DB.InserLayer(Layer, Index);
         }
     }
 
@@ -569,12 +598,12 @@ namespace Plotter
             NewList = newList;
         }
 
-        public override void Redo(CadObjectDB db)
+        public override void Redo(PlotterController pc)
         {
             Layer.FigureList = NewList;
         }
 
-        public override void Undo(CadObjectDB db)
+        public override void Undo(PlotterController pc)
         {
             Layer.FigureList = OldList;
         }

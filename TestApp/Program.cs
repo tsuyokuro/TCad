@@ -84,7 +84,7 @@ namespace TestApp
         {
             var rb = new RingBuffer<string>(3);
 
-            for (int i=0; i<20; i++)
+            for (int i=0; i<1000; i++)
             {
                 rb.Add("" + (i + 1) + "_abcdefg");
             }

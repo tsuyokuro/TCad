@@ -30,7 +30,7 @@ namespace Plotter.Controller
         {
             if (CurrentState != null)
             {
-                DOut.pl(CurrentState.GetType().Name + " Exit");
+                //DOut.pl(CurrentState.GetType().Name + " Exit");
                 CurrentState.Exit();
             }
 
@@ -38,7 +38,7 @@ namespace Plotter.Controller
             
             if (CurrentState != null)
             {
-                DOut.pl(CurrentState.GetType().Name + " Enter");
+                //DOut.pl(CurrentState.GetType().Name + " Enter");
                 CurrentState.Enter();
             }
 

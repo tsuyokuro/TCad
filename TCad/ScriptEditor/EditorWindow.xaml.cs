@@ -1,4 +1,4 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
@@ -285,7 +285,7 @@ namespace TCad.ScriptEditor
                 return true;
             };
 
-            ScriptEnv.RunScriptAsync(s, callback);
+            ScriptEnv.RunScriptAsync(s, true, callback);
         }
 
         private void BtnStop_Click(object sender, RoutedEventArgs e)

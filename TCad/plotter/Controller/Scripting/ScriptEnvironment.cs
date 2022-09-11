@@ -155,55 +155,7 @@ namespace Plotter.Controller
             Controller.PushToView();
         }
 
-        public dynamic RunScript(string s)
-        {
-            mScriptFunctions.StartSession();
-
-            dynamic ret = null;
-
-            try
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                
-                ret = Engine.Execute(s, mScope);
-
-                sw.Stop();
-                ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
-
-                if (ret != null)
-                {
-                    if (ret is Double || ret is Int32 || ret is float)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                    else if (ret is string)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret);
-                    }
-                    else if (ret is bool)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                }
-            }
-            catch (KeyboardInterruptException e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Canceled");
-            }
-            catch (Exception e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
-            }
-
-            mScriptFunctions.EndSession();
-
-            return ret;
-        }
-
-        public async void RunScriptAsync(string s, RunCallback callback)
+        public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
         {
             if (callback != null)
             {
@@ -215,7 +167,7 @@ namespace Plotter.Controller
             await Task.Run(() =>
             {
                 Engine.SetTrace(OnTraceback);
-                RunScript(s);
+                RunScript(s, snapshotDB);
             });
 
             Controller.Clear();
@@ -246,6 +198,63 @@ namespace Plotter.Controller
 
                 return OnTraceback;
             }
+        }
+
+        public dynamic RunScript(string s, bool snapshotDB = false)
+        {
+            mScriptFunctions.StartSession(snapshotDB);
+
+            dynamic ret = null;
+
+            try
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                
+                ret = Engine.Execute(s, mScope);
+
+                sw.Stop();
+                ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
+
+                if (ret != null)
+                {
+                    if (ret is double or Int32 or float)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                    else if (ret is string)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret);
+                    }
+                    else if (ret is bool)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                    else if (ret is Vector3d)
+                    {
+                        Vector3d v = ret;
+                        ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
+                    }
+                    else
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                }
+            }
+            catch (KeyboardInterruptException e)
+            {
+                mScriptFunctions.EndSession();
+                ItConsole.println(AnsiEsc.BRed + "Canceled");
+            }
+            catch (Exception e)
+            {
+                mScriptFunctions.EndSession();
+                ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
+            }
+
+            mScriptFunctions.EndSession();
+
+            return ret;
         }
 
         public void CancelScript()

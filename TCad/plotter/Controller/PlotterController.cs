@@ -138,7 +138,7 @@ namespace Plotter.Controller
             mDB.LayerList.Add(layer);
             CurrentLayer = layer;
 
-            HistoryMan = new HistoryManager(mDB);
+            HistoryMan = new HistoryManager(this);
 
             ScriptEnv = new ScriptEnvironment(this);
 
@@ -339,17 +339,25 @@ namespace Plotter.Controller
         }
         #endregion Getting selection
 
-        public void SetDB(CadObjectDB db)
+        public void SetDB(CadObjectDB db, bool clearHistory)
         {
             mDB = db;
 
-            HistoryMan = new HistoryManager(mDB);
+            if (clearHistory)
+            {
+                HistoryMan.Clear();
+            }
 
             UpdateLayerList();
 
             UpdateObjectTree(true);
 
             //Redraw();
+        }
+
+        public void SetDB(CadObjectDB db)
+        {
+            SetDB(db, true);
         }
 
         public void SetCurrentLayer(uint id)
