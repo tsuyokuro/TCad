@@ -9,6 +9,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <StartupObject>TCad.App</StartupObject>
+    <ApplicationIcon>Resources\Images\TCad.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -63,6 +64,10 @@
     <None Remove="Resources\Cursors\null.cur" />
     <None Remove="Resources\Images\script_icon.png" />
     <None Remove="Resources\Images\triangle2.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Images\TCad.ico" />
   </ItemGroup>
 
   <ItemGroup>

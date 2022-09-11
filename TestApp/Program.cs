@@ -12,39 +12,87 @@ using System.Text.RegularExpressions;
 
 namespace TestApp
 {
+    public class RingBuffer<T>
+    {
+        private T[] Data;
+        private int Top = 0;
+        private int Bottom = 0;
+
+        public T this[int i] => Data[(Top + i) % BufferSize];
+
+        public int Count
+        {
+            get;
+            private set;
+        }
+
+        public int BufferSize
+        {
+            get;
+            private set;
+        }
+
+        public RingBuffer(int size)
+        {
+            CreateBuffer(size);
+        }
+
+        public RingBuffer()
+        {
+        }
+
+        public void CreateBuffer(int size)
+        {
+            BufferSize = size;
+            Data = new T[BufferSize];
+        }
+
+        public void Clear()
+        {
+            Top = 0;
+            Bottom = 0;
+            Count = 0;
+        }
+
+        public void Add(T elem)
+        {
+            Data[Bottom] = elem;
+            Bottom = (Bottom + 1) % BufferSize;
+
+            if (Count < BufferSize)
+            {
+                Count++;
+            }
+            else
+            {
+                Top = (Top + 1) % BufferSize;
+            }
+        }
+
+        public void ForEach(Action<T> action)
+        {
+            for (int i=0; i < Count; i++)
+            {
+                action(this[i]);
+            }
+        }
+    }
 
     internal class Program
     {
         static void test001()
         {
-            string src1 = "x=abc123";
-            string src2 = "x=abc123(456), ";
-            //Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+[\(]*");
+            var rb = new RingBuffer<string>(3);
 
-            //Regex WordPattern = new Regex(@"[@a-zA-Z_0-9]+");
-            Regex WordPattern = new Regex(@"[@a-zA-Z_0-9\(\)]+");
-
-            int cpos = 2;
-
-            MatchCollection mc = WordPattern.Matches(src2);
-
-            int replacePos;
-            int replaceLen;
-            string targetWord = "";
-
-            foreach (Match m in mc)
+            for (int i=0; i<20; i++)
             {
-                if (cpos >= m.Index && cpos <= m.Index + m.Length)
-                {
-                    replacePos = m.Index;
-                    replaceLen = m.Length;
-                    targetWord = m.Value;
-
-                    break;
-                }
+                rb.Add("" + (i + 1) + "_abcdefg");
             }
 
-            Console.WriteLine(targetWord);
+            rb.ForEach((s) =>
+            {
+                Console.WriteLine(s);
+            });
         }
 
         static void Main(string[] args)
