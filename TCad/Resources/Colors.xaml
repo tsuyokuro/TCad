@@ -22,7 +22,7 @@
     <SolidColorBrush x:Key="CandidateListFGColor" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="CandidateListSelBGColor" Color="#FF007ACC" />
     <SolidColorBrush x:Key="CandidateListSelFGColor" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="CandidateListBorderColor" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="CandidateListBorderColor" Color="YellowGreen" />
 
 
     <SolidColorBrush x:Key="ListBoxSelColor" Color="#FF007ACC" />

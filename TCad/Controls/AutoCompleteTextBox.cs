@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Text.RegularExpressions;
 using Plotter;
+using System.Drawing;
 
 namespace TCad.Controls
 {
@@ -32,7 +33,6 @@ namespace TCad.Controls
 
         private ScrollViewer mCandidateScrollViewer = new ScrollViewer();
 
-
         public Style CandidateListBorderStyle
         {
             get => mCandidateBorder.Style;
@@ -56,6 +56,19 @@ namespace TCad.Controls
             get => mCandidateListBox.ItemContainerStyle;
             set => mCandidateListBox.ItemContainerStyle = value;
         }
+
+        public int CandidateListItemFontSize
+        {
+            get;
+            set;
+        }
+
+        public int CandidateListMaxRowCount
+        {
+            get;
+            set;
+        } = 0;
+
 
         private bool DisableCandidateList = false;
 
@@ -94,15 +107,15 @@ namespace TCad.Controls
 
         public AutoCompleteTextBox()
         {
-            mCandidatePopup.MaxHeight = 200;
-            mCandidatePopup.Child = mCandidateBorder;
-            mCandidateBorder.Child = mCandidateScrollViewer;
-            mCandidateScrollViewer.Content = mCandidateListBox;
         }
 
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
+
+            Loaded += AutoCompleteTextBox_Loaded;
+
+            LostFocus += AutoCompleteTextBox_LostFocus;
 
             mCandidateBorder.Background = mCandidateScrollViewer.Background;
 
@@ -115,6 +128,44 @@ namespace TCad.Controls
             {
                 Application.Current.MainWindow.Deactivated += MainWindow_Deactivated;
             }
+        }
+
+        private void AutoCompleteTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void AutoCompleteTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            Control c = mCandidateListBox;
+            if (CandidateListItemFontSize > 0)
+            {
+                c.FontSize = CandidateListItemFontSize;
+            }
+            else
+            {
+                c.FontSize = FontSize;
+            }
+
+            var formattedText = new FormattedText(
+                "Ahj",
+                System.Globalization.CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(c.FontFamily, c.FontStyle, c.FontWeight, c.FontStretch),
+                c.FontSize,
+                c.Foreground,
+                VisualTreeHelper.GetDpi(c).PixelsPerDip
+            );
+
+            int rowCnt = CandidateListMaxRowCount;
+            if (CandidateListMaxRowCount > 0)
+            {
+                mCandidateScrollViewer.MaxHeight = ((int)formattedText.Height + 3) * rowCnt + 1;
+            }
+
+            //mCandidatePopup.MaxHeight = 200;
+            mCandidatePopup.Child = mCandidateBorder;
+            mCandidateBorder.Child = mCandidateScrollViewer;
+            mCandidateScrollViewer.Content = mCandidateListBox;
         }
 
         private void MainWindow_Deactivated(object sender, EventArgs e)
@@ -247,6 +298,14 @@ namespace TCad.Controls
                 {
                     SetTextFromListBox();
                     ClosePopup();
+                }
+                else if (e.Key == Key.Left
+                    || e.Key == Key.Right
+                    || e.Key == Key.Back
+                    || e.Key == Key.Delete
+                    || (e.Key >= Key.A && e.Key <= Key.Z))
+                {
+                    Focus();
                 }
                 else if (e.Key == Key.Escape)
                 {

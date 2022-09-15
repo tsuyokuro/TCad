@@ -850,6 +850,8 @@
                                 CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"
                                 CandidateListBoxStyle="{StaticResource CandidateListBoxStyle}"
                                 CandidateListItemContainerStyle="{StaticResource CandidateListItemContainerStyle}"
+                                CandidateListItemFontSize = "14"
+                                CandidateListMaxRowCount = "4"
                                 FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                 FontSize="16"
                                 FontWeight="Thin"

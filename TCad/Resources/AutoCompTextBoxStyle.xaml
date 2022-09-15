@@ -9,6 +9,7 @@
 
     <Style x:Key="CandidateListBoxStyle" TargetType="ListBox">
         <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Background" Value="{StaticResource CandidateListBGColor}" />
         <Setter Property="BorderBrush" Value="{StaticResource CandidateListBGColor}" />
@@ -25,6 +26,7 @@
                     <Border
                         Name="Border"
                         Padding="0"
+                        Margin="0"
                         SnapsToDevicePixels="true"
                         >
                         <ContentPresenter />
@@ -46,12 +48,16 @@
         TargetType="ScrollViewer">
         <Setter Property="Background" Value="{StaticResource BoarderColor}" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CanContentScroll" Value="false" />
     </Style>
 
     <Style x:Key="CandidateListBorderStyle" TargetType="Border">
         <Setter Property="Padding" Value="0" />
-        <Setter Property="BorderBrush" Value="GreenYellow" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{StaticResource CandidateListBorderColor}" />
+        <Setter Property="BorderBrush" Value="{StaticResource CandidateListBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
