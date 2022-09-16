@@ -825,7 +825,7 @@ namespace TCad.Controls
             tpt.Y = pt.Y + (mLineHeight - ft.Height) / 2;
 
             dc.DrawText(ft, tpt);
-            pt.X += ft.Width;
+            pt.X += ft.WidthIncludingTrailingWhitespace;
             return pt;
         }
         #endregion
