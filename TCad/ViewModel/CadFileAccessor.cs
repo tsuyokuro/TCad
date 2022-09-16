@@ -75,11 +75,22 @@ namespace TCad.ViewModel
 
         private static void LoadExternalData(CadFigure fig, string fname)
         {
+            if (!File.Exists(fname))
+            {
+                return;
+            }
+
             fig.LoadExternalFiles(fname);
 
             foreach (CadFigure c in fig.ChildList)
             {
-                LoadExternalData(fig, fname);
+                try {
+                    LoadExternalData(c, fname);
+                }
+                catch
+                {
+                    continue;
+                }
             }
         }
 

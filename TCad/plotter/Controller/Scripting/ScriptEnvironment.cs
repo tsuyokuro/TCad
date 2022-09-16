@@ -237,7 +237,7 @@ namespace Plotter.Controller
                     }
                     else
                     {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                        ItConsole.println("Object: " + AnsiEsc.BGreen + ret.ToString());
                     }
                 }
             }
