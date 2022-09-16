@@ -1,26 +1,18 @@
-﻿using System.Collections.Generic;
+using Plotter.Controller;
+using System.Collections.Generic;
 
 namespace Plotter
 {
     public class HistoryManager
     {
-        private CadObjectDB mDB;
-
-        public CadObjectDB DB
-        {
-            set
-            {
-                Clear();
-                mDB = value;
-            }
-        }
+        private PlotterController mPC;
 
         public Stack<CadOpe> mUndoStack = new Stack<CadOpe>();
         public Stack<CadOpe> mRedoStack = new Stack<CadOpe>();
 
-        public HistoryManager(CadObjectDB db)
+        public HistoryManager(PlotterController pc)
         {
-            mDB = db;
+            mPC = pc;
         }
 
         public void Clear()
@@ -31,6 +23,12 @@ namespace Plotter
 
         public void foward(CadOpe ope)
         {
+            DOut.pl(this.GetType().Name + " " + ope.GetType().Name);
+            if (ope is null)
+            {
+                return;
+            }
+
             mUndoStack.Push(ope);
 
             DisposeStackItems(mRedoStack);
@@ -42,7 +40,7 @@ namespace Plotter
         {
             foreach (CadOpe ope in stack)
             {
-                ope.Dispose(mDB);
+                ope.Dispose(mPC);
             }
         }
 
@@ -67,7 +65,9 @@ namespace Plotter
                 return;
             }
 
-            ope.Undo(mDB);
+            DOut.pl(this.GetType().Name + " " + "Undo ope:" + ope.GetType().Name);
+
+            ope.Undo(mPC);
 
             mRedoStack.Push(ope);
         }
@@ -83,23 +83,50 @@ namespace Plotter
                 return;
             }
 
-            ope.Redo(mDB);
+            DOut.pl(this.GetType().Name + " " + "Redo ope:" + ope.GetType().Name);
+
+            ope.Redo(mPC);
             mUndoStack.Push(ope);
         }
 
-        public void dump()
+        public void dumpUndoStack()
         {
-            DOut.pl(this.GetType().Name);
+            DOut.pl(GetType().Name + " UndoStack");
             DOut.pl("{");
             DOut.Indent++;
-            DOut.pl("UndoStack [");
-            DOut.Indent++;
-
-
-
-            DOut.Indent--;
+            foreach (CadOpe ope in mUndoStack)
+            {
+                dumpCadOpe(ope);
+            }
             DOut.Indent--;
             DOut.pl("}");
+        }
+
+        public static void dumpCadOpe(CadOpe ope)
+        {
+            DOut.pl(ope.GetType().Name);
+
+            if (ope is CadOpeList)
+            {
+                DOut.pl("{");
+                DOut.Indent++;
+                foreach (CadOpe item in ((CadOpeList)ope).OpeList) {
+                    dumpCadOpe(item);
+                }
+                DOut.Indent--;
+                DOut.pl("}");
+            }
+            else if (ope is CadOpeFigureSnapShotList)
+            {
+                DOut.pl("{");
+                DOut.Indent++;
+                foreach (CadOpe item in ((CadOpeFigureSnapShotList)ope).SnapShotList)
+                {
+                    dumpCadOpe(item);
+                }
+                DOut.Indent--;
+                DOut.pl("}");
+            }
         }
     }
 }

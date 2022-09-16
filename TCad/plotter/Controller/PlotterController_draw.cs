@@ -1,4 +1,4 @@
-﻿
+
 using CadDataTypes;
 using MyCollections;
 using OpenTK;
@@ -337,40 +337,7 @@ namespace Plotter.Controller
 
         protected void DrawAccordingState(DrawContext dc)
         {
-            switch (State)
-            {
-                case States.SELECT:
-                    break;
-
-                case States.START_DRAGING_POINTS:
-                    break;
-
-                case States.RUBBER_BAND_SELECT:
-                    DrawSelRect(dc);
-                    break;
-
-                case States.DRAGING_POINTS:
-                    break;
-
-                case States.START_CREATE:
-                    break;
-
-                case States.CREATING:
-                    if (FigureCreator != null)
-                    {
-                        Vector3d p = dc.DevPointToWorldPoint(CrossCursor.Pos);
-                        FigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
-                    }
-                    break;
-
-                case States.MEASURING:
-                    if (MeasureFigureCreator != null)
-                    {
-                        Vector3d p = dc.DevPointToWorldPoint(CrossCursor.Pos);
-                        MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
-                    }
-                    break;
-            }
+            CurrentState.Draw(dc);
 
             if (mInteractCtrl.IsActive)
             {

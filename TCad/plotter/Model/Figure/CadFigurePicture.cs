@@ -1,9 +1,15 @@
-﻿using CadDataTypes;
+using CadDataTypes;
+using HalfEdgeNS;
 using OpenTK;
 using OpenTK.Mathematics;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace Plotter
 {
@@ -16,15 +22,24 @@ namespace Plotter
         //  0-------------------1
 
         private Bitmap mBitmap;
-        
+
+        public string OrgFilePathName;
+        public string FilePathName;
 
         public CadFigurePicture()
         {
             Type = Types.PICTURE;
+
+            if (mBitmap == null)
+            {
+                
+            }
         }
 
         public void Setup(PaperPageSize pageSize, Vector3d pos, String path)
         {
+            OrgFilePathName = path;
+
             mBitmap = new Bitmap(Image.FromFile(path));
 
             mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -124,6 +139,11 @@ namespace Plotter
 
         private void DrawPicture(DrawContext dc, DrawPen linePen)
         {
+            if (mBitmap == null)
+            {
+                return;
+            }
+
             ImageRenderer renderer = ImageRenderer.Provider.Get();
 
             Vector3d xv = (Vector3d)(mPointList[1] - mPointList[0]);
@@ -293,6 +313,79 @@ namespace Plotter
 
             return ret;
         }
-    }
 
+        #region Serialize
+        public override void SaveExternalFiles(string fname)
+        {
+            if (OrgFilePathName == null)
+            {
+                return;
+            }
+
+            string name = Path.GetFileName(OrgFilePathName);
+
+            string dpath = FileUtil.GetExternalDataDir(fname);
+
+            Directory.CreateDirectory(dpath);
+
+            string dpathName = Path.Combine(dpath, name);
+
+            File.Copy(OrgFilePathName, dpathName, true);
+
+            FilePathName = name;
+
+            OrgFilePathName = null;
+        }
+
+        public override void LoadExternalFiles(string fname)
+        {
+            string basePath = FileUtil.GetExternalDataDir(fname);
+            string dfname = Path.Combine(basePath, FilePathName);
+
+            mBitmap = new Bitmap(Image.FromFile(dfname));
+
+            mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        }
+
+        public override MpGeometricData_v1002 GeometricDataToMp_v1002()
+        {
+            MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
+            geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
+            return geo;
+        }
+
+        public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
+        {
+            if (!(geo is MpSimpleGeometricData_v1002))
+            {
+                return;
+            }
+
+            MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
+
+            mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
+        }
+
+
+        public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+        {
+            MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
+            geo.FilePathName = FilePathName;
+            geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+            return geo;
+        }
+
+        public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+        {
+            if (!(geo is MpPictureGeometricData_v1003))
+            {
+                return;
+            }
+
+            MpPictureGeometricData_v1003 g = (MpPictureGeometricData_v1003)geo;
+            FilePathName = g.FilePathName;
+            mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        }
+        #endregion
+    }
 }

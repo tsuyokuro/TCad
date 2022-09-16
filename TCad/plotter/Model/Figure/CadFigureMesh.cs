@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using HalfEdgeNS;
 using MyCollections;
 using OpenTK;
@@ -229,6 +229,21 @@ namespace Plotter
         public override void RemoveSelected()
         {
             List<int> removeList = new List<int>();
+
+            #region Improved performance of deleting large objects
+            int cnt = 0;
+            mPointList.ForEach((p) =>
+            {
+                if (p.Selected) cnt++;
+            });
+
+            if (cnt == mPointList.Count)
+            {
+                mHeModel.Clear();
+                return;
+            }
+            #endregion
+
 
             for (int i = 0; i < mPointList.Count; i++)
             {

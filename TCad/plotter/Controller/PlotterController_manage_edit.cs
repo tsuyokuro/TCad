@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
@@ -68,7 +68,10 @@ namespace Plotter.Controller
 
             CadOpeList rmOpeList = RemoveInvalidFigure();
 
-            root.Add(rmOpeList);
+            if (rmOpeList.OpeList.Count > 0)
+            {
+                root.Add(rmOpeList);
+            }
 
             mSnapShotList.StoreAfter(DB);
             root.Add(mSnapShotList);
@@ -160,28 +163,7 @@ namespace Plotter.Controller
                 mInteractCtrl.Cancel();
             }
 
-            if (State == States.START_CREATE || State == States.CREATING)
-            {
-                State = States.SELECT;
-                CreatingFigType = CadFigure.Types.NONE;
-
-                NotifyStateChange();
-            }
-            else if (State == States.DRAGING_POINTS)
-            {
-                CancelEdit();
-
-                State = States.SELECT;
-                ClearSelection();
-            }
-            else if (State == States.MEASURING)
-            {
-                State = States.SELECT;
-                mMeasureMode = MeasureModes.NONE;
-                MeasureFigureCreator = null;
-
-                NotifyStateChange();
-            }
+            CurrentState.Cancel();
         }
     }
 }

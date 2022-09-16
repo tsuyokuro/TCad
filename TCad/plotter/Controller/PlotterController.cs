@@ -1,9 +1,10 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -11,12 +12,11 @@ namespace Plotter.Controller
     {
         public enum States
         {
+            NONE,
             SELECT,
             RUBBER_BAND_SELECT,
-            START_DRAGING_POINTS,
             DRAGING_POINTS,
             DRAGING_VIEW_ORG,
-            START_CREATE,
             CREATING,
             MEASURING,
         }
@@ -24,24 +24,17 @@ namespace Plotter.Controller
         private CadObjectDB mDB = new CadObjectDB();
         public CadObjectDB DB => mDB;
 
-        private States mState = States.SELECT;
         public States State
         {
             private set
             {
-                mState = value;
-
-                if (mInteractCtrl.IsActive)
-                {
-                    mInteractCtrl.Cancel();
-                }
+                ChangeState(value);
             }
 
-            get => mState;
+            get => CurrentState.State;
         }
 
         private States mBackState;
-
 
         private PaperPageSize mPageSize = new PaperPageSize(PaperKind.A4, false);
         public PaperPageSize PageSize
@@ -97,9 +90,12 @@ namespace Plotter.Controller
 
         public bool ContinueCreate { set; get; } = true;
 
-
-        public PlotterCallback Callback = new PlotterCallback();
-
+        private IPlotterViewModel mPlotterVM = IPlotterViewModel.Dummy;
+        public IPlotterViewModel ViewIF
+        {
+            get => mPlotterVM;
+            private set => mPlotterVM = value;
+        }
 
         public List<CadFigure> TempFigureList = new List<CadFigure>();
 
@@ -122,13 +118,27 @@ namespace Plotter.Controller
             get => mContextMenuMan;
         }
 
-        public PlotterController()
+        public string CurrentFileName
         {
+            get => ViewIF?.CurrentFileName;
+        }
+
+        public PlotterController(IPlotterViewModel vm)
+        {
+            if (vm == null)
+            {
+                throw new System.ArgumentNullException(nameof(vm));
+            }
+
+            ViewIF = vm;
+
+            InitState();
+
             CadLayer layer = mDB.NewLayer();
             mDB.LayerList.Add(layer);
             CurrentLayer = layer;
 
-            HistoryMan = new HistoryManager(mDB);
+            HistoryMan = new HistoryManager(this);
 
             ScriptEnv = new ScriptEnvironment(this);
 
@@ -144,17 +154,17 @@ namespace Plotter.Controller
         #region ObjectTree handling
         public void UpdateObjectTree(bool remakeTree)
         {
-            Callback.UpdateObjectTree(remakeTree);
+            ViewIF.UpdateTreeView(remakeTree);
         }
 
         public void SetObjectTreePos(int index)
         {
-            Callback.SetObjectTreePos(index);
+            ViewIF.SetTreeViewPos(index);
         }
 
         public int FindObjectTreeItem(uint id)
         {
-            return Callback.FindObjectTreeItemIndex(id);
+            return ViewIF.FindTreeViewItemIndex(id);
         }
         #endregion ObjectTree handling
 
@@ -162,7 +172,7 @@ namespace Plotter.Controller
         #region Notify
         public void UpdateLayerList()
         {
-            Callback.LayerListChanged(this, GetLayerListInfo());
+            ViewIF.LayerListChanged(GetLayerListInfo());
         }
 
         private LayerListInfo GetLayerListInfo()
@@ -179,14 +189,14 @@ namespace Plotter.Controller
             PlotterStateInfo si = default(PlotterStateInfo);
             si.set(this);
 
-            Callback.StateChanged(this, si);
+            ViewIF.StateChanged(si);
         }
         #endregion Notify
 
         #region Start and End creating figure
         public void StartCreateFigure(CadFigure.Types type)
         {
-            State = States.START_CREATE;
+            State = States.CREATING;
             CreatingFigType = type;
         }
 
@@ -329,17 +339,25 @@ namespace Plotter.Controller
         }
         #endregion Getting selection
 
-        public void SetDB(CadObjectDB db)
+        public void SetDB(CadObjectDB db, bool clearHistory)
         {
             mDB = db;
 
-            HistoryMan = new HistoryManager(mDB);
+            if (clearHistory)
+            {
+                HistoryMan.Clear();
+            }
 
             UpdateLayerList();
 
             UpdateObjectTree(true);
 
-            Redraw();
+            //Redraw();
+        }
+
+        public void SetDB(CadObjectDB db)
+        {
+            SetDB(db, true);
         }
 
         public void SetCurrentLayer(uint id)

@@ -1,4 +1,4 @@
-﻿using TCad.Properties;
+using TCad.Properties;
 using Microsoft.Scripting.Hosting;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -154,55 +155,7 @@ namespace Plotter.Controller
             Controller.PushToView();
         }
 
-        public dynamic RunScript(string s)
-        {
-            mScriptFunctions.StartSession();
-
-            dynamic ret = null;
-
-            try
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                
-                ret = Engine.Execute(s, mScope);
-
-                sw.Stop();
-                ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
-
-                if (ret != null)
-                {
-                    if (ret is Double || ret is Int32 || ret is float)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                    else if (ret is string)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret);
-                    }
-                    else if (ret is bool)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                }
-            }
-            catch (KeyboardInterruptException e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Canceled");
-            }
-            catch (Exception e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
-            }
-
-            mScriptFunctions.EndSession();
-
-            return ret;
-        }
-
-        public async void RunScriptAsync(string s, RunCallback callback)
+        public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
         {
             if (callback != null)
             {
@@ -214,12 +167,13 @@ namespace Plotter.Controller
             await Task.Run(() =>
             {
                 Engine.SetTrace(OnTraceback);
-                RunScript(s);
+                RunScript(s, snapshotDB);
             });
 
             Controller.Clear();
             Controller.DrawAll();
             Controller.PushToView();
+            Controller.UpdateObjectTree(true);
 
             if (callback != null)
             {
@@ -246,6 +200,63 @@ namespace Plotter.Controller
             }
         }
 
+        public dynamic RunScript(string s, bool snapshotDB = false)
+        {
+            mScriptFunctions.StartSession(snapshotDB);
+
+            dynamic ret = null;
+
+            try
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                
+                ret = Engine.Execute(s, mScope);
+
+                sw.Stop();
+                ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
+
+                if (ret != null)
+                {
+                    if (ret is double or Int32 or float)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                    else if (ret is string)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret);
+                    }
+                    else if (ret is bool)
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                    else if (ret is Vector3d)
+                    {
+                        Vector3d v = ret;
+                        ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
+                    }
+                    else
+                    {
+                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                    }
+                }
+            }
+            catch (KeyboardInterruptException e)
+            {
+                mScriptFunctions.EndSession();
+                ItConsole.println(AnsiEsc.BRed + "Canceled");
+            }
+            catch (Exception e)
+            {
+                mScriptFunctions.EndSession();
+                ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
+            }
+
+            mScriptFunctions.EndSession();
+
+            return ret;
+        }
+
         public void CancelScript()
         {
             StopScript = true;
@@ -264,14 +275,14 @@ namespace Plotter.Controller
             ThreadUtil.RunOnMainThread(action, true);
         }
 
-        public void OpenPopupMessage(string text, PlotterCallback.MessageType type)
+        public void OpenPopupMessage(string text, UITypes.MessageType type)
         {
-            Controller.Callback.OpenPopupMessage(text, type);
+            Controller.ViewIF.OpenPopupMessage(text, type);
         }
 
         public void ClosePopupMessage()
         {
-            Controller.Callback.ClosePopupMessage();
+            Controller.ViewIF.ClosePopupMessage();
         }
     }
 }

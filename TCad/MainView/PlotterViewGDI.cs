@@ -1,4 +1,4 @@
-﻿//#define MOUSE_THREAD
+//#define MOUSE_THREAD
 
 using System;
 using System.Drawing;
@@ -9,12 +9,15 @@ using TCad;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Controller;
+using TCad.ViewModel;
 
 namespace Plotter
 {
     public partial class PlotterViewGDI : PictureBox, IPlotterView, IPlotterViewForDC
     {
         private PlotterController mController = null;
+
+        private IPlotterViewModel mVM;
 
         private bool firstSizeChange = true;
 
@@ -27,23 +30,21 @@ namespace Plotter
 
         private Cursor PointCursor;
 
-        public DrawContext DrawContext
+        public DrawContext DrawContext => mDrawContext;
+
+        public Control FormsControl => this;
+
+        public static PlotterViewGDI Create(IPlotterViewModel vm)
         {
-            get => mDrawContext;
+            return new PlotterViewGDI(vm);
         }
 
-        public Control FormsControl
+        private PlotterViewGDI(IPlotterViewModel vm)
         {
-            get => this;
-        }
+            mVM = vm;
 
-        public static PlotterViewGDI Create()
-        {
-            return new PlotterViewGDI();
-        }
+            mController = vm.Controller;
 
-        private PlotterViewGDI()
-        {
             mDrawContext = new DrawContextGDI(this);
             mDrawContext.SetupTools(DrawTools.DrawMode.DARK);
 
@@ -239,14 +240,14 @@ namespace Plotter
             };
         }
 
-        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
         {
             ThreadUtil.RunOnMainThread(() => {
-                ShowContextMenuProc(sender, menuInfo, x, y);
+                ShowContextMenuProc(menuInfo, x, y);
             }, true);
         }
 
-        private void ShowContextMenuProc(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        private void ShowContextMenuProc(MenuInfo menuInfo, int x, int y)
         {
             mContextMenu.Items.Clear();
 
@@ -284,21 +285,6 @@ namespace Plotter
             mController.Redraw();
         }
 
-        public void SetController(PlotterController controller)
-        {
-            if (mController != null)
-            {
-                mController.Callback.RequestContextMenu -= ShowContextMenu;
-            }
-
-            mController = controller;
-
-            if (controller != null)
-            {
-                mController.Callback.RequestContextMenu += ShowContextMenu;
-            }
-        }
-
         public void CursorLocked(bool locked)
         {
             if (locked)
@@ -311,17 +297,17 @@ namespace Plotter
             }
         }
 
-        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
         {
             switch (cursorType)
             {
-                case PlotterCallback.MouseCursorType.CROSS:
+                case UITypes.MouseCursorType.CROSS:
                     base.Cursor = PointCursor;
                     break;
-                case PlotterCallback.MouseCursorType.NORMAL_ARROW:
+                case UITypes.MouseCursorType.NORMAL_ARROW:
                     base.Cursor = Cursors.Arrow;
                     break;
-                case PlotterCallback.MouseCursorType.HAND:
+                case UITypes.MouseCursorType.HAND:
                     base.Cursor = Cursors.Hand;
                     break;
             }

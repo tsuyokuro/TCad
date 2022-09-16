@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
-//using JObj = System.Text.Json.Nodes.JsonObject;
-using JObj = Newtonsoft.Json.Linq.JObject;
+using JObj = System.Text.Json.Nodes.JsonObject;
+//using JObj = Newtonsoft.Json.Linq.JObject;
+using System;
 
 namespace Plotter.Serializer
 {
@@ -23,6 +24,38 @@ namespace Plotter.Serializer
             DB = db;
             WorldScale = worldScale;
             PageSize = pageSize;
+        }
+    }
+
+    public class CadFileException : Exception
+    {
+        public enum ReasonCode
+        {
+            OTHER,
+            INCORRECT_TYPE,
+            DESERIALIZE_FAILED,
+        }
+
+        public ReasonCode Reason;
+
+        public CadFileException(ReasonCode reason)
+        {
+            Reason = reason;
+        }
+
+        public string getMessage()
+        {
+            switch (Reason)
+            {
+                case ReasonCode.OTHER:
+                    return "Unknown error";
+                case ReasonCode.INCORRECT_TYPE:
+                    return "Incorrect type signature";
+                case ReasonCode.DESERIALIZE_FAILED:
+                    return "Deserialize failed";
+                default:
+                    return "Unknown error";
+            }
         }
     }
 
@@ -48,7 +81,7 @@ namespace Plotter.Serializer
             if (!Sign.SequenceEqual<byte>(sign) && !SignOld.SequenceEqual<byte>(sign))
             {
                 fs.Close();
-                return null;
+                throw new CadFileException(CadFileException.ReasonCode.INCORRECT_TYPE);
             }
 
             byte[] version = new byte[VersionCode.CodeLength];
@@ -63,18 +96,25 @@ namespace Plotter.Serializer
 
             DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
-            if (VersionCode_v1001.Version.Equals(version))
+            try
             {
+                if (VersionCode_v1001.Version.Equals(version))
+                {
+                }
+                else if (VersionCode_v1002.Version.Equals(version))
+                {
+                    MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
+                    return MpUtil_v1002.CreateCadData_v1002(mpdata);
+                }
+                else
+                {
+                    MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
+                    return MpUtil_v1003.CreateCadData_v1003(mpdata);
+                }
             }
-            else if (VersionCode_v1002.Version.Equals(version))
+            catch
             {
-                MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
-                return MpUtil_v1002.CreateCadData_v1002(mpdata);
-            }
-            else
-            {
-                MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
-                return MpUtil_v1003.CreateCadData_v1003(mpdata);
+                throw new CadFileException(CadFileException.ReasonCode.DESERIALIZE_FAILED);
             }
 
             return null;
@@ -107,7 +147,10 @@ namespace Plotter.Serializer
             if (!jheader.RootElement.TryGetProperty("type", out je)) return null;
             string type = je.GetString();
 
-            if (type != JsonSign) return null;
+            if (type != JsonSign)
+            {
+                throw new CadFileException(CadFileException.ReasonCode.INCORRECT_TYPE);
+            }
 
             if (!jheader.RootElement.TryGetProperty("version", out je)) return null;
             string version = jheader.RootElement.GetProperty("version").GetString();
@@ -117,33 +160,40 @@ namespace Plotter.Serializer
 
             byte[] bin = MessagePackSerializer.ConvertFromJson(body);
 
-            if (version == VersionCode_v1001.Version.Str)
+            try
             {
-                return null;
+                if (version == VersionCode_v1001.Version.Str)
+                {
+                    return null;
+                }
+                else if (version == VersionCode_v1002.Version.Str)
+                {
+                    MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
+
+                    CadData cd = new CadData(
+                        mpcd.GetDB(),
+                        mpcd.ViewInfo.WorldScale,
+                        mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
+                        );
+
+                    return cd;
+                }
+                else if (version == VersionCode_v1003.Version.Str)
+                {
+                    MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
+
+                    CadData cd = new CadData(
+                        mpcd.GetDB(),
+                        mpcd.ViewInfo.WorldScale,
+                        mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
+                        );
+
+                    return cd;
+                }
             }
-            else if (version == VersionCode_v1002.Version.Str)
+            catch
             {
-                MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
-            }
-            else if (version == VersionCode_v1003.Version.Str)
-            {
-                MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
+                throw new CadFileException(CadFileException.ReasonCode.DESERIALIZE_FAILED);
             }
 
             return null;

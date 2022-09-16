@@ -1,4 +1,6 @@
-﻿using Plotter.Controller;
+using Plotter.Controller;
+using System;
+using TCad.ViewModel;
 
 namespace Plotter
 {
@@ -14,15 +16,15 @@ namespace Plotter
             get;
         }
 
-        void SetController(PlotterController controller);
-
         void CursorLocked(bool locked);
 
-        void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType);
+        void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
 
         void SetWorldScale(double scale);
 
         void DrawModeUpdated(DrawTools.DrawMode mode);
+
+        void ShowContextMenu(MenuInfo menuInfo, int x, int y);
     }
 
     public interface IPlotterViewForDC

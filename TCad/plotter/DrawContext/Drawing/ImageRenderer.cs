@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -128,12 +128,8 @@ namespace Plotter
         {
             private static ImageRenderer sImageRenderer;
 
-            private static int RefCnt = 0;
-
             public static ImageRenderer Get()
             {
-                RefCnt++;
-
                 if (sImageRenderer == null)
                 {
                     sImageRenderer = new ImageRenderer();
@@ -149,14 +145,10 @@ namespace Plotter
 
             public static void Release()
             {
-                if (RefCnt > 1)
+                if (sImageRenderer != null)
                 {
-                    RefCnt--;
-                    return;
+                    sImageRenderer.Dispose();
                 }
-
-                sImageRenderer.Dispose();
-                RefCnt = 0;
             }
         }
     }

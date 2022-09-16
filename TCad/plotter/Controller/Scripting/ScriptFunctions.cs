@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -21,6 +21,7 @@ using OpenTK.WinForms;
 using OpenTK.Platform;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using TCad.ViewModel;
 
 namespace Plotter.Controller
 {
@@ -63,19 +64,14 @@ namespace Plotter.Controller
             return Controller.DB.GetFigure(id);
         }
 
-        public void StartSession()
+        public void StartSession(bool snapshotDB = false)
         {
-            Session.Start();
+            Session.Start(snapshotDB);
         }
 
         public void EndSession()
         {
             Session.End();
-
-            if (Session.OpeList.Count() > 0)
-            {
-                Controller.HistoryMan.foward(Session.OpeList);
-            }
         }
 
         public void Println(string s)
@@ -274,8 +270,7 @@ namespace Plotter.Controller
 
             CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
 
-            CadOpeList opeRoot = new CadOpeList();
-
+            CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
             CadOpe ope;
 
             foreach (CadFigure fig in list)
@@ -287,9 +282,11 @@ namespace Plotter.Controller
                     continue;
                 }
 
-                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
-
-                opeRoot.Add(ope);
+                if (!Session.StartWithSnapshotDB)
+                {
+                    ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
+                    opeRoot.Add(ope);
+                }
 
                 Controller.CurrentLayer.RemoveFigureByIndex(idx);
 
@@ -298,15 +295,16 @@ namespace Plotter.Controller
 
             Controller.CurrentLayer.AddFigure(parent);
 
-            ope = new CadOpeAddChildlen(parent, parent.ChildList);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeAddChildlen(parent, parent.ChildList);
+                opeRoot.Add(ope);
 
-            opeRoot.Add(ope);
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, parent.ID);
+                opeRoot.Add(ope);
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, parent.ID);
-
-            opeRoot.Add(ope);
-
-            Session.AddOpe(opeRoot);
+                Session.AddOpe(opeRoot);
+            }
 
             ItConsole.println(
                     global::TCad.Properties.Resources.notice_was_grouped
@@ -341,7 +339,7 @@ namespace Plotter.Controller
         {
             List<CadFigure> list = FilterRootFigure(targetList);
 
-            CadOpeList opeList = new CadOpeList();
+            CadOpeList opeList = Session.StartWithSnapshotDB? null : new CadOpeList();
 
             CadOpe ope;
 
@@ -363,12 +361,18 @@ namespace Plotter.Controller
                     }
                 });
 
-                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, root.ID);
-                opeList.Add(ope);
+                if (!Session.StartWithSnapshotDB)
+                {
+                    ope = new CadOpeRemoveFigure(Controller.CurrentLayer, root.ID);
+                    opeList.Add(ope);
+                }
                 Controller.CurrentLayer.RemoveFigureByID(root.ID);
             }
 
-            Session.AddOpe(opeList);
+            if (!Session.StartWithSnapshotDB)
+            {
+                Session.AddOpe(opeList);
+            }
 
             ItConsole.println(
                 TCad.Properties.Resources.notice_was_ungrouped
@@ -439,8 +443,12 @@ namespace Plotter.Controller
 
             fig.EndCreate(Controller.DC);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             return fig;
@@ -459,8 +467,12 @@ namespace Plotter.Controller
 
             fig.EndCreate(Controller.DC);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             return fig;
@@ -499,8 +511,12 @@ namespace Plotter.Controller
 
             fig.EndCreate(Controller.DC);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -561,8 +577,12 @@ namespace Plotter.Controller
 
             fig.EndCreate(Controller.DC);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -589,8 +609,12 @@ namespace Plotter.Controller
             fig.AddPoint((CadVertex)p1);
             fig.EndCreate(Controller.DC);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -662,8 +686,12 @@ namespace Plotter.Controller
 
             CadFigure fig = MesthToFig(cm);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -678,8 +706,12 @@ namespace Plotter.Controller
 
             CadFigure fig = MesthToFig(cm);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -693,9 +725,12 @@ namespace Plotter.Controller
                 MeshMaker.CreateOctahedron(pos, new Vector3d(x, y, z));
 
             CadFigure fig = MesthToFig(cm);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -708,9 +743,12 @@ namespace Plotter.Controller
             CadMesh cm = MeshMaker.CreateCylinder(pos, circleDiv, slices, r, len);
 
             CadFigure fig = MesthToFig(cm);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -724,8 +762,12 @@ namespace Plotter.Controller
 
             CadFigure fig = MesthToFig(cm);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -739,9 +781,11 @@ namespace Plotter.Controller
 
             fig.Setup(Controller.PageSize, pos, fname);
 
-
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();
@@ -768,12 +812,21 @@ namespace Plotter.Controller
 
             CadFigure fig = MesthToFig(cm);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            CadOpe ope;
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig);
 
-            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, baseFig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, baseFig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.RemoveFigureByID(baseFig.ID);
 
             Session.PostRemakeObjectTree();
@@ -1282,17 +1335,22 @@ namespace Plotter.Controller
                 CadUtil.RotateFigure(fig, org, rotateV, -t);
             }
 
-            CadOpeList root = new CadOpeList();
+            CadOpeList root = Session.StartWithSnapshotDB? null : new CadOpeList();
             CadOpe ope;
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
             Controller.CurrentLayer.AddFigure(fig);
 
-
-            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, figID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, figID);
+                Session.AddOpe(ope);
+            }
 
             Controller.CurrentLayer.RemoveFigureByID(figID);
             Controller.CurrentFigure = null;
@@ -1324,16 +1382,19 @@ namespace Plotter.Controller
 
             fig.SetMesh(hem);
 
-            CadOpeList root = new CadOpeList();
-            CadOpe ope;
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpeList root = new CadOpeList();
+                CadOpe ope;
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            root.Add(ope);
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                root.Add(ope);
 
-            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, tfig.ID);
-            root.Add(ope);
+                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, tfig.ID);
+                root.Add(ope);
 
-            Session.AddOpe(root);
+                Session.AddOpe(root);
+            }
 
             Controller.CurrentLayer.AddFigure(fig);
             Controller.CurrentLayer.RemoveFigureByID(tfig.ID);
@@ -1369,23 +1430,22 @@ namespace Plotter.Controller
 
             figPoly.IsLoop = true;
 
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpeList opeRoot = new CadOpeList();
+                CadOpe ope;
 
-            CadOpeList opeRoot = new CadOpeList();
-            CadOpe ope;
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, figPoly.ID);
+                opeRoot.Add(ope);
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, figPoly.ID);
-            opeRoot.Add(ope);
+                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
+                opeRoot.Add(ope);
+                Session.AddOpe(opeRoot);
+            }
 
             Controller.CurrentLayer.AddFigure(figPoly);
 
-
-            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
-            opeRoot.Add(ope);
-
             Controller.CurrentLayer.RemoveFigureByID(fig.ID);
-
-
-            Session.AddOpe(opeRoot);
 
             Env.RunOnMainThread(() =>
             {
@@ -1397,7 +1457,7 @@ namespace Plotter.Controller
 
         public void ToMesh(uint id)
         {
-            CadOpeList opeRoot = new CadOpeList();
+            CadOpeList opeRoot = Session.StartWithSnapshotDB? null: new CadOpeList();
 
             CadOpe ope;
 
@@ -1430,14 +1490,12 @@ namespace Plotter.Controller
                 int index = orgFig.Parent.ChildList.IndexOf(orgFig);
 
                 // Remove original poly lines object
-                ope = new CadOpeRemoveChild(parent, orgFig, index);
-                opeRoot.Add(ope);
+                opeRoot?.Add(new CadOpeRemoveChild(parent, orgFig, index));
 
                 orgFig.Parent.ChildList.Remove(orgFig);
 
                 // Insert mesh object
-                ope = new CadOpeAddChild(parent, mesh, index);
-                opeRoot.Add(ope);
+                opeRoot?.Add(new CadOpeAddChild(parent, mesh, index));
 
                 orgFig.Parent.ChildList.Insert(index, mesh);
                 mesh.Parent = parent;
@@ -1445,13 +1503,11 @@ namespace Plotter.Controller
             else
             {
                 // Remove original poly lines object
-                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, mesh.ID);
-                opeRoot.Add(ope);
+                opeRoot?.Add(new CadOpeAddFigure(Controller.CurrentLayer.ID, mesh.ID));
                 Controller.CurrentLayer.AddFigure(mesh);
 
                 // Insert mesh object
-                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, orgFig.ID);
-                opeRoot.Add(ope);
+                opeRoot?.Add(new CadOpeRemoveFigure(Controller.CurrentLayer, orgFig.ID));
                 Controller.CurrentLayer.RemoveFigureByID(orgFig.ID);
             }
 
@@ -1470,19 +1526,20 @@ namespace Plotter.Controller
         {
             List<CadFigure> figList = Controller.DB.GetSelectedFigList();
 
-            CadOpeList opeRoot = new CadOpeList();
-            CadOpeInvertDir ope;
+            CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
 
             for (int i = 0; i < figList.Count; i++)
             {
                 CadFigure fig = figList[i];
                 fig.InvertDir();
 
-                ope = new CadOpeInvertDir(fig.ID);
-                opeRoot.Add(ope);
+                opeRoot?.Add(new CadOpeInvertDir(fig.ID));
             }
 
-            Session.AddOpe(opeRoot);
+            if (!Session.StartWithSnapshotDB)
+            {
+                Session.AddOpe(opeRoot);
+            }
         }
 
         public void SetFigName(uint id, string name)
@@ -1535,8 +1592,11 @@ namespace Plotter.Controller
 
             fig.SetMesh(hem);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
             Controller.CurrentLayer.AddFigure(fig);
 
@@ -1570,8 +1630,11 @@ namespace Plotter.Controller
 
             fig.SetMesh(hem);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
             Controller.CurrentLayer.AddFigure(fig);
 
@@ -1605,8 +1668,11 @@ namespace Plotter.Controller
 
             fig.SetMesh(hem);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
 
             Controller.CurrentLayer.AddFigure(fig);
 
@@ -1647,16 +1713,28 @@ namespace Plotter.Controller
 
             CadOpe ope;
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig1.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig1.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig1);
 
-            ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig2.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig2.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.AddFigure(fig2);
 
-            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, tfig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                ope = new CadOpeRemoveFigure(Controller.CurrentLayer, tfig.ID);
+                Session.AddOpe(ope);
+            }
+
             Controller.CurrentLayer.RemoveFigureByID(tfig.ID);
 
             Controller.ClearSelection();
@@ -1739,7 +1817,7 @@ namespace Plotter.Controller
 
         public Vector3d InputPoint()
         {
-            Env.OpenPopupMessage("Input point", PlotterCallback.MessageType.INPUT);
+            Env.OpenPopupMessage("Input point", UITypes.MessageType.INPUT);
 
             InteractCtrl ctrl = Controller.InteractCtrl;
 
@@ -1878,7 +1956,6 @@ namespace Plotter.Controller
             });
         }
 
-        /*
         public void Redraw()
         {
             Env.RunOnMainThread(() =>
@@ -1888,7 +1965,6 @@ namespace Plotter.Controller
                 Controller.PushToView();
             });
         }
-        */
 
         public CadFigure CreatePolyLines()
         {
@@ -1902,8 +1978,12 @@ namespace Plotter.Controller
             {
                 Controller.DB.AddFigure(fig);
                 Controller.CurrentLayer.AddFigure(fig);
-                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-                Session.AddOpe(ope);
+
+                if (!Session.StartWithSnapshotDB)
+                {
+                    CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                    Session.AddOpe(ope);
+                }
             }
         }
 
@@ -1935,8 +2015,11 @@ namespace Plotter.Controller
 
             CadFigure fig = MesthToFig(cm);
 
-            CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
-            Session.AddOpe(ope);
+            if (!Session.StartWithSnapshotDB)
+            {
+                CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                Session.AddOpe(ope);
+            }
             Controller.CurrentLayer.AddFigure(fig);
 
             Session.PostRemakeObjectTree();

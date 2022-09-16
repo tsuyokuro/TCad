@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
@@ -328,7 +328,7 @@ namespace Plotter.Controller
 
             layer.FigureList = newFigList;
 
-            Callback.UpdateObjectTree(true);
+            ViewIF.UpdateTreeView(true);
         }
 
         #endregion

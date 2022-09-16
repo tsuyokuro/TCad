@@ -12,6 +12,7 @@ using Plotter.Serializer.v1001;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TCad.ViewModel;
 
 namespace Plotter.Controller.TaskRunner
 {
@@ -280,7 +281,7 @@ namespace Plotter.Controller.TaskRunner
 
             ctrl.Start();
 
-            OpenPopupMessage("Input rotate origin", PlotterCallback.MessageType.INPUT);
+            OpenPopupMessage("Input rotate origin", UITypes.MessageType.INPUT);
             ItConsole.println(AnsiEsc.BYellow + "<< Input point >>");
 
             InteractCtrl.States ret;
@@ -312,7 +313,7 @@ namespace Plotter.Controller.TaskRunner
 
             ctrl.Start();
 
-            OpenPopupMessage("Input flip axis", PlotterCallback.MessageType.INPUT);
+            OpenPopupMessage("Input flip axis", UITypes.MessageType.INPUT);
             ItConsole.println(AnsiEsc.BYellow + "<< Input point 1 >>");
 
             InteractCtrl.States ret;
@@ -357,14 +358,14 @@ namespace Plotter.Controller.TaskRunner
             return (p0, p1, InteractCtrl.States.END);
         }
 
-        public void OpenPopupMessage(string text, PlotterCallback.MessageType type)
+        public void OpenPopupMessage(string text, UITypes.MessageType type)
         {
-            Controller.Callback.OpenPopupMessage(text, type);
+            Controller.ViewIF.OpenPopupMessage(text, type);
         }
 
         public void ClosePopupMessage()
         {
-            Controller.Callback.ClosePopupMessage();
+            Controller.ViewIF.ClosePopupMessage();
         }
 
         private void RunOnMainThread(Action action)

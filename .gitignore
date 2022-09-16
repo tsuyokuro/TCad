@@ -25,4 +25,5 @@ TestResults/
 /GeoLibWrapper/x64
 /GeoLibWrapper/bin
 /GeoLibWrapper/obj
-
+/DebugClient/DebugClient/bin
+/DebugClient/DebugClient/obj

@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
@@ -25,6 +25,10 @@ namespace Plotter.Serializer
         // List<CadFigure> func(List<MpFigure> list)
         private static Func<List<MpFigure_v1003>, List<CadFigure>> MpToFigList = MpUtil_v1003.FigureListFromMp_v1003;
 
+        private static MessagePackSerializerOptions lz4Options
+        {
+            get => MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
+        }
 
         public static byte[] FigListToBin(List<CadFigure> figList)
         {
@@ -68,13 +72,11 @@ namespace Plotter.Serializer
         public static byte[] FigToLz4Bin(CadFigure fig, bool withChild = false)
         {
             var mpf = CreateMpFig(fig, withChild);
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
             return MessagePackSerializer.Serialize(mpf, lz4Options);
         }
 
         public static CadFigure Lz4BinToFig(byte[] bin, CadObjectDB db = null)
         {
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
             var mpfig = DeserializeFig(bin, lz4Options);
 
             CadFigure fig = mpfig.Restore();
@@ -89,7 +91,6 @@ namespace Plotter.Serializer
 
         public static void Lz4BinRestoreFig(byte[] bin, CadFigure fig, CadObjectDB db = null)
         {
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
             var mpfig = DeserializeFig(bin, lz4Options);
             mpfig.RestoreTo(fig);
 
@@ -103,7 +104,6 @@ namespace Plotter.Serializer
                 return;
             }
 
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
             var mpfig = DeserializeFig(bin, lz4Options);
 
             CadFigure fig = db.GetFigure(mpfig.ID);
@@ -121,6 +121,22 @@ namespace Plotter.Serializer
             {
                 fig.AddChild(db.GetFigure(idList[i]));
             }
+        }
+
+        public static byte[] DBToLz4(CadObjectDB db)
+        {
+            MpCadObjectDB_v1003 mpdb = MpCadObjectDB_v1003.Create(db);
+            byte[] bin = MessagePackSerializer.Serialize(mpdb, lz4Options);
+
+            return bin;
+        }
+
+        public static CadObjectDB Lz4BinRestoreDB(byte[] bin)
+        {
+            MpCadObjectDB_v1003 mpdb = MessagePackSerializer.Deserialize<MpCadObjectDB_v1003>(bin, lz4Options);
+            CadObjectDB db = mpdb.Restore();
+
+            return db;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Plotter.Controller
+namespace Plotter.Controller
 {
     public class ScriptSession
     {
@@ -10,26 +10,51 @@
         private bool NeedRemakeObjectTree = false;
         private bool NeedRedraw = false;
 
+        public bool StartWithSnapshotDB
+        {
+            get;
+            private set;
+        }
+
+        private CadOpeDBSnapShot SnapShot;
+
         public ScriptSession(ScriptEnvironment env)
         {
             Env = env;
-        }
-
-        public CadOpeList OpeList
-        {
-            get => mCadOpeList;
+            mCadOpeList = new CadOpeList();
         }
 
         public void AddOpe(CadOpe ope)
         {
+            if (ope == null)
+            {
+                return;
+            }
+
+            if (StartWithSnapshotDB)
+            {
+                return;
+            }
+
+            DOut.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
             mCadOpeList.Add(ope);
         }
 
-        public void Start()
+        public void Start(bool snapshotDB = false)
         {
-            mCadOpeList = new CadOpeList();
-
             ResetFlags();
+
+            StartWithSnapshotDB = snapshotDB;
+
+            if (snapshotDB)
+            {
+                SnapShot = new CadOpeDBSnapShot();
+                SnapShot.StoreBefore(Env.Controller.DB);
+            }
+            else
+            {
+                mCadOpeList = new CadOpeList();
+            }
         }
 
         public void End()
@@ -42,6 +67,17 @@
             if (NeedRedraw)
             {
                 Redraw();
+            }
+
+            if (StartWithSnapshotDB)
+            {
+                SnapShot.StoreAfter(Env.Controller.DB);
+                Env.Controller.HistoryMan.foward(SnapShot);
+            } else {
+                if (mCadOpeList?.Count() > 0)
+                {
+                    Env.Controller.HistoryMan.foward(mCadOpeList);
+                }
             }
         }
 

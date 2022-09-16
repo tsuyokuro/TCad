@@ -1,4 +1,4 @@
-﻿#define MOUSE_THREAD
+#define MOUSE_THREAD
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
 using GLFont;
+using TCad.ViewModel;
 
 namespace Plotter
 {
@@ -20,6 +21,8 @@ namespace Plotter
         private DrawContextGL mDrawContext = null;
 
         private PlotterController mController = null;
+
+        private IPlotterViewModel mVM;
 
         private Vector3d PrevMousePos = default;
 
@@ -32,38 +35,31 @@ namespace Plotter
 
         private Cursor PointCursor;
 
-        public DrawContext DrawContext
-        {
-            get
-            {
-                return mDrawContext;
-            }
-        }
 
-        public Control FormsControl
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public DrawContext DrawContext => mDrawContext;
+
+        public Control FormsControl => this;
+
 
         private DrawContextGLOrtho mDrawContextOrtho;
 
         private DrawContextGLPers mDrawContextPers;
 
 
-        public static PlotterViewGL Create()
+        public static PlotterViewGL Create(IPlotterViewModel vm)
         {
             DOut.pl("in PlotterViewGL Create");
-            PlotterViewGL v = new PlotterViewGL();
+            PlotterViewGL v = new PlotterViewGL(vm);
             v.MakeCurrent();
             DOut.pl("out PlotterViewGL Create");
             return v;
         }
 
-        private PlotterViewGL()
+        private PlotterViewGL(IPlotterViewModel vm)
         {
+            mVM = vm;
+            mController = mVM.Controller;
+
             SetupContextMenu();
 
             base.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
@@ -206,8 +202,7 @@ namespace Plotter
         public void Redraw()
         {
 #if MOUSE_THREAD
-            ThreadUtil.RunOnMainThread(
-                mController.Redraw, wait: false);
+            ThreadUtil.RunOnMainThread(mController.Redraw, false);
 #else
             mController.Redraw(mController.DC);
 #endif
@@ -276,21 +271,6 @@ namespace Plotter
             mDrawContext.SetViewSize(Size.Width, Size.Height);
         }
 
-        public void SetController(PlotterController controller)
-        {
-            if (mController != null)
-            {
-                mController.Callback.RequestContextMenu -= ShowContextMenu;
-            }
-
-            mController = controller;
-
-            if (controller != null)
-            {
-                mController.Callback.RequestContextMenu += ShowContextMenu;
-            }
-        }
-
         public void PushToFront(DrawContext dc)
         {
             if (dc == mDrawContext)
@@ -311,17 +291,17 @@ namespace Plotter
             }
         }
 
-        public void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
         {
             switch (cursorType)
             {
-                case PlotterCallback.MouseCursorType.CROSS:
+                case UITypes.MouseCursorType.CROSS:
                     base.Cursor = PointCursor;
                     break;
-                case PlotterCallback.MouseCursorType.NORMAL_ARROW:
+                case UITypes.MouseCursorType.NORMAL_ARROW:
                     base.Cursor = Cursors.Arrow;
                     break;
-                case PlotterCallback.MouseCursorType.HAND:
+                case UITypes.MouseCursorType.HAND:
                     base.Cursor = Cursors.SizeAll;
                     break;
             }
@@ -356,15 +336,15 @@ namespace Plotter
             }
         }
 
-        public void ShowContextMenu(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
-                ShowContextMenuProc(sender, menuInfo, x, y);
+                ShowContextMenuProc(menuInfo, x, y);
             }, true);
         }
 
-        private void ShowContextMenuProc(PlotterController sender, MenuInfo menuInfo, int x, int y)
+        private void ShowContextMenuProc(MenuInfo menuInfo, int x, int y)
         {
             mContextMenu.Items.Clear();
 

@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,11 @@ using Plotter.Settings;
 using System.IO;
 using TCad.ScriptEditor;
 using System.Runtime.Versioning;
+using Plotter.Serializer;
 
 namespace TCad.ViewModel
 {
-
-    public class PlotterViewModel : ViewModelContext, INotifyPropertyChanged
+    public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,6 +38,18 @@ namespace TCad.ViewModel
                 Up = up;
                 Description = description;
             }
+        }
+
+        protected PlotterController mController;
+        public PlotterController Controller
+        {
+            get => mController;
+        }
+
+        protected ICadMainWindow mMainWindow;
+        public ICadMainWindow MainWindow
+        {
+            get => mMainWindow;
         }
 
         private Dictionary<string, Action> CommandMap;
@@ -114,12 +126,11 @@ namespace TCad.ViewModel
 
         private MoveKeyHandler mMoveKeyHandler;
 
-        private string mCurrentFileName = null;
+        public string mCurrentFileName;
         public string CurrentFileName
         {
             get => mCurrentFileName;
-
-            private set
+            set
             {
                 mCurrentFileName = value;
                 ChangeCurrentFileName(mCurrentFileName);
@@ -128,7 +139,7 @@ namespace TCad.ViewModel
 
         public PlotterViewModel(ICadMainWindow mainWindow)
         {
-            mController = new PlotterController();
+            mController = new PlotterController(this);
 
             SettingsVM = new SettingsVeiwModel(this);
 
@@ -140,26 +151,14 @@ namespace TCad.ViewModel
 
             mMainWindow = mainWindow;
 
+            CurrentFileName = null;
+
+
             InitCommandMap();
             InitKeyMap();
 
             SelectMode = mController.SelectMode;
             CreatingFigureType = mController.CreatingFigType;
-
-            mController.Callback.StateChanged = StateChanged;
-
-            mController.Callback.CursorPosChanged = CursorPosChanged;
-
-            mController.Callback.OpenPopupMessage = OpenPopupMessage;
-
-            mController.Callback.ClosePopupMessage = ClosePopupMessage;
-
-            mController.Callback.CursorLocked = CursorLocked;
-
-            mController.Callback.ChangeMouseCursor = ChangeMouseCursor;
-
-            mController.Callback.HelpOfKey = HelpOfKey;
-
 
             mController.UpdateLayerList();
 
@@ -180,12 +179,12 @@ namespace TCad.ViewModel
             }
         }
 
-        private void OpenPopupMessage(string text, PlotterCallback.MessageType messageType)
+        public void OpenPopupMessage(string text, UITypes.MessageType messageType)
         {
             mMainWindow.OpenPopupMessage(text, messageType);
         }
 
-        private void ClosePopupMessage()
+        public void ClosePopupMessage()
         {
             mMainWindow.ClosePopupMessage();
         }
@@ -224,6 +223,7 @@ namespace TCad.ViewModel
                 { "centroid", AddCentroid },
                 { "select_all", SelectAll },
                 { "snap_settings", SnapSettings },
+                { "move_key_settings", MoveKeySettings },
                 { "show_editor", ShowEditor },
                 { "export_svg", ExportSVG },
                 { "obj_order_down", ObjOrderDown },
@@ -253,10 +253,14 @@ namespace TCad.ViewModel
                 { "ctrl+p", new KeyAction(InsPoint , null, "Inser Point")},
                 { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
                 { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
-                { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left 1 milli")},
-                { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right 1 milli")},
-                { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up 1 milli")},
-                { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down 1 milli")},
+                { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
+                { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right")},
+                { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up")},
+                { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down")},
+                { "shift+left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left with 1/10 unit")},
+                { "shift+right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right with 1/10 unit")},
+                { "shift+up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up with 1/10 unit")},
+                { "shift+down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down with 1/10 unit")},
                 { "m", new KeyAction(AddMark, null, " Add snap point")},
                 { "ctrl+m", new KeyAction(CleanMark, null, " Clear snap points")},
             };
@@ -276,44 +280,6 @@ namespace TCad.ViewModel
                 t = ss[i];
                 p = Char.ToUpper(t[0]) + t.Substring(1);
                 ret += "+" + p;
-            }
-
-            return ret;
-        }
-
-        public List<string> HelpOfKey(string keyword)
-        {
-            List<string> ret = new List<string>();
-
-            if (keyword == null)
-            {
-                foreach (String s in KeyMap.Keys)
-                {
-                    KeyAction k = KeyMap[s];
-
-                    if (k.Description == null) continue;
-
-                    string t = GetDisplayKeyString(s);
-
-                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
-                }
-
-                return ret;
-            }
-
-            Regex re = new Regex(keyword, RegexOptions.IgnoreCase);
-
-            foreach (String s in KeyMap.Keys)
-            {
-                KeyAction k = KeyMap[s];
-
-                if (k.Description == null) continue;
-
-                if (re.Match(k.Description).Success)
-                {
-                    string t = GetDisplayKeyString(s);
-                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
-                }
             }
 
             return ret;
@@ -491,8 +457,20 @@ namespace TCad.ViewModel
             {
                 SettingsHolder.Settings.LastDataDir = Path.GetDirectoryName(ofd.FileName);
 
-                CadFileAccessor.LoadFile(ofd.FileName, this);
-                CurrentFileName = ofd.FileName;
+                try
+                {
+                    CadFileAccessor.LoadFile(ofd.FileName, this);
+                    CurrentFileName = ofd.FileName;
+                }
+                catch (CadFileException cadFileException)
+                {
+                    string text = cadFileException.getMessage(); ;
+                    string caption = "Load error";
+                    MessageBoxButton button = MessageBoxButton.OK;
+                    MessageBoxImage icon = MessageBoxImage.Error;
+
+                    MessageBox.Show(text, caption, button, icon);
+                }
             }
         }
 
@@ -574,6 +552,24 @@ namespace TCad.ViewModel
                 Settings.PrintWithBitmap = dlg.PrintWithBitmap;
                 Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
                 Settings.PrintLineSmooth = dlg.PrintLineSmooth;
+            }
+        }
+
+        public void MoveKeySettings()
+        {
+            MoveKeySettingsDialog dlg = new MoveKeySettingsDialog();
+
+            dlg.Owner = mMainWindow.GetWindow();
+
+            dlg.MoveX = Settings.MoveKeyUnitX;
+            dlg.MoveY = Settings.MoveKeyUnitY;
+
+            bool? result = dlg.ShowDialog();
+
+            if (result.Value)
+            {
+                Settings.MoveKeyUnitX = dlg.MoveX;
+                Settings.MoveKeyUnitY = dlg.MoveY;
             }
         }
 
@@ -717,9 +713,9 @@ namespace TCad.ViewModel
 #endregion
 
         // Handle events from PlotterController
-#region Event From PlotterController
+        #region Event From PlotterController
 
-        public void StateChanged(PlotterController sender, PlotterStateInfo si)
+        public void StateChanged(PlotterStateInfo si)
         {
             if (CreatingFigureType != si.CreatingFigureType)
             {
@@ -732,7 +728,7 @@ namespace TCad.ViewModel
             }
         }
 
-        private void CursorPosChanged(PlotterController sender, Vector3d pt, Plotter.Controller.CursorType type)
+        public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type)
         {
             if (type == Plotter.Controller.CursorType.TRACKING)
             {
@@ -744,7 +740,7 @@ namespace TCad.ViewModel
             }
         }
 
-        private void CursorLocked(bool locked)
+        public void CursorLocked(bool locked)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
@@ -752,7 +748,7 @@ namespace TCad.ViewModel
             }, true);
         }
 
-        private void ChangeMouseCursor(PlotterCallback.MouseCursorType cursorType)
+        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
         {
             ThreadUtil.RunOnMainThread(() =>
             {
@@ -760,11 +756,73 @@ namespace TCad.ViewModel
             }, true);
         }
 
-#endregion Event From PlotterController
+        public List<string> HelpOfKey(string keyword)
+        {
+            List<string> ret = new List<string>();
 
+            if (keyword == null)
+            {
+                foreach (String s in KeyMap.Keys)
+                {
+                    KeyAction k = KeyMap[s];
+
+                    if (k.Description == null) continue;
+
+                    string t = GetDisplayKeyString(s);
+
+                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
+                }
+
+                return ret;
+            }
+
+            Regex re = new Regex(keyword, RegexOptions.IgnoreCase);
+
+            foreach (String s in KeyMap.Keys)
+            {
+                KeyAction k = KeyMap[s];
+
+                if (k.Description == null) continue;
+
+                if (re.Match(k.Description).Success)
+                {
+                    string t = GetDisplayKeyString(s);
+                    ret.Add(AnsiEsc.BGreen + t + AnsiEsc.Reset + " " + k.Description);
+                }
+            }
+
+            return ret;
+        }
+
+        public void LayerListChanged(LayerListInfo layerListInfo)
+        {
+            LayerListVM.LayerListChanged(layerListInfo);
+        }
+
+        public void UpdateTreeView(bool remakeTree)
+        {
+            ObjTreeVM?.UpdateTreeView(remakeTree);
+        }
+
+        public void SetTreeViewPos(int index)
+        {
+            ObjTreeVM.SetTreeViewPos(index);
+        }
+
+        public int FindTreeViewItemIndex(uint id)
+        {
+            return ObjTreeVM.FindTreeViewItemIndex(id);
+        }
+
+        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
+        {
+            mViewManager.PlotterView.ShowContextMenu(menuInfo, x, y);
+        }
+
+        #endregion Event From PlotterController
 
         // Keyboard handling
-#region Keyboard handling
+        #region Keyboard handling
         private string GetModifyerKeysString()
         {
             ModifierKeys modifierKeys = Keyboard.Modifiers;
@@ -987,10 +1045,15 @@ namespace TCad.ViewModel
             }
         }
 
-        public override void DrawModeUpdated(DrawTools.DrawMode mode)
+        public void DrawModeUpdated(DrawTools.DrawMode mode)
         {
             mViewManager.DrawModeUpdated(mode);
             mMainWindow.DrawModeUpdated(mode);
+        }
+
+        public void Redraw()
+        {
+            ThreadUtil.RunOnMainThread(mController.Redraw, true);
         }
     }
 }

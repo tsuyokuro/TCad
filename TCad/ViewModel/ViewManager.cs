@@ -1,4 +1,4 @@
-﻿//#define USE_GDI_VIEW
+//#define USE_GDI_VIEW
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -12,7 +12,7 @@ namespace TCad.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModelContext mContext;
+        public IPlotterViewModel mContext;
 
         private IPlotterView mPlotterView = null;
         public IPlotterView PlotterView
@@ -50,7 +50,7 @@ namespace TCad.ViewModel
             get => mViewMode;
         }
 
-        public ViewManager(ViewModelContext context)
+        public ViewManager(IPlotterViewModel context)
         {
             mContext = context;
         }
@@ -60,9 +60,9 @@ namespace TCad.ViewModel
             DOut.pl("in ViewManager#SetupViews");
 
 #if USE_GDI_VIEW
-            PlotterViewGDI1 = PlotterViewGDI.Create();
+            PlotterViewGDI1 = PlotterViewGDI.Create(mContext);
 #endif
-            PlotterViewGL1 = PlotterViewGL.Create();
+            PlotterViewGL1 = PlotterViewGL.Create(mContext);
 
 #if USE_GDI_VIEW
             ViewMode = ViewModes.FREE;  // 一旦GL側を設定してViewをLoadしておく
@@ -291,11 +291,7 @@ namespace TCad.ViewModel
 #endif
         private void SetView(IPlotterView view)
         {
-            mPlotterView?.SetController(null);
-
             mPlotterView = view;
-
-            mPlotterView.SetController(mContext.Controller);
 
             mContext.Controller.DC = view.DrawContext;
 

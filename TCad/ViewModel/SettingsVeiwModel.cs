@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.ComponentModel;
 using OpenTK;
 using OpenTK.Mathematics;
@@ -15,7 +15,7 @@ namespace TCad.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModelContext mContext;
+        public IPlotterViewModel mContext;
 
         [UserSettingData]
         public bool ContinueCreateFigure
@@ -287,15 +287,27 @@ namespace TCad.ViewModel
         }
 
         [UserSettingData]
-        public double KeyMoveUnit
+        public double MoveKeyUnitX
         {
             set
             {
-                SettingsHolder.Settings.KeyMoveUnit = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(KeyMoveUnit)));
+                SettingsHolder.Settings.MoveKeyUnitX = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MoveKeyUnitX)));
             }
 
-            get => SettingsHolder.Settings.KeyMoveUnit;
+            get => SettingsHolder.Settings.MoveKeyUnitX;
+        }
+
+        [UserSettingData]
+        public double MoveKeyUnitY
+        {
+            set
+            {
+                SettingsHolder.Settings.MoveKeyUnitY = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MoveKeyUnitY)));
+            }
+
+            get => SettingsHolder.Settings.MoveKeyUnitY;
         }
 
         [UserSettingData]
@@ -349,7 +361,7 @@ namespace TCad.ViewModel
             get => SettingsHolder.Settings.PrintLineSmooth;
         }
 
-        public SettingsVeiwModel(ViewModelContext context)
+        public SettingsVeiwModel(IPlotterViewModel context)
         {
             mContext = context;
         }

@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK.Mathematics;
 
 namespace Plotter
