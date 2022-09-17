@@ -260,7 +260,7 @@ namespace TestApp
 
             TextLine tl = new TextLine(attr);
 
-            string s = "黒木" + AnsiEsc.Green + "剛" + AnsiEsc.Blue + AnsiEsc.GreenBG + "tsuyoshi";
+            string s = "漢字" + AnsiEsc.Green + "テスト" + AnsiEsc.Blue + AnsiEsc.GreenBG + "ABCdef";
 
             tl.Parse(s);
 

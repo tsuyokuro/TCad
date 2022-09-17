@@ -212,7 +212,7 @@
                     Width="{StaticResource AppIconSize}"
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
-                    Source="{StaticResource triangle2DrawingImage}" />
+                    Source="{StaticResource traiangle2DrawingImage}" />
                 <Label
                     Grid.Column="1"
                     Margin="4,0,0,0"

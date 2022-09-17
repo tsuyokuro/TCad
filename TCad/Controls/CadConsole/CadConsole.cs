@@ -783,28 +783,6 @@ namespace TCad.Controls
             }
         }
 
-        protected void DrawSelectedRange(DrawingContext dc, int row)
-        {
-            if (Sel.IsValid && row >= Sel.SP.Row && row <= Sel.EP.Row)
-            {
-                Rect r = new Rect(mTextLeftMargin, row * mLineHeight - 0.5, 0, mLineHeight);
-
-                TextSpan ts = Sel.GetRowSpan(row, mList[row].Data.Length);
-
-                //DOut.pl($"row:{row} ts.Start:{ts.Start} ts.Len{ts.Len}");
-
-                double sp = TextColToPoint(ts.Start - 1, mList[row].Data, CW, CWF);
-                double ep = TextColToPoint(ts.Start + ts.Len - 1, mList[row].Data, CW, CWF);
-
-                r.X = sp + mTextLeftMargin;
-                r.Width = ep - sp;
-
-                dc.PushOpacity(mSelectedBackgroundOpacity);
-                dc.DrawRectangle(mSelectedBackground, null, r);
-                dc.Pop();
-            }
-        }
-
         protected Point RenderText(
             DrawingContext dc, TextAttr attr, string s, Point pt, int row)
         {
@@ -825,6 +803,28 @@ namespace TCad.Controls
             dc.DrawText(ft, tpt);
             pt.X += ft.WidthIncludingTrailingWhitespace;
             return pt;
+        }
+
+        protected void DrawSelectedRange(DrawingContext dc, int row)
+        {
+            if (Sel.IsValid && row >= Sel.SP.Row && row <= Sel.EP.Row)
+            {
+                Rect r = new Rect(mTextLeftMargin, row * mLineHeight - 0.5, 0, mLineHeight);
+
+                TextSpan ts = Sel.GetRowSpan(row, mList[row].Data.Length);
+
+                //DOut.pl($"row:{row} ts.Start:{ts.Start} ts.Len{ts.Len}");
+
+                double sp = TextColToPoint(ts.Start - 1, mList[row].Data, CW, CWF);
+                double ep = TextColToPoint(ts.Start + ts.Len - 1, mList[row].Data, CW, CWF);
+
+                r.X = sp + mTextLeftMargin;
+                r.Width = ep - sp;
+
+                dc.PushOpacity(mSelectedBackgroundOpacity);
+                dc.DrawRectangle(mSelectedBackground, null, r);
+                dc.Pop();
+            }
         }
         #endregion
 
