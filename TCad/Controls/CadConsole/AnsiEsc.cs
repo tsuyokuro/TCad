@@ -1,4 +1,4 @@
-﻿using Plotter;
+using Plotter;
 using System;
 using System.Windows.Media;
 
@@ -10,7 +10,7 @@ namespace TCad.Controls
 
         public const string Reset = ESC + "0m";
 
-        public const string Balck = ESC + "30m";
+        public const string Black = ESC + "30m";
         public const string Red = ESC + "31m";
         public const string Green = ESC + "32m";
         public const string Yellow = ESC + "33m";
@@ -19,7 +19,7 @@ namespace TCad.Controls
         public const string Cyan = ESC + "36m";
         public const string White = ESC + "37m";
 
-        public const string BBalck = ESC + "90m";
+        public const string BBlack = ESC + "90m";
         public const string BRed = ESC + "91m";
         public const string BGreen = ESC + "92m";
         public const string BYellow = ESC + "93m";
@@ -29,7 +29,7 @@ namespace TCad.Controls
         public const string BWhite = ESC + "97m";
 
 
-        public const string BalckBG = ESC + "40m";
+        public const string BlackBG = ESC + "40m";
         public const string RedBG = ESC + "41m";
         public const string GreenBG = ESC + "42m";
         public const string YellowBG = ESC + "43m";
@@ -38,7 +38,7 @@ namespace TCad.Controls
         public const string CyanBG = ESC + "46m";
         public const string WhiteBG = ESC + "47m";
 
-        public const string BBalckBG = ESC + "100m";
+        public const string BBlackBG = ESC + "100m";
         public const string BRedBG = ESC + "101m";
         public const string BGreenBG = ESC + "102m";
         public const string BYellowBG = ESC + "103m";

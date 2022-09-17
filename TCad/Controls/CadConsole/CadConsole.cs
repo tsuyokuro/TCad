@@ -776,12 +776,10 @@ namespace TCad.Controls
 
         protected void DrawText(DrawingContext dc, TextLine line, Point pt, int row)
         {
-            int sp = 0;
             foreach (AttrSpan attr in line.Attrs)
             {
-                string s = line.Data.Substring(sp, attr.Len);
-                pt = RenderText(dc, attr.Attr, s, pt, row, sp);
-                sp += attr.Len;
+                string s = line.Data.Substring(attr.Start, attr.Len);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
             }
         }
 
@@ -808,7 +806,7 @@ namespace TCad.Controls
         }
 
         protected Point RenderText(
-            DrawingContext dc, TextAttr attr, string s, Point pt, int row, int col)
+            DrawingContext dc, TextAttr attr, string s, Point pt, int row)
         {
             Brush foreground = Palette.Brushes[attr.FColor];
 
