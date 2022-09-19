@@ -1,3 +1,4 @@
+using Plotter;
 using System;
 using System.Security.Policy;
 using System.Text;
@@ -61,7 +62,7 @@ namespace TCad.Controls
             set => mLineHeight = value;
         }
 
-        protected string DefaultFontName = "ＭＳ ゴシック";
+        protected string DefaultFontName = "MS Gothic";
         protected Typeface mTypeface;
         protected FontFamily mFontFamily = null;
         public FontFamily FontFamily
@@ -167,13 +168,15 @@ namespace TCad.Controls
         {
         }
 
-        private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
-        {
-            mIsLoaded = true;
+        protected override void OnInitialized(EventArgs e) {
+            base.OnInitialized(e);
+            DOut.plx("");
 
             if (FontFamily == null)
             {
-                FontFamily = new FontFamily(DefaultFontName);
+                //FontFamily = new FontFamily(DefaultFontName);
+                Uri uri = new Uri("pack://application:,,,/Fonts/");
+                FontFamily = new FontFamily(uri, "./mplus-1m-light.ttf#M+ 1m light");
             }
 
             FrameworkElement parent = (FrameworkElement)Parent;
@@ -187,6 +190,12 @@ namespace TCad.Controls
             {
                 Scroll.ScrollChanged += Scroll_ScrollChanged;
             }
+        }
+
+        private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
+        {
+            DOut.plx("");
+            mIsLoaded = true;
 
             mAutoScroller = new AutoScroller(this);
             mAutoScroller.Scroll = AutoScrollEvent;
@@ -776,13 +785,33 @@ namespace TCad.Controls
 
         protected void DrawText(DrawingContext dc, TextLine line, Point pt, int row)
         {
-            int sp = 0;
             foreach (AttrSpan attr in line.Attrs)
             {
-                string s = line.Data.Substring(sp, attr.Len);
-                pt = RenderText(dc, attr.Attr, s, pt, row, sp);
-                sp += attr.Len;
+                string s = line.Data.Substring(attr.Start, attr.Len);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
             }
+        }
+
+        protected Point RenderText(
+            DrawingContext dc, TextAttr attr, string s, Point pt, int row)
+        {
+            Brush foreground = Palette.Brushes[attr.FColor];
+
+            FormattedText ft = GetFormattedText(s, foreground);
+
+            Rect r = new Rect(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight); 
+
+            Brush background = Palette.Brushes[attr.BColor];
+
+            dc.DrawRectangle(background, null, r);
+
+            Point tpt = pt;
+
+            tpt.Y = pt.Y + (mLineHeight - ft.Height) / 2;
+
+            dc.DrawText(ft, tpt);
+            pt.X += ft.WidthIncludingTrailingWhitespace;
+            return pt;
         }
 
         protected void DrawSelectedRange(DrawingContext dc, int row)
@@ -805,28 +834,6 @@ namespace TCad.Controls
                 dc.DrawRectangle(mSelectedBackground, null, r);
                 dc.Pop();
             }
-        }
-
-        protected Point RenderText(
-            DrawingContext dc, TextAttr attr, string s, Point pt, int row, int col)
-        {
-            Brush foreground = Palette.Brushes[attr.FColor];
-
-            FormattedText ft = GetFormattedText(s, foreground);
-
-            Rect r = new Rect(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight); 
-
-            Brush background = Palette.Brushes[attr.BColor];
-
-            dc.DrawRectangle(background, null, r);
-
-            Point tpt = pt;
-
-            tpt.Y = pt.Y + (mLineHeight - ft.Height) / 2;
-
-            dc.DrawText(ft, tpt);
-            pt.X += ft.WidthIncludingTrailingWhitespace;
-            return pt;
         }
         #endregion
 

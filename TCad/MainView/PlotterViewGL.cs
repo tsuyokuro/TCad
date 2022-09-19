@@ -48,10 +48,10 @@ namespace Plotter
 
         public static PlotterViewGL Create(IPlotterViewModel vm)
         {
-            DOut.pl("in PlotterViewGL Create");
+            DOut.plx("in");
             PlotterViewGL v = new PlotterViewGL(vm);
             v.MakeCurrent();
-            DOut.pl("out PlotterViewGL Create");
+            DOut.plx("out");
             return v;
         }
 
@@ -93,7 +93,7 @@ namespace Plotter
 
         private void OnLoad(object sender, EventArgs e)
         {
-            DOut.pl("in PlotterViewGL#OnLoad");
+            DOut.plx("in");
 
             FontShader.GetInstance();
             ImageShader.GetInstance();
@@ -114,7 +114,7 @@ namespace Plotter
 
             SwapBuffers();
 
-            DOut.pl("out PlotterViewGL#OnLoad");
+            DOut.plx("out");
         }
 
         protected void SetupCursor()

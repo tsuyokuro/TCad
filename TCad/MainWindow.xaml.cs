@@ -24,7 +24,7 @@ namespace TCad
 
         public MainWindow()
         {
-            DOut.pl("in MainWindow constructor");
+            DOut.plx("in");
 
             InitializeComponent();
 
@@ -54,7 +54,7 @@ namespace TCad
 
             InitPopup();
 
-            DOut.pl("out MainWindow constructor");
+            DOut.plx("out");
         }
 
         public CadConsoleView GetBuiltinConsole()
@@ -190,7 +190,7 @@ namespace TCad
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            DOut.pl("in MainWindow_Loaded");
+            DOut.plx("in");
 
             var hsrc = HwndSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
@@ -200,7 +200,7 @@ namespace TCad
 
             ImageRenderer.Provider.Get();
 
-            DOut.pl("out MainWindow_Loaded");
+            DOut.plx("out");
         }
 
         private void Command_Clicked(object sender, RoutedEventArgs e)

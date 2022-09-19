@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -14,6 +14,9 @@ using TCad.Controls;
 using OpenTK.Mathematics;
 using Plotter.svg;
 using System.Xml.Linq;
+using System.Windows.Resources;
+using System.Windows;
+using System.IO;
 
 namespace Plotter.Controller
 {
@@ -446,8 +449,16 @@ namespace Plotter.Controller
 
         private void Test()
         {
-            GetPointsTest();
-            //GetSegsTest();
+            Uri uri = new Uri("pack://application:,,,/Fonts/mplus-1m-light.ttf");
+            StreamResourceInfo info = Application.GetResourceStream(uri);
+
+            Stream stream = info.Stream;
+
+            long len = stream.Length;
+
+            byte[] data = new byte[len];
+
+            int read = stream.Read(data, 0, (int)len);
         }
 
         private void testTriangulate()

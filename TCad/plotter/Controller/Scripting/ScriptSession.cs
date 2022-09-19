@@ -74,7 +74,7 @@ namespace Plotter.Controller
                 SnapShot.StoreAfter(Env.Controller.DB);
                 Env.Controller.HistoryMan.foward(SnapShot);
             } else {
-                if (mCadOpeList?.Count() > 0)
+                if (mCadOpeList?.Count > 0)
                 {
                     Env.Controller.HistoryMan.foward(mCadOpeList);
                 }

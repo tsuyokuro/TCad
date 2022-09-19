@@ -442,10 +442,11 @@ unit_vz = Vector3d(0,0,1)
 w_1x4 = 89
 t_1x4 = 19
 
-
+#[AC] esc_reset
 esc_reset = "\x1b[0m"
 
 # Normal color
+#[AC] esc_
 esc_black = "\x1b[30m"
 esc_red = "\x1b[31m"
 esc_green = "\x1b[32m"
@@ -456,6 +457,7 @@ esc_cyan = "\x1b[36m"
 esc_white = "\x1b[37m"
 
 # Bright color
+#[AC] esc_b_
 esc_b_balck = "\x1b[90m"
 esc_b_red = "\x1b[91m"
 esc_b_green = "\x1b[92m"
@@ -465,22 +467,23 @@ esc_b_magenta = "\x1b[95m"
 esc_b_cyan = "\x1b[96m"
 esc_b_white = "\x1b[97m"
 
+#[AC] esc_bg_
+esc_bg_black = "\x1b[40m";
+esc_bg_red = "\x1b[41m";
+esc_bg_green = "\x1b[42m";
+esc_bg_yellow = "\x1b[43m";
+esc_bg_blue = "\x1b[44m";
+esc_bg_magenta = "\x1b[45m";
+esc_bg_cyan = "\x1b[46m";
+esc_bg_white = "\x1b[47m";
 
-esc_black_bg = "\x1b[40m";
-esc_red_bg = "\x1b[41m";
-esc_green_bg = "\x1b[42m";
-esc_yellow_bg = "\x1b[43m";
-esc_blue_bg = "\x1b[44m";
-esc_magenta_bg = "\x1b[45m";
-esc_cyan_bg = "\x1b[46m";
-esc_white_bg = "\x1b[47m";
-
-esc_b_black_bg = "\x1b[100m";
-esc_b_red_bg = "\x1b[101m";
-esc_b_green_bg = "\x1b[102m";
-esc_b_yellow_bg = "\x1b[103m";
-esc_b_blue_bg = "\x1b[104m";
-esc_b_magenta_bg = "\x1b[105m";
-esc_b_cyan_bg = "\x1b[106m";
-esc_b_white_bg = "\x1b[107m";
+#[AC] esc_bg_b_
+esc_bg_b_black = "\x1b[100m";
+esc_bg_b_red = "\x1b[101m";
+esc_bg_b_green = "\x1b[102m";
+esc_bg_b_yellow = "\x1b[103m";
+esc_bg_b_blue = "\x1b[104m";
+esc_bg_b_magenta = "\x1b[105m";
+esc_bg_b_cyan = "\x1b[106m";
+esc_bg_b_white = "\x1b[107m";
 
