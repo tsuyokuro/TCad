@@ -1,3 +1,4 @@
+using Plotter;
 using System;
 using System.Security.Policy;
 using System.Text;
@@ -61,7 +62,7 @@ namespace TCad.Controls
             set => mLineHeight = value;
         }
 
-        protected string DefaultFontName = "ＭＳ ゴシック";
+        protected string DefaultFontName = "MS Gothic";
         protected Typeface mTypeface;
         protected FontFamily mFontFamily = null;
         public FontFamily FontFamily
@@ -167,13 +168,15 @@ namespace TCad.Controls
         {
         }
 
-        private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
-        {
-            mIsLoaded = true;
+        protected override void OnInitialized(EventArgs e) {
+            base.OnInitialized(e);
+            DOut.plx("");
 
             if (FontFamily == null)
             {
-                FontFamily = new FontFamily(DefaultFontName);
+                //FontFamily = new FontFamily(DefaultFontName);
+                Uri uri = new Uri("pack://application:,,,/Fonts/");
+                FontFamily = new FontFamily(uri, "./mplus-1m-light.ttf#M+ 1m light");
             }
 
             FrameworkElement parent = (FrameworkElement)Parent;
@@ -187,6 +190,12 @@ namespace TCad.Controls
             {
                 Scroll.ScrollChanged += Scroll_ScrollChanged;
             }
+        }
+
+        private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
+        {
+            DOut.plx("");
+            mIsLoaded = true;
 
             mAutoScroller = new AutoScroller(this);
             mAutoScroller.Scroll = AutoScrollEvent;

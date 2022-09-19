@@ -85,5 +85,23 @@ namespace Plotter
             PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " + space + s);
             End();
         }
+
+        public static void plx(String s)
+        {
+            System.Diagnostics.StackFrame stackFrame = new System.Diagnostics.StackFrame(1);
+
+            string method = stackFrame.GetMethod().Name;
+            string klass = stackFrame.GetMethod().ReflectedType.Name;
+
+            if (method == ".ctor")
+            {
+                method = "Constructor";
+            }
+
+            Begin();
+            PutCount++;
+            PrintLn(space + klass + "," + method + " " + s);
+            End();
+        }
     }
 }

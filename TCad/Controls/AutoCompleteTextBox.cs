@@ -12,6 +12,68 @@ using System.Drawing;
 
 namespace TCad.Controls
 {
+    public class CandidatePopup : Popup
+    {
+        private Border mBorder = new Border();
+        public Border Border
+        {
+            get => mBorder;
+        }
+
+        private ListBox mListBox = new ListBox();
+        public ListBox ListBox
+        {
+            get => mListBox;
+        }
+
+        private ScrollViewer mScrollViewer = new ScrollViewer();
+        public ScrollViewer ScrollViewer
+        {
+            get => mScrollViewer;
+        }
+
+        public ItemCollection Items
+        {
+            get => mListBox.Items;
+        }
+
+        public object SelectedItem
+        {
+            get => mListBox.SelectedItem;
+        }
+
+        public string SelectedItemText
+        {
+            get
+            {
+                if (mListBox.SelectedItem == null)
+                {
+                    return null;
+                }
+
+                ListBoxItem item = (ListBoxItem)(mListBox.SelectedItem);
+
+                return item.Content as string;
+            }
+        }
+
+        public CandidatePopup()
+        {
+            Child = mBorder;
+            mBorder.Child = mScrollViewer;
+            mScrollViewer.Content = mListBox;
+
+            StaysOpen = false;
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+            Border.Background = ScrollViewer.Background;
+        }
+    }
+
+
     public class AutoCompleteTextBox : TextBox
     {
         static AutoCompleteTextBox()
@@ -25,36 +87,30 @@ namespace TCad.Controls
             public string Text;
         }
 
-        private Popup mCandidatePopup = new Popup();
-
-        private Border mCandidateBorder = new Border();
-
-        private ListBox mCandidateListBox = new ListBox();
-
-        private ScrollViewer mCandidateScrollViewer = new ScrollViewer();
+        private CandidatePopup mCandidatePopup = new CandidatePopup();
 
         public Style CandidateListBorderStyle
         {
-            get => mCandidateBorder.Style;
-            set => mCandidateBorder.Style = value;
+            get => mCandidatePopup.Border.Style;
+            set => mCandidatePopup.Border.Style = value;
         }
 
         public Style CandidateListScrollViewerStyle
         {
-            get => mCandidateScrollViewer.Style;
-            set => mCandidateScrollViewer.Style = value;
+            get => mCandidatePopup.ScrollViewer.Style;
+            set => mCandidatePopup.ScrollViewer.Style = value;
         }
 
         public Style CandidateListBoxStyle
         {
-            get => mCandidateListBox.Style;
-            set => mCandidateListBox.Style = value;
+            get => mCandidatePopup.ListBox.Style;
+            set => mCandidatePopup.ListBox.Style = value;
         }
 
         public Style CandidateListItemContainerStyle
         {
-            get => mCandidateListBox.ItemContainerStyle;
-            set => mCandidateListBox.ItemContainerStyle = value;
+            get => mCandidatePopup.ListBox.ItemContainerStyle;
+            set => mCandidatePopup.ListBox.ItemContainerStyle = value;
         }
 
         public int CandidateListItemFontSize
@@ -84,19 +140,6 @@ namespace TCad.Controls
             set;
         } = new TextHistory();
 
-        public bool IsDropDownOpen
-        {
-            get
-            {
-                if (mCandidatePopup == null)
-                {
-                    return false;
-                }
-
-                return mCandidatePopup.IsOpen;
-            }
-        }
-
         public int CandidateWordMin
         {
             get;
@@ -112,31 +155,14 @@ namespace TCad.Controls
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
+            DOut.plx("");
 
-            Loaded += AutoCompleteTextBox_Loaded;
+            mCandidatePopup.ListBox.MouseUp += CandidateListBox_MouseUp;
+            mCandidatePopup.ListBox.PreviewKeyDown += CandidateListBox_PreviewKeyDown;
 
-            LostFocus += AutoCompleteTextBox_LostFocus;
+            mCandidatePopup.ListBox.PreviewLostKeyboardFocus += CandidateListBox_PreviewLostKeyboardFocus;
 
-            mCandidateBorder.Background = mCandidateScrollViewer.Background;
-
-            mCandidateListBox.MouseUp += CandidateListBox_MouseUp;
-            mCandidateListBox.PreviewKeyDown += CandidateListBox_PreviewKeyDown;
-
-            mCandidateListBox.PreviewLostKeyboardFocus += CandidateListBox_PreviewLostKeyboardFocus;
-
-            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-            {
-                Application.Current.MainWindow.Deactivated += MainWindow_Deactivated;
-            }
-        }
-
-        private void AutoCompleteTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void AutoCompleteTextBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            Control c = mCandidateListBox;
+            Control c = mCandidatePopup.ListBox;
             if (CandidateListItemFontSize > 0)
             {
                 c.FontSize = CandidateListItemFontSize;
@@ -159,18 +185,8 @@ namespace TCad.Controls
             int rowCnt = CandidateListMaxRowCount;
             if (CandidateListMaxRowCount > 0)
             {
-                mCandidateScrollViewer.MaxHeight = ((int)formattedText.Height + 3) * rowCnt + 1;
+                mCandidatePopup.ScrollViewer.MaxHeight = ((int)formattedText.Height + 3) * rowCnt + 1;
             }
-
-            //mCandidatePopup.MaxHeight = 200;
-            mCandidatePopup.Child = mCandidateBorder;
-            mCandidateBorder.Child = mCandidateScrollViewer;
-            mCandidateScrollViewer.Content = mCandidateListBox;
-        }
-
-        private void MainWindow_Deactivated(object sender, EventArgs e)
-        {
-            ClosePopup();
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -181,11 +197,11 @@ namespace TCad.Controls
             {
                 if (e.Key == Key.Down)
                 {
-                    mCandidateListBox.Focus();
+                    mCandidatePopup.ListBox.Focus();
                 }
                 else if (e.Key == Key.Up)
                 {
-                    mCandidateListBox.Focus();
+                    mCandidatePopup.ListBox.Focus();
                 }
                 else if (e.Key == Key.Escape)
                 {
@@ -270,7 +286,7 @@ namespace TCad.Controls
 
             bool focus = false;
 
-            foreach (ListBoxItem item in mCandidateListBox.Items)
+            foreach (ListBoxItem item in mCandidatePopup.Items)
             {
                 if (item.Equals(e.NewFocus))
                 {
@@ -314,6 +330,11 @@ namespace TCad.Controls
             }
         }
 
+        public void CloseCandidatePopup()
+        {
+            mCandidatePopup.IsOpen = false;
+        }
+
         private void ClosePopup()
         {
             mCandidatePopup.IsOpen = false;
@@ -323,14 +344,11 @@ namespace TCad.Controls
 
         private bool SetTextFromListBox()
         {
-            if (mCandidateListBox.SelectedItem == null)
+            string s = mCandidatePopup.SelectedItemText;
+            if (s == null)
             {
                 return false;
             }
-
-            ListBoxItem item = (ListBoxItem)(mCandidateListBox.SelectedItem);
-
-            string s = (string)(item.Content);
 
             string currentText = Text;
 
@@ -392,7 +410,7 @@ namespace TCad.Controls
                 return false;
             }
 
-            mCandidateListBox.Items.Clear();
+            mCandidatePopup.Items.Clear();
 
             var tempList = new List<string>();
 
@@ -419,10 +437,10 @@ namespace TCad.Controls
 
                 item.Content = str;
 
-                mCandidateListBox.Items.Add(item);
+                mCandidatePopup.Items.Add(item);
             }
 
-            return mCandidateListBox.Items.Count > 0;
+            return mCandidatePopup.Items.Count > 0;
         }
 
 

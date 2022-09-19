@@ -771,7 +771,8 @@
                     <WindowsFormsHost
                         x:Name="viewContainer"
                         Grid.Row="0"
-                        Background="#FF080808" />
+                        Background="#FF080808"
+                        Focusable="True"/>
 
                     <GridSplitter
                         x:Name="viewBottom"

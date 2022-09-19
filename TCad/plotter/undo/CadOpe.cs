@@ -96,6 +96,11 @@ namespace Plotter
     {
         public List<CadOpeFigureSnapShot> SnapShotList = new List<CadOpeFigureSnapShot>();
 
+        public int Count
+        {
+            get => SnapShotList.Count;
+        }
+
         public CadOpeFigureSnapShotList()
         {
 
@@ -144,6 +149,11 @@ namespace Plotter
     {
         public List<CadOpe> OpeList { get; protected set; } = null;
 
+        public int Count
+        {
+            get => OpeList.Count();
+        }
+
         public CadOpeList()
         {
             OpeList = new List<CadOpe>();
@@ -159,11 +169,6 @@ namespace Plotter
             OpeList.Clear();
         }
 
-        public int Count()
-        {
-            return OpeList.Count();
-        }
-
         public void Add(CadOpe ope)
         {
             OpeList.Add(ope);
@@ -173,7 +178,6 @@ namespace Plotter
         {
             foreach (CadOpe ope in OpeList.Reverse<CadOpe>())
             {
-                DOut.pl("aaaa " + ope.GetType().Name);
                 ope.Undo(pc);
             }
         }

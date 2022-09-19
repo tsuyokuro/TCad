@@ -268,18 +268,16 @@ namespace TestApp
             sw.Start();
 
             ReadOnlySpan<char> tspan = tl.Data;
-            StringBuilder sb = new StringBuilder(1024);
 
-            for (int i=0; i<10000; i++)
+            for (int i=0; i<1000000; i++)
             {
                 foreach (AttrSpan span in tl.Attrs)
                 {
                     if (span.Len == 0) continue;
-                    ReadOnlySpan<char> pspan = tspan.Slice(span.Start, span.Len);
+                    //ReadOnlySpan<char> pspan = tspan.Slice(span.Start, span.Len);
+                    //string ps = pspan.ToString();
 
-                    sb.Clear();
-                    sb.Append(pspan);
-                    string ps = sb.ToString();  
+                    string ps = tl.Data.Substring(span.Start, span.Len);
 
                     //Console.WriteLine(ps);
                 }
@@ -292,6 +290,7 @@ namespace TestApp
 
         static void Main(string[] args)
         {
+            Thread.Sleep(100);
             test001();
             Console.WriteLine("<<< END >>>");
             Console.ReadLine();

@@ -36,6 +36,11 @@ namespace TCad.ViewModel
 
         public void MoveKeyDown()
         {
+            if (Controller.GetSelectedFigureList().Count == 0)
+            {
+                return;
+            }
+
             if (!IsStarted)
             {
                 EditFigList = Controller.StartEdit();

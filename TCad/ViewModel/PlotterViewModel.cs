@@ -1026,12 +1026,12 @@ namespace TCad.ViewModel
 
         public void Open()
         {
-            DOut.pl("in PlotterViewModel#Open");
+            DOut.plx("in");
 
             Settings.Load();
             mViewManager.SetupViews();
 
-            DOut.pl("out PlotterViewModel#Open");
+            DOut.plx("out");
         }
 
         public void Close()

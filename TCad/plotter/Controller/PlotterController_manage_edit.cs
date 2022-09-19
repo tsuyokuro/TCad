@@ -74,9 +74,15 @@ namespace Plotter.Controller
             }
 
             mSnapShotList.StoreAfter(DB);
-            root.Add(mSnapShotList);
+            if (mSnapShotList.Count > 0)
+            {
+                root.Add(mSnapShotList);
+            }
 
-            HistoryMan.foward(root);
+            if (root.Count > 0)
+            {
+                HistoryMan.foward(root);
+            }
 
             mSnapShotList = null;
         }

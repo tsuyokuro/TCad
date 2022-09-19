@@ -57,7 +57,7 @@ namespace TCad.ViewModel
 
         public void SetupViews()
         {
-            DOut.pl("in ViewManager#SetupViews");
+            DOut.plx("in");
 
 #if USE_GDI_VIEW
             PlotterViewGDI1 = PlotterViewGDI.Create(mContext);
@@ -70,7 +70,7 @@ namespace TCad.ViewModel
 
             ViewMode = ViewModes.FRONT;
 
-            DOut.pl("out ViewManager#SetupViews");
+            DOut.plx("out");
         }
 
         public void SetWorldScale(double scale)
