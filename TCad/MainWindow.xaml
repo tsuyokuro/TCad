@@ -983,8 +983,10 @@
                                                 </StackPanel>
                                                 <Label
                                                     Grid.Column="1"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    VerticalContentAlignment="Center"
+                                                    HorizontalContentAlignment="Left"
                                                     Content="{Binding Path=Name}"
                                                     Foreground="White" />
                                             </Grid>
