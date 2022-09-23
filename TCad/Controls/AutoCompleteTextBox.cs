@@ -8,7 +8,6 @@ using System.Windows.Media;
 using System.Windows;
 using System.Text.RegularExpressions;
 using Plotter;
-using System.Drawing;
 
 namespace TCad.Controls
 {
@@ -425,10 +424,17 @@ namespace TCad.Controls
 
             tempList.Sort((a, b) =>
             {
-                MatchCollection mca = WordPattern.Matches(a);
-                MatchCollection mcb = WordPattern.Matches(a);
+                int idxA = a.IndexOf(targetWord, StringComparison.CurrentCultureIgnoreCase);
+                int idxB = b.IndexOf(targetWord, StringComparison.CurrentCultureIgnoreCase);
 
-                return mca[0].Length - mcb[0].Length;
+                int r = idxA - idxB;
+
+                if (r == 0)
+                {
+                    return string.Compare(a, b, StringComparison.CurrentCultureIgnoreCase);
+                }
+
+                return r;
             });
 
             foreach (var str in tempList)
