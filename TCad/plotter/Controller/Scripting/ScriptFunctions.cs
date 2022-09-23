@@ -834,7 +834,10 @@ namespace Plotter.Controller
 
         public void AddLayer(string name)
         {
-            Controller.AddLayer(name);
+            ThreadUtil.RunOnMainThread(() =>
+            {
+                Controller.AddLayer(name);
+            }, true);
         }
 
         public void Move(uint figID, double x, double y, double z)
@@ -1704,6 +1707,11 @@ namespace Plotter.Controller
 
             (CadMesh m1, CadMesh m2) = MeshUtil.CutMeshWithVector(src, p0, p1, normal);
 
+            if (m1 == null || m2 == null)
+            {
+                ItConsole.println("Can not cut a mesh. id:" + id);
+                return;
+            }
 
             CadFigureMesh fig1 = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
             fig1.SetMesh(HeModelConverter.ToHeModel(m1));
@@ -1902,7 +1910,7 @@ namespace Plotter.Controller
 
             v = v.UnitVector();
 
-            ItConsole.println(v.CoordString());
+            ItConsole.println(p1.CoordString());
 
             return v;
         }
@@ -1941,7 +1949,7 @@ namespace Plotter.Controller
             }
 
             Vector3d p1 = Controller.InteractCtrl.PointList[1];
-            ItConsole.println(p0.CoordString());
+            ItConsole.println(p1.CoordString());
 
             ctrl.End();
 

@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using CarveWapper;
 using HalfEdgeNS;
 using MeshMakerNS;
