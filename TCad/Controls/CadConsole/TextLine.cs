@@ -49,9 +49,9 @@ public class TextLine
 
     public void Clear()
     {
-        TextAttr lastAttr = LastAttrSpan.Attr;
+        AttrSpan lastAttrSpan = LastAttrSpan;
         Attrs.Clear();
-        AppendAttr(lastAttr);
+        Attrs.Add(new AttrSpan(lastAttrSpan.Attr, 0, 0));
         Data = "";
     }
 
@@ -74,7 +74,7 @@ public class TextLine
     {
         TextAttr attr = LastAttrSpan.Attr;
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder builder = new StringBuilder(str.Length);
 
         int blen = 0;
 
@@ -101,13 +101,15 @@ public class TextLine
                 case 0:
                     if (s[i] == '\r')
                     {
-                        Clear();
-                        blen = 0;
-                        sb.Clear();
+                        // Ignore CR
+
+                        //Clear();
+                        //blen = 0;
+                        //builder.Clear();
                     }
                     else
                     {
-                        sb.Append(s[i]);
+                        builder.Append(s[i]);
                         blen++;
                     }
                     break;
@@ -138,7 +140,7 @@ public class TextLine
                     }
                     else
                     {
-                        sb.Append(s[i]);
+                        builder.Append(s[i]);
                         blen++;
                         state = 0;
                     }
@@ -178,7 +180,7 @@ public class TextLine
                     }
                     else
                     {
-                        sb.Append(s[i]);
+                        builder.Append(s[i]);
                         blen++;
                         state = 0;
                     }
@@ -193,6 +195,6 @@ public class TextLine
             blen = 0;
         }
 
-        Data += sb.ToString();
+        Data += builder.ToString();
     }
 }
