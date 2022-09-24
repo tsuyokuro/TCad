@@ -292,6 +292,11 @@
     <ClCompile Include="IglFuncs.cpp" />
     <ClCompile Include="IglW.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CadDataTypes\CadDataTypes.csproj">
+      <Project>{99f0879c-d576-44d5-b96c-d46dd8efcc0b}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

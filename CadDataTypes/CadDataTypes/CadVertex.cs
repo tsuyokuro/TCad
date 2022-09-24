@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -128,25 +128,30 @@ namespace CadDataTypes
             vector.Z = z;
 
             Flag = 0;
-            Attr = null;
+
+            Attr = default(CadVertexAttr);
         }
 
         public CadVertex(Vector3d pos)
         {
             vector = pos;
 
-            this.Flag = 0;
-            Attr = null;
+            Flag = 0;
+
+            Attr = default(CadVertexAttr);
         }
 
-        public static CadVertex Create(double v)
+        public CadVertex(double x, double y, double z, byte flag, CadVertexAttr attr)
+        {
+            vector = new Vector3d(x, y, z);
+
+            Flag = flag;
+            Attr = attr;
+        }
+
+        private static CadVertex Create(double v)
         {
             return Create(v, v, v);
-        }
-
-        public static CadVertex Create(double x, double y)
-        {
-            return Create(x, y, 0);
         }
 
         public static CadVertex Create(double x, double y, double z)
@@ -155,6 +160,8 @@ namespace CadDataTypes
             v.Set(x, y, z);
 
             v.Flag = 0;
+
+            v.Attr = new CadVertexAttr();
 
             return v;
         }
@@ -189,23 +196,11 @@ namespace CadDataTypes
             return p;
         }
 
-        public static CadVertex Create(CadVertex v)
-        {
-            return v;
-        }
-
         public static CadVertex CreateInvalid()
         {
             CadVertex p = default(CadVertex);
             p.Valid = false;
             return p;
-        }
-
-        public CadVertex(double x, double y, double z, byte flag, CadVertexAttr attr)
-        {
-            vector = new Vector3d(x, y, z);
-            Flag = flag;
-            Attr = attr;
         }
 
         public bool IsZero()

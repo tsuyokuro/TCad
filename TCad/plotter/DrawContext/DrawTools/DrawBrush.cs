@@ -1,4 +1,4 @@
-﻿
+
 using OpenTK.Mathematics;
 using System.Drawing;
 
@@ -9,6 +9,8 @@ namespace Plotter
         public int ID;
 
         public int Argb;
+
+        public Color4 mColor4;
 
         public SolidBrush mGdiBrush;
         public SolidBrush GdiBrush
@@ -34,7 +36,7 @@ namespace Plotter
 
         public Color4 Color4()
         {
-            return Color4Util.FromArgb(Argb);
+            return mColor4;
         }
 
         public Color GdiColor()
@@ -47,6 +49,7 @@ namespace Plotter
             ID = 0;
             mGdiBrush = brush;
             Argb = brush.Color.ToArgb();
+            mColor4 = Color4Util.FromArgb(Argb);
         }
 
         public DrawBrush(Color color)
@@ -54,6 +57,7 @@ namespace Plotter
             ID = 0;
             mGdiBrush = null;
             Argb = color.ToArgb();
+            mColor4 = Color4Util.FromArgb(Argb);
         }
 
         public DrawBrush(Color4 color)
@@ -61,6 +65,7 @@ namespace Plotter
             ID = 0;
             mGdiBrush = null;
             Argb = color.ToArgb();
+            mColor4 = color;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -91,11 +91,11 @@ namespace Plotter
 
             if (t == DrawMode.DARK)
             {
-                SetupScrrenSet(DarkColors.Instance, penW);
+                SetupScreenSet(DarkColors.Instance, penW);
             }
             else if (t == DrawMode.LIGHT)
             {
-                SetupScrrenSet(LightColors.Instance, penW);
+                SetupScreenSet(LightColors.Instance, penW);
             }
             else if (t == DrawMode.PRINTER)
             {
@@ -103,7 +103,7 @@ namespace Plotter
             }
         }
 
-        private void SetupScrrenSet(ColorSet colorSet, int penW)
+        private void SetupScreenSet(ColorSet colorSet, int penW)
         {
             AllocGDITbl();
 

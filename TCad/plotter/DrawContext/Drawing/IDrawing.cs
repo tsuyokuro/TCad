@@ -1,4 +1,4 @@
-﻿using HalfEdgeNS;
+using HalfEdgeNS;
 using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Mathematics;

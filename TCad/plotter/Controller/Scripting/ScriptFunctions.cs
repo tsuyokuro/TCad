@@ -1995,6 +1995,25 @@ namespace Plotter.Controller
             }
         }
 
+        public void SetColor(float r, float g, float b)
+        {
+            List<CadFigure> figs = GetSlectedFigList();
+
+            Color4 color = new Color4(r, g, b, 1.0f);
+
+            foreach (CadFigure fig in figs)
+            {
+                for (int i = 0; i < fig.PointList.Count; i++)
+                {
+                    if (!fig.PointList[i].Selected) continue;
+                    fig.PointList[i].Attr.Color1 = color;
+                    fig.PointList[i].Attr.IsColor1Valid = true;
+                    fig.PointList[i].Attr.Color2 = color;
+                    fig.PointList[i].Attr.IsColor2Valid = true;
+                }
+            }
+        }
+
         public List<CadFigure> GetSlectedFigList()
         {
             return Controller.DB.GetSelectedFigList();
@@ -2060,12 +2079,6 @@ namespace Plotter.Controller
             fb.Dispose();
 
             bmp.Save(@"F:\work\test2.bmp");
-        }
-
-
-        private void PrintSuccess()
-        {
-            ItConsole.println(AnsiEsc.Green + "Success");
         }
 
         public CadFigure GetTargetFigure()

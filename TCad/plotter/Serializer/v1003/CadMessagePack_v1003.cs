@@ -459,6 +459,77 @@ namespace Plotter.Serializer.v1003
     }
 
     [MessagePackObject]
+    public struct MpColor4_v1003
+    {
+        [Key(0)]
+        public float R;
+
+        [Key(1)]
+        public float G;
+
+        [Key(2)]
+        public float B;
+
+        [Key(3)]
+        public float A;
+
+        public static MpColor4_v1003 Create(Color4 c)
+        {
+            MpColor4_v1003 ret = new MpColor4_v1003();
+            ret.R = c.R;
+            ret.G = c.G;
+            ret.B = c.B;
+            ret.A = c.A;
+
+            return ret;
+        }
+
+        public Color4 Restore()
+        {
+            return new Color4(R, G, B, A);
+        }
+    }
+
+
+    [MessagePackObject]
+    public struct MpVertexAttr_v1003
+    {
+        [Key("flags")]
+        public byte Flags;
+
+        [Key("C1")]
+        public MpColor4_v1003 Color1;
+
+        [Key("C2")]
+        public MpColor4_v1003 Color2;
+
+        [Key("N")]
+        public MpVector3d_v1003 Normal;
+
+        public static MpVertexAttr_v1003 Create(CadVertexAttr attr)
+        {
+            MpVertexAttr_v1003 ret = new MpVertexAttr_v1003();
+
+            ret.Color1 = MpColor4_v1003.Create(attr.Color1);
+            ret.Color2 = MpColor4_v1003.Create(attr.Color2);
+            ret.Normal =MpVector3d_v1003.Create(attr.Normal);
+            ret.Flags = attr.Flags;
+            return ret;
+        }
+
+        public CadVertexAttr Restore()
+        {
+            CadVertexAttr attr = new CadVertexAttr();
+
+            attr.Color1 = Color1.Restore();
+            attr.Color2 = Color2.Restore();
+            attr.Normal = Normal.Restore();
+            attr.Flags = Flags;
+            return attr;
+        }
+    }
+
+    [MessagePackObject]
     public struct MpVertex_v1003
     {
         [Key("flag")]
@@ -466,6 +537,9 @@ namespace Plotter.Serializer.v1003
 
         [Key("P")]
         public MpVector3d_v1003 P;
+
+        [Key("Attr")]
+        public MpVertexAttr_v1003 Attr;
 
         public static MpVertex_v1003 Create(CadVertex v)
         {
@@ -476,6 +550,9 @@ namespace Plotter.Serializer.v1003
             ret.P.X = v.X;
             ret.P.Y = v.Y;
             ret.P.Z = v.Z;
+
+            ret.Attr = MpVertexAttr_v1003.Create(v.Attr);
+
             return ret;
         }
 
@@ -483,6 +560,7 @@ namespace Plotter.Serializer.v1003
         {
             CadVertex v = CadVertex.Create(P.X, P.Y, P.Z);
             v.Flag = Flag;
+            v.Attr = Attr.Restore();
 
             return v;
         }
