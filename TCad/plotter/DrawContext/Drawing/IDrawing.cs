@@ -36,7 +36,7 @@ namespace Plotter
 
     public interface IDrawing : IDisposable
     {
-        void Clear(in DrawBrush brush);
+        void Clear(DrawBrush brush);
 
         void DrawSelected(List<CadFigure> list);
 
@@ -50,39 +50,39 @@ namespace Plotter
 
         void DrawGrid(Gridding grid);
 
-        void DrawHighlightPoint(Vector3d pt, in DrawPen pen);
+        void DrawHighlightPoint(Vector3d pt, DrawPen pen);
 
         void DrawHighlightPoints(List<HighlightPointListItem> list);
 
-        void DrawSelectedPoint(Vector3d pt, in DrawPen pen);
+        void DrawSelectedPoint(Vector3d pt, DrawPen pen);
 
-        void DrawSelectedPoints(VertexList pointList, in DrawPen pen);
+        void DrawSelectedPoints(VertexList pointList, DrawPen pen);
 
-        void DrawExtSnapPoints(Vector3dList pointList, in DrawPen pen);
+        void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen);
 
-        void DrawMarkCursor(in DrawPen pen, Vector3d p, double pix_size);
+        void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size);
 
-        void DrawRect(in DrawPen pen, Vector3d p0, Vector3d p1);
+        void DrawRect(DrawPen pen, Vector3d p0, Vector3d p1);
 
-        void DrawCross(in DrawPen pen, Vector3d p, double size);
+        void DrawCross(DrawPen pen, Vector3d p, double size);
 
-        void DrawLine(in DrawPen pen, Vector3d a, Vector3d b);
+        void DrawLine(DrawPen pen, Vector3d a, Vector3d b);
 
-        void DrawDot(in DrawPen pen, Vector3d p);
+        void DrawDot(DrawPen pen, Vector3d p);
 
         void DrawHarfEdgeModel(
-            in DrawBrush brush, in DrawPen pen, in DrawPen edgePen, double edgeThreshold, HeModel model);
+            DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model);
 
-        void DrawText(int font, in DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s);
+        void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s);
 
-        void DrawArrow(in DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width);
+        void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width);
 
-        void DrawCrossCursorScrn(CadCursor pp, in DrawPen pen);
+        void DrawCrossCursorScrn(CadCursor pp, DrawPen pen);
 
-        void DrawRectScrn(in DrawPen pen, Vector3d p0, Vector3d p1);
+        void DrawRectScrn(DrawPen pen, Vector3d p0, Vector3d p1);
 
-        void DrawCrossScrn(in DrawPen pen, Vector3d p, double size);
+        void DrawCrossScrn(DrawPen pen, Vector3d p, double size);
 
-        void DrawBouncingBox(in DrawPen pen, MinMax3D mm);
+        void DrawBouncingBox(DrawPen pen, MinMax3D mm);
     }
 }

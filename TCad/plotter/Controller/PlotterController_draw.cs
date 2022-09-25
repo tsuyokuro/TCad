@@ -103,13 +103,20 @@ namespace Plotter.Controller
 
         public void DrawFiguresRaw(DrawContext dc)
         {
+            DrawParams normal_dp = default;
+            normal_dp.LinePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+            normal_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MESH_LINE);
+            normal_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+            normal_dp.MeshBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
+            normal_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
+
             foreach (CadLayer layer in mDB.LayerList)
             {
                 if (!layer.Visible) continue;
 
                 foreach (CadFigure fig in layer.FigureList)
                 {
-                    fig.DrawEach(dc);
+                    fig.DrawEach(dc, normal_dp);
                 }
             }
         }
@@ -122,36 +129,68 @@ namespace Plotter.Controller
             if (dc == null) return;
 
             DrawParams pale_dp = default;
-            DrawParams test_dp = default;
+            DrawParams temp_dp = default;
             DrawParams current_dp = default;
             DrawParams measure_dp = default;
-
-            DrawParams empty_dp = default;
-            empty_dp.Empty = true;
+            DrawParams normal_dp = default;
 
             pale_dp.LinePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
             pale_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
             pale_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_PALE_FIGURE);
-            pale_dp.FillBrush = DrawBrush.NullBrush;
+            pale_dp.MeshBrush = DrawBrush.NullBrush;
             pale_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_PALE_TEXT);
 
-            test_dp.LinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
-            test_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
-            test_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
-            test_dp.FillBrush = DrawBrush.NullBrush;
-            test_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
+            temp_dp.LinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
+            temp_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
+            temp_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_TEST_FIGURE);
+            temp_dp.MeshBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
+            temp_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
 
             current_dp.LinePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
+
             current_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
             current_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
-            current_dp.FillBrush = DrawBrush.NullBrush;
+
+            if (SettingsHolder.Settings.FillMesh)
+            {
+                current_dp.MeshBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
+            }
+            else
+            {
+                current_dp.MeshBrush = DrawBrush.NullBrush;
+            }
+
             current_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
 
             measure_dp.LinePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
             measure_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
             measure_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_MEASURE_FIGURE);
-            measure_dp.FillBrush = DrawBrush.NullBrush;
+            measure_dp.MeshBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
             measure_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
+
+            normal_dp.LinePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+            if (SettingsHolder.Settings.DrawMeshEdge)
+            {
+                normal_dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MESH_LINE);
+                normal_dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+            }
+            else
+            {
+                normal_dp.MeshLinePen = DrawPen.NullPen;
+                normal_dp.MeshEdgePen = DrawPen.NullPen;
+            }
+
+            if (SettingsHolder.Settings.FillMesh)
+            {
+                normal_dp.MeshBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
+            }
+            else
+            {
+                normal_dp.MeshBrush = DrawBrush.NullBrush;
+            }
+
+            normal_dp.TextBrush = dc.GetBrush(DrawTools.BRUSH_TEXT);
+
 
             AlphaFigList.Clear();
             AlphaFigListCurrentLayer.Clear();
@@ -202,7 +241,7 @@ namespace Plotter.Controller
                         }
                         else
                         {
-                            fig.DrawEach(dc);
+                            fig.DrawEach(dc, normal_dp);
                         }
                     }
                 }
@@ -214,7 +253,7 @@ namespace Plotter.Controller
                         continue;
                     }
 
-                    fig.DrawEach(dc, test_dp);
+                    fig.DrawEach(dc, temp_dp);
                 }
 
                 if (MeasureFigureCreator != null)
@@ -246,7 +285,7 @@ namespace Plotter.Controller
                     }
                     else
                     {
-                        fig.DrawEach(dc);
+                        fig.DrawEach(dc, normal_dp);
                     }
                 }
 
@@ -258,7 +297,7 @@ namespace Plotter.Controller
                         continue;
                     }
 
-                    fig.DrawEach(dc, test_dp);
+                    fig.DrawEach(dc, temp_dp);
                 }
 
                 if (MeasureFigureCreator != null)

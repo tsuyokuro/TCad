@@ -618,8 +618,6 @@ namespace Plotter
             }
         }
 
-        public abstract void Draw(DrawContext dc);
-
         public abstract void Draw(DrawContext dc, DrawParams dp);
 
         public abstract void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB);
@@ -632,17 +630,7 @@ namespace Plotter
 
         public abstract void EndCreate(DrawContext dc);
 
-        public void DrawEach(DrawContext dc)
-        {
-            Draw(dc);
-
-            foreach (CadFigure c in ChildList)
-            {
-                c.DrawEach(dc);
-            }
-        }
-
-        public void DrawEach(DrawContext dc, DrawParams dp)
+        public void DrawEach(DrawContext dc, in DrawParams dp)
         {
             Draw(dc, dp);
 

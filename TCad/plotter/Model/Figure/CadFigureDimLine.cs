@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using System;
@@ -61,11 +61,6 @@ namespace Plotter
             {
                 mPointList.Clear();
             }
-        }
-
-        public override void Draw(DrawContext dc)
-        {
-            DrawDim(dc, dc.GetPen(DrawTools.PEN_DIMENTION), dc.GetBrush(DrawTools.BRUSH_TEXT));
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

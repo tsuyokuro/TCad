@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using CadDataTypes;
@@ -47,11 +47,6 @@ namespace Plotter
             {
                 mPointList.Clear();
             }
-        }
-
-        public override void Draw(DrawContext dc)
-        {
-            drawPoint(dc, dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE));
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

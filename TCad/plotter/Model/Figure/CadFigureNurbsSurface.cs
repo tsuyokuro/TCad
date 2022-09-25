@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
@@ -98,11 +98,6 @@ namespace Plotter
             }
 
             NurbsPointList = new VertexList(Nurbs.UOutCnt * Nurbs.VOutCnt);
-        }
-
-        public override void Draw(DrawContext dc)
-        {
-            DrawNurbs(dc, dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE));
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

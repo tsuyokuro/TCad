@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using CadDataTypes;
@@ -42,11 +42,6 @@ namespace Plotter
         public override void RemoveSelected()
         {
             mPointList.Clear();
-        }
-
-        public override void Draw(DrawContext dc)
-        {
-            drawCircle(dc, dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE));
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

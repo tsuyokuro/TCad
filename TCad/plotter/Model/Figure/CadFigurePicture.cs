@@ -127,11 +127,6 @@ namespace Plotter
             }
         }
 
-        public override void Draw(DrawContext dc)
-        {
-            DrawPicture(dc, dc.GetPen(DrawTools.PEN_DIMENTION));
-        }
-
         public override void Draw(DrawContext dc, DrawParams dp)
         {
             DrawPicture(dc, dp.LinePen);

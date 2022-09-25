@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using SplineCurve;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
@@ -79,11 +79,6 @@ namespace Plotter
             Nurbs.SetupDefaultCtrlOrder();
 
             NurbsPointList = new VertexList(Nurbs.OutCnt);
-        }
-        
-        public override void Draw(DrawContext dc)
-        {
-            DrawNurbs(dc, dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE));
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

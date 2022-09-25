@@ -46,7 +46,7 @@ namespace Plotter
             FontRenderer.Provider.Release();
         }
 
-        public void Clear(in DrawBrush brush)
+        public void Clear(DrawBrush brush)
         {
             GL.ClearColor(brush.Color4());
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -62,7 +62,7 @@ namespace Plotter
             }
         }
 
-        public void DrawLine(in DrawPen pen, Vector3d a, Vector3d b)
+        public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
         {
             GL.Color4(pen.Color4());
 
@@ -75,7 +75,7 @@ namespace Plotter
         }
 
         public void DrawHarfEdgeModel(
-            in DrawBrush brush, in DrawPen pen, in DrawPen edgePen, double edgeThreshold, HeModel model)
+            DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model)
         {
             DrawHeFaces(brush, model);
             DrawHeEdges(pen, edgePen, edgeThreshold, model);
@@ -86,7 +86,7 @@ namespace Plotter
             }
         }
 
-        private void DrawHeFaces(in DrawBrush brush, HeModel model)
+        private void DrawHeFaces(DrawBrush brush, HeModel model)
         {
             if (brush.IsNullBrush)
             {
@@ -174,7 +174,7 @@ namespace Plotter
             EnableLight();
         }
 
-        private void DrawHeEdges(in DrawPen borderPen, in DrawPen edgePen, double edgeThreshold, HeModel model)
+        private void DrawHeEdges(DrawPen borderPen, DrawPen edgePen, double edgeThreshold, HeModel model)
         {
             bool drawBorder = !borderPen.IsNullPen;
             bool drawEdge = !edgePen.IsNullPen;
@@ -587,7 +587,7 @@ namespace Plotter
             PopMatrixes();
         }
 
-        public void DrawSelectedPoint(Vector3d pt, in DrawPen pen)
+        public void DrawSelectedPoint(Vector3d pt, DrawPen pen)
         {
             Vector3d p = DC.WorldPointToDevPoint(pt);
             Start2D();
@@ -602,7 +602,7 @@ namespace Plotter
             End2D();
         }
 
-        public void DrawSelectedPoints(VertexList pointList, in DrawPen pen)
+        public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
         {
             Start2D();
             GL.Color4(pen.Color4());
@@ -622,7 +622,7 @@ namespace Plotter
             End2D();
         }
 
-        private void DrawRect2D(Vector3d p0, Vector3d p1, in DrawPen pen)
+        private void DrawRect2D(Vector3d p0, Vector3d p1, DrawPen pen)
         {
             Vector3d v0 = Vector3d.Zero;
             Vector3d v1 = Vector3d.Zero;
@@ -657,7 +657,7 @@ namespace Plotter
             End2D();
         }
 
-        public void DrawCross(in DrawPen pen, Vector3d p, double size)
+        public void DrawCross(DrawPen pen, Vector3d p, double size)
         {
             GL.Disable(EnableCap.Lighting);
             GL.Disable(EnableCap.Light0);
@@ -692,7 +692,7 @@ namespace Plotter
             return vv;
         }
 
-        public void DrawText(int font, in DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
+        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
         {
             FontTex tex = mFontFaceW.CreateTexture(s);
 
@@ -714,7 +714,7 @@ namespace Plotter
             mFontRenderer.Render(tex, a, xv, yv);
         }
 
-        private void DrawTextScrn(int font, in DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, string s, double imgScale, DrawTextOption opt)
+        private void DrawTextScrn(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, string s, double imgScale, DrawTextOption opt)
         {
             Start2D();
 
@@ -741,7 +741,7 @@ namespace Plotter
         }
 
 
-        public void DrawCrossCursorScrn(CadCursor pp, in DrawPen pen)
+        public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
         {
             double size = Math.Max(DC.ViewWidth, DC.ViewHeight);
 
@@ -766,7 +766,7 @@ namespace Plotter
             GL.Enable(EnableCap.DepthTest);
         }
 
-        public void DrawMarkCursor(in DrawPen pen, Vector3d p, double pix_size)
+        public void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size)
         {
             GL.Disable(EnableCap.DepthTest);
 
@@ -779,7 +779,7 @@ namespace Plotter
             GL.Enable(EnableCap.DepthTest);
         }
 
-        public void DrawRect(in DrawPen pen, Vector3d p0, Vector3d p1)
+        public void DrawRect(DrawPen pen, Vector3d p0, Vector3d p1)
         {
             GL.Disable(EnableCap.DepthTest);
 
@@ -806,7 +806,7 @@ namespace Plotter
         }
 
         // Snap時にハイライトされるポイントを描画する
-        public void DrawHighlightPoint(Vector3d pt, in DrawPen pen)
+        public void DrawHighlightPoint(Vector3d pt, DrawPen pen)
         {
             GL.LineWidth(DrawingConst.HighlightPointLineWidth);
 
@@ -911,7 +911,7 @@ namespace Plotter
             GL.End();
         }
 
-        public void DrawDot(in DrawPen pen, Vector3d p)
+        public void DrawDot(DrawPen pen, Vector3d p)
         {
             GL.Color4(pen.Color4());
 
@@ -1112,7 +1112,7 @@ namespace Plotter
             //}
         }
 
-        public void DrawRectScrn(in DrawPen pen, Vector3d pp0, Vector3d pp1)
+        public void DrawRectScrn(DrawPen pen, Vector3d pp0, Vector3d pp1)
         {
             Vector3d p0 = DC.DevPointToWorldPoint(pp0);
             Vector3d p1 = DC.DevPointToWorldPoint(pp1);
@@ -1171,7 +1171,7 @@ namespace Plotter
             GL.Disable(EnableCap.Light0);
         }
 
-        public void DrawBouncingBox(in DrawPen pen, MinMax3D mm)
+        public void DrawBouncingBox(DrawPen pen, MinMax3D mm)
         {
             Vector3d p0 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Min.Z);
             Vector3d p1 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Max.Z);
@@ -1199,19 +1199,19 @@ namespace Plotter
             DC.Drawing.DrawLine(pen, p3, p7);
         }
 
-        public void DrawCrossScrn(in DrawPen pen, Vector3d p, double size)
+        public void DrawCrossScrn(DrawPen pen, Vector3d p, double size)
         {
             Start2D();
             DrawCross(pen, p, size);
             End2D();
         }
 
-        public void DrawArrow(in DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
+        public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
         {
             DrawUtil.DrawArrow(this, pen, pt0, pt1, type, pos, len, width);
         }
 
-        public void DrawExtSnapPoints(Vector3dList pointList, in DrawPen pen)
+        public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
         {
             GL.Disable(EnableCap.Lighting);
             GL.Disable(EnableCap.Light0);

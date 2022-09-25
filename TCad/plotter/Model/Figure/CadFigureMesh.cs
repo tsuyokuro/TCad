@@ -132,38 +132,9 @@ namespace Plotter
             }
         }
 
-        public override void Draw(DrawContext dc)
-        {
-            DrawParams dp = default;
-
-            if (SettingsHolder.Settings.DrawMeshEdge)
-            {
-                dp.MeshLinePen = dc.GetPen(DrawTools.PEN_MESH_LINE);
-                dp.MeshEdgePen = dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
-            }
-            else
-            {
-                dp.MeshLinePen = DrawPen.NullPen;
-                dp.MeshEdgePen = DrawPen.NullPen;
-            }
-
-            dp.FillBrush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
-
-            Draw(dc, dp);
-        }
-
         public override void Draw(DrawContext dc, DrawParams dp)
         {
-            DrawBrush brush;
-
-            if (SettingsHolder.Settings.FillMesh)
-            {
-                brush = dc.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
-            }
-            else
-            {
-                brush = DrawBrush.NullBrush;
-            }
+            DrawBrush brush = dp.MeshBrush;
 
             DrawPen borderPen;
             DrawPen edgePen;

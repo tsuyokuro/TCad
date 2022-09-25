@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public struct DrawBrush
+    public class DrawBrush
     {
         public int Argb;
 

@@ -1,4 +1,4 @@
-﻿//#define LOG_DEBUG
+//#define LOG_DEBUG
 
 using CadDataTypes;
 
@@ -9,10 +9,6 @@ namespace Plotter
         public CadFigureGroup()
         {
             Type = Types.GROUP;
-        }
-
-        public override void Draw(DrawContext dc)
-        {
         }
 
         public override void Draw(DrawContext dc, DrawParams dp)

@@ -1,4 +1,4 @@
-﻿namespace Plotter
+namespace Plotter
 {
     public struct DrawParams
     {
@@ -7,8 +7,8 @@
 
         public DrawPen MeshLinePen;
         public DrawPen MeshEdgePen;
+        public DrawBrush MeshBrush;
 
-        public DrawBrush FillBrush;
         public DrawBrush TextBrush;
     }
 }

@@ -165,7 +165,7 @@ namespace Plotter
             BmpDC.UnlockBits();
         }
 
-        public override void DrawDot(in DrawPen pen, Vector3d p)
+        public override void DrawDot(DrawPen pen, Vector3d p)
         {
             Vector3d p0 = DC.WorldPointToDevPoint(p);
 
