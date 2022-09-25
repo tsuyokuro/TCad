@@ -4,10 +4,8 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public class DrawPen
+    public struct DrawPen
     {
-        public int ID;
-
         public int Argb;
 
         public Color4 mColor4;
@@ -48,7 +46,6 @@ namespace Plotter
 
         public DrawPen(Pen pen)
         {
-            ID = 0;
             mGdiPen = pen;
             Argb = pen.Color.ToArgb();
             mColor4 = Color4Util.FromArgb(Argb);
@@ -57,7 +54,6 @@ namespace Plotter
 
         public DrawPen(Color color, float width)
         {
-            ID = 0;
             mGdiPen = null;
             Argb = color.ToArgb();
             mColor4 = Color4Util.FromArgb(Argb);
@@ -66,7 +62,6 @@ namespace Plotter
 
         public DrawPen(Color4 color, float width)
         {
-            ID = 0;
             mGdiPen = null;
             Argb = color.ToArgb();
             mColor4 = color;

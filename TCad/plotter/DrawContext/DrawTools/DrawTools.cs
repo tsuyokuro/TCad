@@ -1,3 +1,4 @@
+using MyCollections;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
@@ -74,15 +75,15 @@ namespace Plotter
         public Color[] PenColorTbl;
         public Color[] BrushColorTbl;
 
-        DrawPen[] PenTbl = null;
-        DrawBrush[] BrushTbl = null;
-        Font[] FontTbl = null;
+        FlexArray<DrawPen> PenTbl = null;
+        FlexArray<DrawBrush> BrushTbl = null;
+        FlexArray<Font> GDIFontTbl = null; // GDI Modeでしか使わない
 
-        private void AllocGDITbl()
+        private void AllocTbl()
         {
-            PenTbl = new DrawPen[PEN_TBL_SIZE];
-            BrushTbl = new DrawBrush[BRUSH_TBL_SIZE];
-            FontTbl = new Font[FONT_TBL_SIZE];
+            PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
+            BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
+            GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
         }
 
         public void Setup(DrawMode t, int penW = 0)
@@ -105,7 +106,7 @@ namespace Plotter
 
         private void SetupScreenSet(ColorSet colorSet, int penW)
         {
-            AllocGDITbl();
+            AllocTbl();
 
             PenColorTbl = colorSet.PenColorTbl;
             BrushColorTbl = colorSet.BrushColorTbl;
@@ -113,26 +114,24 @@ namespace Plotter
             for (int i=0; i<PEN_TBL_SIZE; i++)
             {
                 PenTbl[i] = new DrawPen(new Pen(PenColorTbl[i], penW));
-                PenTbl[i].ID = i;
             }
 
             for (int i = 0; i < BRUSH_TBL_SIZE; i++)
             {
                 BrushTbl[i] = new DrawBrush(new SolidBrush(BrushColorTbl[i]));
-                BrushTbl[i].ID = i;
             }
 
             //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
             FontFamily fontFamily = new FontFamily("MS UI Gothic");
             //FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
 
-            FontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
-            FontTbl[FONT_SMALL]   = new Font(fontFamily, FONT_SIZE_SMALL);
+            GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
+            GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
         }
 
         private void SetupPrinterSet(int penW)
         {
-            AllocGDITbl();
+            AllocTbl();
 
             ColorSet colorSet = PrintColors.Instance;
 
@@ -142,23 +141,21 @@ namespace Plotter
             for (int i = 0; i < PEN_TBL_SIZE; i++)
             {
                 PenTbl[i] = new DrawPen(new Pen(PenColorTbl[i], penW));
-                PenTbl[i].ID = i;
             }
 
             for (int i = 0; i < BRUSH_TBL_SIZE; i++)
             {
                 BrushTbl[i] = new DrawBrush(new SolidBrush(BrushColorTbl[i]));
-                BrushTbl[i].ID = i;
             }
 
             BrushTbl[BRUSH_BACKGROUND].Dispose();
 
             //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
             //FontFamily fontFamily = new FontFamily("MS UI Gothic");
-            FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
+            FontFamily fontFamily = new FontFamily("MS Gothic");
 
-            FontTbl[FONT_DEFAULT]           = new Font(fontFamily, FONT_SIZE_DEFAULT);
-            FontTbl[FONT_SMALL]             = new Font(fontFamily, FONT_SIZE_SMALL);
+            GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
+            GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
         }
 
         public void Dispose()
@@ -183,9 +180,9 @@ namespace Plotter
                 BrushTbl = null;
             }
 
-            if (FontTbl != null)
+            if (GDIFontTbl != null)
             {
-                foreach (Font font in FontTbl)
+                foreach (Font font in GDIFontTbl)
                 {
                     if (font != null)
                     {
@@ -193,7 +190,7 @@ namespace Plotter
                     }
                 }
 
-                FontTbl = null;
+                GDIFontTbl = null;
             }
         }
 
@@ -254,6 +251,7 @@ namespace Plotter
             return BrushTbl[id];
         }
 
+
         public Color PenColor(int id)
         {
             return PenColorTbl[id];
@@ -266,7 +264,7 @@ namespace Plotter
 
         public Font font(int id)
         {
-            return FontTbl[id];
+            return GDIFontTbl[id];
         }
     }
 }

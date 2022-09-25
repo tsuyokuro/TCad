@@ -25,7 +25,7 @@ namespace Plotter
             DC = dc;
         }
 
-        public void Clear(DrawBrush brush)
+        public void Clear(in DrawBrush brush)
         {
             FillRectangleScrn(
                 brush,
@@ -218,7 +218,7 @@ namespace Plotter
         #endregion
 
         #region "Draw marker"
-        public void DrawHighlightPoint(Vector3d pt, DrawPen pen)
+        public void DrawHighlightPoint(Vector3d pt, in DrawPen pen)
         {
             Vector3d pp = DC.WorldPointToDevPoint(pt);
 
@@ -235,7 +235,7 @@ namespace Plotter
             });
         }
 
-        public void DrawSelectedPoint(Vector3d pt, DrawPen pen)
+        public void DrawSelectedPoint(Vector3d pt, in DrawPen pen)
         {
             Vector3d pp = DC.WorldPointToDevPoint(pt);
 
@@ -248,7 +248,7 @@ namespace Plotter
                 );
         }
 
-        public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
+        public void DrawSelectedPoints(VertexList pointList, in DrawPen pen)
         {
             foreach (CadVertex p in pointList)
             {
@@ -259,14 +259,14 @@ namespace Plotter
             }
         }
 
-        public void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size)
+        public void DrawMarkCursor(in DrawPen pen, Vector3d p, double pix_size)
         {
             DrawCross(pen, p, pix_size);
         }
         #endregion
 
         public void DrawHarfEdgeModel(
-            DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model)
+            in DrawBrush brush, in DrawPen pen, in DrawPen edgePen, double edgeThreshold, HeModel model)
         {
             for (int i = 0; i < model.FaceStore.Count; i++)
             {
@@ -317,7 +317,7 @@ namespace Plotter
             }
         }
 
-        public void DrawRect(DrawPen pen, Vector3d p0, Vector3d p1)
+        public void DrawRect(in DrawPen pen, Vector3d p0, Vector3d p1)
         {
             Vector3d pp0 = DC.WorldPointToDevPoint(p0);
             Vector3d pp1 = DC.WorldPointToDevPoint(p1);
@@ -325,7 +325,7 @@ namespace Plotter
             DrawRectangleScrn(pen, pp0.X, pp0.Y, pp1.X, pp1.Y);
         }
 
-        public void DrawCross(DrawPen pen, Vector3d p, double size)
+        public void DrawCross(in DrawPen pen, Vector3d p, double size)
         {
             double hs = size;
 
@@ -349,20 +349,20 @@ namespace Plotter
             DrawLine(pen, pz0, pz1);
         }
 
-        public void DrawCrossScrn(DrawPen pen, Vector3d p, double size)
+        public void DrawCrossScrn(in DrawPen pen, Vector3d p, double size)
         {
             DrawLineScrn(pen, p.X - size, p.Y + 0, p.X + size, p.Y + 0);
             DrawLineScrn(pen, p.X + 0, p.Y + size, p.X + 0, p.Y - size);
         }
 
-        private void DrawXScrn(DrawPen pen, Vector3d p, double size)
+        private void DrawXScrn(in DrawPen pen, Vector3d p, double size)
         {
             DrawLineScrn(pen, p.X - size, p.Y + size, p.X + size, p.Y - size);
             DrawLineScrn(pen, p.X - size, p.Y - size, p.X + size, p.Y + size);
         }
 
 
-        public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
+        public void DrawLine(in DrawPen pen, Vector3d a, Vector3d b)
         {
             if (pen.GdiPen == null) return;
 
@@ -372,7 +372,7 @@ namespace Plotter
             DC.GdiGraphics.DrawLine(pen.GdiPen, (int)pa.X, (int)pa.Y, (int)pb.X, (int)pb.Y);
         }
 
-        public virtual void DrawDot(DrawPen pen, Vector3d p)
+        public virtual void DrawDot(in DrawPen pen, Vector3d p)
         {
             Vector3d p0 = DC.WorldPointToDevPoint(p);
             Vector3d p1 = p0;
@@ -382,7 +382,7 @@ namespace Plotter
             DC.GdiGraphics.DrawLine(pen.GdiPen, (float)p0.X, (float)p0.Y, (float)p1.X, (float)p1.Y);
         }
 
-        public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
+        public void DrawText(int font, in DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
         {
             Vector3d pa = DC.WorldPointToDevPoint(a);
             Vector3d d = DC.WorldVectorToDevVector(xdir);
@@ -390,7 +390,7 @@ namespace Plotter
             DrawTextScrn(font, brush, pa, d, opt, s);
         }
 
-        private void DrawTextScrn(int font, DrawBrush brush, Vector3d a, Vector3d dir, DrawTextOption opt, string s)
+        private void DrawTextScrn(int font, in DrawBrush brush, Vector3d a, Vector3d dir, DrawTextOption opt, string s)
         {
             if (brush.GdiBrush == null) return;
             if (DC.Font(font) == null) return;
@@ -449,7 +449,7 @@ namespace Plotter
             return v;
         }
 
-        public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
+        public void DrawCrossCursorScrn(CadCursor pp, in DrawPen pen)
         {
             double size = Math.Max(DC.ViewWidth, DC.ViewHeight);
 
@@ -464,26 +464,26 @@ namespace Plotter
             DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
         }
 
-        public void DrawRectScrn(DrawPen pen, Vector3d pp0, Vector3d pp1)
+        public void DrawRectScrn(in DrawPen pen, Vector3d pp0, Vector3d pp1)
         {
             DrawRectangleScrn(pen, pp0.X, pp0.Y, pp1.X, pp1.Y);
         }
 
-        protected void DrawLineScrn(DrawPen pen, Vector3d a, Vector3d b)
+        protected void DrawLineScrn(in DrawPen pen, Vector3d a, Vector3d b)
         {
             if (pen.GdiPen == null) return;
 
             DC.GdiGraphics.DrawLine(pen.GdiPen, (int)a.X, (int)a.Y, (int)b.X, (int)b.Y);
         }
 
-        protected void DrawLineScrn(DrawPen pen, double x1, double y1, double x2, double y2)
+        protected void DrawLineScrn(in DrawPen pen, double x1, double y1, double x2, double y2)
         {
             if (pen.GdiPen == null) return;
 
             DC.GdiGraphics.DrawLine(pen.GdiPen, (int)x1, (int)y1, (int)x2, (int)y2);
         }
 
-        protected void DrawRectangleScrn(DrawPen pen, double x0, double y0, double x1, double y1)
+        protected void DrawRectangleScrn(in DrawPen pen, double x0, double y0, double x1, double y1)
         {
             if (pen.GdiPen == null) return;
 
@@ -511,13 +511,13 @@ namespace Plotter
             DC.GdiGraphics.DrawRectangle(pen.GdiPen, lx, ty, dx, dy);
         }
 
-        protected void DrawCircleScrn(DrawPen pen, Vector3d cp, Vector3d p1)
+        protected void DrawCircleScrn(in DrawPen pen, Vector3d cp, Vector3d p1)
         {
             double r = CadMath.SegNorm(cp, p1);
             DrawCircleScrn(pen, cp, r);
         }
 
-        protected void DrawCircleScrn(DrawPen pen, Vector3d cp, double r)
+        protected void DrawCircleScrn(in DrawPen pen, Vector3d cp, double r)
         {
             if (pen.GdiPen == null) return;
 
@@ -525,7 +525,7 @@ namespace Plotter
                 pen.GdiPen, (int)(cp.X - r), (int)(cp.Y - r), (int)(r * 2), (int)(r * 2));
         }
 
-        protected void FillRectangleScrn(DrawBrush brush, double x0, double y0, double x1, double y1)
+        protected void FillRectangleScrn(in DrawBrush brush, double x0, double y0, double x1, double y1)
         {
             if (brush.GdiBrush == null) return;
 
@@ -557,7 +557,7 @@ namespace Plotter
         {
         }
 
-        public void DrawBouncingBox(DrawPen pen, MinMax3D mm)
+        public void DrawBouncingBox(in DrawPen pen, MinMax3D mm)
         {
             Vector3d p0 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Min.Z);
             Vector3d p1 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Max.Z);
@@ -585,17 +585,17 @@ namespace Plotter
             DC.Drawing.DrawLine(pen, p3, p7);
         }
 
-        public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
+        public void DrawArrow(in DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
         {
-            DrawUtil.DrawArrow(DrawLine, pen, pt0, pt1, type, pos, len, width);
+            DrawUtil.DrawArrow(this, pen, pt0, pt1, type, pos, len, width);
         }
 
-        public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
+        public void DrawExtSnapPoints(Vector3dList pointList, in DrawPen pen)
         {
-            pointList.ForEach(v =>
+            foreach (var v in pointList)
             {
                 DrawHighlightPoint(v, pen);
-            });
+            }
         }
     }
 }

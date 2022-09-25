@@ -4,10 +4,8 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public class DrawBrush
+    public struct DrawBrush
     {
-        public int ID;
-
         public int Argb;
 
         public Color4 mColor4;
@@ -46,7 +44,6 @@ namespace Plotter
 
         public DrawBrush(SolidBrush brush)
         {
-            ID = 0;
             mGdiBrush = brush;
             Argb = brush.Color.ToArgb();
             mColor4 = Color4Util.FromArgb(Argb);
@@ -54,7 +51,6 @@ namespace Plotter
 
         public DrawBrush(Color color)
         {
-            ID = 0;
             mGdiBrush = null;
             Argb = color.ToArgb();
             mColor4 = Color4Util.FromArgb(Argb);
@@ -62,7 +58,6 @@ namespace Plotter
 
         public DrawBrush(Color4 color)
         {
-            ID = 0;
             mGdiBrush = null;
             Argb = color.ToArgb();
             mColor4 = color;

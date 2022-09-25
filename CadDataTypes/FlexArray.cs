@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -38,6 +38,13 @@ namespace MyCollections
             Init(src.Count);
             Array.Copy(src.Data, Data, src.Count);
             Count_ = src.Count;
+        }
+
+        public FlexArray(T[] src)
+        {
+            Init(src.Length);
+            Array.Copy(src, Data, src.Length);
+            Count_ = src.Length;
         }
 
         protected void Init(int capa)

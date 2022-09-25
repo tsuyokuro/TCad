@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -7,8 +7,8 @@ namespace Plotter
     public static class DrawUtil
     {
         public static void DrawArrow(
-            Action<DrawPen, Vector3d, Vector3d> DrawLine,
-            DrawPen pen,
+            IDrawing drawing,
+            in DrawPen pen,
             Vector3d pt0,
             Vector3d pt1,
             ArrowTypes type,
@@ -16,7 +16,7 @@ namespace Plotter
             double len,
             double width)
         {
-            DrawLine(pen, pt0, pt1);
+            drawing.DrawLine(pen, pt0, pt1);
 
             Vector3d d = pt1 - pt0;
 
@@ -57,10 +57,10 @@ namespace Plotter
 
                 a += pt1;
 
-                DrawLine(pen, a.p0.vector, a.p1.vector);
-                DrawLine(pen, a.p0.vector, a.p2.vector);
-                DrawLine(pen, a.p0.vector, a.p3.vector);
-                DrawLine(pen, a.p0.vector, a.p4.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p1.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p2.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p3.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p4.vector);
             }
 
             if (pos == ArrowPos.START || pos == ArrowPos.START_END)
@@ -71,10 +71,10 @@ namespace Plotter
 
                 a += pt0;
 
-                DrawLine(pen, a.p0.vector, a.p1.vector);
-                DrawLine(pen, a.p0.vector, a.p2.vector);
-                DrawLine(pen, a.p0.vector, a.p3.vector);
-                DrawLine(pen, a.p0.vector, a.p4.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p1.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p2.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p3.vector);
+                drawing.DrawLine(pen, a.p0.vector, a.p4.vector);
             }
         }
     }
