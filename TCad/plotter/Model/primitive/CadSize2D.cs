@@ -1,4 +1,6 @@
-﻿namespace Plotter
+using System.Windows.Forms;
+
+namespace Plotter
 {
     public struct CadSize2D
     {
@@ -10,5 +12,10 @@
             Width = w;
             Height = h;
         }
+
+        public static CadSize2D operator * (CadSize2D me,double f)
+        {
+            return new CadSize2D(me.Width * f, me.Height * f);
+        } 
     }
 }

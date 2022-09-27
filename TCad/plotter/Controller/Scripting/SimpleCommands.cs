@@ -37,7 +37,8 @@ namespace Plotter.Controller
             Stopwatch sw = new Stopwatch();
             sw.Start();
             int i = 0;
-            while (i < 240)
+            int cnt = 1000;
+            while (i < cnt)
             {
                 ThreadUtil.RunOnMainThread(() =>
                 {
@@ -55,6 +56,7 @@ namespace Plotter.Controller
 
             ItConsole.println("BenchDraw end");
             ItConsole.println($"BenchDraw cnt:{i} time:{sw.ElapsedMilliseconds}ms");
+            ItConsole.println($"BenchDraw FPS:" + ((double)cnt / sw.ElapsedMilliseconds) * 1000);
         }
 
         public bool ExecCommand(string s)

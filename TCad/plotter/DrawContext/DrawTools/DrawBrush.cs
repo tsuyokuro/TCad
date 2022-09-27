@@ -4,13 +4,11 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public class DrawBrush
+    public struct DrawBrush
     {
-        public int Argb;
-
         public Color4 mColor4;
 
-        public SolidBrush mGdiBrush;
+        private SolidBrush mGdiBrush;
         public SolidBrush GdiBrush
         {
             get => mGdiBrush;
@@ -20,7 +18,7 @@ namespace Plotter
 
         public bool IsNullBrush
         {
-            get => ((uint)Argb & 0xff000000) == 0;
+            get => mColor4.A == 0;
         }
 
         public void Dispose()
@@ -28,7 +26,6 @@ namespace Plotter
             if (mGdiBrush != null)
             {
                 mGdiBrush.Dispose();
-                mGdiBrush = null;
             }
         }
 
@@ -37,29 +34,21 @@ namespace Plotter
             return mColor4;
         }
 
-        public Color GdiColor()
-        {
-            return Color.FromArgb(Argb);
-        }
-
         public DrawBrush(SolidBrush brush)
         {
             mGdiBrush = brush;
-            Argb = brush.Color.ToArgb();
-            mColor4 = Color4Util.FromArgb(Argb);
+            mColor4 = Color4Util.FromArgb(brush.Color.ToArgb());
         }
 
         public DrawBrush(Color color)
         {
             mGdiBrush = null;
-            Argb = color.ToArgb();
-            mColor4 = Color4Util.FromArgb(Argb);
+            mColor4 = Color4Util.FromArgb(color.ToArgb());
         }
 
         public DrawBrush(Color4 color)
         {
             mGdiBrush = null;
-            Argb = color.ToArgb();
             mColor4 = color;
         }
     }

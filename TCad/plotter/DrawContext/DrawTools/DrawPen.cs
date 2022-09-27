@@ -4,15 +4,13 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public class DrawPen
+    public struct DrawPen
     {
-        public int Argb;
-
         public Color4 mColor4;
 
         public float Width;
 
-        public Pen mGdiPen;
+        private Pen mGdiPen;
         public Pen GdiPen
         {
             get => mGdiPen;
@@ -22,7 +20,7 @@ namespace Plotter
 
         public bool IsNullPen
         {
-            get => ((uint)Argb & 0xff000000) == 0;
+            get => mColor4.A == 0.0;
         }
 
         public void Dispose()
@@ -39,31 +37,23 @@ namespace Plotter
             return mColor4;
         }
 
-        public Color GdiColor()
-        {
-            return Color.FromArgb(Argb);
-        }
-
         public DrawPen(Pen pen)
         {
             mGdiPen = pen;
-            Argb = pen.Color.ToArgb();
-            mColor4 = Color4Util.FromArgb(Argb);
+            mColor4 = Color4Util.FromArgb(pen.Color.ToArgb());
             Width = pen.Width;
         }
 
         public DrawPen(Color color, float width)
         {
             mGdiPen = null;
-            Argb = color.ToArgb();
-            mColor4 = Color4Util.FromArgb(Argb);
+            mColor4 = Color4Util.FromArgb(color.ToArgb());
             Width = width;
         }
 
         public DrawPen(Color4 color, float width)
         {
             mGdiPen = null;
-            Argb = color.ToArgb();
             mColor4 = color;
             Width = width;
         }
