@@ -1,4 +1,4 @@
-﻿//#define PRINT_WITH_GL_ONLY
+//#define PRINT_WITH_GL_ONLY
 //#define PRINT_WITH_GDI_ONLY
 
 using GLUtil;
@@ -51,6 +51,10 @@ namespace Plotter.Controller
                 return null;
             }
 
+            double upRes = 1.0;
+
+            deviceSize *= upRes;
+
             DrawContext dc = pc.DC.CreatePrinterContext(pageSize, deviceSize);
             dc.SetupTools(DrawTools.DrawMode.PRINTER, 2);
 
@@ -82,6 +86,8 @@ namespace Plotter.Controller
                 GL.Disable(EnableCap.LineSmooth);
             }
 
+            GL.LineWidth((float)upRes);
+
             dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 
             pc.DrawFiguresRaw(dc);
@@ -91,11 +97,20 @@ namespace Plotter.Controller
             dc.EndDraw();
 
             Bitmap bmp = fb.GetBitmap();
+            Bitmap rsBmp = bmp;
 
             fb.End();
             fb.Dispose();
 
-            return bmp;
+            if (upRes != 1.0)
+            {
+                rsBmp = BitmapUtil.ResizeBitmap(bmp,
+                                        (int)(bmp.Width / upRes),
+                                        (int)(bmp.Height / upRes),
+                                        System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
+            }
+
+            return rsBmp;
         }
     }
 }
