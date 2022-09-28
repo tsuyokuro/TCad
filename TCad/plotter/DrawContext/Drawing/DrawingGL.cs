@@ -592,7 +592,7 @@ namespace Plotter
             Vector3d p = DC.WorldPointToDevPoint(pt);
             Start2D();
             GL.Color4(pen.Color4());
-            GL.PointSize(4);
+            GL.PointSize(3);
 
             GL.Begin(PrimitiveType.Points);
 
@@ -606,7 +606,7 @@ namespace Plotter
         {
             Start2D();
             GL.Color4(pen.Color4());
-            GL.PointSize(4);
+            GL.PointSize(3);
 
             GL.Begin(PrimitiveType.Points);
 

@@ -1,6 +1,7 @@
-﻿
+
 using OpenTK.Mathematics;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace Plotter
 {
@@ -36,6 +37,15 @@ namespace Plotter
                     c.B,
                     c.A
                 );
+        }
+
+        public static Color ToGDIColor(Color4 c)
+        {
+            return Color.FromArgb(
+                (int)(c.A * 255f),
+                (int)(c.R * 255f),
+                (int)(c.G * 255f),
+                (int)(c.B * 255f));
         }
     }
 }

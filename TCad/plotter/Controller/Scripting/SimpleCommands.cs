@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Plotter.Controller
 {
@@ -33,6 +34,8 @@ namespace Plotter.Controller
         public void BenchDraw()
         {
             ItConsole.println("BenchDraw start");
+
+            Thread.Sleep(100);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();

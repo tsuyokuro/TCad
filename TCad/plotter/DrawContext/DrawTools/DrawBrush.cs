@@ -8,10 +8,12 @@ namespace Plotter
     {
         public Color4 mColor4;
 
-        private SolidBrush mGdiBrush;
         public SolidBrush GdiBrush
         {
-            get => mGdiBrush;
+            get
+            {
+                return new SolidBrush(Color4Util.ToGDIColor(mColor4));
+            }
         }
 
         public static DrawBrush NullBrush = new DrawBrush(Color.FromArgb(0, 0, 0, 0));
@@ -23,10 +25,6 @@ namespace Plotter
 
         public void Dispose()
         {
-            if (mGdiBrush != null)
-            {
-                mGdiBrush.Dispose();
-            }
         }
 
         public Color4 Color4()
@@ -36,19 +34,16 @@ namespace Plotter
 
         public DrawBrush(SolidBrush brush)
         {
-            mGdiBrush = brush;
             mColor4 = Color4Util.FromArgb(brush.Color.ToArgb());
         }
 
-        public DrawBrush(Color color)
+        public DrawBrush(int argb)
         {
-            mGdiBrush = null;
-            mColor4 = Color4Util.FromArgb(color.ToArgb());
+            mColor4 = Color4Util.FromArgb(argb);
         }
 
         public DrawBrush(Color4 color)
         {
-            mGdiBrush = null;
             mColor4 = color;
         }
     }

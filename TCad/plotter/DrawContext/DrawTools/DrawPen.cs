@@ -7,16 +7,17 @@ namespace Plotter
     public struct DrawPen
     {
         public Color4 mColor4;
-
         public float Width;
 
-        private Pen mGdiPen;
         public Pen GdiPen
         {
-            get => mGdiPen;
+            get
+            {
+                return new Pen(Color4Util.ToGDIColor(mColor4), Width);
+            }
         }
 
-        public static DrawPen NullPen = new DrawPen(Color.FromArgb(0, 0, 0, 0), 0);
+        public static DrawPen NullPen = new DrawPen(0, 0);
 
         public bool IsNullPen
         {
@@ -25,11 +26,6 @@ namespace Plotter
 
         public void Dispose()
         {
-            if (mGdiPen != null)
-            {
-                mGdiPen.Dispose();
-                mGdiPen = null;
-            }
         }
 
         public Color4 Color4()
@@ -39,21 +35,18 @@ namespace Plotter
 
         public DrawPen(Pen pen)
         {
-            mGdiPen = pen;
             mColor4 = Color4Util.FromArgb(pen.Color.ToArgb());
             Width = pen.Width;
         }
 
-        public DrawPen(Color color, float width)
+        public DrawPen(int argb, float width)
         {
-            mGdiPen = null;
-            mColor4 = Color4Util.FromArgb(color.ToArgb());
+            mColor4 = Color4Util.FromArgb(argb);
             Width = width;
         }
 
         public DrawPen(Color4 color, float width)
         {
-            mGdiPen = null;
             mColor4 = color;
             Width = width;
         }

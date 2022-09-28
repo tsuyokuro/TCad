@@ -113,12 +113,12 @@ namespace Plotter
 
             for (int i=0; i<PEN_TBL_SIZE; i++)
             {
-                PenTbl[i] = new DrawPen(new Pen(PenColorTbl[i], penW));
+                PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
             }
 
             for (int i = 0; i < BRUSH_TBL_SIZE; i++)
             {
-                BrushTbl[i] = new DrawBrush(new SolidBrush(BrushColorTbl[i]));
+                BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
             }
 
             //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
@@ -140,15 +140,13 @@ namespace Plotter
 
             for (int i = 0; i < PEN_TBL_SIZE; i++)
             {
-                PenTbl[i] = new DrawPen(new Pen(PenColorTbl[i], penW));
+                PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
             }
 
             for (int i = 0; i < BRUSH_TBL_SIZE; i++)
             {
-                BrushTbl[i] = new DrawBrush(new SolidBrush(BrushColorTbl[i]));
+                BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
             }
-
-            BrushTbl[BRUSH_BACKGROUND].Dispose();
 
             //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
             //FontFamily fontFamily = new FontFamily("MS UI Gothic");

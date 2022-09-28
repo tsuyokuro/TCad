@@ -1048,9 +1048,7 @@ namespace Plotter.Controller
 
             tdc.SetupTools(DrawTools.DrawMode.DARK);
 
-            Pen pen = new Pen(Color.FromArgb((int)argb), lineW);
-
-            DrawPen drawPen = new DrawPen(pen);
+            DrawPen drawPen = new DrawPen((int)argb, lineW);
 
             double sw = r.p1.X - r.p0.X;
             double sh = r.p1.Y - r.p0.Y;
@@ -1171,7 +1169,7 @@ namespace Plotter.Controller
             ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
 
 
-            DrawPen drawPen = new DrawPen(Color.FromArgb((int)argb), lineW);
+            DrawPen drawPen = new DrawPen((int)argb, lineW);
 
             DrawParams drawParams = default;
             drawParams.LinePen = drawPen;
@@ -1188,7 +1186,7 @@ namespace Plotter.Controller
 
             GL.Disable(EnableCap.LineSmooth);
 
-            tdc.Drawing.Clear(new DrawBrush(Color.Blue));
+            tdc.Drawing.Clear(new DrawBrush(Color.Blue.ToArgb()));
             //tdc.Drawing.Clear(tdc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
 
             foreach (CadFigure fig in figList)
