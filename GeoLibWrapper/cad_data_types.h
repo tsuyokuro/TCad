@@ -1,4 +1,5 @@
 #pragma once
+
 //#ifdef WIN32
 //	#ifdef _DEBUG
 //		#using "..\\CadDataTypes\\bin\\x86\\Debug\\net6.0\\CadDataTypes.dll"

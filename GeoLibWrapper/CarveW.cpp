@@ -129,38 +129,6 @@ namespace CarveWapper
 
 		return data.create();
 	}
-
-
-
-	// ‚à‚¤Žg‚í‚È‚¢
-	CadMesh^ CarveW::CrateCylinder(
-		int slices,
-		double rad,
-		double height)
-	{
-		carve::math::Matrix transform = carve::math::Matrix::SCALE(1.0, 1.0, 1.0);
-
-		carve::poly::Polyhedron* pmesh = makeCylinder(slices, rad, height, transform);
-
-		CadMesh^ ret = ToCadMesh(pmesh);
-
-		delete pmesh;
-
-		return ret;
-	}
-
-	CadMesh^ CarveW::CrateRectangular(double sizeX, double sizeY, double sizeZ)
-	{
-		carve::math::Matrix transform = carve::math::Matrix::SCALE(sizeX, sizeY, sizeZ);
-
-		carve::poly::Polyhedron* pmesh = makeCube(transform);
-
-		CadMesh^ ret = ToCadMesh(pmesh);
-
-		delete pmesh;
-
-		return ret;
-	}
 }
 
 
