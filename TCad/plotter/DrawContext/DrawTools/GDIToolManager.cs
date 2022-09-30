@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Plotter;
 
-public class GDIToolManager
+public class GDIToolManager : IDisposable
 {
     public readonly struct PenKey : IEquatable<PenKey>
     {
@@ -132,5 +132,10 @@ public class GDIToolManager
             b.Dispose();
         }
         BrushMap.Clear();
+    }
+
+    public void Dispose()
+    {
+        Clear();
     }
 }

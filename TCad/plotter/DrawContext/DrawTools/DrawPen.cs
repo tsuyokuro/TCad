@@ -14,15 +14,21 @@ public readonly struct DrawPen
         get => GDIToolManager.Instance.Pen(this);
     }
 
+    public int Argb
+    {
+        get => ColorUtil.ToArgb(mColor4);
+    }
+
+    public ColorPack ColorPack
+    {
+        get => new ColorPack(Argb);
+    }
+
     public static DrawPen NullPen = new DrawPen(0, 0);
 
     public bool IsNullPen
     {
         get => mColor4.A == 0.0;
-    }
-
-    public void Dispose()
-    {
     }
 
     public Color4 Color4()

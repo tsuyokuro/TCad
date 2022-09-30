@@ -195,8 +195,8 @@ namespace TCad
             var hsrc = HwndSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
 
-            System.Drawing.Color c = ViewModel.DC.Tools.BrushColor(DrawTools.BRUSH_BACKGROUND);
-            viewRoot.Background = new SolidColorBrush(Color.FromRgb(c.R, c.G, c.B));
+            ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+            viewRoot.Background = new SolidColorBrush(Color.FromArgb(cp.A, cp.R, cp.G, cp.B));
 
             ImageRenderer.Provider.Get();
 
@@ -351,8 +351,8 @@ namespace TCad
 
         public void DrawModeUpdated(DrawTools.DrawMode drawMode)
         {
-            System.Drawing.Color c = ViewModel.DC.Tools.BrushColor(DrawTools.BRUSH_BACKGROUND);
-            viewRoot.Background = new SolidColorBrush(Color.FromRgb(c.R, c.G, c.B));
+            ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+            viewRoot.Background = new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B));
         }
         #endregion
     }

@@ -1093,7 +1093,6 @@ namespace Plotter.Controller
                 }
 
                 tdc.Dispose();
-                drawPen.Dispose();
             }));
         }
 
@@ -1211,7 +1210,6 @@ namespace Plotter.Controller
             }
 
             tdc.Dispose();
-            drawPen.Dispose();
 
             orgDC.MakeCurrent();
 

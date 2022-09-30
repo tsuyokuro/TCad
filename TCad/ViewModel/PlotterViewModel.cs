@@ -1043,6 +1043,8 @@ namespace TCad.ViewModel
                 mEditorWindow.Close();
                 mEditorWindow = null;
             }
+
+            GDIToolManager.Instance.Dispose();
         }
 
         public void DrawModeUpdated(DrawTools.DrawMode mode)

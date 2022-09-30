@@ -4,36 +4,40 @@ using System.Runtime.InteropServices;
 
 namespace Plotter;
 
-public static class ColorUtil
+[StructLayout(LayoutKind.Explicit)]
+public struct ColorPack
 {
-    [StructLayout(LayoutKind.Explicit)]
-    private struct ColorPack
+    [FieldOffset(0)]
+    public int Argb = 0;
+
+    [FieldOffset(3)]
+    public byte A = 0;
+
+    [FieldOffset(2)]
+    public byte R = 0;
+
+    [FieldOffset(1)]
+    public byte G = 0;
+
+    [FieldOffset(0)]
+    public byte B = 0;
+
+    public ColorPack(byte a, byte r, byte g, byte b)
     {
-        [FieldOffset(0)]
-        public int Argb;
-
-        [FieldOffset(3)]
-        public byte A;
-
-        [FieldOffset(2)]
-        public byte R;
-
-        [FieldOffset(1)]
-        public byte G;
-
-        [FieldOffset(0)]
-        public byte B;
-
-        public ColorPack(byte a, byte r, byte g, byte b)
-        {
-            Argb = 0;
-            A = a;
-            R = r;
-            G = g;
-            B = b;
-        }
+        A = a;
+        R = r;
+        G = g;
+        B = b;
     }
 
+    public ColorPack(int argb)
+    {
+        Argb = argb;
+    }
+}
+
+public static class ColorUtil
+{
     public static Color4 FromArgb(int argb)
     {
         ColorPack c = default;
@@ -47,9 +51,18 @@ public static class ColorUtil
             );
     }
 
-    public static int ARGB(byte a, byte r, byte g, byte b)
+    public static int Argb(byte a, byte r, byte g, byte b)
     {
         return new ColorPack(a, r, g, b).Argb;
+    }
+
+    public static int ToArgb(Color4 c)
+    {
+        return Argb(
+                (byte)(c.A * 255f),
+                (byte)(c.R * 255f),
+                (byte)(c.G * 255f),
+                (byte)(c.B * 255f));
     }
 
     public static Color ToGDIColor(Color4 c)

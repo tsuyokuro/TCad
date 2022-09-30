@@ -160,21 +160,11 @@ namespace Plotter
         {
             if (PenTbl != null)
             {
-                foreach (DrawPen pen in PenTbl)
-                {
-                    pen.Dispose();
-                }
-
                 PenTbl = null;
             }
 
             if (BrushTbl != null)
             {
-                foreach (DrawBrush brush in BrushTbl)
-                {
-                    brush.Dispose();
-                }
-
                 BrushTbl = null;
             }
 
@@ -247,17 +237,6 @@ namespace Plotter
         public DrawBrush Brush(int id)
         {
             return BrushTbl[id];
-        }
-
-
-        public Color PenColor(int id)
-        {
-            return PenColorTbl[id];
-        }
-
-        public Color BrushColor(int id)
-        {
-            return BrushColorTbl[id];
         }
 
         public Font font(int id)
