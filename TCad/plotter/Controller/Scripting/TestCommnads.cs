@@ -455,7 +455,17 @@ namespace Plotter.Controller
             Pen pen1 = dp1.GdiPen;
             Pen pen2 = dp2.GdiPen;
 
-            bool r = pen1 == pen2;
+            bool r = ReferenceEquals(pen1 ,pen2);
+            ItConsole.println("r:" + r);
+
+            DrawBrush db1 = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
+            DrawBrush db2 = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
+            SolidBrush brush1 = db1.GdiBrush;
+            SolidBrush brush2 = db2.GdiBrush;
+
+            r = ReferenceEquals(brush1, brush2);
+
+            ItConsole.println("r:" + r);
         }
 
         private void testTriangulate()

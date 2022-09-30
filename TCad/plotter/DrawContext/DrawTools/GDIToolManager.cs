@@ -2,12 +2,7 @@ using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Plotter;
 
@@ -103,7 +98,7 @@ public class GDIToolManager
         PenKey key = new PenKey(dp);
 
         if (!PenMap.ContainsKey(key)) {
-            Pen pen = new Pen(Color4Util.ToGDIColor(dp.Color4()), dp.Width);
+            Pen pen = new Pen(ColorUtil.ToGDIColor(dp.Color4()), dp.Width);
             PenMap.Add(key, pen);
         }
 
@@ -117,7 +112,7 @@ public class GDIToolManager
 
         if (!BrushMap.ContainsKey(key))
         {
-            SolidBrush brush = new SolidBrush(Color4Util.ToGDIColor(db.Color4()));
+            SolidBrush brush = new SolidBrush(ColorUtil.ToGDIColor(db.Color4()));
             BrushMap.Add(key, brush);
         }
 
