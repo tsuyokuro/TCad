@@ -24,6 +24,15 @@ namespace Plotter
 
             [FieldOffset(0)]
             public byte B;
+
+            public ColorPack(byte a, byte r, byte g, byte b)
+            {
+                Argb = 0;
+                A = a;
+                R = r;
+                G = g;
+                B = b;
+            }
         }
 
         public static Color4 FromArgb(int argb)
@@ -37,6 +46,11 @@ namespace Plotter
                     c.B,
                     c.A
                 );
+        }
+
+        public static int ARGB(byte a, byte r, byte g, byte b)
+        {
+            return new ColorPack(a, r, g, b).Argb;
         }
 
         public static Color ToGDIColor(Color4 c)

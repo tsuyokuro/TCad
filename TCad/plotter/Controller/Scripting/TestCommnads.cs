@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using System.Windows.Resources;
 using System.Windows;
 using System.IO;
+using System.Drawing;
 
 namespace Plotter.Controller
 {
@@ -449,16 +450,12 @@ namespace Plotter.Controller
 
         private void Test()
         {
-            Uri uri = new Uri("pack://application:,,,/Fonts/mplus-1m-light.ttf");
-            StreamResourceInfo info = Application.GetResourceStream(uri);
+            DrawPen dp1 = new DrawPen(new Color4(0.5f, 0.5f, 0.5f, 1.0f), 1f);
+            DrawPen dp2 = new DrawPen(new Color4(0.5f, 0.5f, 0.5f, 1.0f), 1f);
+            Pen pen1 = dp1.GdiPen;
+            Pen pen2 = dp2.GdiPen;
 
-            Stream stream = info.Stream;
-
-            long len = stream.Length;
-
-            byte[] data = new byte[len];
-
-            int read = stream.Read(data, 0, (int)len);
+            bool r = pen1 == pen2;
         }
 
         private void testTriangulate()

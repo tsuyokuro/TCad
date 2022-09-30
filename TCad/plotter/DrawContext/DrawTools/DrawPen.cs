@@ -4,17 +4,14 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public struct DrawPen
+    public readonly struct DrawPen
     {
-        public Color4 mColor4;
-        public float Width;
+        public readonly Color4 mColor4;
+        public readonly float Width;
 
         public Pen GdiPen
         {
-            get
-            {
-                return new Pen(Color4Util.ToGDIColor(mColor4), Width);
-            }
+            get => GDIToolManager.Instance.Pen(this);
         }
 
         public static DrawPen NullPen = new DrawPen(0, 0);
@@ -31,12 +28,6 @@ namespace Plotter
         public Color4 Color4()
         {
             return mColor4;
-        }
-
-        public DrawPen(Pen pen)
-        {
-            mColor4 = Color4Util.FromArgb(pen.Color.ToArgb());
-            Width = pen.Width;
         }
 
         public DrawPen(int argb, float width)

@@ -4,16 +4,13 @@ using System.Drawing;
 
 namespace Plotter
 {
-    public struct DrawBrush
+    public readonly struct DrawBrush
     {
-        public Color4 mColor4;
+        public readonly Color4 mColor4;
 
-        public SolidBrush GdiBrush
+        public readonly SolidBrush GdiBrush
         {
-            get
-            {
-                return new SolidBrush(Color4Util.ToGDIColor(mColor4));
-            }
+            get => GDIToolManager.Instance.Brush(this);
         }
 
         public static DrawBrush NullBrush = new DrawBrush(Color.FromArgb(0, 0, 0, 0));
@@ -30,11 +27,6 @@ namespace Plotter
         public Color4 Color4()
         {
             return mColor4;
-        }
-
-        public DrawBrush(SolidBrush brush)
-        {
-            mColor4 = Color4Util.FromArgb(brush.Color.ToArgb());
         }
 
         public DrawBrush(int argb)
