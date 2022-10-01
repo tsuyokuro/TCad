@@ -95,6 +95,16 @@ namespace MyCollections
             return ref Data[Count_ - 1];
         }
 
+        public T Get(int idx)
+        {
+            return Data[idx];
+        }
+
+        public void Set(int idx, T val)
+        {
+            Data[idx] = val;
+        }
+
         public void RemoveAt(int idx)
         {
             Array.Copy(Data, idx + 1, Data, idx, Count_ - (idx + 1));
