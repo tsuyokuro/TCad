@@ -710,10 +710,10 @@ namespace Plotter.Controller
             si.Cursor.Pos = mGridding.MatchD;
 
 
-            //si.SnapPoint = dc.DevPointToWorldPoint(si.Cursor.Pos);
+            //si.SnapPoint = DC.DevPointToWorldPoint(si.Cursor.Pos);
             si.SnapPoint = mGridding.MatchW;
 
-            //HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+            //HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, DC.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
             return si;
         }
@@ -865,7 +865,7 @@ namespace Plotter.Controller
         {
             if (State == States.DRAGING_VIEW_ORG)
             {
-                //ViewOrgDrag(pointer, dc, x, y);
+                //ViewOrgDrag(pointer, DC, x, y);
                 CurrentState.MouseMove(pointer, dc, x, y);
                 return;
             }

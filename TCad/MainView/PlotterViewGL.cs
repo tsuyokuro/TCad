@@ -458,7 +458,7 @@ namespace Plotter
 
                     if (CadKeyboard.IsCtrlKeyDown())
                     {
-                        //MoveCamera(dc, prev, current);
+                        //MoveCamera(DC, prev, current);
                         PanCamera(dc, prev, current);
                     }
                     else

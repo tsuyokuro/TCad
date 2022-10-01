@@ -81,7 +81,7 @@ namespace Plotter
             NurbsPointList = new VertexList(Nurbs.OutCnt);
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
             DrawNurbs(dc, dp.LinePen);
         }

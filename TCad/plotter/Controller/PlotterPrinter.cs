@@ -61,7 +61,7 @@ namespace Plotter.Controller
             // Bitmapを印刷すると大きさが変わるので、補正
             double f = SettingsHolder.Settings.MagnificationBitmapPrinting;
             dc.UnitPerMilli *= f;
-            //dc.UnitPerMilli *= 0.96;
+            //DC.UnitPerMilli *= 0.96;
 
             Vector3d org = dc.ViewOrg;
 

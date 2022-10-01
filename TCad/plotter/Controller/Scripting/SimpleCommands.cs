@@ -22,7 +22,7 @@ namespace Plotter.Controller
             autoComps.Add("@cls");
             autoComps.Add("@help key");
             autoComps.Add("@dump db");
-            autoComps.Add("@dump dc");
+            autoComps.Add("@dump DC");
             autoComps.Add("@dump fig");
             autoComps.Add("@dump layer");
             autoComps.Add("@dump undo");
@@ -86,7 +86,7 @@ namespace Plotter.Controller
                 {
                     Controller.DB.dump();
                 }
-                else if (ss[1] == "dc")
+                else if (ss[1] == "DC")
                 {
                     Controller.DC.dump();
                 }

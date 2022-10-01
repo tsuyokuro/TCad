@@ -618,7 +618,7 @@ namespace Plotter
             }
         }
 
-        public abstract void Draw(DrawContext dc, DrawParams dp);
+        public abstract void Draw(DrawContext dc, DrawOption dp);
 
         public abstract void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB);
 
@@ -630,7 +630,7 @@ namespace Plotter
 
         public abstract void EndCreate(DrawContext dc);
 
-        public void DrawEach(DrawContext dc, in DrawParams dp)
+        public void DrawEach(DrawContext dc, in DrawOption dp)
         {
             Draw(dc, dp);
 

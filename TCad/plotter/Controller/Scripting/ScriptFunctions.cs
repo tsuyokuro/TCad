@@ -1066,7 +1066,7 @@ namespace Plotter.Controller
 
             tdc.SetViewOrg(tdc.ViewOrg - d);
 
-            DrawParams dp = default;
+            DrawOption dp = default;
 
             dp.LinePen = drawPen;
             dp.MeshEdgePen = drawPen;
@@ -1170,7 +1170,7 @@ namespace Plotter.Controller
 
             DrawPen drawPen = new DrawPen((int)argb, lineW);
 
-            DrawParams drawParams = default;
+            DrawOption drawParams = default;
             drawParams.LinePen = drawPen;
             drawParams.MeshLinePen = DrawPen.NullPen;
             drawParams.MeshEdgePen = drawPen;
@@ -1457,8 +1457,6 @@ namespace Plotter.Controller
         public void ToMesh(uint id)
         {
             CadOpeList opeRoot = Session.StartWithSnapshotDB? null: new CadOpeList();
-
-            CadOpe ope;
 
             CadFigure orgFig = Controller.DB.GetFigure(id);
 

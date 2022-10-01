@@ -16,7 +16,7 @@
 
 
 // 強制的にリソース文字列をUSにする
-// Force resource string to US
+// ForceLinePen resource string to US
 //#define FORCE_US
 
 using TCad.Util;

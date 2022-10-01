@@ -38,7 +38,7 @@ namespace Plotter
         #region Point Move
         public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
         {
-            //base.MoveSelectedPoints(dc, delta);
+            //base.MoveSelectedPoints(DC, delta);
 
             if (Locked) return;
 
@@ -109,19 +109,19 @@ namespace Plotter
             mPointList.Add(p);
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
-            DrawPolyLines(dc, dp.LinePen);
+            DrawPolyLines(dc, dp);
         }
 
-        public void DrawPolyLines(DrawContext dc, DrawPen pen)
+        public void DrawPolyLines(DrawContext dc, DrawOption opt)
         {
             if (mStoreList != null)
             {
-                DrawLines(dc, dc.GetPen(DrawTools.PEN_OLD_FIGURE), mStoreList);
+                DrawLines(dc, dc.OptionSet.Before, mStoreList);
             }
 
-            DrawLines(dc, pen, mPointList);
+            DrawLines(dc, opt, mPointList);
 
             if (SettingsHolder.Settings.DrawNormal && !Normal.IsZero())
             {
@@ -181,7 +181,7 @@ namespace Plotter
         }
 
 
-        protected void DrawLines(DrawContext dc, DrawPen pen, VertexList pl)
+        protected void DrawLines(DrawContext dc, DrawOption opt, VertexList pl)
         {
             int start = 0;
             int cnt = pl.Count;
@@ -202,23 +202,23 @@ namespace Plotter
 
             if (cnt == 1)
             {
-                dc.Drawing.DrawCross(pen, a.vector, 2);
+                dc.Drawing.DrawCross(opt.LinePen, a.vector, 2);
                 //if (a.Selected)
                 //{
-                //    dc.Drawing.DrawHighlightPoint(a.vector, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT));
+                //    DC.Drawing.DrawHighlightPoint(a.vector, DC.GetPen(DrawTools.PEN_POINT_HIGHLIGHT));
                 //}
 
                 return;
             }
 
-            //DrawParam dp = new DrawParam(dc, pen);
+            //DrawParam dp = new DrawParam(DC, pen);
             //PolyLineExpander.ForEachSegs<DrawParam>(pl, IsLoop, 8, 
             //    (v0, v1, p) =>
             //    {
             //        p.DC.Drawing.DrawLine(p.Pen, v0.vector, v1.vector);
             //    }, dp);
 
-            PolyLineExpander.Draw(pl, IsLoop, 8, dc, pen);
+            PolyLineExpander.Draw(pl, IsLoop, 8, dc, opt);
         }
 
         public override VertexList GetPoints(int curveSplitNum)

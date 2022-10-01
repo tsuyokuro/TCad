@@ -241,7 +241,7 @@ namespace Plotter.Controller
                     }
                 }
             }
-            catch (KeyboardInterruptException e)
+            catch (KeyboardInterruptException)
             {
                 mScriptFunctions.EndSession();
                 ItConsole.println(AnsiEsc.BRed + "Canceled");

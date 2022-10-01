@@ -130,10 +130,25 @@ namespace Plotter
         public double DeviceScaleX = 1.0;
         public double DeviceScaleY = -1.0;
 
-        public DrawTools Tools = new DrawTools();
+        public DrawTools Tools
+        {
+            get;
+            protected set;
+        } = new DrawTools();
+
+        public DrawOptionSet OptionSet
+        {
+            get;
+            protected set;
+        }
 
         protected IDrawing mDrawing;
         public IDrawing Drawing => mDrawing;
+
+        public DrawContext()
+        {
+            OptionSet = new DrawOptionSet(this);
+        }
 
         public virtual void Active()
         {

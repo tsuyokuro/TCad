@@ -316,8 +316,6 @@ namespace Plotter
         public void DrawAxisLabel()
         {
             Vector3d p;
-            Vector3d p1;
-            Vector3d pp;
 
             double len = AxisLength();
 

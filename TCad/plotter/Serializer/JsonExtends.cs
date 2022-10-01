@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 
 
@@ -56,7 +56,7 @@ namespace Plotter.Serializer
             {
                 return (T)Enum.ToObject(typeof(T), num);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 return defaultValue;
             }

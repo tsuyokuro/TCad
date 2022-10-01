@@ -180,9 +180,9 @@ namespace Plotter
             }
         }
 
-        //public void Check(DrawContext dc, CadVertex pt)
+        //public void Check(DrawContext DC, CadVertex pt)
         //{
-        //    CheckFigPoint(dc, pt, null, null, 0);
+        //    CheckFigPoint(DC, pt, null, null, 0);
         //}
 
         public void Check(DrawContext dc, Vector3d pt)

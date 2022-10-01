@@ -314,7 +314,7 @@ namespace MeshUtilNS
             {
                 m2 = CarveW.AMinusB(src, cubeB);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return (null, null);
             }

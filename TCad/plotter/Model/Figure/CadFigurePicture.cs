@@ -127,7 +127,7 @@ namespace Plotter
             }
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
             DrawPicture(dc, dp.LinePen);
         }
@@ -176,11 +176,11 @@ namespace Plotter
 
             if (cnt == 1)
             {
-                //DrawDim(dc, PointList[0], tp, tp, pen);
+                //DrawDim(DC, PointList[0], tp, tp, pen);
                 return;
             }
 
-            //DrawDim(dc, PointList[0], PointList[1], tp, pen);
+            //DrawDim(DC, PointList[0], PointList[1], tp, pen);
         }
 
         public override void StartCreate(DrawContext dc)

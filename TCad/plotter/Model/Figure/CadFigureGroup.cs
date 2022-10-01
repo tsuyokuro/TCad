@@ -11,7 +11,7 @@ namespace Plotter
             Type = Types.GROUP;
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
         }
 

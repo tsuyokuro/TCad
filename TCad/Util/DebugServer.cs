@@ -121,7 +121,7 @@ internal class DebugServer
                 }
             }
         }
-        catch (SocketException e)
+        catch (SocketException)
         {
         }
         catch

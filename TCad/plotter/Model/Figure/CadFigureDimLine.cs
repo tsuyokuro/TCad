@@ -63,7 +63,7 @@ namespace Plotter
             }
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
             DrawDim(dc, dp.LinePen, dp.TextBrush);
         }

@@ -115,7 +115,7 @@ namespace Plotter
             if (Figure_.PointList.Count > 2)
             {
                 //Vector3d normal = CadUtil.RepresentativeNormal(fig.PointList);
-                //double t = Vector3d.Dot(normal, dc.ViewDir);
+                //double t = Vector3d.Dot(normal, DC.ViewDir);
 
                 Figure_.Normal = dc.ViewDir;
                 Figure_.Normal *= -1;

@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +80,7 @@ namespace Plotter.Serializer
                 C_2 = byte.Parse(vt[2], NumberStyles.HexNumber);
                 C_3 = byte.Parse(vt[3], NumberStyles.HexNumber);
 
-            } catch (FormatException e) {
+            } catch (FormatException) {
                 C_0 = 0xFF;
                 C_1 = 0xFF;
                 C_2 = 0xFF;

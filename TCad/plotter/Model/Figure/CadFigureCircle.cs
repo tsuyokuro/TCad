@@ -44,14 +44,14 @@ namespace Plotter
             mPointList.Clear();
         }
 
-        public override void Draw(DrawContext dc, DrawParams dp)
+        public override void Draw(DrawContext dc, DrawOption dp)
         {
             drawCircle(dc, dp.LinePen);
         }
 
         public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
         {
-            //drawCircle(dc, pen);
+            //drawCircle(DC, pen);
         }
 
         public override void DrawSelected(DrawContext dc)
