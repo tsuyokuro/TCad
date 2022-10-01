@@ -56,7 +56,7 @@ namespace TCad.ViewModel
 
         private Dictionary<string, KeyAction> KeyMap;
 
-        public CursorPosViewModel CursorPosVM = new CursorPosViewModel();
+        public CursorPosViewModel CursorPosVM = new();
 
         public ObjectTreeViewModel ObjTreeVM;
 
@@ -274,14 +274,14 @@ namespace TCad.ViewModel
             string[] ss = s.Split('+');
 
             string t = ss[0];
-            string p = Char.ToUpper(t[0]) + t.Substring(1);
+            string p = Char.ToUpper(t[0]) + t[1..];
 
             string ret = p;
 
             for (int i=1; i<ss.Length; i++)
             {
                 t = ss[i];
-                p = Char.ToUpper(t[0]) + t.Substring(1);
+                p = Char.ToUpper(t[0]) + t[1..];
                 ret += "+" + p;
             }
 
@@ -449,7 +449,7 @@ namespace TCad.ViewModel
 
         public void Load()
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog ofd = new();
             
             if (IsVaridDir(SettingsHolder.Settings.LastDataDir))
             {
@@ -490,7 +490,7 @@ namespace TCad.ViewModel
 
         public void SaveAs()
         {
-            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            System.Windows.Forms.SaveFileDialog sfd = new();
 
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -503,10 +503,9 @@ namespace TCad.ViewModel
 
         public void GridSettings()
         {
-            GridSettingsDialog dlg = new GridSettingsDialog();
+            GridSettingsDialog dlg = new();
 
             dlg.GridSize = Settings.GridSize;
-
             dlg.Owner = mMainWindow.GetWindow();
 
             bool? result = dlg.ShowDialog();
@@ -520,7 +519,7 @@ namespace TCad.ViewModel
 
         public void SnapSettings()
         {
-            SnapSettingsDialog dlg = new SnapSettingsDialog();
+            SnapSettingsDialog dlg = new();
 
             dlg.Owner = mMainWindow.GetWindow();
 
@@ -540,7 +539,7 @@ namespace TCad.ViewModel
 
         public void PrintSettings()
         {
-            PrintSettingsDialog dlg = new PrintSettingsDialog();
+            PrintSettingsDialog dlg = new();
 
             dlg.Owner = mMainWindow.GetWindow();
 
@@ -560,7 +559,7 @@ namespace TCad.ViewModel
 
         public void MoveKeySettings()
         {
-            MoveKeySettingsDialog dlg = new MoveKeySettingsDialog();
+            MoveKeySettingsDialog dlg = new();
 
             dlg.Owner = mMainWindow.GetWindow();
 
@@ -597,13 +596,13 @@ namespace TCad.ViewModel
 
         public void ExportSVG()
         {
-            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            System.Windows.Forms.SaveFileDialog sfd = new();
 
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 List<CadFigure> figList = Controller.DB.GetSelectedFigList();
 
-                SvgExporter exporter = new SvgExporter();
+                SvgExporter exporter = new();
 
                 XDocument doc = exporter.ToSvg(figList, Controller.DC,
                     Controller.PageSize.Width, Controller.PageSize.Height);
@@ -761,7 +760,7 @@ namespace TCad.ViewModel
 
         public List<string> HelpOfKey(string keyword)
         {
-            List<string> ret = new List<string>();
+            List<string> ret = new();
 
             if (keyword == null)
             {
@@ -779,7 +778,7 @@ namespace TCad.ViewModel
                 return ret;
             }
 
-            Regex re = new Regex(keyword, RegexOptions.IgnoreCase);
+            Regex re = new(keyword, RegexOptions.IgnoreCase);
 
             foreach (String s in KeyMap.Keys)
             {
@@ -877,8 +876,7 @@ namespace TCad.ViewModel
 #region print
         public void StartPrint()
         {
-            PrintDocument pd =
-                new PrintDocument();
+            PrintDocument pd = new();
 
             PageSettings storePageSettings = pd.DefaultPageSettings;
 
@@ -890,7 +888,7 @@ namespace TCad.ViewModel
 
             pd.PrintPage += PrintPage;
 
-            System.Windows.Forms.PrintDialog pdlg = new System.Windows.Forms.PrintDialog();
+            System.Windows.Forms.PrintDialog pdlg = new();
 
             pdlg.Document = pd;
 
@@ -905,8 +903,8 @@ namespace TCad.ViewModel
         private void PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             Graphics g = e.Graphics;
-            CadSize2D deviceSize = new CadSize2D(e.PageBounds.Size.Width, e.PageBounds.Size.Height);
-            CadSize2D pageSize = new CadSize2D(Controller.PageSize.Width, Controller.PageSize.Height);
+            CadSize2D deviceSize = new(e.PageBounds.Size.Width, e.PageBounds.Size.Height);
+            CadSize2D pageSize = new(Controller.PageSize.Width, Controller.PageSize.Height);
 
             Controller.PrintPage(g, pageSize, deviceSize);
         }
@@ -914,9 +912,9 @@ namespace TCad.ViewModel
         [SupportedOSPlatform("windows")]
         public void PageSetting()
         {
-            System.Windows.Forms.PageSetupDialog pageDlg = new System.Windows.Forms.PageSetupDialog();
+            System.Windows.Forms.PageSetupDialog pageDlg = new();
 
-            PageSettings pageSettings = new PageSettings();
+            PageSettings pageSettings = new();
 
             pageSettings.PaperSize = Controller.PageSize.GetPaperSize();
             pageSettings.Landscape = Controller.PageSize.mLandscape;
@@ -937,7 +935,7 @@ namespace TCad.ViewModel
 
         public void DocSetting()
         {
-            DocumentSettingsDialog dlg = new DocumentSettingsDialog();
+            DocumentSettingsDialog dlg = new();
 
             dlg.Owner = mMainWindow.GetWindow();
 

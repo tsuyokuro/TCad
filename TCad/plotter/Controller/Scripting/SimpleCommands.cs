@@ -7,7 +7,7 @@ namespace Plotter.Controller
 {
     public class SipmleCommands
     {
-        private PlotterController Controller;
+        private readonly PlotterController Controller;
 
         public SipmleCommands(PlotterController controller)
         {
@@ -16,17 +16,18 @@ namespace Plotter.Controller
 
         public List<string> GetAutoCompleteForSimpleCmd()
         {
-            List<string> autoComps = new List<string>();
-
-            autoComps.Add("@clear");
-            autoComps.Add("@cls");
-            autoComps.Add("@help key");
-            autoComps.Add("@dump db");
-            autoComps.Add("@dump DC");
-            autoComps.Add("@dump fig");
-            autoComps.Add("@dump layer");
-            autoComps.Add("@dump undo");
-            autoComps.Add("@bench draw");
+            List<string> autoComps = new()
+            {
+                "@clear",
+                "@cls",
+                "@help key",
+                "@dump db",
+                "@dump DC",
+                "@dump fig",
+                "@dump layer",
+                "@dump undo",
+                "@bench draw"
+            };
 
             return autoComps;
         }
@@ -37,7 +38,7 @@ namespace Plotter.Controller
 
             Thread.Sleep(100);
 
-            Stopwatch sw = new Stopwatch();
+            Stopwatch sw = new();
             sw.Start();
             int i = 0;
             int cnt = 1000;
