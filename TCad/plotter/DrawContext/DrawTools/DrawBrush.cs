@@ -4,9 +4,9 @@ using System.Drawing;
 
 namespace Plotter;
 
-public readonly struct DrawBrush
+public struct DrawBrush
 {
-    public readonly Color4 mColor4;
+    public Color4 mColor4;
 
     public readonly SolidBrush GdiBrush
     {
@@ -30,9 +30,10 @@ public readonly struct DrawBrush
         get => mColor4.A == 0;
     }
 
-    public Color4 Color4()
+    public Color4 Color4
     {
-        return mColor4;
+        get => mColor4;
+        set => mColor4 = value;
     }
 
     public DrawBrush(int argb)

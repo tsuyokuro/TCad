@@ -154,7 +154,7 @@ namespace TCad.Controls
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
-            DOut.plx("");
+            DOut.plx("in");
 
             mCandidatePopup.ListBox.MouseUp += CandidateListBox_MouseUp;
             mCandidatePopup.ListBox.PreviewKeyDown += CandidateListBox_PreviewKeyDown;
@@ -186,6 +186,8 @@ namespace TCad.Controls
             {
                 mCandidatePopup.ScrollViewer.MaxHeight = ((int)formattedText.Height + 3) * rowCnt + 1;
             }
+
+            DOut.plx("out");
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)

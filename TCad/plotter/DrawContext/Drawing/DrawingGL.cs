@@ -48,7 +48,7 @@ namespace Plotter
 
         public void Clear(DrawBrush brush)
         {
-            GL.ClearColor(brush.Color4());
+            GL.ClearColor(brush.Color4);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
@@ -64,7 +64,7 @@ namespace Plotter
 
         public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
         {
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
 
             GL.Begin(PrimitiveType.LineStrip);
 
@@ -104,7 +104,7 @@ namespace Plotter
                 HalfEdge c = head;
 
                 GL.Begin(PrimitiveType.Polygon);
-                GL.Color4(brush.Color4());
+                GL.Color4(brush.Color4);
 
                 if (f.Normal != HeModel.INVALID_INDEX)
                 {
@@ -188,8 +188,8 @@ namespace Plotter
 
             GL.LineWidth(1.0f);
 
-            Color4 color = borderPen.Color4();
-            Color4 edgeColor = edgePen.Color4();
+            Color4 color = borderPen.Color4;
+            Color4 edgeColor = edgePen.Color4;
 
             Vector3d shift = GetShiftForOutLine();
 
@@ -535,17 +535,17 @@ namespace Plotter
 
             tex = mFontFaceW.CreateTexture("X");
             p1 = Vector3d.UnitX * size;
-            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4());
+            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4);
             mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
             tex = mFontFaceW.CreateTexture("Y");
             p1 = Vector3d.UnitY * size;
-            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4());
+            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4);
             mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
             tex = mFontFaceW.CreateTexture("Z");
             p1 = Vector3d.UnitZ * size;
-            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4());
+            GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4);
             mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
             PopMatrixes();
@@ -589,7 +589,7 @@ namespace Plotter
         {
             Vector3d p = DC.WorldPointToDevPoint(pt);
             Start2D();
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
             GL.PointSize(3);
 
             GL.Begin(PrimitiveType.Points);
@@ -603,7 +603,7 @@ namespace Plotter
         public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
         {
             Start2D();
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
             GL.PointSize(3);
 
             GL.Begin(PrimitiveType.Points);
@@ -643,7 +643,7 @@ namespace Plotter
 
             GL.Begin(PrimitiveType.LineStrip);
 
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
             GL.Vertex3(v0);
             GL.Vertex3(v1);
             GL.Vertex3(v2);
@@ -707,7 +707,7 @@ namespace Plotter
                 a -= (xv / 2);
             }
 
-            GL.Color4(brush.Color4());
+            GL.Color4(brush.Color4);
             
             mFontRenderer.Render(tex, a, xv, yv);
         }
@@ -731,7 +731,7 @@ namespace Plotter
                 return;
             }
 
-            GL.Color4(brush.Color4());
+            GL.Color4(brush.Color4);
 
             mFontRenderer.Render(tex, a, xv, yv);
 
@@ -810,7 +810,7 @@ namespace Plotter
 
             Start2D();
 
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
             //DrawCross2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
             DrawX2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
 
@@ -831,7 +831,7 @@ namespace Plotter
 
             list.ForEach(item =>
             {
-                GL.Color4(item.Pen.Color4());
+                GL.Color4(item.Pen.Color4);
                 //DrawCross2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
                 DrawX2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
             });
@@ -911,7 +911,7 @@ namespace Plotter
 
         public void DrawDot(DrawPen pen, Vector3d p)
         {
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
 
             GL.Begin(PrimitiveType.Points);
 
@@ -1217,7 +1217,7 @@ namespace Plotter
             Start2D();
 
             GL.LineWidth(DrawingConst.HighlightPointLineWidth);
-            GL.Color4(pen.Color4());
+            GL.Color4(pen.Color4);
 
             pointList.ForEach(v =>
             {

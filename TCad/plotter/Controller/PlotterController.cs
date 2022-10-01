@@ -125,6 +125,8 @@ namespace Plotter.Controller
 
         public PlotterController(IPlotterViewModel vm)
         {
+            DOut.plx("in");
+
             if (vm == null)
             {
                 throw new System.ArgumentNullException(nameof(vm));
@@ -149,6 +151,8 @@ namespace Plotter.Controller
             ObjDownPoint = VectorExt.InvalidVector3d;
 
             InitHid();
+
+            DOut.plx("out");
         }
 
         #region ObjectTree handling

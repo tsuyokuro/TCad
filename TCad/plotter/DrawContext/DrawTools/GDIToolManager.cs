@@ -15,7 +15,7 @@ public class GDIToolManager : IDisposable
 
         public PenKey(DrawPen dp)
         {
-            Color4 = dp.Color4();
+            Color4 = dp.Color4;
             W = dp.Width;
         }
 
@@ -47,7 +47,7 @@ public class GDIToolManager : IDisposable
 
         public BrushKey(DrawBrush db)
         {
-            Color4 = db.Color4();
+            Color4 = db.Color4;
         }
 
         public bool Equals(BrushKey other)
@@ -98,7 +98,7 @@ public class GDIToolManager : IDisposable
         PenKey key = new PenKey(dp);
 
         if (!PenMap.ContainsKey(key)) {
-            Pen pen = new Pen(ColorUtil.ToGDIColor(dp.Color4()), dp.Width);
+            Pen pen = new Pen(ColorUtil.ToGDIColor(dp.Color4), dp.Width);
             PenMap.Add(key, pen);
         }
 
@@ -112,7 +112,7 @@ public class GDIToolManager : IDisposable
 
         if (!BrushMap.ContainsKey(key))
         {
-            SolidBrush brush = new SolidBrush(ColorUtil.ToGDIColor(db.Color4()));
+            SolidBrush brush = new SolidBrush(ColorUtil.ToGDIColor(db.Color4));
             BrushMap.Add(key, brush);
         }
 

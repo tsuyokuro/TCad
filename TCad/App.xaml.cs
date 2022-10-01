@@ -198,15 +198,15 @@ namespace TCad
         {
             if (DOutTarget == DebugOutTarget.Console)
             {
-                DOut.PrintF = Console.Write;
+                DOut.Print = Console.Write;
                 DOut.PrintLn = Console.WriteLine;
 
                 DOut.pl("DOut's output setting is Console");
             }
             else if (DOutTarget == DebugOutTarget.DebugServer)
             {
-                DOut.PrintF = DServer.Write;
-                DOut.PrintLn = DServer.WriteLn;
+                DOut.Print = DServer.Print;
+                DOut.PrintLn = DServer.PrintLn;
 
                 DOut.pl("DOut's output setting is DebugServer");
             }

@@ -588,7 +588,7 @@ namespace Plotter
 
             if (de > GetR0Min() && de < GetR0Max())
             {
-                //DebugOut.Std.println("CrossPlane is parallel");
+                //DebugOut.Std.PrintLn("CrossPlane is parallel");
 
                 // 平面と直線は平行
                 return VectorExt.InvalidVector3d;

@@ -48,6 +48,8 @@ namespace Plotter.Controller
 
         public ScriptEnvironment(PlotterController controller)
         {
+            DOut.plx("in");
+
             Controller = controller;
 
             mScriptFunctions = new ScriptFunctions();
@@ -59,6 +61,8 @@ namespace Plotter.Controller
             InitScriptingEngine();
 
             mScriptFunctions.Init(this, mScope);
+
+            DOut.plx("out");
         }
 
         Regex AutoCompPtn = new Regex(@"#\[AC\][ \t]*(.+)\n");

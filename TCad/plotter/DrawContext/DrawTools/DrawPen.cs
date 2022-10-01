@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace Plotter;
 
-public readonly struct DrawPen
+public struct DrawPen
 {
-    public readonly Color4 mColor4;
-    public readonly float Width;
+    public Color4 mColor4;
+    public float Width;
 
     public Pen GdiPen
     {
@@ -31,9 +31,10 @@ public readonly struct DrawPen
         get => mColor4.A == 0.0;
     }
 
-    public Color4 Color4()
+    public Color4 Color4
     {
-        return mColor4;
+        get => mColor4;
+        set => mColor4 = value;
     }
 
     public DrawPen(int argb, float width)

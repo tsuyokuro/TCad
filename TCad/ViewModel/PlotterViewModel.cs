@@ -139,6 +139,8 @@ namespace TCad.ViewModel
 
         public PlotterViewModel(ICadMainWindow mainWindow)
         {
+            DOut.plx("in");
+
             mController = new PlotterController(this);
 
             SettingsVM = new SettingsVeiwModel(this);
@@ -153,7 +155,6 @@ namespace TCad.ViewModel
 
             CurrentFileName = null;
 
-
             InitCommandMap();
             InitKeyMap();
 
@@ -163,6 +164,8 @@ namespace TCad.ViewModel
             mController.UpdateLayerList();
 
             mMoveKeyHandler = new MoveKeyHandler(Controller);
+
+            DOut.plx("out");
         }
 
 
@@ -198,7 +201,7 @@ namespace TCad.ViewModel
                 { "load", Load },
                 { "save",Save },
                 { "save_as",SaveAs },
-                { "print",StartPrint },
+                { "Print",StartPrint },
                 { "page_setting",PageSetting },
                 { "doc_setting",DocSetting },
                 { "undo",Undo },
