@@ -334,9 +334,12 @@ namespace Plotter
         public static CadVertex Draw(
             VertexList src, bool isloop,
             int curveSplitNum,
-            DrawContext dc, DrawOption opt)
+            DrawContext dc, DrawPen pen, DrawOption opt)
         {
-            DrawPen pen = opt.LinePen;
+            if (opt.ForcePen || (pen.IsInvalid))
+            {
+                pen = opt.LinePen;
+            }
 
             VertexList pl = src;
 

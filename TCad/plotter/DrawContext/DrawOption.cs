@@ -42,14 +42,14 @@ namespace Plotter
             Pale.LinePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
             Pale.MeshLinePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
             Pale.MeshEdgePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
-            Pale.MeshBrush = DrawBrush.NullBrush;
+            Pale.MeshBrush = DrawBrush.Invalid;
             Pale.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
 
             // Before
             Before.LinePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
             Before.MeshLinePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
             Before.MeshEdgePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
-            Before.MeshBrush = DrawBrush.NullBrush;
+            Before.MeshBrush = DrawBrush.Invalid;
             Before.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
 
             // Temp
@@ -71,7 +71,7 @@ namespace Plotter
             }
             else
             {
-                Current.MeshBrush = DrawBrush.NullBrush;
+                Current.MeshBrush = DrawBrush.Invalid;
             }
 
             Current.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
@@ -92,8 +92,8 @@ namespace Plotter
             }
             else
             {
-                Normal.MeshLinePen = DrawPen.NullPen;
-                Normal.MeshEdgePen = DrawPen.NullPen;
+                Normal.MeshLinePen = DrawPen.Invalid;
+                Normal.MeshEdgePen = DrawPen.Invalid;
             }
 
             if (SettingsHolder.Settings.FillMesh)
@@ -102,7 +102,7 @@ namespace Plotter
             }
             else
             {
-                Normal.MeshBrush = DrawBrush.NullBrush;
+                Normal.MeshBrush = DrawBrush.Invalid;
             }
 
             Normal.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);

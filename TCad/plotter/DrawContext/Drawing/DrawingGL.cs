@@ -88,7 +88,7 @@ namespace Plotter
 
         private void DrawHeFaces(DrawBrush brush, HeModel model)
         {
-            if (brush.IsNullBrush)
+            if (brush.IsInvalid)
             {
                 return;
             }
@@ -176,8 +176,8 @@ namespace Plotter
 
         private void DrawHeEdges(DrawPen borderPen, DrawPen edgePen, double edgeThreshold, HeModel model)
         {
-            bool drawBorder = !borderPen.IsNullPen;
-            bool drawEdge = !edgePen.IsNullPen;
+            bool drawBorder = !borderPen.IsInvalid;
+            bool drawEdge = !edgePen.IsInvalid;
 
             if (!drawBorder && !drawEdge)
             {

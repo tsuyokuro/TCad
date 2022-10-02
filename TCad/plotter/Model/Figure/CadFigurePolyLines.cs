@@ -154,33 +154,6 @@ namespace Plotter
             Normal = -Normal;
         }
 
-        struct DrawParam
-        {
-            public DrawContext DC;
-            public DrawPen Pen;
-
-            public DrawParam(DrawContext dc, DrawPen pen)
-            {
-                DC = dc;
-                Pen = pen;
-            }
-        }
-
-        struct DrawParam2
-        {
-            public DrawContext DC;
-            public DrawPen Pen;
-            public Vector3d PrevV;
-
-            public DrawParam2(DrawContext dc, DrawPen pen, Vector3d p)
-            {
-                DC = dc;
-                Pen = pen;
-                PrevV = p;
-            }
-        }
-
-
         protected void DrawLines(DrawContext dc, DrawOption opt, VertexList pl)
         {
             int start = 0;
@@ -203,22 +176,10 @@ namespace Plotter
             if (cnt == 1)
             {
                 dc.Drawing.DrawCross(opt.LinePen, a.vector, 2);
-                //if (a.Selected)
-                //{
-                //    DC.Drawing.DrawHighlightPoint(a.vector, DC.GetPen(DrawTools.PEN_POINT_HIGHLIGHT));
-                //}
-
                 return;
             }
 
-            //DrawParam dp = new DrawParam(DC, pen);
-            //PolyLineExpander.ForEachSegs<DrawParam>(pl, IsLoop, 8, 
-            //    (v0, v1, p) =>
-            //    {
-            //        p.DC.Drawing.DrawLine(p.Pen, v0.vector, v1.vector);
-            //    }, dp);
-
-            PolyLineExpander.Draw(pl, IsLoop, 8, dc, opt);
+            PolyLineExpander.Draw(pl, IsLoop, 8, dc, LinePen, opt);
         }
 
         public override VertexList GetPoints(int curveSplitNum)

@@ -8,6 +8,7 @@ using System.Drawing.Printing;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
+using static IronPython.Modules._ast;
 
 namespace Plotter.Serializer.v1003
 {
@@ -313,6 +314,11 @@ namespace Plotter.Serializer.v1003
         [Key("Name")]
         public string Name;
 
+        [Key("LinePen")]
+        public MpDrawPen_v1003 LinePen;
+
+        [Key("FillBrush")]
+        public MpDrawBrush_v1003 FillBrush;
 
         [IgnoreMember]
         public CadFigure TempFigure = null;
@@ -380,6 +386,9 @@ namespace Plotter.Serializer.v1003
             GeoData = fig.GeometricDataToMp_v1003();
 
             Name = fig.Name;
+
+            LinePen = MpDrawPen_v1003.Create(fig.LinePen);
+            FillBrush = MpDrawBrush_v1003.Create(fig.FillBrush);
         }
 
         public void StoreChildIdList(CadFigure fig)
@@ -417,6 +426,9 @@ namespace Plotter.Serializer.v1003
             fig.GeometricDataFromMp_v1003(GeoData);
 
             fig.Name = Name;
+
+            fig.LinePen = LinePen.Restore();
+            fig.FillBrush = FillBrush.Restore();
         }
 
         public CadFigure Restore()
@@ -490,6 +502,56 @@ namespace Plotter.Serializer.v1003
         }
     }
 
+    [MessagePackObject]
+    public struct MpDrawPen_v1003
+    {
+        [Key("color")]
+        public MpColor4_v1003 Color4;
+
+        [Key("W")]
+        public float Width;
+
+        public static MpDrawPen_v1003 Create(DrawPen v)
+        {
+            return new MpDrawPen_v1003
+            {
+                Color4 = MpColor4_v1003.Create(v.Color4),
+                Width = v.Width,
+            };
+        }
+
+        public DrawPen Restore()
+        {
+            return new DrawPen
+            {
+                Color4 = Color4.Restore(),
+                Width = Width,
+            };
+        }
+    }
+
+    [MessagePackObject]
+    public struct MpDrawBrush_v1003
+    {
+        [Key("color")]
+        public MpColor4_v1003 Color4;
+
+        public static MpDrawBrush_v1003 Create(DrawBrush v)
+        {
+            return new MpDrawBrush_v1003
+            {
+                Color4 = MpColor4_v1003.Create(v.Color4),
+            };
+        }
+
+        public DrawBrush Restore()
+        {
+            return new DrawBrush
+            {
+                Color4 = Color4.Restore(),
+            };
+        }
+    }
 
     [MessagePackObject]
     public struct MpVertexAttr_v1003

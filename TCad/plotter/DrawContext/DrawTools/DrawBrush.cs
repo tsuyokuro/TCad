@@ -1,11 +1,24 @@
 
 using OpenTK.Mathematics;
+using System;
 using System.Drawing;
 
 namespace Plotter;
 
-public struct DrawBrush
+public struct DrawBrush : IEquatable<DrawBrush>
 {
+    public static DrawBrush Invalid;
+
+    private static float InvalidValue = -1.0f;
+
+    static DrawBrush()
+    {
+        Invalid = new()
+        {
+            Color4 = new Color4(0, 0, 0, InvalidValue),
+        };
+    }
+
     public Color4 mColor4;
 
     public readonly SolidBrush GdiBrush
@@ -23,11 +36,9 @@ public struct DrawBrush
         get => new ColorPack(Argb);
     }
 
-    public static DrawBrush NullBrush = new DrawBrush(0);
-
-    public bool IsNullBrush
+    public bool IsInvalid
     {
-        get => mColor4.A == 0;
+        get => mColor4.A < 0f;
     }
 
     public Color4 Color4
@@ -45,4 +56,34 @@ public struct DrawBrush
     {
         mColor4 = color;
     }
+
+    public static bool operator == (DrawBrush brush1, DrawBrush brush2)
+    {
+        return (brush1.Color4 == brush2.Color4);
+    }
+
+    public static bool operator != (DrawBrush brush1, DrawBrush brush2)
+    {
+        return !(brush1.Color4 == brush2.Color4);
+    }
+
+    public bool Equals(DrawBrush other)
+    {
+        return Color4 == other.Color4;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is DrawBrush other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            Color4.A, Color4.R, Color4.G, Color4.B
+            );
+    }
+
+
 }
+

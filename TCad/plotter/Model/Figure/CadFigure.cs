@@ -102,6 +102,9 @@ namespace Plotter
 
         public LocalCoordinate LocalCoord = new LocalCoordinate();
 
+        public DrawPen LinePen = DrawPen.Invalid;
+        public DrawBrush FillBrush = DrawBrush.Invalid;
+
         #endregion
 
         protected VertexList mPointList = new VertexList(4);

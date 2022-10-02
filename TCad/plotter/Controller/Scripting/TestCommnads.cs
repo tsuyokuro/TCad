@@ -448,26 +448,6 @@ namespace Plotter.Controller
             Controller.UpdateObjectTree(true);
         }
 
-        private void Test()
-        {
-            DrawPen dp1 = new DrawPen(new Color4(0.5f, 0.5f, 0.5f, 1.0f), 1f);
-            DrawPen dp2 = new DrawPen(new Color4(0.5f, 0.5f, 0.5f, 1.0f), 1f);
-            Pen pen1 = dp1.GdiPen;
-            Pen pen2 = dp2.GdiPen;
-
-            bool r = ReferenceEquals(pen1 ,pen2);
-            ItConsole.println("r:" + r);
-
-            DrawBrush db1 = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
-            DrawBrush db2 = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
-            SolidBrush brush1 = db1.GdiBrush;
-            SolidBrush brush2 = db2.GdiBrush;
-
-            r = ReferenceEquals(brush1, brush2);
-
-            ItConsole.println("r:" + r);
-        }
-
         private void testTriangulate()
         {
             CadFigure tfig = GetTargetFigure();
@@ -507,6 +487,40 @@ namespace Plotter.Controller
 
             DOut.pl(doc.ToString());
             doc.Save(@"f:\work2\test.svg");
+        }
+
+        private void Test()
+        {
+            CadFigure fig = Controller.CurrentFigure;
+
+            fig.LinePen = new DrawPen(new Color4(0.5f, 0.5f, 1.0f, 1f), 1.0f);
+            fig.FillBrush = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1f));
+        }
+
+        private void Test2()
+        {
+            DrawPen dpen1 = new DrawPen(new Color4(0.25f, 0.25f, 0.25f, 1), 1);
+            DrawPen dpen2 = new DrawPen(new Color4(0.25f, 0.25f, 0.25f, 1), 1);
+            DrawPen dpen3 = new DrawPen(new Color4(0.25f, 0.25f, 0.2f, 1), 1);
+
+            DrawBrush dbr1 = new DrawBrush(new Color4(0.25f, 0.25f, 0.25f, 1));
+            DrawBrush dbr2 = new DrawBrush(new Color4(0.25f, 0.25f, 0.25f, 1));
+            DrawBrush dbr3 = new DrawBrush(new Color4(0.25f, 0.25f, 0.2f, 1));
+
+            Pen pen1 = dpen1.GdiPen;
+            Pen pen2 = dpen2.GdiPen;
+            Pen pen3 = dpen3.GdiPen;
+
+            DOut.pl("pen1==pen2: " + ReferenceEquals(pen1, pen2));
+            DOut.pl("pen1==pen3: " + ReferenceEquals(pen1, pen3));
+
+
+            SolidBrush br1 = dbr1.GdiBrush;
+            SolidBrush br2 = dbr2.GdiBrush;
+            SolidBrush br3 = dbr3.GdiBrush;
+
+            DOut.pl("br1==br2: " + ReferenceEquals(pen1, pen2));
+            DOut.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
         }
 
         public bool ExecCommand(string s)
@@ -560,6 +574,11 @@ namespace Plotter.Controller
             else if (cmd == "@test")
             {
                 Test();
+            }
+
+            else if (cmd == "@test2")
+            {
+                Test2();
             }
 
             else if (cmd == "@tcons1")
