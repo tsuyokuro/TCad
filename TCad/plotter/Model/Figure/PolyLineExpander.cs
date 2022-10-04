@@ -1,5 +1,6 @@
 using CadDataTypes;
 using System;
+using System.Drawing;
 
 namespace Plotter
 {
@@ -334,12 +335,9 @@ namespace Plotter
         public static CadVertex Draw(
             VertexList src, bool isloop,
             int curveSplitNum,
-            DrawContext dc, DrawPen pen, DrawOption opt)
+            DrawContext dc, DrawOption opt)
         {
-            if (opt.ForcePen || (pen.IsInvalid))
-            {
-                pen = opt.LinePen;
-            }
+            ref DrawPen pen = ref opt.LinePen;
 
             VertexList pl = src;
 

@@ -6,6 +6,7 @@ using System.Drawing;
 using static Plotter.CadFigure;
 using CadDataTypes;
 using Plotter.Settings;
+using System.Windows.Media;
 
 namespace Plotter
 {
@@ -179,7 +180,16 @@ namespace Plotter
                 return;
             }
 
-            PolyLineExpander.Draw(pl, IsLoop, 8, dc, LinePen, opt);
+            DrawPen saveLinePen = opt.LinePen;
+
+            if (!opt.ForcePen && (!LinePen.IsInvalid))
+            {
+                opt.LinePen = LinePen;
+            }
+
+            PolyLineExpander.Draw(pl, IsLoop, 8, dc, opt);
+
+            opt.LinePen = saveLinePen;
         }
 
         public override VertexList GetPoints(int curveSplitNum)

@@ -2,6 +2,7 @@ using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using CadDataTypes;
+using System.Runtime.InteropServices;
 
 namespace Plotter
 {
@@ -147,7 +148,11 @@ namespace Plotter
 
         public DrawContext()
         {
+            DOut.plx("in");
+
             OptionSet = new DrawOptionSet(this);
+
+            DOut.plx("out");
         }
 
         public virtual void Active()

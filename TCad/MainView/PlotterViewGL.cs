@@ -566,6 +566,13 @@ namespace Plotter
         class MyEvent : EventSequencer<MyEvent>.Event
         {
             public new MouseEventArgs EventArgs;
+            public MyEventSequencer Sequencer;
+            public Action<MyEventSequencer, MyEvent> Action;
+
+            public void ExecAction()
+            {
+                Action(Sequencer, this);
+            }
         }
 
         class MyEventSequencer : EventSequencer<MyEvent>
@@ -584,23 +591,28 @@ namespace Plotter
 
             public override void HandleEvent(MyEvent msg)
             {
-                //DOut.pl($"HandleEvent what:{msg.What}");
+                msg.Sequencer = this;
+                msg.Action = MsgExec;
+                ThreadUtil.RunOnMainThread(msg.ExecAction, false);
+            }
 
+            private static void MsgExec(MyEventSequencer this_, MyEvent msg)
+            {
                 if (msg.What == MOUSE_MOVE)
                 {
-                    mPlotterView.HandleMouseMove(msg.EventArgs);
+                    this_.mPlotterView.HandleMouseMove(msg.EventArgs);
                 }
                 else if (msg.What == MOUSE_WHEEL)
                 {
-                    mPlotterView.HandleMouseWheel(msg.EventArgs);
+                    this_.mPlotterView.HandleMouseWheel(msg.EventArgs);
                 }
                 else if (msg.What == MOUSE_DOWN)
                 {
-                    mPlotterView.HandleMouseDown(msg.EventArgs);
+                    this_.mPlotterView.HandleMouseDown(msg.EventArgs);
                 }
                 else if (msg.What == MOUSE_UP)
                 {
-                    mPlotterView.HandleMouseUp(msg.EventArgs);
+                    this_.mPlotterView.HandleMouseUp(msg.EventArgs);
                 }
             }
         }
