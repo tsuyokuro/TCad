@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 
 namespace Plotter
 {
@@ -51,12 +51,17 @@ namespace Plotter
             BrushColorTbl[DrawTools.BRUSH_DEFAULT_MESH_FILL] = Color.FromArgb(204, 204, 204);
             BrushColorTbl[DrawTools.BRUSH_TRANSPARENT] = Color.FromArgb(0, 0, 0, 0);
             BrushColorTbl[DrawTools.BRUSH_PALE_TEXT] = Color.FromArgb(0x7E, 0x7E, 0x7E);
-            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_X] = Color.FromArgb(0xFF, 0xFF, 0xFF);
-            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_Y] = Color.FromArgb(0xFF, 0xFF, 0xFF);
-            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_Z] = Color.FromArgb(0xFF, 0xFF, 0xFF);
-            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_X] = Color.FromArgb(0xFF, 0xFF, 0xFF);
-            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Y] = Color.FromArgb(0xFF, 0xFF, 0xFF);
-            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Z] = Color.FromArgb(0xFF, 0xFF, 0xFF);
+
+            Color AxisLabel_X = Color.FromArgb(0x90, 0x90, 0x90);
+            Color AxisLabel_Y = Color.FromArgb(0x90, 0x90, 0x90);
+            Color AxisLabel_Z = Color.FromArgb(0x90, 0x90, 0x90);
+
+            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_X] = AxisLabel_X;
+            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_Y] = AxisLabel_Y;
+            BrushColorTbl[DrawTools.BRUSH_AXIS_LABEL_Z] = AxisLabel_Z;
+            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_X] = AxisLabel_X;
+            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Y] = AxisLabel_Y;
+            BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Z] = AxisLabel_Z;
         }
     }
 }

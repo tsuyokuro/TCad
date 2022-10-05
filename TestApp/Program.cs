@@ -12,90 +12,246 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using TCad.Controls;
 using OpenTK.Mathematics;
+using Plotter;
+using System.Timers;
+using System.Collections.Concurrent;
 
-namespace TestApp
+namespace TestApp;
+
+public abstract class EventSequencer<EventT> where EventT : EventSequencer<EventT>.Event, new()
 {
-    [MessagePackObject]
-    public struct MpColor4
+    public class Event
     {
-        [Key(0)]
-        public float R;
-        [Key(1)]
-        public float G;
-        [Key(2)]
-        public float B;
-        [Key(3)]
-        public float A;
+        public int What = 0;
+        public long ExpireTime = 0;
 
-        public static MpColor4 Create(Color4 c)
+        public virtual void Clean()
         {
-            MpColor4 ret = new MpColor4();
-            ret.R = c.R;
-            ret.G = c.G;
-            ret.B = c.B;
-            ret.A = c.A;
+            What = 0;
+            ExpireTime = 0;
+        }
 
-            return ret;
+        public Event() { }
+
+        public new String ToString()
+        {
+            return "Event What=" + What.ToString();
         }
     }
 
-    [MessagePackObject]
-    public class Attr
+    private Task Looper;
+
+    private bool ContinueLoop;
+
+    private BlockingCollection<EventT> Events;
+
+    private List<EventT> DelayedEvents;
+
+    private BlockingCollection<EventT> FreeEvents;
+
+    private int QueueSize = 5;
+
+    private System.Timers.Timer CheckTimer;
+
+    private Object LockObj = new Object();
+
+    public EventSequencer(int queueSize)
     {
-        [Key("C")]
-        public MpColor4? mColor;
+        QueueSize = queueSize;
+
+        Events = new BlockingCollection<EventT>(QueueSize);
+        FreeEvents = new BlockingCollection<EventT>(QueueSize);
+
+        DelayedEvents = new List<EventT>();
+
+        for (int i = 0; i < QueueSize; i++)
+        {
+            FreeEvents.Add(new EventT());
+        }
+
+        CheckTimer = new System.Timers.Timer();
+        CheckTimer.Elapsed += new ElapsedEventHandler(OnElapsed_TimersTimer);
+
+        //CheckTimer = new System.Threading.Timer(TimerCallback);
+
+        Looper = new Task(Loop);
     }
 
-    internal class Program
+    public EventT ObtainEvent()
     {
-        static void test001()
+        EventT evt = FreeEvents.Take();
+        evt.Clean();
+        return evt;
+    }
+
+    public void Post(EventT evt)
+    {
+        lock (LockObj)
         {
-            TextAttr attr = default;
-            attr.FColor = 1;
-            attr.BColor = 0;
+            Events.Add(evt);
+        }
+    }
 
-            TextLine tl = new TextLine(attr);
-
-            string s = "漢字\r" + AnsiEsc.Green + "テスト" + AnsiEsc.Blue + AnsiEsc.GreenBG + "ABCdef";
-
-            tl.Parse(s);
-
-            var sw = new Stopwatch();
-            sw.Start();
+    private long GetCurrentMilliSec()
+    {
+        return DateTime.Now.Ticks / 10000;
+    }
 
 
-            foreach (AttrSpan span in tl.Attrs)
+    public void Post(EventT evt, int delay)
+    {
+        lock (LockObj)
+        {
+            evt.ExpireTime = GetCurrentMilliSec() + delay;
+            DelayedEvents.Add(evt);
+            UpdateTimer();
+        }
+    }
+
+    public abstract void HandleEvent(EventT evt);
+
+    public void Loop()
+    {
+        while (ContinueLoop)
+        {
+            EventT evt = Events.Take();
+
+            HandleEvent(evt);
+
+            FreeEvents.Add(evt);
+        }
+    }
+
+    public void Stop()
+    {
+        ContinueLoop = false;
+    }
+
+    public void Start()
+    {
+        ContinueLoop = true;
+        Looper.Start();
+    }
+
+    private void TimerCallback(object state)
+    {
+        UpdateTimer();
+    }
+
+    void OnElapsed_TimersTimer(object sender, ElapsedEventArgs e)
+    {
+        CheckTimer.Stop();
+        UpdateTimer();
+    }
+
+    private void UpdateTimer()
+    {
+        lock (LockObj)
+        {
+            long now = GetCurrentMilliSec();
+
+            long minDt = long.MaxValue;
+
+            if (DelayedEvents.Count > 0)
             {
-                if (span.Len == 0) continue;
+                foreach (EventT evt in DelayedEvents)
+                {
+                    if (evt.ExpireTime == 0)
+                    {
+                        continue;
+                    }
 
-                string ps = tl.Data.Substring(span.Start, span.Len);
+                    long t = evt.ExpireTime - now;
 
-                Console.WriteLine(ps);
+                    if (t <= 0)
+                    {
+                        evt.ExpireTime = 0;
+                        Events.Add(evt);
+                    }
+                    else
+                    {
+                        if (t < minDt)
+                        {
+                            minDt = t;
+                        }
+                    }
+                }
+            }
+            DelayedEvents.RemoveAll(m => m.ExpireTime == 0);
+
+            if (minDt != long.MaxValue)
+            {
+                CheckTimer.Stop();
+                CheckTimer.Interval = minDt;
+                CheckTimer.Start();
+            }
+        }
+    }
+
+    public void RemoveAll(Predicate<Event> match)
+    {
+        lock (LockObj)
+        {
+            BlockingCollection<EventT> newEvents = new(QueueSize);
+
+            foreach (EventT evt in Events) {
+                if (!match(evt))
+                {
+                    newEvents.Add(evt);
+                }
+                else
+                {
+                    Removed(evt);
+                }
             }
 
-            sw.Stop();
+            Events = newEvents;
 
-            Console.WriteLine("" + sw.ElapsedMilliseconds);
+            List<EventT> newList = new List<EventT>();
+            foreach (EventT evt in DelayedEvents)
+            {
+                if (!match(evt))
+                {
+                    newList.Add(evt);
+                }
+                else
+                {
+                    Removed(evt);
+                }
+            }
+
+            DelayedEvents = newList;
         }
+    }
 
-        static void test002()
-        {
-            Attr attr1 = new Attr();
+    public void RemoveAll(int what)
+    {
+        RemoveAll(e => e.What == what);
+    }
 
-            attr1.mColor = MpColor4.Create(Color4.LightGray);
+    private void Removed(EventT ev)
+    {
+        FreeEvents.Add(ev);
+    }
+}
 
-            byte[] data = MessagePackSerializer.Serialize(attr1);
+public class MyEvent : EventSequencer<MyEvent>.Event
+{
+    int Value;
+}
 
-            Attr attr2 = MessagePackSerializer.Deserialize<Attr>(data);
+internal class Program
+{
 
-            Console.WriteLine("");
-        }
+    static void test002()
+    {
+        Console.WriteLine("");
+    }
 
-        static void Main(string[] args)
-        {
-            test002();
-            Console.WriteLine("<<< END >>>");
-            Console.ReadLine();
-        }
+    static void Main(string[] args)
+    {
+        test002();
+        Console.WriteLine("<<< END >>>");
+        Console.ReadLine();
     }
 }

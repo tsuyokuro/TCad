@@ -1,5 +1,6 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK.Mathematics;
+using System.Windows.Documents;
 
 namespace Plotter
 {
@@ -90,6 +91,14 @@ namespace Plotter
 
         public override void AddPointInCreating(DrawContext dc, CadVertex p)
         {
+            if (Figure_.PointList.Count > 0)
+            {
+                if (Figure_.PointList.End().vector == p.vector)
+                {
+                    return;
+                }
+            }
+
             Figure_.PointList.Add(p);
         }
 
@@ -194,6 +203,11 @@ namespace Plotter
             {
                 Vector3d p0 = Figure_.PointList[0].vector;
                 Vector3d p2 = p.vector;
+
+                if (p0 == p2)
+                {
+                    return;
+                }
 
                 Vector3d hv = CadMath.CrossProduct(dc.UpVector, dc.ViewDir).Normalized();
                 Vector3d uv = dc.UpVector;

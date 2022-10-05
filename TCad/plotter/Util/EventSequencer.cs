@@ -1,209 +1,207 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace Plotter
+namespace Plotter;
+
+public abstract class EventSequencer<EventT> where EventT : EventSequencer<EventT>.Event, new()
 {
-    public abstract class EventSequencer<EventT> where EventT : EventSequencer<EventT>.Event, new()
+    public class Event
     {
-        public class Event
+        public int What = 0;
+        public long ExpireTime = 0;
+
+        public virtual void Clean()
         {
-            public int What = 0;
-            public long ExpireTime = 0;
-            public MouseEventArgs EventArgs = null;
-
-            public virtual void Clean()
-            {
-                What = 0;
-                ExpireTime = 0;
-            }
-
-            public Event() { }
-
-            public new String ToString()
-            {
-                return "Event What=" + What.ToString();
-            }
+            What = 0;
+            ExpireTime = 0;
         }
 
-        private Task Looper;
+        public Event() { }
 
-        private bool ContinueLoop;
-
-        private FlexBlockingQueue<EventT> Events;
-
-        private List<EventT> DelayedEvents;
-
-        private FlexBlockingQueue<EventT> FreeEvents;
-
-        private int QueueSize = 5;
-
-        private System.Timers.Timer CheckTimer;
-
-        private Object LockObj = new Object();
-
-        public EventSequencer(int queueSize)
+        public new String ToString()
         {
-            QueueSize = queueSize;
+            return "Event What=" + What.ToString();
+        }
+    }
 
-            Events = new FlexBlockingQueue<EventT>(QueueSize);
-            FreeEvents = new FlexBlockingQueue<EventT>(QueueSize);
+    private Task Looper;
 
-            DelayedEvents = new List<EventT>();
+    private bool ContinueLoop;
 
-            for (int i = 0; i < QueueSize; i++)
-            {
-                FreeEvents.Push(new EventT());
-            }
+    private FlexBlockingQueue<EventT> Events;
 
-            CheckTimer = new System.Timers.Timer();
-            CheckTimer.Elapsed += new ElapsedEventHandler(OnElapsed_TimersTimer);
+    private List<EventT> DelayedEvents;
 
-            //CheckTimer = new System.Threading.Timer(TimerCallback);
+    private FlexBlockingQueue<EventT> FreeEvents;
 
-            Looper = new Task(Loop);
+    private int QueueSize = 5;
+
+    private System.Timers.Timer CheckTimer;
+
+    private Object LockObj = new Object();
+
+    public EventSequencer(int queueSize)
+    {
+        QueueSize = queueSize;
+
+        Events = new FlexBlockingQueue<EventT>(QueueSize);
+        FreeEvents = new FlexBlockingQueue<EventT>(QueueSize);
+
+        DelayedEvents = new List<EventT>();
+
+        for (int i = 0; i < QueueSize; i++)
+        {
+            FreeEvents.Push(new EventT());
         }
 
-        public EventT ObtainEvent()
+        CheckTimer = new System.Timers.Timer();
+        CheckTimer.Elapsed += new ElapsedEventHandler(OnElapsed_TimersTimer);
+
+        //CheckTimer = new System.Threading.Timer(TimerCallback);
+
+        Looper = new Task(Loop);
+    }
+
+    public EventT ObtainEvent()
+    {
+        EventT evt = FreeEvents.Pop();
+        evt.Clean();
+        return evt;
+    }
+
+    public void Post(EventT evt)
+    {
+        lock (LockObj)
         {
-            EventT evt = FreeEvents.Pop();
-            evt.Clean();
-            return evt;
+            Events.Push(evt);
         }
+    }
 
-        public void Post(EventT evt)
+    private long GetCurrentMilliSec()
+    {
+        return DateTime.Now.Ticks / 10000;
+    }
+
+
+    public void Post(EventT evt, int delay)
+    {
+        lock (LockObj)
         {
-            lock (LockObj)
-            {
-                Events.Push(evt);
-            }
-        }
-
-        private long GetCurrentMilliSec()
-        {
-            return DateTime.Now.Ticks / 10000;
-        }
-
-
-        public void Post(EventT evt, int delay)
-        {
-            lock (LockObj)
-            {
-                evt.ExpireTime = GetCurrentMilliSec() + delay;
-                DelayedEvents.Add(evt);
-                UpdateTimer();
-            }
-        }
-
-        public abstract void HandleEvent(EventT evt);
-
-        public void Loop()
-        {
-            while (ContinueLoop)
-            {
-                EventT evt = Events.Pop();
-
-                HandleEvent(evt);
-
-                FreeEvents.Push(evt);
-            }
-        }
-
-        public void Stop()
-        {
-            ContinueLoop = false;
-        }
-
-        public void Start()
-        {
-            ContinueLoop = true;
-            Looper.Start();
-        }
-
-        private void TimerCallback(object state)
-        {
+            evt.ExpireTime = GetCurrentMilliSec() + delay;
+            DelayedEvents.Add(evt);
             UpdateTimer();
         }
+    }
 
-        void OnElapsed_TimersTimer(object sender, ElapsedEventArgs e)
+    public abstract void HandleEvent(EventT evt);
+
+    public void Loop()
+    {
+        while (ContinueLoop)
         {
-            CheckTimer.Stop();
-            UpdateTimer();
+            EventT evt = Events.Pop();
+
+            HandleEvent(evt);
+
+            FreeEvents.Push(evt);
         }
+    }
 
-        private void UpdateTimer()
+    public void Stop()
+    {
+        ContinueLoop = false;
+    }
+
+    public void Start()
+    {
+        ContinueLoop = true;
+        Looper.Start();
+    }
+
+    private void TimerCallback(object state)
+    {
+        UpdateTimer();
+    }
+
+    void OnElapsed_TimersTimer(object sender, ElapsedEventArgs e)
+    {
+        CheckTimer.Stop();
+        UpdateTimer();
+    }
+
+    private void UpdateTimer()
+    {
+        lock (LockObj)
         {
-            lock (LockObj)
+            long now = GetCurrentMilliSec();
+
+            long minDt = long.MaxValue;
+
+            if (DelayedEvents.Count > 0)
             {
-                long now = GetCurrentMilliSec();
-
-                long minDt = long.MaxValue;
-
-                if (DelayedEvents.Count > 0)
+                foreach (EventT evt in DelayedEvents)
                 {
-                    foreach (EventT evt in DelayedEvents)
+                    if (evt.ExpireTime == 0)
                     {
-                        if (evt.ExpireTime == 0)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        long t = evt.ExpireTime - now;
+                    long t = evt.ExpireTime - now;
 
-                        if (t <= 0)
+                    if (t <= 0)
+                    {
+                        evt.ExpireTime = 0;
+                        Events.Push(evt);
+                    }
+                    else
+                    {
+                        if (t < minDt)
                         {
-                            evt.ExpireTime = 0;
-                            Events.Push(evt);
-                        }
-                        else
-                        {
-                            if (t < minDt)
-                            {
-                                minDt = t;
-                            }
+                            minDt = t;
                         }
                     }
                 }
-                DelayedEvents.RemoveAll(m => m.ExpireTime == 0);
-
-                if (minDt != long.MaxValue)
-                {
-                    CheckTimer.Stop();
-                    CheckTimer.Interval = minDt;
-                    CheckTimer.Start();
-                }
             }
-        }
+            DelayedEvents.RemoveAll(m => m.ExpireTime == 0);
 
-        public void RemoveAll(Predicate<Event> match)
-        {
-            lock (LockObj)
+            if (minDt != long.MaxValue)
             {
-                Events.RemoveAll(match, Removed);
+                CheckTimer.Stop();
+                CheckTimer.Interval = minDt;
+                CheckTimer.Start();
+            }
+        }
+    }
 
-                for (int i = DelayedEvents.Count - 1; i >= 0; i--)
+    public void RemoveAll(Predicate<Event> match)
+    {
+        lock (LockObj)
+        {
+            Events.RemoveAll(match, Removed);
+
+            for (int i = DelayedEvents.Count - 1; i >= 0; i--)
+            {
+                EventT item = DelayedEvents[i];
+
+                if (match(item))
                 {
-                    EventT item = DelayedEvents[i];
-
-                    if (match(item))
-                    {
-                        DelayedEvents.RemoveAt(i);
-                        Removed(item);
-                    }
+                    DelayedEvents.RemoveAt(i);
+                    Removed(item);
                 }
             }
         }
+    }
 
-        public void RemoveAll(int what)
-        {
-            RemoveAll(e => e.What == what);
-        }
+    public void RemoveAll(int what)
+    {
+        RemoveAll(e => e.What == what);
+    }
 
-        private void Removed(EventT ev)
-        {
-            FreeEvents.Push(ev);
-        }
+    private void Removed(EventT ev)
+    {
+        FreeEvents.Push(ev);
     }
 }

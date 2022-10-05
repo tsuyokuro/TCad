@@ -153,6 +153,11 @@ namespace Plotter.Controller
 
             public override void Cancel()
             {
+                if (Ctrl.FigureCreator?.Figure.PointCount > 0)
+                {
+                    Ctrl.UpdateObjectTree(true);
+                }
+
                 Ctrl.State = States.SELECT;
                 Ctrl.CreatingFigType = CadFigure.Types.NONE;
                 Ctrl.NotifyStateChange();

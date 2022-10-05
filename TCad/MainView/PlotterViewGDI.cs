@@ -328,6 +328,7 @@ namespace Plotter
 
         class MyEvent : EventSequencer<MyEvent>.Event
         {
+            public MouseEventArgs EventArgs = null;
             public int x = 0;
             public int y = 0;
         }
