@@ -10,6 +10,7 @@ using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Controller;
 using TCad.ViewModel;
+using TCad.Util;
 
 namespace Plotter
 {
@@ -24,7 +25,7 @@ namespace Plotter
         ContextMenuEx mCurrentContextMenu = null;
         ContextMenuEx mContextMenu = null;
 
-        MyEventSequencer mEventSequencer;
+        MyEventHandler mEventSequencer;
 
         private DrawContextGDI mDrawContext = null;
 
@@ -54,7 +55,7 @@ namespace Plotter
 
             SizeChanged += onSizeChanged;
 
-            mEventSequencer = new MyEventSequencer(this, 100);
+            mEventSequencer = new MyEventHandler(this, 100);
 
             mEventSequencer.Start();
 
@@ -326,14 +327,14 @@ namespace Plotter
             // NOP
         }
 
-        class MyEvent : EventSequencer<MyEvent>.Event
+        class MyEvent : EventHandlerEvent
         {
             public MouseEventArgs EventArgs = null;
             public int x = 0;
             public int y = 0;
         }
 
-        class MyEventSequencer : EventSequencer<MyEvent>
+        class MyEventHandler : TCad.Util.EventHandler<MyEvent>
         {
             public const int MOUSE_MOVE = 1;
             public const int MOUSE_WHEEL = 2;
@@ -342,7 +343,7 @@ namespace Plotter
 
             private PlotterViewGDI mPlotterView;
 
-            public MyEventSequencer(PlotterViewGDI view, int queueSize) : base(queueSize)
+            public MyEventHandler(PlotterViewGDI view, int queueSize) : base(queueSize)
             {
                 mPlotterView = view;
             }

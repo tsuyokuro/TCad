@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Windows.Resources;
 using GLFont;
 using TCad.ViewModel;
+using TCad.Util;
 
 namespace Plotter
 {
@@ -31,7 +32,7 @@ namespace Plotter
         private ContextMenuEx mCurrentContextMenu = null;
         private ContextMenuEx mContextMenu = null;
 
-        private MyEventSequencer mEventSequencer;
+        private MyEventHandler mEventSequencer;
 
         private Cursor PointCursor;
 
@@ -78,7 +79,7 @@ namespace Plotter
             SetupCursor();
 
 #if MOUSE_THREAD
-            mEventSequencer = new MyEventSequencer(this, 100);
+            mEventSequencer = new MyEventHandler(this, 100);
             mEventSequencer.Start();
 #endif
         }
@@ -130,7 +131,7 @@ namespace Plotter
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
 #if MOUSE_THREAD
-            int what = MyEventSequencer.MOUSE_UP;
+            int what = MyEventHandler.MOUSE_UP;
 
             mEventSequencer.RemoveAll(what);
 
@@ -148,7 +149,7 @@ namespace Plotter
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
 #if MOUSE_THREAD
-            int what = MyEventSequencer.MOUSE_DOWN;
+            int what = MyEventHandler.MOUSE_DOWN;
 
             mEventSequencer.RemoveAll(what);
 
@@ -166,7 +167,7 @@ namespace Plotter
         private void OnMouseWheel(object sender, MouseEventArgs e)
         {
 #if MOUSE_THREAD
-            int what = MyEventSequencer.MOUSE_WHEEL;
+            int what = MyEventHandler.MOUSE_WHEEL;
 
             mEventSequencer.RemoveAll(what);
 
@@ -184,7 +185,7 @@ namespace Plotter
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
 #if MOUSE_THREAD
-            int what = MyEventSequencer.MOUSE_MOVE;
+            int what = MyEventHandler.MOUSE_MOVE;
 
             mEventSequencer.RemoveAll(what);
 
@@ -563,11 +564,11 @@ namespace Plotter
             base.MakeCurrent();
         }
 
-        class MyEvent : EventSequencer<MyEvent>.Event
+        class MyEvent : EventHandlerEvent
         {
             public MouseEventArgs EventArgs;
-            public MyEventSequencer Sequencer;
-            public Action<MyEventSequencer, MyEvent> Action;
+            public MyEventHandler Sequencer;
+            public Action<MyEventHandler, MyEvent> Action;
 
             public void ExecAction()
             {
@@ -575,7 +576,7 @@ namespace Plotter
             }
         }
 
-        class MyEventSequencer : EventSequencer<MyEvent>
+        class MyEventHandler : TCad.Util.EventHandler<MyEvent>
         {
             public const int MOUSE_MOVE = 1;
             public const int MOUSE_WHEEL = 2;
@@ -584,7 +585,7 @@ namespace Plotter
 
             private PlotterViewGL mPlotterView;
 
-            public MyEventSequencer(PlotterViewGL view, int queueSize) : base(queueSize)
+            public MyEventHandler(PlotterViewGL view, int queueSize) : base(queueSize)
             {
                 mPlotterView = view;
             }
@@ -596,7 +597,7 @@ namespace Plotter
                 ThreadUtil.RunOnMainThread(msg.ExecAction, false);
             }
 
-            private static void MsgExec(MyEventSequencer this_, MyEvent msg)
+            private static void MsgExec(MyEventHandler this_, MyEvent msg)
             {
                 if (msg.What == MOUSE_MOVE)
                 {

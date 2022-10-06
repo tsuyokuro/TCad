@@ -18,7 +18,7 @@ namespace Plotter
             PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.White;
             PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.CadetBlue;
             PenColorTbl[DrawTools.PEN_POINT_HIGHLIGHT] = Color.Orange;
-            PenColorTbl[DrawTools.PEN_MATCH_SEG] = Color.Green;
+            PenColorTbl[DrawTools.PEN_MATCH_SEG] = Color.YellowGreen;
             PenColorTbl[DrawTools.PEN_LAST_POINT_MARKER] = Color.CornflowerBlue;
             PenColorTbl[DrawTools.PEN_LAST_POINT_MARKER2] = Color.YellowGreen;
             PenColorTbl[DrawTools.PEN_AXIS] = Color.FromArgb(60, 60, 92);
@@ -26,7 +26,7 @@ namespace Plotter
             PenColorTbl[DrawTools.PEN_TEST_FIGURE] = Color.Yellow;
             PenColorTbl[DrawTools.PEN_GRID] = Color.FromArgb(92, 92, 92);
             PenColorTbl[DrawTools.PEN_POINT_HIGHLIGHT2] = Color.FromArgb(64, 255, 255);
-            PenColorTbl[DrawTools.PEN_FIGURE_HIGHLIGHT] = Color.HotPink;
+            PenColorTbl[DrawTools.PEN_FIGURE_HIGHLIGHT] = Color.FromArgb(255, 156, 192);
             PenColorTbl[DrawTools.PEN_PALE_FIGURE] = Color.FromArgb(0x7E, 0x7E, 0x7E);
             PenColorTbl[DrawTools.PEN_MEASURE_FIGURE] = Color.OrangeRed;
             PenColorTbl[DrawTools.PEN_DIMENTION] = Color.FromArgb(0xFF, 128, 192, 255);

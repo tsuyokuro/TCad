@@ -12,13 +12,13 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using TCad.Controls;
 using OpenTK.Mathematics;
-using Plotter;
 using System.Timers;
 using System.Collections.Concurrent;
+using TCad.Util;
 
 namespace TestApp;
 
-public class MyEvent : EventSequencer<MyEvent>.Event
+public class MyEvent : TCad.Util.EventHandler<MyEvent>.Event
 {
     int Value;
 }
