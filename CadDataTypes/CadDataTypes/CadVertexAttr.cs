@@ -42,7 +42,7 @@ namespace CadDataTypes
 
         public bool IsColor2Valid
         {
-            set => Flags = value ? (byte)(Flags | COLOR1_VALID) : (byte)(Flags & ~COLOR1_VALID);
+            set => Flags = value ? (byte)(Flags | COLOR2_VALID) : (byte)(Flags & ~COLOR2_VALID);
             get => (Flags & COLOR1_VALID) != 0;
         }
 

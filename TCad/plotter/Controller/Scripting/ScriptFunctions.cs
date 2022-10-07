@@ -22,6 +22,7 @@ using OpenTK.Platform;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using TCad.ViewModel;
+using static IronPython.Modules.CTypes;
 
 namespace Plotter.Controller
 {
@@ -2006,6 +2007,24 @@ namespace Plotter.Controller
                     fig.PointList[i].Attr.IsColor2Valid = true;
                 }
             }
+        }
+
+        public void SetColor(uint figID, float r, float g, float b)
+        {
+            CadFigure fig = Controller.DB.GetFigure(figID);
+            if (fig == null)
+            {
+                return;
+            }
+
+            float w = 1.0f;
+
+            if (fig.LinePen.IsInvalid)
+            {
+                w = fig.LinePen.Width;
+            }
+
+            fig.LinePen = new DrawPen(new Color4(r, g, b, 1.0f), w);
         }
 
         public List<CadFigure> GetSlectedFigList()

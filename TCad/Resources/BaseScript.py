@@ -414,11 +414,18 @@ def get_fig(id):
 def get_vertex(fig, index):
 	return SE.FigVertexAt(fig, index)
 
+###############################################################################
+#[AC] set_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
+def set_color(id, r, g, b):
+    SE.SetColor(id, r, g, b)
+
+###############################################################################
 
 #[AC] test()
 def test():
 	SE.Test()
 
+###############################################################################
 
 class MyConsoleOut:
 	def write(self, s):
