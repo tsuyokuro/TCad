@@ -210,7 +210,7 @@ namespace Plotter.Controller
             NextState();
         }
 
-        private void NextState()
+        public void NextState()
         {
             if (State == States.CREATING)
             {

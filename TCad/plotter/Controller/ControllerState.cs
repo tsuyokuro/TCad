@@ -1,6 +1,8 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
+using System;
+using TCad.Controls;
 
 namespace Plotter.Controller;
 
@@ -188,7 +190,7 @@ public class CreateFigureState : ControllerState
 
             CadVertex p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
 
-            Ctrl.SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
         }
         else
         {
@@ -196,7 +198,7 @@ public class CreateFigureState : ControllerState
 
             CadVertex p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
 
-            Ctrl.SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
         }
     }
 
@@ -210,6 +212,56 @@ public class CreateFigureState : ControllerState
         Ctrl.ChangeState(PlotterController.States.SELECT);
         Ctrl.CreatingFigType = CadFigure.Types.NONE;
         Ctrl.NotifyStateChange();
+    }
+
+    private FigCreator FigureCreator
+    {
+        get => Ctrl.FigureCreator;
+    }
+
+    private CadLayer CurrentLayer
+    {
+        get => Ctrl.CurrentLayer;
+    }
+
+    private HistoryManager HistoryMan
+    {
+        get => Ctrl.HistoryMan;
+    }
+
+    private void SetPointInCreating(DrawContext dc, CadVertex p)
+    {
+        FigureCreator.AddPointInCreating(dc, p);
+
+        FigCreator.State state = FigureCreator.GetCreateState();
+
+        if (state == FigCreator.State.FULL)
+        {
+            FigureCreator.EndCreate(dc);
+
+            CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
+            HistoryMan.foward(ope);
+            CurrentLayer.AddFigure(FigureCreator.Figure);
+
+            Ctrl.NextState();
+        }
+        else if (state == FigCreator.State.ENOUGH)
+        {
+            CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
+            HistoryMan.foward(ope);
+            CurrentLayer.AddFigure(FigureCreator.Figure);
+        }
+        else if (state == FigCreator.State.WAIT_NEXT_POINT)
+        {
+            CadOpe ope = new CadOpeAddPoint(
+                CurrentLayer.ID,
+                FigureCreator.Figure.ID,
+                FigureCreator.Figure.PointCount - 1,
+                ref p
+                );
+
+            HistoryMan.foward(ope);
+        }
     }
 }
 
@@ -248,7 +300,7 @@ public class SelectingState : ControllerState
                 Ctrl.ChangeState(PlotterController.States.DRAGING_POINTS);
             }
 
-            Ctrl.OffsetScreen = pixp - Ctrl.CrossCursor.Pos;
+            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
 
             Ctrl.StoredObjDownPoint = Ctrl.ObjDownPoint;
         }
@@ -299,7 +351,7 @@ public class RubberBandSelectState : ControllerState
                 Ctrl.ChangeState(PlotterController.States.DRAGING_POINTS);
             }
 
-            Ctrl.OffsetScreen = pixp - Ctrl.CrossCursor.Pos;
+            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
 
             Ctrl.StoredObjDownPoint = Ctrl.ObjDownPoint;
         }
@@ -449,8 +501,8 @@ public class MeasuringState : ControllerState
             p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
         }
 
-        Ctrl.SetPointInMeasuring(dc, p);
-        Ctrl.PutMeasure();
+        SetPointInMeasuring(dc, p);
+        PutMeasure();
     }
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
@@ -468,6 +520,59 @@ public class MeasuringState : ControllerState
         Ctrl.MeasureFigureCreator = null;
 
         Ctrl.NotifyStateChange();
+    }
+
+    private FigCreator MeasureFigureCreator
+    {
+        get => Ctrl.MeasureFigureCreator;
+    }
+
+    private void SetPointInMeasuring(DrawContext dc, CadVertex p)
+    {
+        MeasureFigureCreator.AddPointInCreating(dc, p);
+    }
+
+    public void PutMeasure()
+    {
+        int pcnt = MeasureFigureCreator.Figure.PointCount;
+
+        double currentD = 0;
+
+        if (pcnt > 1)
+        {
+            CadVertex p0 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 2);
+            CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
+
+            currentD = (p1 - p0).Norm();
+            currentD = Math.Round(currentD, 4);
+        }
+
+        double a = 0;
+
+        if (pcnt > 2)
+        {
+            CadVertex p0 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 2);
+            CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 3);
+            CadVertex p2 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
+
+            Vector3d v1 = p1.vector - p0.vector;
+            Vector3d v2 = p2.vector - p0.vector;
+
+            double t = CadMath.AngleOfVector(v1, v2);
+            a = CadMath.Rad2Deg(t);
+            a = Math.Round(a, 4);
+        }
+
+        double totalD = CadUtil.AroundLength(MeasureFigureCreator.Figure);
+
+        totalD = Math.Round(totalD, 4);
+
+        int cnt = MeasureFigureCreator.Figure.PointCount;
+
+        ItConsole.println("[" + cnt.ToString() + "]" +
+            AnsiEsc.Reset + " LEN:" + AnsiEsc.BGreen + currentD.ToString() +
+            AnsiEsc.Reset + " ANGLE:" + AnsiEsc.BBlue + a.ToString() +
+            AnsiEsc.Reset + " TOTAL:" + totalD.ToString());
     }
 }
 
@@ -504,11 +609,24 @@ public class DragingViewOrgState : ControllerState
 
     public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
     {
-        Ctrl.ViewOrgDrag(pointer, dc, x, y);
+        ViewOrgDrag(pointer, dc, x, y);
     }
 
     public override void Cancel()
     {
+    }
+
+    private void ViewOrgDrag(CadMouse pointer, DrawContext dc, double x, double y)
+    {
+        Vector3d cp = new Vector3d(x, y, 0);
+
+        Vector3d d = cp - pointer.MDownPoint;
+
+        Vector3d op = Ctrl.StoreViewOrg + d;
+
+        ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
+
+        Ctrl.CrossCursor.Pos = Ctrl.CrossCursor.StorePos + d;
     }
 }
 

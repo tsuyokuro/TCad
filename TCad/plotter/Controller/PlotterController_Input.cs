@@ -31,7 +31,7 @@ namespace Plotter.Controller
         private CadRulerSet RulerSet = new CadRulerSet();
 
 
-        private Vector3d StoreViewOrg = default;
+        public Vector3d StoreViewOrg = default;
 
         public Vector3d SnapPoint;
 
@@ -50,7 +50,7 @@ namespace Plotter.Controller
         public Vector3d StoredObjDownPoint = default;
 
         // 実際のMouse座標からCross cursorへのOffset
-        public Vector3d OffsetScreen = default;
+        public Vector3d CrossCursorOffset = default;
 
         public Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
 
@@ -381,7 +381,7 @@ namespace Plotter.Controller
             RubberBandScrnPoint1 = pixp;
             RubberBandScrnPoint0 = pixp;
 
-            OffsetScreen = pixp - CrossCursor.Pos;
+            CrossCursorOffset = pixp - CrossCursor.Pos;
 
             if (mInteractCtrl.IsActive)
             {
@@ -398,49 +398,6 @@ namespace Plotter.Controller
             }
 
             ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
-        }
-
-        public void PutMeasure()
-        {
-            int pcnt = MeasureFigureCreator.Figure.PointCount;
-
-            double currentD = 0;
-
-            if (pcnt > 1)
-            {
-                CadVertex p0 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 2);
-                CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
-
-                currentD = (p1 - p0).Norm();
-                currentD = Math.Round(currentD, 4);
-            }
-
-            double a = 0;
-
-            if (pcnt > 2)
-            {
-                CadVertex p0 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 2);
-                CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 3);
-                CadVertex p2 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
-
-                Vector3d v1 = p1.vector - p0.vector;
-                Vector3d v2 = p2.vector - p0.vector;
-
-                double t = CadMath.AngleOfVector(v1, v2);
-                a = CadMath.Rad2Deg(t);
-                a = Math.Round(a, 4);
-            }
-
-            double totalD = CadUtil.AroundLength(MeasureFigureCreator.Figure);
-
-            totalD = Math.Round(totalD, 4);
-
-            int cnt = MeasureFigureCreator.Figure.PointCount;
-
-            ItConsole.println("[" + cnt.ToString() + "]" +
-                AnsiEsc.Reset + " LEN:" + AnsiEsc.BGreen + currentD.ToString() +
-                AnsiEsc.Reset + " ANGLE:" + AnsiEsc.BBlue + a.ToString() +
-                AnsiEsc.Reset + " TOTAL:" + totalD.ToString());
         }
 
         private void MButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
@@ -473,21 +430,6 @@ namespace Plotter.Controller
             CrossCursor.Pos = new Vector3d(x, y, 0);
 
             ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
-        }
-
-        public void ViewOrgDrag(CadMouse pointer, DrawContext dc, double x, double y)
-        {
-            //DOut.tpl("ViewOrgDrag");
-
-            Vector3d cp = new Vector3d(x, y, 0);
-
-            Vector3d d = cp - pointer.MDownPoint;
-
-            Vector3d op = StoreViewOrg + d;
-
-            ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
-
-            CrossCursor.Pos = CrossCursor.StorePos + d;
         }
 
         private void Wheel(CadMouse pointer, DrawContext dc, double x, double y, int delta)
@@ -555,7 +497,7 @@ namespace Plotter.Controller
 
             UpdateObjectTree(false);
 
-            OffsetScreen = default;
+            CrossCursorOffset = default;
         }
 
         private void RButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
@@ -876,7 +818,7 @@ namespace Plotter.Controller
                 y = CrossCursor.Pos.Y;
             }
 
-            Vector3d pixp = new Vector3d(x, y, 0) - OffsetScreen;
+            Vector3d pixp = new Vector3d(x, y, 0) - CrossCursorOffset;
             Vector3d cp = dc.DevPointToWorldPoint(pixp);
 
             RubberBandScrnPoint1 = pixp;
@@ -901,46 +843,6 @@ namespace Plotter.Controller
         private void LDrag(CadMouse pointer, DrawContext dc, int x, int y)
         {
             MouseMove(pointer, dc, x, y);
-        }
-
-        public void SetPointInCreating(DrawContext dc, CadVertex p)
-        {
-            FigureCreator.AddPointInCreating(dc, p);
-
-            FigCreator.State state = FigureCreator.GetCreateState();
-
-            if (state == FigCreator.State.FULL)
-            {
-                FigureCreator.EndCreate(dc);
-
-                CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
-                HistoryMan.foward(ope);
-                CurrentLayer.AddFigure(FigureCreator.Figure);
-
-                NextState();
-            }
-            else if (state == FigCreator.State.ENOUGH)
-            {
-                CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, FigureCreator.Figure.ID);
-                HistoryMan.foward(ope);
-                CurrentLayer.AddFigure(FigureCreator.Figure);
-            }
-            else if (state == FigCreator.State.WAIT_NEXT_POINT)
-            {
-                CadOpe ope = new CadOpeAddPoint(
-                    CurrentLayer.ID,
-                    FigureCreator.Figure.ID,
-                    FigureCreator.Figure.PointCount - 1,
-                    ref p
-                    );
-
-                HistoryMan.foward(ope);
-            }
-        }
-
-        public void SetPointInMeasuring(DrawContext dc, CadVertex p)
-        {
-            MeasureFigureCreator.AddPointInCreating(dc, p);
         }
 
         public void MoveCursorToNearPoint(DrawContext dc)
