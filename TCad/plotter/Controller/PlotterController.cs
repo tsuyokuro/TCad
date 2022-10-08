@@ -10,31 +10,8 @@ namespace Plotter.Controller
 {
     public partial class PlotterController
     {
-        public enum States
-        {
-            NONE,
-            SELECT,
-            RUBBER_BAND_SELECT,
-            DRAGING_POINTS,
-            DRAGING_VIEW_ORG,
-            CREATING,
-            MEASURING,
-        }
-
         private CadObjectDB mDB = new CadObjectDB();
         public CadObjectDB DB => mDB;
-
-        public States State
-        {
-            set
-            {
-                ChangeState(value);
-            }
-
-            get => CurrentState.State;
-        }
-
-        private States mBackState;
 
         private PaperPageSize mPageSize = new PaperPageSize(PaperKind.A4, false);
         public PaperPageSize PageSize
@@ -136,7 +113,8 @@ namespace Plotter.Controller
 
             ViewIF = vm;
 
-            InitState();
+            StateMachine = new ControllerStateMachine(this);
+            ChangeState(States.SELECT);
 
             CadLayer layer = mDB.NewLayer();
             mDB.LayerList.Add(layer);
@@ -202,7 +180,7 @@ namespace Plotter.Controller
         #region Start and End creating figure
         public void StartCreateFigure(CadFigure.Types type)
         {
-            State = States.CREATING;
+            ChangeState(States.CREATING);
             CreatingFigType = type;
         }
 
@@ -246,7 +224,7 @@ namespace Plotter.Controller
                 {
                     mFigureCreator = null;
                     CreatingFigType = CadFigure.Types.NONE;
-                    State = States.SELECT;
+                    ChangeState(States.SELECT);
 
                     UpdateObjectTree(true);
                     NotifyStateChange();
@@ -256,7 +234,7 @@ namespace Plotter.Controller
 
         public void StartMeasure(MeasureModes mode)
         {
-            State = States.MEASURING;
+            ChangeState(States.MEASURING);
             mMeasureMode = mode;
             MeasureFigureCreator =
                 FigCreator.Get(
@@ -267,7 +245,7 @@ namespace Plotter.Controller
 
         public void EndMeasure()
         {
-            State = States.SELECT;
+            ChangeState(States.SELECT);
             mMeasureMode = MeasureModes.NONE;
             MeasureFigureCreator = null;
         }

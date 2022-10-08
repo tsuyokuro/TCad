@@ -1,4 +1,4 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
@@ -13,8 +13,6 @@ namespace Plotter.Controller
 
     public struct PlotterStateInfo
     {
-        public PlotterController.States State;
-
         public SelectModes SelectMode;
 
         public CadFigure.Types CreatingFigureType;
@@ -28,7 +26,6 @@ namespace Plotter.Controller
 
         public void set(PlotterController pc)
         {
-            State = pc.State;
             SelectMode = pc.SelectMode;
             CreatingFigureType = pc.CreatingFigType;
             CreatingFigurePointCnt = 0;

@@ -449,7 +449,7 @@ namespace Plotter.Controller
 
             pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
 
-            State = States.DRAGING_VIEW_ORG;
+            ChangeState(States.DRAGING_VIEW_ORG);
 
             StoreViewOrg = dc.ViewOrg;
             CursorLocked = false;
@@ -468,7 +468,7 @@ namespace Plotter.Controller
                 ViewUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
             }
 
-            State = mBackState;
+            ChangeState(mBackState);
 
             CrossCursor.Pos = new Vector3d(x, y, 0);
 

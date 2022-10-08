@@ -6,41 +6,94 @@ namespace Plotter.Controller;
 
 public partial class PlotterController
 {
-    ControllerState[] StateList = new ControllerState[(int)States.MEASURING + 1];
-    ControllerState CurrentState = null;
-
-    private void InitState()
+    public enum States
     {
-        StateList[(int)States.SELECT] = new SelectingState(this);
-        StateList[(int)States.RUBBER_BAND_SELECT] = new RubberBandSelectState(this);
-        StateList[(int)States.DRAGING_POINTS] = new DragingPointsState(this);
-        StateList[(int)States.DRAGING_VIEW_ORG] = new DragingViewOrgState(this);
-        StateList[(int)States.CREATING] = new CreateFigureState(this);
-        StateList[(int)States.MEASURING] = new MeasuringState(this);
-
-        State = States.SELECT;
+        NONE,
+        SELECT,
+        RUBBER_BAND_SELECT,
+        DRAGING_POINTS,
+        DRAGING_VIEW_ORG,
+        CREATING,
+        MEASURING,
     }
 
-    private void ChangeState(States state)
+    private ControllerStateMachine StateMachine;
+
+    public States State
     {
-        if (CurrentState != null)
+        get => StateMachine.CurrentStateID;
+    }
+
+    private States mBackState;
+
+    private ControllerState CurrentState
+    {
+        get => StateMachine.CurrentState;
+    }
+
+    public void ChangeState(States state)
+    {
+        StateMachine.ChangeState(state);
+    }
+}
+
+public class ControllerStateMachine
+{
+    ControllerState[] StateList = new ControllerState[(int)PlotterController.States.MEASURING + 1];
+
+    private ControllerState mCurrentState = null;
+
+    public ControllerState CurrentState
+    {
+        get => mCurrentState;
+    }
+
+    public PlotterController.States CurrentStateID
+    {
+        get
         {
-            DOut.pl(CurrentState.GetType().Name + " Exit");
-            CurrentState.Exit();
+            if (mCurrentState == null)
+            {
+                return PlotterController.States.NONE;
+            }
+
+            return mCurrentState.State;
+        }
+    }
+
+    PlotterController Controller;
+
+    public ControllerStateMachine(PlotterController controller)
+    {
+        Controller = controller;
+
+        StateList[(int)PlotterController.States.SELECT] = new SelectingState(Controller);
+        StateList[(int)PlotterController.States.RUBBER_BAND_SELECT] = new RubberBandSelectState(Controller);
+        StateList[(int)PlotterController.States.DRAGING_POINTS] = new DragingPointsState(Controller);
+        StateList[(int)PlotterController.States.DRAGING_VIEW_ORG] = new DragingViewOrgState(Controller);
+        StateList[(int)PlotterController.States.CREATING] = new CreateFigureState(Controller);
+        StateList[(int)PlotterController.States.MEASURING] = new MeasuringState(Controller);
+    }
+
+    public void ChangeState(PlotterController.States state)
+    {
+        if (mCurrentState != null)
+        {
+            DOut.pl(mCurrentState.GetType().Name + " Exit");
+            mCurrentState.Exit();
         }
 
-        CurrentState = StateList[(int)state];
+        mCurrentState = StateList[(int)state];
 
-        if (CurrentState != null)
+        if (mCurrentState != null)
         {
-            DOut.pl(CurrentState.GetType().Name + " Enter");
-            CurrentState.Enter();
+            DOut.pl(mCurrentState.GetType().Name + " Enter");
+            mCurrentState.Enter();
         }
 
-
-        if (mInteractCtrl.IsActive)
+        if (Controller.InteractCtrl.IsActive)
         {
-            mInteractCtrl.Cancel();
+            Controller.InteractCtrl.Cancel();
         }
     }
 }
@@ -154,7 +207,7 @@ public class CreateFigureState : ControllerState
             Ctrl.UpdateObjectTree(true);
         }
 
-        Ctrl.State = PlotterController.States.SELECT;
+        Ctrl.ChangeState(PlotterController.States.SELECT);
         Ctrl.CreatingFigType = CadFigure.Types.NONE;
         Ctrl.NotifyStateChange();
     }
@@ -192,7 +245,7 @@ public class SelectingState : ControllerState
         {
             if (!Ctrl.CursorLocked)
             {
-                Ctrl.State = PlotterController.States.DRAGING_POINTS;
+                Ctrl.ChangeState(PlotterController.States.DRAGING_POINTS);
             }
 
             Ctrl.OffsetScreen = pixp - Ctrl.CrossCursor.Pos;
@@ -201,7 +254,7 @@ public class SelectingState : ControllerState
         }
         else
         {
-            Ctrl.State = PlotterController.States.RUBBER_BAND_SELECT;
+            Ctrl.ChangeState(PlotterController.States.RUBBER_BAND_SELECT);
         }
     }
 
@@ -243,7 +296,7 @@ public class RubberBandSelectState : ControllerState
         {
             if (!Ctrl.CursorLocked)
             {
-                Ctrl.State= PlotterController.States.DRAGING_POINTS;
+                Ctrl.ChangeState(PlotterController.States.DRAGING_POINTS);
             }
 
             Ctrl.OffsetScreen = pixp - Ctrl.CrossCursor.Pos;
@@ -252,14 +305,14 @@ public class RubberBandSelectState : ControllerState
         }
         else
         {
-            Ctrl.State = PlotterController.States.RUBBER_BAND_SELECT;
+            Ctrl.ChangeState(PlotterController.States.RUBBER_BAND_SELECT);
         }
     }
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
     {
         Ctrl.RubberBandSelect(Ctrl.RubberBandScrnPoint0, Ctrl.RubberBandScrnPoint1);
-        Ctrl.State = PlotterController.States.SELECT;
+        Ctrl.ChangeState(PlotterController.States.SELECT);
     }
 
     public override void Cancel()
@@ -307,7 +360,7 @@ public class DragingPointsState : ControllerState
             Ctrl.EndEdit();
         }
 
-        Ctrl.State = PlotterController.States.SELECT;
+        Ctrl.ChangeState(PlotterController.States.SELECT);
     }
 
     public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y) 
@@ -348,7 +401,7 @@ public class DragingPointsState : ControllerState
     public override void Cancel()
     {
         Ctrl.CancelEdit();
-        Ctrl.State = PlotterController.States.SELECT;
+        Ctrl.ChangeState(PlotterController.States.SELECT);
         Ctrl.ClearSelection();
     }
 }
@@ -410,7 +463,7 @@ public class MeasuringState : ControllerState
 
     public override void Cancel()
     {
-        Ctrl.State = PlotterController.States.SELECT;
+        Ctrl.ChangeState(PlotterController.States.SELECT);
         Ctrl.MeasureMode = MeasureModes.NONE;
         Ctrl.MeasureFigureCreator = null;
 
