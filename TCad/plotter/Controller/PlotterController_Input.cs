@@ -33,24 +33,24 @@ namespace Plotter.Controller
 
         private Vector3d StoreViewOrg = default;
 
-        private Vector3d SnapPoint;
+        public Vector3d SnapPoint;
 
-        private SnapInfo mSnapInfo;
+        public SnapInfo mSnapInfo;
 
-        private Vector3d MoveOrgScrnPoint;
+        public Vector3d MoveOrgScrnPoint;
 
         // 生のL button down point (デバイス座標系)
-        private Vector3d RawDownPoint = default;
+        public Vector3d RawDownPoint = default;
 
         // Snap等で補正された L button down point (World座標系)
         public Vector3d LastDownPoint = default;
 
         // 選択したObjectの点の座標 (World座標系)
-        private Vector3d ObjDownPoint = default;
-        private Vector3d StoredObjDownPoint = default;
+        public Vector3d ObjDownPoint = default;
+        public Vector3d StoredObjDownPoint = default;
 
         // 実際のMouse座標からCross cursorへのOffset
-        private Vector3d OffsetScreen = default;
+        public Vector3d OffsetScreen = default;
 
         public Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
 
@@ -86,7 +86,7 @@ namespace Plotter.Controller
         }
 
         private bool mCursorLocked = false;
-        private bool CursorLocked
+        public bool CursorLocked
         {
             set
             {
@@ -400,7 +400,7 @@ namespace Plotter.Controller
             ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
         }
 
-        private void PutMeasure()
+        public void PutMeasure()
         {
             int pcnt = MeasureFigureCreator.Figure.PointCount;
 
@@ -475,7 +475,7 @@ namespace Plotter.Controller
             ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
         }
 
-        private void ViewOrgDrag(CadMouse pointer, DrawContext dc, double x, double y)
+        public void ViewOrgDrag(CadMouse pointer, DrawContext dc, double x, double y)
         {
             //DOut.tpl("ViewOrgDrag");
 
@@ -903,7 +903,7 @@ namespace Plotter.Controller
             MouseMove(pointer, dc, x, y);
         }
 
-        private void SetPointInCreating(DrawContext dc, CadVertex p)
+        public void SetPointInCreating(DrawContext dc, CadVertex p)
         {
             FigureCreator.AddPointInCreating(dc, p);
 
@@ -938,7 +938,7 @@ namespace Plotter.Controller
             }
         }
 
-        private void SetPointInMeasuring(DrawContext dc, CadVertex p)
+        public void SetPointInMeasuring(DrawContext dc, CadVertex p)
         {
             MeasureFigureCreator.AddPointInCreating(dc, p);
         }

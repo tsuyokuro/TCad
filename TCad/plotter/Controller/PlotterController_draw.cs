@@ -313,7 +313,7 @@ namespace Plotter.Controller
             }
         }
 
-        protected void DrawSelRect(DrawContext dc)
+        public void DrawSelRect(DrawContext dc)
         {
             dc.Drawing.DrawRectScrn(
                 dc.GetPen(DrawTools.PEN_TEMP_FIGURE),

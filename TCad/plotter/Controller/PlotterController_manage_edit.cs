@@ -141,7 +141,7 @@ namespace Plotter.Controller
             EndEdit();
         }
 
-        private void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
+        public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
         {
             List<uint> figIDList = DB.GetSelectedFigIDList();
 

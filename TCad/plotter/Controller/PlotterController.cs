@@ -26,7 +26,7 @@ namespace Plotter.Controller
 
         public States State
         {
-            private set
+            set
             {
                 ChangeState(value);
             }
@@ -65,7 +65,7 @@ namespace Plotter.Controller
 
         public CadFigure.Types CreatingFigType
         {
-            private set => mCreatingFigType = value;
+            set => mCreatingFigType = value;
             get => mCreatingFigType;
         }
 
@@ -73,12 +73,14 @@ namespace Plotter.Controller
         public MeasureModes MeasureMode
         {
             get => mMeasureMode;
+            set => mMeasureMode = value;
         }
 
         private FigCreator mFigureCreator = null;
         public FigCreator FigureCreator
         {
             get => mFigureCreator;
+            set => mFigureCreator = value;
         }
 
         public FigCreator MeasureFigureCreator = null;
@@ -188,7 +190,7 @@ namespace Plotter.Controller
             return layerInfo;
         }
 
-        private void NotifyStateChange()
+        public void NotifyStateChange()
         {
             PlotterStateInfo si = default(PlotterStateInfo);
             si.set(this);
