@@ -4,6 +4,8 @@ using Plotter.Settings;
 using System;
 using TCad.Controls;
 
+using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
+
 namespace Plotter.Controller;
 
 public partial class PlotterController
@@ -39,19 +41,31 @@ public partial class PlotterController
     }
 }
 
-public class ControllerStateContext
-{
-    public Vector3d StoredObjDownPoint = default;
-    public PlotterController Controller;
-
-    public ControllerStateContext(PlotterController controller)
-    {
-        Controller = controller;
-    }
-}
-
+/// <summary>
+/// ControllerStateMachine
+/// 
+/// </summary>
 public class ControllerStateMachine
 {
+    public class StateContext
+    {
+        public Vector3d StoredObjDownPoint = default;
+        public PlotterController Controller;
+
+        public ControllerState CurrentState
+        {
+            get => StateMachine.CurrentState;
+        }
+
+        private ControllerStateMachine StateMachine;
+
+        public StateContext(ControllerStateMachine stateMachine)
+        {
+            StateMachine = stateMachine;
+            Controller = stateMachine.Controller;
+        }
+    }
+
     ControllerState[] StateList = new ControllerState[(int)PlotterController.States.MEASURING + 1];
 
     private ControllerState mCurrentState = null;
@@ -74,14 +88,14 @@ public class ControllerStateMachine
         }
     }
 
-    private ControllerStateContext Context;
+    private StateContext Context;
 
     private PlotterController Controller;
 
     public ControllerStateMachine(PlotterController controller)
     {
         Controller = controller;
-        Context = new ControllerStateContext(controller);
+        Context = new StateContext(this);
 
         StateList[(int)PlotterController.States.SELECT] = new SelectingState(Context);
         StateList[(int)PlotterController.States.RUBBER_BAND_SELECT] = new RubberBandSelectState(Context);
@@ -114,6 +128,10 @@ public class ControllerStateMachine
     }
 }
 
+/// <summary>
+/// CreateFigureState
+/// 
+/// </summary>
 public class ControllerState
 {
     public virtual PlotterController.States State
@@ -123,11 +141,11 @@ public class ControllerState
 
     protected PlotterController Ctrl;
 
-    protected ControllerStateContext Context;
+    protected StateContext Context;
 
     public bool isStart;
 
-    public ControllerState(ControllerStateContext context)
+    public ControllerState(StateContext context)
     {
         Context = context;
         Ctrl = Context.Controller;
@@ -152,6 +170,10 @@ public class ControllerState
     public virtual void Cancel() { }
 }
 
+/// <summary>
+/// CreateFigureState
+/// 
+/// </summary>
 public class CreateFigureState : ControllerState
 {
     public override PlotterController.States State
@@ -159,7 +181,7 @@ public class CreateFigureState : ControllerState
         get => PlotterController.States.CREATING;
     }
 
-    public CreateFigureState(ControllerStateContext context) : base(context)
+    public CreateFigureState(StateContext context) : base(context)
     {
     }
 
@@ -282,6 +304,10 @@ public class CreateFigureState : ControllerState
     }
 }
 
+/// <summary>
+/// SelectingState
+/// 
+/// </summary>
 public class SelectingState : ControllerState
 {
     public override PlotterController.States State
@@ -289,7 +315,7 @@ public class SelectingState : ControllerState
         get => PlotterController.States.SELECT;
     }
 
-    public SelectingState(ControllerStateContext context) : base(context)
+    public SelectingState(StateContext context) : base(context)
     {
     }
 
@@ -310,7 +336,7 @@ public class SelectingState : ControllerState
         Vector3d pixp = new Vector3d(x, y, 0);
 
 
-        if (Ctrl.SelectNearest(dc, (Vector3d)Ctrl.CrossCursor.Pos))
+        if (Ctrl.SelectNearest(dc, Ctrl.CrossCursor.Pos))
         {
             if (!Ctrl.CursorLocked)
             {
@@ -324,6 +350,7 @@ public class SelectingState : ControllerState
         else
         {
             Ctrl.ChangeState(PlotterController.States.RUBBER_BAND_SELECT);
+            Context.CurrentState.LButtonDown(pointer, dc, x, y);
         }
     }
 
@@ -332,19 +359,27 @@ public class SelectingState : ControllerState
     }
 }
 
+/// <summary>
+/// RubberBandSelectState
+/// 
+/// </summary>
 public class RubberBandSelectState : ControllerState
 {
+    private Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+    private Vector3d RubberBandScrnPoint1 = default;
+
     public override PlotterController.States State
     {
         get => PlotterController.States.RUBBER_BAND_SELECT;
     }
 
-    public RubberBandSelectState(ControllerStateContext context) : base(context)
+    public RubberBandSelectState(StateContext context) : base(context)
     {
     }
 
     public override void Enter()
     {
+        isStart = true;
     }
 
     public override void Exit()
@@ -353,13 +388,15 @@ public class RubberBandSelectState : ControllerState
 
     public override void Draw(DrawContext dc)
     {
-        Ctrl.DrawSelRect(dc);
+        Ctrl.DrawSelRect(dc, RubberBandScrnPoint0, RubberBandScrnPoint1);
     }
 
     public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
     {
         Vector3d pixp = new Vector3d(x, y, 0);
 
+        RubberBandScrnPoint0 = pixp;
+        RubberBandScrnPoint1 = pixp;
 
         if (Ctrl.SelectNearest(dc, (Vector3d)Ctrl.CrossCursor.Pos))
         {
@@ -380,8 +417,20 @@ public class RubberBandSelectState : ControllerState
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
     {
-        Ctrl.RubberBandSelect(Ctrl.RubberBandScrnPoint0, Ctrl.RubberBandScrnPoint1);
+        Vector3d pixp = new Vector3d(x, y, 0);
+
+        Ctrl.RubberBandSelect(RubberBandScrnPoint0, pixp);
+
+        RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+
         Ctrl.ChangeState(PlotterController.States.SELECT);
+    }
+
+    public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    {
+        RubberBandScrnPoint1.X = x;
+        RubberBandScrnPoint1.Y = y;
+        RubberBandScrnPoint1.Z = 0;
     }
 
     public override void Cancel()
@@ -389,6 +438,10 @@ public class RubberBandSelectState : ControllerState
     }
 }
 
+/// <summary>
+/// DragingPointsState
+/// 
+/// </summary>
 public class DragingPointsState : ControllerState
 {
     public override PlotterController.States State
@@ -396,7 +449,7 @@ public class DragingPointsState : ControllerState
         get => PlotterController.States.DRAGING_POINTS;
     }
 
-    public DragingPointsState(ControllerStateContext context) : base(context)
+    public DragingPointsState(StateContext context) : base(context)
     {
     }
 
@@ -473,7 +526,10 @@ public class DragingPointsState : ControllerState
         Ctrl.ClearSelection();
     }
 }
-    
+
+/// <summary>
+/// MeasuringState
+/// </summary>
 public class MeasuringState : ControllerState
 {
     public override PlotterController.States State
@@ -481,7 +537,7 @@ public class MeasuringState : ControllerState
         get => PlotterController.States.MEASURING;
     }
 
-    public MeasuringState(ControllerStateContext context) : base(context)
+    public MeasuringState(StateContext context) : base(context)
     {
     }
 
@@ -592,6 +648,10 @@ public class MeasuringState : ControllerState
     }
 }
 
+/// <summary>
+/// DragingViewOrgState
+/// 
+/// </summary>
 public class DragingViewOrgState : ControllerState
 {
     public override PlotterController.States State
@@ -599,7 +659,7 @@ public class DragingViewOrgState : ControllerState
         get => PlotterController.States.DRAGING_VIEW_ORG;
     }
 
-    public DragingViewOrgState(ControllerStateContext context) : base(context)
+    public DragingViewOrgState(StateContext context) : base(context)
     {
     }
 

@@ -73,12 +73,9 @@ public partial class PlotterController
         DrawTop(dc);
     }
 
-    public void DrawSelRect(DrawContext dc)
+    public void DrawSelRect(DrawContext dc, Vector3d p0, Vector3d p1)
     {
-        dc.Drawing.DrawRectScrn(
-            dc.GetPen(DrawTools.PEN_TEMP_FIGURE),
-            RubberBandScrnPoint0,
-            RubberBandScrnPoint1);
+        dc.Drawing.DrawRectScrn(dc.GetPen(DrawTools.PEN_TEMP_FIGURE), p0, p1);
     }
 
     public void DrawFiguresRaw(DrawContext dc)

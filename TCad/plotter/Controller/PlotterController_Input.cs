@@ -13,8 +13,7 @@ namespace Plotter.Controller;
 public partial class PlotterController
 {
     private InteractCtrl mInteractCtrl = new InteractCtrl();
-    public InteractCtrl InteractCtrl
-    {
+    public InteractCtrl InteractCtrl {
         get => mInteractCtrl;
     }
 
@@ -50,10 +49,6 @@ public partial class PlotterController
 
     // 実際のMouse座標からCross cursorへのOffset
     public Vector3d CrossCursorOffset = default;
-
-    public Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
-
-    public Vector3d RubberBandScrnPoint1 = default;
 
     private CadFigure mCurrentFigure = null;
 
@@ -376,9 +371,6 @@ public partial class PlotterController
         Vector3d cp = dc.DevPointToWorldPoint(pixp);
 
         RawDownPoint = pixp;
-
-        RubberBandScrnPoint1 = pixp;
-        RubberBandScrnPoint0 = pixp;
 
         CrossCursorOffset = pixp - CrossCursor.Pos;
 
@@ -820,8 +812,6 @@ public partial class PlotterController
         Vector3d pixp = new Vector3d(x, y, 0) - CrossCursorOffset;
         Vector3d cp = dc.DevPointToWorldPoint(pixp);
 
-        RubberBandScrnPoint1 = pixp;
-
         CrossCursor.Pos = pixp;
         SnapPoint = cp;
 
@@ -830,7 +820,7 @@ public partial class PlotterController
             SnapCursor(dc);
         }
 
-        if (CurrentState.State == States.DRAGING_POINTS)
+        if (CurrentState.State == States.DRAGING_POINTS || CurrentState.State == States.RUBBER_BAND_SELECT)
         {
             CurrentState.MouseMove(pointer, dc, x, y);
         }
