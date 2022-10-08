@@ -139,7 +139,10 @@ public class ControllerState
         get => PlotterController.States.NONE;
     }
 
-    protected PlotterController Ctrl;
+    protected PlotterController Ctrl
+    {
+        get => Context.Controller;
+    }
 
     protected StateContext Context;
 
@@ -148,7 +151,6 @@ public class ControllerState
     public ControllerState(StateContext context)
     {
         Context = context;
-        Ctrl = Context.Controller;
     }
 
     public virtual void Enter() { }
@@ -419,7 +421,7 @@ public class RubberBandSelectState : ControllerState
     {
         Vector3d pixp = new Vector3d(x, y, 0);
 
-        Ctrl.RubberBandSelect(RubberBandScrnPoint0, pixp);
+        RubberBandSelect(dc, RubberBandScrnPoint0, pixp);
 
         RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
 
@@ -435,6 +437,34 @@ public class RubberBandSelectState : ControllerState
 
     public override void Cancel()
     {
+    }
+
+    private void RubberBandSelect(DrawContext dc, Vector3d p0, Vector3d p1)
+    {
+        Ctrl.LastSelPoint = null;
+        Ctrl.LastSelSegment = null;
+
+        Vector3d minp = VectorExt.Min(p0, p1);
+        Vector3d maxp = VectorExt.Max(p0, p1);
+        Ctrl.DB.ForEachEditableFigure(
+            (layer, fig) =>
+            {
+                SelectIfContactRect(dc, minp, maxp, layer, fig);
+            });
+    }
+
+    private void SelectIfContactRect(DrawContext dc, Vector3d minp, Vector3d maxp, CadLayer layer, CadFigure fig)
+    {
+        for (int i = 0; i < fig.PointCount; i++)
+        {
+            Vector3d p = dc.WorldPointToDevPoint(fig.PointList[i].vector);
+
+            if (CadUtil.IsInRect2D(minp, maxp, p))
+            {
+                fig.SelectPointAt(i, true);
+            }
+        }
+        return;
     }
 }
 

@@ -686,7 +686,7 @@ namespace TCad.ViewModel
 
         public void CursorLock()
         {
-            mController.CursorLock();
+            mController.CursorLocked = true;
         }
 
         public void MoveKeyDown()

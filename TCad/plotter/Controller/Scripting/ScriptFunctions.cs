@@ -384,13 +384,13 @@ namespace Plotter.Controller
 
         public void MoveLastDownPoint(double x, double y, double z)
         {
-            Vector3d p = Controller.GetLastDownPoint();
+            Vector3d p = Controller.LastDownPoint;
 
             Vector3d delta = new Vector3d(x, y, z);
 
             p += delta;
 
-            Controller.SetLastDownPoint(p);
+            Controller.LastDownPoint = p;
 
             Session.PostRedraw();
         }
@@ -399,7 +399,7 @@ namespace Plotter.Controller
         {
             Vector3d p = new Vector3d(x, y, z);
 
-            Controller.SetLastDownPoint(p);
+            Controller.LastDownPoint = p;
 
             Session.PostRedraw();
         }

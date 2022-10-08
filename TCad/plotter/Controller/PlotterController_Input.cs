@@ -12,10 +12,11 @@ namespace Plotter.Controller;
 // User interface handling
 public partial class PlotterController
 {
-    private InteractCtrl mInteractCtrl = new InteractCtrl();
-    public InteractCtrl InteractCtrl {
-        get => mInteractCtrl;
-    }
+    public InteractCtrl InteractCtrl
+    {
+        get;
+        private set;
+    } = new InteractCtrl();
 
     public CadMouse Mouse { get; } = new CadMouse();
 
@@ -42,7 +43,16 @@ public partial class PlotterController
     public Vector3d RawDownPoint = default;
 
     // Snap等で補正された L button down point (World座標系)
-    public Vector3d LastDownPoint = default;
+    private Vector3d mLastDownPoint = default;
+    public Vector3d LastDownPoint
+    {
+        get => mLastDownPoint;
+        set
+        {
+            mLastDownPoint = value;
+            ViewIF?.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        }
+    }
 
     // 選択したObjectの点の座標 (World座標系)
     public Vector3d ObjDownPoint = default;
@@ -374,9 +384,9 @@ public partial class PlotterController
 
         CrossCursorOffset = pixp - CrossCursor.Pos;
 
-        if (mInteractCtrl.IsActive)
+        if (InteractCtrl.IsActive)
         {
-            mInteractCtrl.SetPoint(SnapPoint);
+            InteractCtrl.SetPoint(SnapPoint);
             LastDownPoint = SnapPoint;
             return;
         }
@@ -451,37 +461,6 @@ public partial class PlotterController
         mContextMenuMan.RequestContextMenu(x, y);
     }
 
-    #region RubberBand
-    public void RubberBandSelect(Vector3d p0, Vector3d p1)
-    {
-        LastSelPoint = null;
-        LastSelSegment = null;
-
-        Vector3d minp = VectorExt.Min(p0, p1);
-        Vector3d maxp = VectorExt.Max(p0, p1);
-
-        DB.ForEachEditableFigure(
-            (layer, fig) =>
-            {
-                SelectIfContactRect(minp, maxp, layer, fig);
-            });
-    }
-
-    public void SelectIfContactRect(Vector3d minp, Vector3d maxp, CadLayer layer, CadFigure fig)
-    {
-        for (int i = 0; i < fig.PointCount; i++)
-        {
-            Vector3d p = DC.WorldPointToDevPoint(fig.PointList[i].vector);
-
-            if (CadUtil.IsInRect2D(minp, maxp, p))
-            {
-                fig.SelectPointAt(i, true);
-            }
-        }
-        return;
-    }
-    #endregion
-
     private void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
     {
         CurrentState.LButtonUp(pointer, dc, x, y);
@@ -507,9 +486,9 @@ public partial class PlotterController
             }
         }
 
-        if (mInteractCtrl.IsActive)
+        if (InteractCtrl.IsActive)
         {
-            foreach (Vector3d v in mInteractCtrl.PointList)
+            foreach (Vector3d v in InteractCtrl.PointList)
             {
                 mPointSearcher.Check(dc, v);
             }
@@ -829,11 +808,6 @@ public partial class PlotterController
         ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
-    private void LDrag(CadMouse pointer, DrawContext dc, int x, int y)
-    {
-        MouseMove(pointer, dc, x, y);
-    }
-
     public void MoveCursorToNearPoint(DrawContext dc)
     {
         if (mSpPointList == null)
@@ -869,16 +843,6 @@ public partial class PlotterController
         CrossCursor.Pos = p;
     }
 
-    public void CursorLock()
-    {
-        CursorLocked = true;
-    }
-
-    public void CursorUnlock()
-    {
-        CursorLocked = false;
-    }
-
     public Vector3d GetCursorPos()
     {
         return SnapPoint;
@@ -890,18 +854,6 @@ public partial class PlotterController
         CrossCursor.Pos = DC.WorldPointToDevPoint(SnapPoint);
 
         ViewIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-    }
-
-
-    public Vector3d GetLastDownPoint()
-    {
-        return LastDownPoint;
-    }
-
-    public void SetLastDownPoint(Vector3d v)
-    {
-        LastDownPoint = v;
-        ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     public void AddExtendSnapPoint()

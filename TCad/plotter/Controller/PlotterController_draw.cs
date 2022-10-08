@@ -316,9 +316,9 @@ public partial class PlotterController
     {
         CurrentState.Draw(dc);
 
-        if (mInteractCtrl.IsActive)
+        if (InteractCtrl.IsActive)
         {
-            mInteractCtrl.Draw(dc, SnapPoint);
+            InteractCtrl.Draw(dc, SnapPoint);
         }
     }
 
