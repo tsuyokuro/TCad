@@ -39,6 +39,17 @@ public partial class PlotterController
     }
 }
 
+public class ControllerStateContext
+{
+    public Vector3d StoredObjDownPoint = default;
+    public PlotterController Controller;
+
+    public ControllerStateContext(PlotterController controller)
+    {
+        Controller = controller;
+    }
+}
+
 public class ControllerStateMachine
 {
     ControllerState[] StateList = new ControllerState[(int)PlotterController.States.MEASURING + 1];
@@ -63,18 +74,21 @@ public class ControllerStateMachine
         }
     }
 
-    PlotterController Controller;
+    private ControllerStateContext Context;
+
+    private PlotterController Controller;
 
     public ControllerStateMachine(PlotterController controller)
     {
         Controller = controller;
+        Context = new ControllerStateContext(controller);
 
-        StateList[(int)PlotterController.States.SELECT] = new SelectingState(Controller);
-        StateList[(int)PlotterController.States.RUBBER_BAND_SELECT] = new RubberBandSelectState(Controller);
-        StateList[(int)PlotterController.States.DRAGING_POINTS] = new DragingPointsState(Controller);
-        StateList[(int)PlotterController.States.DRAGING_VIEW_ORG] = new DragingViewOrgState(Controller);
-        StateList[(int)PlotterController.States.CREATING] = new CreateFigureState(Controller);
-        StateList[(int)PlotterController.States.MEASURING] = new MeasuringState(Controller);
+        StateList[(int)PlotterController.States.SELECT] = new SelectingState(Context);
+        StateList[(int)PlotterController.States.RUBBER_BAND_SELECT] = new RubberBandSelectState(Context);
+        StateList[(int)PlotterController.States.DRAGING_POINTS] = new DragingPointsState(Context);
+        StateList[(int)PlotterController.States.DRAGING_VIEW_ORG] = new DragingViewOrgState(Context);
+        StateList[(int)PlotterController.States.CREATING] = new CreateFigureState(Context);
+        StateList[(int)PlotterController.States.MEASURING] = new MeasuringState(Context);
     }
 
     public void ChangeState(PlotterController.States state)
@@ -109,11 +123,14 @@ public class ControllerState
 
     protected PlotterController Ctrl;
 
+    protected ControllerStateContext Context;
+
     public bool isStart;
 
-    public ControllerState(PlotterController controller)
+    public ControllerState(ControllerStateContext context)
     {
-        Ctrl = controller;
+        Context = context;
+        Ctrl = Context.Controller;
     }
 
     public virtual void Enter() { }
@@ -142,7 +159,7 @@ public class CreateFigureState : ControllerState
         get => PlotterController.States.CREATING;
     }
 
-    public CreateFigureState(PlotterController controller) : base(controller)
+    public CreateFigureState(ControllerStateContext context) : base(context)
     {
     }
 
@@ -272,7 +289,7 @@ public class SelectingState : ControllerState
         get => PlotterController.States.SELECT;
     }
 
-    public SelectingState(PlotterController controller) : base(controller)
+    public SelectingState(ControllerStateContext context) : base(context)
     {
     }
 
@@ -302,7 +319,7 @@ public class SelectingState : ControllerState
 
             Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
 
-            Ctrl.StoredObjDownPoint = Ctrl.ObjDownPoint;
+            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
         }
         else
         {
@@ -322,7 +339,7 @@ public class RubberBandSelectState : ControllerState
         get => PlotterController.States.RUBBER_BAND_SELECT;
     }
 
-    public RubberBandSelectState(PlotterController controller) : base(controller)
+    public RubberBandSelectState(ControllerStateContext context) : base(context)
     {
     }
 
@@ -353,7 +370,7 @@ public class RubberBandSelectState : ControllerState
 
             Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
 
-            Ctrl.StoredObjDownPoint = Ctrl.ObjDownPoint;
+            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
         }
         else
         {
@@ -379,7 +396,7 @@ public class DragingPointsState : ControllerState
         get => PlotterController.States.DRAGING_POINTS;
     }
 
-    public DragingPointsState(PlotterController controller) : base(controller)
+    public DragingPointsState(ControllerStateContext context) : base(context)
     {
     }
 
@@ -433,8 +450,7 @@ public class DragingPointsState : ControllerState
                 Ctrl.StartEdit();
             }
         }
-
-        if (!isStart)
+        else
         {
             Vector3d p0 = dc.DevPointToWorldPoint(Ctrl.MoveOrgScrnPoint);
             Vector3d p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
@@ -446,7 +462,7 @@ public class DragingPointsState : ControllerState
 
             Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.MoveOrgScrnPoint, Ctrl.CrossCursor.Pos));
 
-            Ctrl.ObjDownPoint = Ctrl.StoredObjDownPoint + delta;
+            Ctrl.ObjDownPoint = Context.StoredObjDownPoint + delta;
         }
     }
 
@@ -465,7 +481,7 @@ public class MeasuringState : ControllerState
         get => PlotterController.States.MEASURING;
     }
 
-    public MeasuringState(PlotterController controller) : base(controller)
+    public MeasuringState(ControllerStateContext context) : base(context)
     {
     }
 
@@ -583,7 +599,7 @@ public class DragingViewOrgState : ControllerState
         get => PlotterController.States.DRAGING_VIEW_ORG;
     }
 
-    public DragingViewOrgState(PlotterController controller) : base(controller)
+    public DragingViewOrgState(ControllerStateContext context) : base(context)
     {
     }
 

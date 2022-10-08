@@ -47,7 +47,6 @@ namespace Plotter.Controller
 
         // 選択したObjectの点の座標 (World座標系)
         public Vector3d ObjDownPoint = default;
-        public Vector3d StoredObjDownPoint = default;
 
         // 実際のMouse座標からCross cursorへのOffset
         public Vector3d CrossCursorOffset = default;
