@@ -102,6 +102,24 @@ public partial class PlotterController
         get => ViewIF?.CurrentFileName;
     }
 
+    private ControllerStateMachine StateMachine;
+
+    public ControllerStates State
+    {
+        get => StateMachine.CurrentStateID;
+    }
+
+    private ControllerState CurrentState
+    {
+        get => StateMachine.CurrentState;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="vm"> Interface of Plotter ViewModel</param>
+    /// <exception cref="System.ArgumentNullException"></exception>
+    /// 
     public PlotterController(IPlotterViewModel vm)
     {
         DOut.plx("in");
@@ -114,7 +132,7 @@ public partial class PlotterController
         ViewIF = vm;
 
         StateMachine = new ControllerStateMachine(this);
-        ChangeState(States.SELECT);
+        ChangeState(ControllerStates.SELECT);
 
         CadLayer layer = mDB.NewLayer();
         mDB.LayerList.Add(layer);
@@ -133,6 +151,11 @@ public partial class PlotterController
         InitHid();
 
         DOut.plx("out");
+    }
+
+    public void ChangeState(ControllerStates state)
+    {
+        StateMachine.ChangeState(state);
     }
 
     #region ObjectTree handling
@@ -180,7 +203,7 @@ public partial class PlotterController
     #region Start and End creating figure
     public void StartCreateFigure(CadFigure.Types type)
     {
-        ChangeState(States.CREATING);
+        ChangeState(ControllerStates.CREATING);
         CreatingFigType = type;
     }
 
@@ -212,7 +235,7 @@ public partial class PlotterController
 
     public void NextState()
     {
-        if (State == States.CREATING)
+        if (State == ControllerStates.CREATING)
         {
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
@@ -224,7 +247,7 @@ public partial class PlotterController
             {
                 mFigureCreator = null;
                 CreatingFigType = CadFigure.Types.NONE;
-                ChangeState(States.SELECT);
+                ChangeState(ControllerStates.SELECT);
 
                 UpdateObjectTree(true);
                 NotifyStateChange();
@@ -234,7 +257,7 @@ public partial class PlotterController
 
     public void StartMeasure(MeasureModes mode)
     {
-        ChangeState(States.MEASURING);
+        ChangeState(ControllerStates.MEASURING);
         mMeasureMode = mode;
         MeasureFigureCreator =
             FigCreator.Get(
@@ -245,7 +268,7 @@ public partial class PlotterController
 
     public void EndMeasure()
     {
-        ChangeState(States.SELECT);
+        ChangeState(ControllerStates.SELECT);
         mMeasureMode = MeasureModes.NONE;
         MeasureFigureCreator = null;
     }

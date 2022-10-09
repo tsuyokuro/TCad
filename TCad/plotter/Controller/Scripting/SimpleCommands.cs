@@ -49,8 +49,8 @@ namespace Plotter.Controller
                     //Controller.Redraw();
 
                     Controller.DC.StartDraw();
-                    Controller.Clear(Controller.DC);
-                    Controller.DrawAll(Controller.DC);
+                    Controller.Clear();
+                    Controller.DrawAll();
                     Controller.DC.EndDraw();
 
                 }, true);

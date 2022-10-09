@@ -28,11 +28,6 @@ public partial class PlotterController
         dc.PushToView();
     }
 
-    //public void RedrawOnMainThread()
-    //{
-    //    ThreadUtil.RunOnMainThread(Redraw, false);
-    //}
-
     public void Clear()
     {
         Clear(DC);
@@ -73,11 +68,6 @@ public partial class PlotterController
         DrawTop(dc);
     }
 
-    public void DrawSelRect(DrawContext dc, Vector3d p0, Vector3d p1)
-    {
-        dc.Drawing.DrawRectScrn(dc.GetPen(DrawTools.PEN_TEMP_FIGURE), p0, p1);
-    }
-
     public void DrawFiguresRaw(DrawContext dc)
     {
         dc.OptionSet.Update();
@@ -95,7 +85,7 @@ public partial class PlotterController
     }
 
     #region private
-    private void DrawTop(DrawContext dc)
+    private static void DrawTop(DrawContext dc)
     {
         if (SettingsHolder.Settings.DrawAxis && SettingsHolder.Settings.DrawAxisLabel)
         {
@@ -123,8 +113,8 @@ public partial class PlotterController
         DrawGrid(dc);
     }
 
-    FlexArray<CadFigure> AlphaFigList = new FlexArray<CadFigure>(100);
-    FlexArray<CadFigure> AlphaFigListCurrentLayer = new FlexArray<CadFigure>(100);
+    FlexArray<CadFigure> AlphaFigList = new(100);
+    FlexArray<CadFigure> AlphaFigListCurrentLayer = new(100);
 
     private void DrawFigures(DrawContext dc)
     {
@@ -290,7 +280,7 @@ public partial class PlotterController
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (State != States.DRAGING_POINTS)
+        if (State != ControllerStates.DRAGING_POINTS)
         {
             return;
         }

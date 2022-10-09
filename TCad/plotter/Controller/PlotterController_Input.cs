@@ -35,7 +35,7 @@ public partial class PlotterController
 
     public Vector3d SnapPoint;
 
-    public SnapInfo mSnapInfo;
+    public SnapInfo CurrentSnapInfo;
 
     public Vector3d MoveOrgScrnPoint;
 
@@ -367,6 +367,41 @@ public partial class PlotterController
         return sc;
     }
 
+    private void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    {
+        if (State == ControllerStates.DRAGING_VIEW_ORG)
+        {
+            //ViewOrgDrag(pointer, DC, x, y);
+            CurrentState.MouseMove(pointer, dc, x, y);
+            return;
+        }
+
+        if (CursorLocked)
+        {
+            x = CrossCursor.Pos.X;
+            y = CrossCursor.Pos.Y;
+        }
+
+        Vector3d pixp = new Vector3d(x, y, 0) - CrossCursorOffset;
+        Vector3d cp = dc.DevPointToWorldPoint(pixp);
+
+        CrossCursor.Pos = pixp;
+        SnapPoint = cp;
+
+        if (!CursorLocked)
+        {
+            SnapCursor(dc);
+        }
+
+        if (CurrentState.State == ControllerStates.DRAGING_POINTS || CurrentState.State == ControllerStates.RUBBER_BAND_SELECT)
+        {
+            CurrentState.MouseMove(pointer, dc, x, y);
+        }
+
+        ViewIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+    }
+
     private void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
     {
         //DOut.tpl($"LButtonDown ({x},{y})");
@@ -378,7 +413,6 @@ public partial class PlotterController
         }
 
         Vector3d pixp = new Vector3d(x, y, 0);
-        Vector3d cp = dc.DevPointToWorldPoint(pixp);
 
         RawDownPoint = pixp;
 
@@ -401,13 +435,20 @@ public partial class PlotterController
         ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
+    private void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    {
+        CurrentState.LButtonUp(pointer, dc, x, y);
+
+        UpdateObjectTree(false);
+
+        CrossCursorOffset = default;
+    }
+
     private void MButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
     {
-        mBackState = State;
-
         pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
 
-        ChangeState(States.DRAGING_VIEW_ORG);
+        StateMachine.PushState(ControllerStates.DRAGING_VIEW_ORG);
 
         StoreViewOrg = dc.ViewOrg;
         CursorLocked = false;
@@ -426,7 +467,7 @@ public partial class PlotterController
             ViewUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
         }
 
-        ChangeState(mBackState);
+        StateMachine.PopState();
 
         CrossCursor.Pos = new Vector3d(x, y, 0);
 
@@ -439,7 +480,7 @@ public partial class PlotterController
         {
             CursorLocked = false;
 
-            double f = 1.0;
+            double f;
 
             if (delta > 0)
             {
@@ -459,15 +500,6 @@ public partial class PlotterController
         LastDownPoint = SnapPoint;
 
         mContextMenuMan.RequestContextMenu(x, y);
-    }
-
-    private void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
-    {
-        CurrentState.LButtonUp(pointer, dc, x, y);
-
-        UpdateObjectTree(false);
-
-        CrossCursorOffset = default;
     }
 
     private void RButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
@@ -770,42 +802,7 @@ public partial class PlotterController
         SnapPoint = si.SnapPoint;
         CrossCursor.Pos = si.Cursor.Pos;
 
-        mSnapInfo = si;
-    }
-
-    private void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
-    {
-        if (State == States.DRAGING_VIEW_ORG)
-        {
-            //ViewOrgDrag(pointer, DC, x, y);
-            CurrentState.MouseMove(pointer, dc, x, y);
-            return;
-        }
-
-        if (CursorLocked)
-        {
-            x = CrossCursor.Pos.X;
-            y = CrossCursor.Pos.Y;
-        }
-
-        Vector3d pixp = new Vector3d(x, y, 0) - CrossCursorOffset;
-        Vector3d cp = dc.DevPointToWorldPoint(pixp);
-
-        CrossCursor.Pos = pixp;
-        SnapPoint = cp;
-
-        if (!CursorLocked)
-        {
-            SnapCursor(dc);
-        }
-
-        if (CurrentState.State == States.DRAGING_POINTS || CurrentState.State == States.RUBBER_BAND_SELECT)
-        {
-            CurrentState.MouseMove(pointer, dc, x, y);
-        }
-
-        ViewIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        CurrentSnapInfo = si;
     }
 
     public void MoveCursorToNearPoint(DrawContext dc)

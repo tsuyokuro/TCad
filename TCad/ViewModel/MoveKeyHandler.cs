@@ -86,7 +86,7 @@ namespace TCad.ViewModel
             moveInfo.Delta = Delta;
 
 
-            if (Controller.State == PlotterController.States.SELECT)
+            if (Controller.State == ControllerStates.SELECT)
             {
                 if (EditFigList != null && EditFigList.Count > 0)
                 {

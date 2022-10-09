@@ -1,4 +1,4 @@
-﻿
+
 namespace Plotter.Controller
 {
     public enum SelectModes
@@ -29,6 +29,17 @@ namespace Plotter.Controller
         RIGHT,
         LEFT,
         FREE,
+    }
+
+    public enum ControllerStates
+    {
+        NONE,
+        SELECT,
+        RUBBER_BAND_SELECT,
+        DRAGING_POINTS,
+        DRAGING_VIEW_ORG,
+        CREATING,
+        MEASURING,
     }
 
     class ControllerConst
