@@ -201,7 +201,7 @@ namespace TCad.ViewModel
                 { "load", Load },
                 { "save",Save },
                 { "save_as",SaveAs },
-                { "Print",StartPrint },
+                { "print",StartPrint },
                 { "page_setting",PageSetting },
                 { "doc_setting",DocSetting },
                 { "undo",Undo },

@@ -132,15 +132,31 @@ namespace Plotter
             }
         }
 
-        public override void Draw(DrawContext dc, DrawOption dp)
+        public override void Draw(DrawContext dc, DrawOption opt)
         {
-            DrawBrush brush = dp.MeshBrush;
-
+            DrawBrush brush;
             DrawPen borderPen;
             DrawPen edgePen;
 
-            borderPen = dp.MeshLinePen;
-            edgePen = dp.MeshEdgePen;
+            if (!opt.ForceMeshBrush && (!FillBrush.IsInvalid))
+            {
+                brush = FillBrush;
+            }
+            else
+            {
+                brush = opt.MeshBrush;
+            }
+
+            if (!opt.ForceMeshPen && (!LinePen.IsInvalid))
+            {
+                borderPen = new DrawPen(ColorUtil.Mix(LinePen.Color4, brush.Color4, 0.2f), LinePen.Width);
+                edgePen = LinePen;
+            }
+            else
+            {
+                borderPen = opt.MeshLinePen;
+                edgePen = opt.MeshEdgePen;
+            }
 
             dc.Drawing.DrawHarfEdgeModel(
                 brush,

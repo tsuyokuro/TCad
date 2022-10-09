@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using OpenTK;
 using OpenTK.Mathematics;
@@ -69,13 +69,20 @@ namespace Plotter
             */
 
             LightPosition = new Vector4(100.0f, 500f, 150.0f, 0.0f);
-            LightAmbient = new Color4(0.5f, 0.5f, 0.5f, 1.0f);
-            LightDiffuse = new Color4(0.7f, 0.7f, 0.7f, 1.0f);
-            LightSpecular = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
+            float v;
+            v = 0.1f;
+            LightAmbient = new Color4(v, v, v, 1.0f);
+
+            v = 0.4f;
+            LightDiffuse = new Color4(v, v, v, 1.0f);
+
+            v = 1.0f;
+            LightSpecular = new Color4(v, v, v, 1.0f);
+
 
             MaterialAmbient = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
             MaterialDiffuse = new Color4(0.7f, 0.7f, 0.7f, 1.0f);
-            MaterialSpecular = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+            MaterialSpecular = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
             MaterialShininess = new Color4(0.1f, 0.1f, 0.1f, 1.0f);
 
             SetupDrawing();

@@ -2027,6 +2027,17 @@ namespace Plotter.Controller
             fig.LinePen = new DrawPen(new Color4(r, g, b, 1.0f), w);
         }
 
+        public void SetFillColor(uint figID, float r, float g, float b)
+        {
+            CadFigure fig = Controller.DB.GetFigure(figID);
+            if (fig == null)
+            {
+                return;
+            }
+
+            fig.FillBrush = new DrawBrush(new Color4(r, g, b, 1.0f));
+        }
+
         public List<CadFigure> GetSlectedFigList()
         {
             return Controller.DB.GetSelectedFigList();

@@ -94,6 +94,8 @@ namespace Plotter
             }
 
             EnableLight();
+            GL.Enable(EnableCap.ColorMaterial);
+            GL.Color4(brush.Color4);
 
             for (int i = 0; i < model.FaceStore.Count; i++)
             {
@@ -104,7 +106,6 @@ namespace Plotter
                 HalfEdge c = head;
 
                 GL.Begin(PrimitiveType.Polygon);
-                GL.Color4(brush.Color4);
 
                 if (f.Normal != HeModel.INVALID_INDEX)
                 {

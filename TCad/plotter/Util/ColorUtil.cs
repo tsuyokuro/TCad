@@ -73,4 +73,18 @@ public static class ColorUtil
             (int)(c.G * 255f),
             (int)(c.B * 255f));
     }
+
+    public static Color4 Mix(Color4 c1, Color4 c2, float strengthC1)
+    {
+        float strengthC2 = 1.0f - strengthC1;
+
+        Color4 rc = default;
+
+        rc.R = ((c1.R * strengthC1) + (c2.R * strengthC2)) / 2.0f;
+        rc.G = ((c1.G * strengthC1) + (c2.G * strengthC2)) / 2.0f;
+        rc.B = ((c1.B * strengthC1) + (c2.B * strengthC2)) / 2.0f;
+        rc.A = 1.0f;
+
+        return rc;
+    }
 }

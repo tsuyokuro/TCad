@@ -419,6 +419,10 @@ def get_vertex(fig, index):
 def set_color(id, r, g, b):
     SE.SetColor(id, r, g, b)
 
+#[AC] set_fill_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
+def set_fill_color(id, r, g, b):
+    SE.SetFillColor(id, r, g, b)
+
 ###############################################################################
 
 #[AC] test()
