@@ -325,7 +325,7 @@ public class SelectingState : ControllerState
 
     public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
     {
-        Vector3d pixp = new Vector3d(x, y, 0);
+        Vector3d pixp = new(x, y, 0);
 
 
         if (Ctrl.SelectNearest(dc, Ctrl.CrossCursor.Pos))
@@ -333,6 +333,7 @@ public class SelectingState : ControllerState
             if (!Ctrl.CursorLocked)
             {
                 Context.ChangeState(ControllerStates.DRAGING_POINTS);
+                Context.CurrentState.LButtonDown(pointer, dc, x, y);
             }
 
             Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
@@ -465,6 +466,8 @@ public class RubberBandSelectState : ControllerState
 /// </summary>
 public class DragingPointsState : ControllerState
 {
+    Vector3d StartPos;
+
     public override ControllerStates State
     {
         get => ControllerStates.DRAGING_POINTS;
@@ -477,6 +480,7 @@ public class DragingPointsState : ControllerState
     public override void Enter()
     {
         isStart = true;
+        StartPos = Ctrl.CrossCursor.Pos;
     }
 
     public override void Exit()
@@ -520,21 +524,17 @@ public class DragingPointsState : ControllerState
             if (d > SettingsHolder.Settings.InitialMoveLimit)
             {
                 isStart = false;
-                //DOut.pl("MouseMove change isStart:" + isStart);
                 Ctrl.StartEdit();
             }
         }
         else
         {
-            Vector3d p0 = dc.DevPointToWorldPoint(Ctrl.MoveOrgScrnPoint);
+            Vector3d p0 = dc.DevPointToWorldPoint(StartPos);
             Vector3d p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
-
-            //p0.dump("p0");
-            //p1.dump("p1");
 
             Vector3d delta = p1 - p0;
 
-            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.MoveOrgScrnPoint, Ctrl.CrossCursor.Pos));
+            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.CrossCursor.Pos));
 
             Ctrl.ObjDownPoint = Context.StoredObjDownPoint + delta;
         }

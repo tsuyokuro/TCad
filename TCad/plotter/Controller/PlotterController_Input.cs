@@ -37,8 +37,6 @@ public partial class PlotterController
 
     public SnapInfo CurrentSnapInfo;
 
-    public Vector3d MoveOrgScrnPoint;
-
     // 生のL button down point (デバイス座標系)
     public Vector3d RawDownPoint = default;
 
@@ -60,12 +58,11 @@ public partial class PlotterController
     // 実際のMouse座標からCross cursorへのOffset
     public Vector3d CrossCursorOffset = default;
 
-    private CadFigure mCurrentFigure = null;
-
     public MarkSegment? LastSelSegment = null;
 
     public MarkPoint? LastSelPoint = null;
 
+    private CadFigure mCurrentFigure = null;
     public CadFigure CurrentFigure
     {
         set
@@ -249,10 +246,6 @@ public partial class PlotterController
 
         ObjDownPoint = sc.MarkPt.Point;
 
-        MoveOrgScrnPoint = sc.DC.WorldPointToDevPoint(sc.MarkPt.Point);
-
-        MoveOrgScrnPoint.Z = 0;
-
         CadFigure fig = mDB.GetFigure(sc.MarkPt.FigureID);
 
         CadLayer layer = mDB.GetLayer(sc.MarkPt.LayerID);
@@ -354,8 +347,6 @@ public partial class PlotterController
 
             fig.SelectWithGroup();
         }
-
-        MoveOrgScrnPoint = sc.DC.WorldPointToDevPoint(ObjDownPoint);
 
         if (sc.SegmentSelected)
         {
