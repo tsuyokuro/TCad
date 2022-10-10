@@ -1,23 +1,53 @@
 using Plotter.Settings;
+using SharpFont.Fnt;
+using static System.Windows.Forms.DataFormats;
 
 namespace Plotter;
 
-public struct DrawOption
+public class DrawOption
 {
-    public bool ForcePen = false;
-    public bool ForceMeshPen = false;
-    public bool ForceMeshBrush = false;
+    public static byte FORCE_PEN = 0x01;
+    public static byte FORCE_MESH_PEN = 0x02;
+    public static byte FORCE_MESH_BREASH = 0x04;
+
+    byte Flag = 0;
 
     public DrawPen LinePen = default;
-
     public DrawPen MeshLinePen = default;
     public DrawPen MeshEdgePen = default;
     public DrawBrush MeshBrush = default;
-
     public DrawBrush TextBrush = default;
+
+    public bool ForcePen
+    {
+        set => Flag = value ? (byte)(Flag | FORCE_PEN) : (byte)(Flag & ~FORCE_PEN);
+        get => (Flag & FORCE_PEN) != 0;
+    }
+
+    public bool ForceMeshPen
+    {
+        set => Flag = value ? (byte)(Flag | FORCE_MESH_PEN) : (byte)(Flag & ~FORCE_MESH_PEN);
+        get => (Flag & FORCE_PEN) != 0;
+    }
+
+    public bool ForceMeshBrush
+    {
+        set => Flag = value ? (byte)(Flag | FORCE_MESH_BREASH) : (byte)(Flag & ~FORCE_MESH_BREASH);
+        get => (Flag & FORCE_MESH_BREASH) != 0;
+    }
 
     public DrawOption()
     {
+    }
+
+    public void ForceAllOn()
+    {
+        Flag = 0xFF;
+    }
+
+    public void ForceAllOff()
+    {
+        Flag = 0x00;
     }
 }
 
@@ -45,9 +75,7 @@ public class DrawOptionSet
         Pale.MeshEdgePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
         Pale.MeshBrush = DrawBrush.Invalid;
         Pale.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
-        Pale.ForcePen = true;
-        Pale.ForceMeshPen = true;
-        Pale.ForceMeshBrush = true;
+        Pale.ForceAllOn();
 
         // Before
         Before.LinePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
@@ -55,9 +83,7 @@ public class DrawOptionSet
         Before.MeshEdgePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
         Before.MeshBrush = DrawBrush.Invalid;
         Before.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
-        Before.ForcePen = true;
-        Before.ForceMeshPen = true;
-        Before.ForceMeshBrush = true;
+        Before.ForceAllOn();
 
         // Temp
         Temp.LinePen = DC.GetPen(DrawTools.PEN_TEST_FIGURE);
@@ -65,11 +91,10 @@ public class DrawOptionSet
         Temp.MeshEdgePen = DC.GetPen(DrawTools.PEN_TEST_FIGURE);
         Temp.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
         Temp.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
-        Temp.ForcePen = true;
-        Temp.ForceMeshPen = true;
-        Temp.ForceMeshBrush = true;
+        Temp.ForceAllOn();
 
         // Current
+        Current.ForceAllOn();
         Current.LinePen = DC.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
 
         Current.MeshLinePen = DC.GetPen(DrawTools.PEN_FIGURE_HIGHLIGHT);
@@ -78,6 +103,7 @@ public class DrawOptionSet
         if (SettingsHolder.Settings.FillMesh)
         {
             Current.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
+            Current.ForceMeshBrush = false;
         }
         else
         {
@@ -85,10 +111,6 @@ public class DrawOptionSet
         }
 
         Current.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
-        Current.ForcePen = true;
-        Current.ForceMeshPen = true;
-        Current.ForceMeshBrush = true;
-
 
         // Measure
         Measure.LinePen = DC.GetPen(DrawTools.PEN_MEASURE_FIGURE);
@@ -96,18 +118,17 @@ public class DrawOptionSet
         Measure.MeshEdgePen = DC.GetPen(DrawTools.PEN_MEASURE_FIGURE);
         Measure.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
         Measure.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
-        Measure.ForcePen = true;
-        Measure.ForceMeshPen = true;
-        Measure.ForceMeshBrush = true;
-
+        Measure.ForceAllOn();
 
         // Noraml
+        Normal.ForceAllOff();
+
         Normal.LinePen = DC.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+
         if (SettingsHolder.Settings.DrawMeshEdge)
         {
             Normal.MeshLinePen = DC.GetPen(DrawTools.PEN_MESH_LINE);
             Normal.MeshEdgePen = DC.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
-            Normal.ForceMeshPen = false;
         }
         else
         {
@@ -119,7 +140,6 @@ public class DrawOptionSet
         if (SettingsHolder.Settings.FillMesh)
         {
             Normal.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL);
-            Normal.ForceMeshBrush = false;
         }
         else
         {
@@ -130,5 +150,3 @@ public class DrawOptionSet
         Normal.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
     }
 }
-
-

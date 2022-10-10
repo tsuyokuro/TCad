@@ -291,23 +291,29 @@ namespace TCad.ViewModel
         public void ExecCommand(string cmd)
         {
             Action action;
-            CommandMap.TryGetValue(cmd, out action);
-
-            action?.Invoke();
+            if (CommandMap.TryGetValue(cmd, out action))
+            {
+                action.Invoke();
+            }
+            else
+            {
+                MessageBox.Show("Unknow Command: " + cmd);
+            }
         }
 
         public bool ExecShortcutKey(string keyCmd, bool down)
         {
             KeyAction ka;
-            KeyMap.TryGetValue(keyCmd, out ka);
-
-            if (down)
+            if (KeyMap.TryGetValue(keyCmd, out ka))
             {
-                ka?.Down?.Invoke();
-            }
-            else
-            {
-                ka?.Up?.Invoke();
+                if (down)
+                {
+                    ka.Down?.Invoke();
+                }
+                else
+                {
+                    ka.Up?.Invoke();
+                }
             }
 
             return true;
