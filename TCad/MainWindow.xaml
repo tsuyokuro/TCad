@@ -451,6 +451,10 @@
                                     Click="Command_Clicked"
                                     Header="Poly lins to SVG"
                                     Tag="export_svg" />
+                                <MenuItem
+                                    Click="Command_Clicked"
+                                    Header="TEST"
+                                    Tag="test" />
                             </MenuItem>
                         </Menu>
                     </StackPanel>

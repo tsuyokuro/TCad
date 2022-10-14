@@ -236,6 +236,7 @@ namespace TCad.ViewModel
                 { "reset_camera", ResetCamera },
                 { "cut_mesh_with_vector", CutMeshWithVector },
                 { "print_setting", PrintSettings },
+                { "test", Test },
             };
         }
 
@@ -578,6 +579,19 @@ namespace TCad.ViewModel
             {
                 Settings.MoveKeyUnitX = dlg.MoveX;
                 Settings.MoveKeyUnitY = dlg.MoveY;
+            }
+        }
+
+        public void Test()
+        {
+            ColorPickerDialog dlg = new();
+
+            dlg.Owner = mMainWindow.GetWindow();
+
+            bool? result = dlg.ShowDialog();
+
+            if (result.Value)
+            {
             }
         }
 
