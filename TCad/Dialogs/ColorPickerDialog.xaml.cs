@@ -11,11 +11,24 @@ namespace TCad
 {
     public partial class ColorPickerDialog : Window
     {
+        Color4 mSelectedColor;
+
 		public Color4 SelectedColor
 		{
-			get;
-			set;
-		} = Color4.Blue;
+            get
+            {
+                return mSelectedColor;
+            }
+			set
+            {
+                if (value.IsInvalid())
+                {
+                    InvalidColor = true;
+                    return;
+                }
+                mSelectedColor = value;
+            }
+		}
 
         public bool InvalidColor
         {
@@ -26,6 +39,8 @@ namespace TCad
         public ColorPickerDialog()
         {
             InitializeComponent();
+
+            SelectedColor = Color4.Blue;
 
             ok_button.Click += Ok_button_Click;
             cancel_button.Click += Cancel_button_Click;

@@ -348,6 +348,15 @@
                                     Click="Command_Clicked"
                                     Header="Select all"
                                     Tag="select_all" />
+                                <MenuItem
+                                    Click="Command_Clicked"
+                                    Header="Set Line Color"
+                                    Tag="set_line_color" />
+                                <MenuItem
+                                    Click="Command_Clicked"
+                                    Header="Set FIll Color"
+                                    Tag="set_fill_color" />
+
                             </MenuItem>
                             <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_settings}">
                                 <MenuItem

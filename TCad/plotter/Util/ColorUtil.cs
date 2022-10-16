@@ -88,3 +88,13 @@ public static class ColorUtil
         return rc;
     }
 }
+
+public static class Color4Ext
+{
+    public static bool IsInvalid(this Color4 v)
+    {
+        return v.A < 0.0;
+    }
+
+    public static readonly Color4 Invalid = new Color4(0, 0, 0, -1.0f);
+}

@@ -7,15 +7,13 @@ namespace Plotter;
 
 public struct DrawBrush : IEquatable<DrawBrush>
 {
-    public static DrawBrush Invalid;
-
-    private static float InvalidValue = -1.0f;
+    public static DrawBrush InvalidBrush;
 
     static DrawBrush()
     {
-        Invalid = new()
+        InvalidBrush = new()
         {
-            Color4 = new Color4(0, 0, 0, InvalidValue),
+            Color4 = Color4Ext.Invalid,
         };
     }
 
@@ -39,6 +37,11 @@ public struct DrawBrush : IEquatable<DrawBrush>
     public bool IsInvalid
     {
         get => mColor4.A < 0f;
+    }
+
+    public bool IsNull
+    {
+        get => mColor4.A == 0f;
     }
 
     public Color4 Color4

@@ -1173,7 +1173,7 @@ namespace Plotter.Controller
 
             DrawOption drawParams = default;
             drawParams.LinePen = drawPen;
-            drawParams.MeshLinePen = DrawPen.Invalid;
+            drawParams.MeshLinePen = DrawPen.InvalidPen;
             drawParams.MeshEdgePen = drawPen;
 
 

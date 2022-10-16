@@ -236,6 +236,8 @@ namespace TCad.ViewModel
                 { "reset_camera", ResetCamera },
                 { "cut_mesh_with_vector", CutMeshWithVector },
                 { "print_setting", PrintSettings },
+                { "set_line_color", SetLineColor },
+                { "set_fill_color", SetFillColor },
                 { "test", Test },
             };
         }
@@ -579,6 +581,62 @@ namespace TCad.ViewModel
             {
                 Settings.MoveKeyUnitX = dlg.MoveX;
                 Settings.MoveKeyUnitY = dlg.MoveY;
+            }
+        }
+
+        public void SetLineColor()
+        {
+            if (Controller.CurrentFigure == null)
+            {
+                return;
+            }
+
+            ColorPickerDialog dlg = new();
+
+            dlg.SelectedColor = Controller.CurrentFigure.LinePen.Color4;
+
+            dlg.Owner = mMainWindow.GetWindow();
+
+            bool? result = dlg.ShowDialog();
+
+            if (result.Value)
+            {
+                if (dlg.InvalidColor)
+                {
+                    Controller.CurrentFigure.LinePen.Color4 = DrawPen.InvalidPen.Color4;
+                }
+                else
+                {
+                    Controller.CurrentFigure.LinePen.Color4 = dlg.SelectedColor;
+                }
+            }
+        }
+
+        public void SetFillColor()
+        {
+            if (Controller.CurrentFigure == null)
+            {
+                return;
+            }
+
+            ColorPickerDialog dlg = new();
+
+            dlg.SelectedColor = Controller.CurrentFigure.FillBrush.Color4;
+
+            dlg.Owner = mMainWindow.GetWindow();
+
+            bool? result = dlg.ShowDialog();
+
+            if (result.Value)
+            {
+                if (dlg.InvalidColor)
+                {
+                    Controller.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
+                }
+                else
+                {
+                    Controller.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
+                }
             }
         }
 

@@ -177,6 +177,11 @@ namespace Plotter
 
         private void DrawHeEdges(DrawPen borderPen, DrawPen edgePen, double edgeThreshold, HeModel model)
         {
+            if (edgePen.IsNull)
+            {
+                return;
+            }
+
             bool drawBorder = !borderPen.IsInvalid;
             bool drawEdge = !edgePen.IsInvalid;
 

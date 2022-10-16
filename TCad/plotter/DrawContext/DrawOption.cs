@@ -73,7 +73,7 @@ public class DrawOptionSet
         Pale.LinePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
         Pale.MeshLinePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
         Pale.MeshEdgePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
-        Pale.MeshBrush = DrawBrush.Invalid;
+        Pale.MeshBrush = DrawBrush.InvalidBrush;
         Pale.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
         Pale.ForceAllOn();
 
@@ -81,7 +81,7 @@ public class DrawOptionSet
         Before.LinePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
         Before.MeshLinePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
         Before.MeshEdgePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
-        Before.MeshBrush = DrawBrush.Invalid;
+        Before.MeshBrush = DrawBrush.InvalidBrush;
         Before.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
         Before.ForceAllOn();
 
@@ -107,7 +107,7 @@ public class DrawOptionSet
         }
         else
         {
-            Current.MeshBrush = DrawBrush.Invalid;
+            Current.MeshBrush = DrawBrush.InvalidBrush;
         }
 
         Current.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
@@ -132,8 +132,8 @@ public class DrawOptionSet
         }
         else
         {
-            Normal.MeshLinePen = DrawPen.Invalid;
-            Normal.MeshEdgePen = DrawPen.Invalid;
+            Normal.MeshLinePen = DrawPen.InvalidPen;
+            Normal.MeshEdgePen = DrawPen.InvalidPen;
             Normal.ForceMeshPen = true;
         }
 
@@ -143,7 +143,7 @@ public class DrawOptionSet
         }
         else
         {
-            Normal.MeshBrush = DrawBrush.Invalid;
+            Normal.MeshBrush = DrawBrush.InvalidBrush;
             Normal.ForceMeshBrush = true;
         }
 

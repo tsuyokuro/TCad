@@ -102,8 +102,8 @@ namespace Plotter
 
         public LocalCoordinate LocalCoord = new LocalCoordinate();
 
-        public DrawPen LinePen = DrawPen.Invalid;
-        public DrawBrush FillBrush = DrawBrush.Invalid;
+        public DrawPen LinePen = DrawPen.InvalidPen;
+        public DrawBrush FillBrush = DrawBrush.InvalidBrush;
 
         #endregion
 
