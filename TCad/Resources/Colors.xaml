@@ -18,9 +18,10 @@
 
     <SolidColorBrush x:Key="ToolBarBGColor" Color="#FF3F3F46" />
 
+    <SolidColorBrush x:Key="MenuHighlightBGColor" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="MenuHighlightTextColor" Color="#FF000000" />
 
-    <SolidColorBrush x:Key="MenuDisableBGColor" Color="Green" />
+    <SolidColorBrush x:Key="MenuDisableBGColor" Color="#FF3F3F46" />
     <SolidColorBrush x:Key="MenuDisableTextColor" Color="Gray" />
 
     <!-- AutoCompleteTextBox CandidateList -->

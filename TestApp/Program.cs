@@ -18,10 +18,6 @@ using TCad.Util;
 
 namespace TestApp;
 
-public class MyEvent : TCad.Util.EventHandler<MyEvent>.Event
-{
-    int Value;
-}
 
 internal class Program
 {
