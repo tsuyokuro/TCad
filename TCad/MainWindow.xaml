@@ -237,117 +237,90 @@
                             WindowChrome.IsHitTestVisibleInChrome="True">
                             <MenuItem x:Name ="FileMenu" Header="{x:Static properties:Resources.menu_file}">
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_new_doc}"
-                                    Tag="new_doc" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="new_doc" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_load}"
-                                    Tag="load" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="load" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_save}"
-                                    Tag="save" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="save" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_save_as}"
-                                    Tag="save_as" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="save_as" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_print}"
-                                    Tag="print" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="print" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Print settings"
-                                    Tag="print_setting" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="print_setting" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_page_settings}"
-                                    Tag="page_setting" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="page_setting" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_doc_settings}"
-                                    Tag="doc_setting" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="doc_setting" />
                             </MenuItem>
                             <MenuItem x:Name ="EditMenu" Header="{x:Static properties:Resources.menu_edit}">
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Undo"
-                                    Tag="undo" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="undo" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Redo"
-                                    Tag="redo" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="redo" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Copy"
-                                    Tag="copy" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="copy" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Paste"
-                                    Tag="paste" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="paste" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Separate"
-                                    Tag="separate" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="separate" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Bond"
-                                    Tag="bond" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="bond" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="To Bezier"
-                                    Tag="to_bezier" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="to_bezier" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Cut Segment"
-                                    Tag="cut_segment" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="cut_segment" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Cut mesh"
-                                    Tag="cut_mesh_with_vector" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="cut_mesh_with_vector" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Insert point"
-                                    Tag="ins_point" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="ins_point" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="To Loop lines"
-                                    Tag="to_loop" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="to_loop" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="To Unloop lines"
-                                    Tag="to_unloop" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="to_unloop" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Rotate"
-                                    Tag="rotate_with_point" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="rotate_with_point" />
                                 <MenuItem Header="Flip">
                                     <MenuItem
-                                        Click="Command_Clicked"
                                         Header="Flip"
-                                        Tag="flip_with_vector" />
+                                        Command="{Binding SimpleCmd}" CommandParameter="flip_with_vector" />
                                     <MenuItem
-                                        Click="Command_Clicked"
                                         Header="Flip and copy"
-                                        Tag="flip_and_copy_with_vector" />
+                                        Command="{Binding SimpleCmd}" CommandParameter="flip_and_copy_with_vector" />
                                     <MenuItem
-                                        Click="Command_Clicked"
                                         Header="Flip Normal"
-                                        Tag="flip_normal" />
+                                        Command="{Binding SimpleCmd}" CommandParameter="flip_normal" />
                                 </MenuItem>
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Clear layer"
-                                    Tag="clear_layer" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="clear_layer" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Centroid"
-                                    Tag="centroid" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="centroid" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Select all"
-                                    Tag="select_all" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="select_all" />
 
                                 <MenuItem
                                     Header="Set Line Color"
@@ -357,26 +330,26 @@
                                     Command="{Binding CurrentFigCmd}" CommandParameter="set_fill_color"/>
 
                             </MenuItem>
+
+                            <!-- Settings Menu -->
                             <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_settings}">
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_grid_settings}"
-                                    Tag="grid_settings" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="grid_settings" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_snap_settings}"
-                                    Tag="snap_settings" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="snap_settings" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Move Key settings"
-                                    Tag="move_key_settings" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="move_key_settings" />
                                 <MenuItem
-                                    x:Name="ContinueCreateFigureSetting"
+                                    x:Name="ContinueCreateFigureSettingItem"
                                     Header="{x:Static properties:Resources.menu_continue_create_figure}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding ContinueCreateFigure}" />
+                                    IsChecked="{Binding ContinueCreateFigure}"/>
                             </MenuItem>
 
+                            <!-- Snap Option Menu -->
                             <MenuItem x:Name="SnapMenu" Header="{x:Static properties:Resources.menu_snap}">
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_grid}"
@@ -407,6 +380,8 @@
                                     IsCheckable="True"
                                     IsChecked="{Binding SnapToSelfPoint}" />
                             </MenuItem>
+
+                            <!-- Draw Option Menu -->
                             <MenuItem x:Name="DrawOptionMenu" Header="{x:Static properties:Resources.menu_draw}">
                                 <MenuItem
                                     x:Name="DrawModeMenu"
@@ -449,21 +424,22 @@
                                     IsCheckable="True"
                                     IsChecked="{Binding DrawCompass}" />
                             </MenuItem>
-                            <MenuItem Header="{x:Static properties:Resources.menu_script}">
+
+                            <!-- Script Menu -->
+                            <MenuItem x:Name = "ScripMenu" Header="{x:Static properties:Resources.menu_script}">
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_show_script_editor}"
-                                    Tag="show_editor" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="show_editor" />
                             </MenuItem>
-                            <MenuItem Header="Experimental">
+
+                            <!-- Experimental Menu -->
+                            <MenuItem x:Name = "ExperimentalMenu" Header="Experimental">
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Poly lins to SVG"
-                                    Tag="export_svg" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="export_svg" />
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="TEST"
-                                    Tag="test" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="test" />
                             </MenuItem>
                         </Menu>
                     </StackPanel>
@@ -679,16 +655,14 @@
                                 Margin="1,0,1,3"
                                 Content="Select Figure"
                                 IsChecked="{Binding SelectMode, ConverterParameter=OBJECT, Converter={StaticResource SelModeConv}}"
-                                Style="{StaticResource ToolRadioButton}"
-                                Tag="OBJECT" />
+                                Style="{StaticResource ToolRadioButton}" />
 
                             <RadioButton
                                 Height="{StaticResource ButtonHeight}"
                                 Margin="1,0,1,3"
                                 Content="Select Point"
                                 IsChecked="{Binding SelectMode, ConverterParameter=POINT, Converter={StaticResource SelModeConv}}"
-                                Style="{StaticResource ToolRadioButton}"
-                                Tag="POINT" />
+                                Style="{StaticResource ToolRadioButton}" />
                         </StackPanel>
 
                         <StackPanel x:Name="FigurePanel" Grid.Row="1">

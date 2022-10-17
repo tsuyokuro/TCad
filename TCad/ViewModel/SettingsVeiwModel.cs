@@ -26,6 +26,11 @@ namespace TCad.ViewModel
                 {
                     SettingsHolder.Settings.ContinueCreateFigure = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SnapToGrid)));
+
+                    if (!value)
+                    {
+                        mContext.Controller.EndCreateFigure();
+                    }
                 }
             }
 

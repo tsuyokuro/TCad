@@ -102,16 +102,14 @@ namespace TCad
             FileMenu.DataContext = ViewModel;
             EditMenu.DataContext = ViewModel;
             SettingsMenu.DataContext = ViewModel;
+            ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
+            SnapMenu.DataContext = ViewModel.Settings;
+            DrawModeMenu.DataContext = ViewModel.Settings;
+            DrawOptionMenu.DataContext = ViewModel.Settings;
+            ScripMenu.DataContext = ViewModel;
+            ExperimentalMenu.DataContext = ViewModel;
 
             ViewModePanel.DataContext = ViewModel.mViewManager;
-
-            SnapMenu.DataContext = ViewModel.Settings;
-
-            ContinueCreateFigureSetting.DataContext = ViewModel.Settings;
-
-            DrawModeMenu.DataContext = ViewModel.Settings;
-
-            DrawOptionMenu.DataContext = ViewModel.Settings;
 
             SnapToolBar.DataContext = ViewModel.Settings;
 

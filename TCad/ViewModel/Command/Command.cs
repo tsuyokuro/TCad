@@ -47,4 +47,35 @@ namespace TCad.ViewModel
             }
         }
     }
+
+    public class SimpleCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            mViewModel.ExecCommand(parameter as string);
+        }
+
+        private PlotterViewModel mViewModel;
+
+        public SimpleCommand(PlotterViewModel vm)
+        {
+            mViewModel = vm;
+            CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
+        }
+
+        public void UpdateCanExecute()
+        {
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, EventArgs.Empty);
+            }
+        }
+    }
 }

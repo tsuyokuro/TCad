@@ -25,6 +25,11 @@ namespace TCad.ViewModel
 {
     public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
+        public enum CmdNames
+        {
+            new_doc,
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public class KeyAction
@@ -140,11 +145,14 @@ namespace TCad.ViewModel
 
         public CurrentFigCommand CurrentFigCmd { get; set; }
 
+        public SimpleCommand SimpleCmd{ get; set; }
+
         public PlotterViewModel(ICadMainWindow mainWindow)
         {
             DOut.plx("in");
 
             CurrentFigCmd = new(this);
+            SimpleCmd = new(this);
 
             mController = new PlotterController(this);
 
