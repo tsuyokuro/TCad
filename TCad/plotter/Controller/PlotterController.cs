@@ -191,12 +191,9 @@ public partial class PlotterController
         return layerInfo;
     }
 
-    public void NotifyStateChange()
+    public void NotifyStateChange(StateChangedParam param)
     {
-        PlotterStateInfo si = default(PlotterStateInfo);
-        si.set(this);
-
-        ViewIF.StateChanged(si);
+        ViewIF.StateChanged(param);
     }
     #endregion Notify
 
@@ -250,7 +247,8 @@ public partial class PlotterController
                 ChangeState(ControllerStates.SELECT);
 
                 UpdateObjectTree(true);
-                NotifyStateChange();
+                NotifyStateChange(
+                    new StateChangedParam(StateChangedType.CREATING_FIG_TYPE_CHANGED));
             }
         }
     }

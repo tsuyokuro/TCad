@@ -241,8 +241,10 @@ public class CreateFigureState : ControllerState
         }
 
         Context.ChangeState(ControllerStates.SELECT);
+
         Ctrl.CreatingFigType = CadFigure.Types.NONE;
-        Ctrl.NotifyStateChange();
+        Ctrl.NotifyStateChange(
+            new StateChangedParam(StateChangedType.CREATING_FIG_TYPE_CHANGED));
     }
 
     private FigCreator FigureCreator
@@ -347,6 +349,12 @@ public class SelectingState : ControllerState
         }
     }
 
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    {
+        Ctrl.NotifyStateChange(
+            new StateChangedParam(StateChangedType.SELECTION_CHANGED));
+    }
+
     public override void Cancel()
     {
     }
@@ -416,6 +424,9 @@ public class RubberBandSelectState : ControllerState
         RubberBandSelect(dc, RubberBandScrnPoint0, pixp);
 
         RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+
+        Ctrl.NotifyStateChange(
+            new StateChangedParam(StateChangedType.SELECTION_CHANGED));
 
         Context.ChangeState(ControllerStates.SELECT);
     }
@@ -612,7 +623,8 @@ public class MeasuringState : ControllerState
         Ctrl.MeasureMode = MeasureModes.NONE;
         Ctrl.MeasureFigureCreator = null;
 
-        Ctrl.NotifyStateChange();
+        Ctrl.NotifyStateChange(
+            new StateChangedParam(StateChangedType.MESURE_MODE_CHANGED));
     }
 
     private FigCreator MeasureFigureCreator

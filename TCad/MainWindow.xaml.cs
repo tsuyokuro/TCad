@@ -99,11 +99,15 @@ namespace TCad
             textBlockXYZ.DataContext = ViewModel.CursorPosVM;
             textBlockXYZ2.DataContext = ViewModel.CursorPosVM;
 
+            FileMenu.DataContext = ViewModel;
+            EditMenu.DataContext = ViewModel;
+            SettingsMenu.DataContext = ViewModel;
+
             ViewModePanel.DataContext = ViewModel.mViewManager;
 
             SnapMenu.DataContext = ViewModel.Settings;
 
-            SettingsMenu.DataContext = ViewModel.Settings;
+            ContinueCreateFigureSetting.DataContext = ViewModel.Settings;
 
             DrawModeMenu.DataContext = ViewModel.Settings;
 

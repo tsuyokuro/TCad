@@ -11,33 +11,24 @@ namespace Plotter.Controller
         public uint CurrentID;
     }
 
-    public struct PlotterStateInfo
+    public enum StateChangedType
     {
-        public SelectModes SelectMode;
+        CURRENT_FIG_CHANGED,
+        CREATING_FIG_TYPE_CHANGED,
+        MESURE_MODE_CHANGED,
+        SELECTION_CHANGED,
+    }
 
-        public CadFigure.Types CreatingFigureType;
-
-        public int CreatingFigurePointCnt;
-
-        public MeasureModes MeasureMode;
-
-        public bool HasSelect;
-
-
-        public void set(PlotterController pc)
+    public struct StateChangedParam
+    {
+        public StateChangedType Type
         {
-            SelectMode = pc.SelectMode;
-            CreatingFigureType = pc.CreatingFigType;
-            CreatingFigurePointCnt = 0;
+            get; set;
+        }
 
-            if (pc.FigureCreator != null)
-            {
-                CreatingFigurePointCnt = pc.FigureCreator.Figure.PointCount;
-            }
-
-            MeasureMode = pc.MeasureMode;
-
-            HasSelect = pc.HasSelect();
+        public StateChangedParam(StateChangedType type)
+        {
+            Type = type;
         }
     }
 

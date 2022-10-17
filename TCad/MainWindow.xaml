@@ -235,7 +235,7 @@
                             Margin="0,0,0,0"
                             VerticalAlignment="Center"
                             WindowChrome.IsHitTestVisibleInChrome="True">
-                            <MenuItem Header="{x:Static properties:Resources.menu_file}">
+                            <MenuItem x:Name ="FileMenu" Header="{x:Static properties:Resources.menu_file}">
                                 <MenuItem
                                     Click="Command_Clicked"
                                     Header="{x:Static properties:Resources.menu_new_doc}"
@@ -269,7 +269,7 @@
                                     Header="{x:Static properties:Resources.menu_doc_settings}"
                                     Tag="doc_setting" />
                             </MenuItem>
-                            <MenuItem Header="{x:Static properties:Resources.menu_edit}">
+                            <MenuItem x:Name ="EditMenu" Header="{x:Static properties:Resources.menu_edit}">
                                 <MenuItem
                                     Click="Command_Clicked"
                                     Header="Undo"
@@ -348,14 +348,13 @@
                                     Click="Command_Clicked"
                                     Header="Select all"
                                     Tag="select_all" />
+
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Set Line Color"
-                                    Tag="set_line_color" />
+                                    Command="{Binding CurrentFigCmd}" CommandParameter="set_line_color"/>
                                 <MenuItem
-                                    Click="Command_Clicked"
                                     Header="Set FIll Color"
-                                    Tag="set_fill_color" />
+                                    Command="{Binding CurrentFigCmd}" CommandParameter="set_fill_color"/>
 
                             </MenuItem>
                             <MenuItem x:Name="SettingsMenu" Header="{x:Static properties:Resources.menu_settings}">
@@ -372,6 +371,7 @@
                                     Header="Move Key settings"
                                     Tag="move_key_settings" />
                                 <MenuItem
+                                    x:Name="ContinueCreateFigureSetting"
                                     Header="{x:Static properties:Resources.menu_continue_create_figure}"
                                     IsCheckable="True"
                                     IsChecked="{Binding ContinueCreateFigure}" />

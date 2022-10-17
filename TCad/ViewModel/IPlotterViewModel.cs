@@ -45,7 +45,7 @@ namespace TCad.ViewModel
         void DrawModeUpdated(DrawTools.DrawMode mode);
 
 
-        void StateChanged(PlotterStateInfo si);
+        void StateChanged(StateChangedParam si);
 
         void LayerListChanged(LayerListInfo layerListInfo);
 
@@ -99,7 +99,7 @@ namespace TCad.ViewModel
         public void Redraw() { }
         public void SetTreeViewPos(int index) { }
         public void ShowContextMenu(MenuInfo menuInfo, int x, int y) { }
-        public void StateChanged(PlotterStateInfo si) { }
+        public void StateChanged(StateChangedParam si) { }
         public void UpdateTreeView(bool remakeTree) { }
     }
 }

@@ -19,6 +19,7 @@ using System.IO;
 using TCad.ScriptEditor;
 using System.Runtime.Versioning;
 using Plotter.Serializer;
+using System.ComponentModel.Design;
 
 namespace TCad.ViewModel
 {
@@ -137,9 +138,13 @@ namespace TCad.ViewModel
             }
         }
 
+        public CurrentFigCommand CurrentFigCmd { get; set; }
+
         public PlotterViewModel(ICadMainWindow mainWindow)
         {
             DOut.plx("in");
+
+            CurrentFigCmd = new(this);
 
             mController = new PlotterController(this);
 
@@ -790,21 +795,27 @@ namespace TCad.ViewModel
             Redraw();
         }
 
-#endregion
+        #endregion
+
 
         // Handle events from PlotterController
         #region Event From PlotterController
 
-        public void StateChanged(PlotterStateInfo si)
+        public void StateChanged(StateChangedParam param)
         {
-            if (CreatingFigureType != si.CreatingFigureType)
+            if (CreatingFigureType != Controller.CreatingFigType)
             {
-                CreatingFigureType = si.CreatingFigureType;
+                CreatingFigureType = Controller.CreatingFigType;
             }
 
-            if (MeasureMode != si.MeasureMode)
+            if (MeasureMode != Controller.MeasureMode)
             {
-                MeasureMode = si.MeasureMode;
+                MeasureMode = Controller.MeasureMode;
+            }
+
+            if (param.Type == StateChangedType.SELECTION_CHANGED)
+            {
+                CurrentFigCmd.UpdateCanExecute();
             }
         }
 
