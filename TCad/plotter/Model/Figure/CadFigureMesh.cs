@@ -149,13 +149,27 @@ namespace Plotter
 
             if (!opt.ForceMeshPen && (!LinePen.IsInvalid))
             {
-                borderPen = new DrawPen(ColorUtil.Mix(LinePen.Color4, brush.Color4, 0.2f), LinePen.Width);
                 edgePen = LinePen;
+                if (edgePen.IsNull)
+                {
+                    borderPen = edgePen;
+                }
+                else
+                {
+                    borderPen = new DrawPen(ColorUtil.Mix(LinePen.Color4, brush.Color4, 0.2f), LinePen.Width);
+                }
             }
             else
             {
-                borderPen = opt.MeshLinePen;
                 edgePen = opt.MeshEdgePen;
+                if (edgePen.IsInvalid)
+                {
+                    borderPen = DrawPen.InvalidPen;
+                }
+                else
+                {
+                    borderPen = new DrawPen(ColorUtil.Mix(edgePen.Color4, brush.Color4, 0.2f), edgePen.Width); ;
+                }
             }
 
             dc.Drawing.DrawHarfEdgeModel(

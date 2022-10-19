@@ -128,7 +128,7 @@ public class DrawOptionSet
         if (SettingsHolder.Settings.DrawMeshEdge)
         {
             Normal.MeshLinePen = DC.GetPen(DrawTools.PEN_MESH_LINE);
-            Normal.MeshEdgePen = DC.GetPen(DrawTools.PEN_DEFAULT_FIGURE);
+            Normal.MeshEdgePen = DC.GetPen(DrawTools.PEN_MESH_EDGE_LINE);
         }
         else
         {

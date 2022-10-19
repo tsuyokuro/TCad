@@ -1165,14 +1165,12 @@ namespace Plotter
 
         public void EnableLight()
         {
-            GL.Enable(EnableCap.Lighting);
-            GL.Enable(EnableCap.Light0);
+            DC.EnableLight();
         }
 
         public void DisableLight()
         {
-            GL.Disable(EnableCap.Lighting);
-            GL.Disable(EnableCap.Light0);
+            DC.DisableLight();
         }
 
         public void DrawBouncingBox(DrawPen pen, MinMax3D mm)

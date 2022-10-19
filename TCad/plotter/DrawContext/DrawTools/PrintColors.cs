@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 
 namespace Plotter
 {
@@ -32,6 +32,7 @@ namespace Plotter
             PenColorTbl[DrawTools.PEN_MEASURE_FIGURE] = Color.Black;
             PenColorTbl[DrawTools.PEN_DIMENTION] = Color.Black;
             PenColorTbl[DrawTools.PEN_MESH_LINE] = Color.Gray;
+            PenColorTbl[DrawTools.PEN_MESH_EDGE_LINE] = Color.Black;
             PenColorTbl[DrawTools.PEN_TEST] = Color.Black;
             PenColorTbl[DrawTools.PEN_NURBS_CTRL_LINE] = Color.Black;
             PenColorTbl[DrawTools.PEN_DRAG_LINE] = Color.Black;

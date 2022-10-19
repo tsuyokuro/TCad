@@ -17,6 +17,11 @@ namespace Plotter
         protected Control ViewCtrl;
 
         Vector4 LightPosition;
+
+        Vector4 SpotLightDirection;
+
+        bool IsSpotLight = true;
+
         Color4 LightAmbient;    // 環境光
         Color4 LightDiffuse;    // 拡散光
         Color4 LightSpecular;   // 鏡面反射光
@@ -68,16 +73,42 @@ namespace Plotter
             LightSpecular = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
             */
 
-            LightPosition = new Vector4(100.0f, 500f, 150.0f, 0.0f);
+            //LightPosition = new Vector4(100.0f, 500f, 150.0f, 0.0f);
+
+            LightPosition = new Vector4(-0.5f, 1f, 1.0f, 0.0f);
+
+            SpotLightDirection = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+
             float v;
-            v = 0.1f;
-            LightAmbient = new Color4(v, v, v, 1.0f);
 
-            v = 0.4f;
-            LightDiffuse = new Color4(v, v, v, 1.0f);
+            if (IsSpotLight)
+            {
+                // 環境光
+                v = 0.2f;
+                LightAmbient = new Color4(v, v, v, 1.0f);
 
-            v = 1.0f;
-            LightSpecular = new Color4(v, v, v, 1.0f);
+                // 拡散光
+                v = 0.8f;
+                LightDiffuse = new Color4(v, v, v, 1.0f);
+
+                // 鏡面光
+                v = 0.1f;
+                LightSpecular = new Color4(v, v, v, 1.0f);
+            }
+            else
+            {
+                // 環境光
+                v = 0.1f;
+                LightAmbient = new Color4(v, v, v, 1.0f);
+
+                // 拡散光
+                v = 0.8f;
+                LightDiffuse = new Color4(v, v, v, 1.0f);
+
+                // 鏡面光
+                v = 0.1f;
+                LightSpecular = new Color4(v, v, v, 1.0f);
+            }
 
 
             MaterialAmbient = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -141,7 +172,15 @@ namespace Plotter
             //法線の正規化
             //GL.Enable(EnableCap.Normalize);
 
-            GL.Light(LightName.Light0, LightParameter.Position, LightPosition);
+            if (IsSpotLight)
+            {
+                GL.Light(LightName.Light0, LightParameter.SpotDirection, SpotLightDirection);
+            }
+            else
+            {
+                GL.Light(LightName.Light0, LightParameter.Position, LightPosition);
+            }
+
             GL.Light(LightName.Light0, LightParameter.Ambient, LightAmbient);
             GL.Light(LightName.Light0, LightParameter.Diffuse, LightDiffuse);
             GL.Light(LightName.Light0, LightParameter.Specular, LightSpecular);
@@ -180,6 +219,18 @@ namespace Plotter
         protected void SetupDrawing()
         {
             mDrawing = new DrawingGL(this);
+        }
+
+        public override void EnableLight()
+        {
+            GL.Enable(EnableCap.Lighting);
+            GL.Enable(EnableCap.Light0);
+        }
+
+        public override void DisableLight()
+        {
+            GL.Disable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Light0);
         }
     }
 }

@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -80,9 +81,14 @@ public static class ColorUtil
 
         Color4 rc = default;
 
-        rc.R = ((c1.R * strengthC1) + (c2.R * strengthC2)) / 2.0f;
-        rc.G = ((c1.G * strengthC1) + (c2.G * strengthC2)) / 2.0f;
-        rc.B = ((c1.B * strengthC1) + (c2.B * strengthC2)) / 2.0f;
+        rc.R = ((c1.R * strengthC1) + (c2.R * strengthC2));
+        rc.G = ((c1.G * strengthC1) + (c2.G * strengthC2));
+        rc.B = ((c1.B * strengthC1) + (c2.B * strengthC2));
+
+        rc.R = Math.Min(1.0f, rc.R);
+        rc.G = Math.Min(1.0f, rc.G);
+        rc.B = Math.Min(1.0f, rc.B);
+
         rc.A = 1.0f;
 
         return rc;

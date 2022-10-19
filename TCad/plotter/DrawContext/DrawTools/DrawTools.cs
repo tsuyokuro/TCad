@@ -42,7 +42,8 @@ namespace Plotter
         public const int PEN_COMPASS_X          = 30;
         public const int PEN_COMPASS_Y          = 31;
         public const int PEN_COMPASS_Z          = 32;
-        public const int PEN_TBL_SIZE           = 33;
+        public const int PEN_MESH_EDGE_LINE     = 33;
+        public const int PEN_TBL_SIZE           = 34;
 
         public const int BRUSH_DEFAULT = 1;
         public const int BRUSH_BACKGROUND = 2;

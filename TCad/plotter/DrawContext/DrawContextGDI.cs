@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -185,6 +185,16 @@ namespace Plotter
         virtual protected void SetupDrawing()
         {
             mDrawing = new DrawingGDI(this);
+        }
+
+        public override void EnableLight()
+        {
+            // NOP
+        }
+
+        public override void DisableLight()
+        {
+            // NOP
         }
     }
 }

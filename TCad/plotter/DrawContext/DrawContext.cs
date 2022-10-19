@@ -366,6 +366,9 @@ namespace Plotter
         public abstract DrawPen GetPen(int idx);
         public abstract DrawBrush GetBrush(int idx);
 
+        public abstract void EnableLight();
+        public abstract void DisableLight();
+
         public virtual void dump()
         {
             ViewOrg.dump("ViewOrg");
