@@ -7,7 +7,7 @@ namespace TCad.ViewModel
 {
     public class CadFileAccessor
     {
-        public static void SaveFile(string fname, PlotterViewModel vm)
+        public static void SaveFile(string fname, IPlotterViewModel vm)
         {
             if ((fname != null && vm.CurrentFileName != null) && fname != vm.CurrentFileName)
             {
@@ -26,7 +26,7 @@ namespace TCad.ViewModel
             }
         }
 
-        public static void LoadFile(string fname, PlotterViewModel vm)
+        public static void LoadFile(string fname, IPlotterViewModel vm)
         {
             if (fname.EndsWith(".txt"))
             {
@@ -97,7 +97,7 @@ namespace TCad.ViewModel
 
         #region "MessagePack file access"
 
-        private static void SaveToMsgPackFile(string fname, PlotterViewModel vm)
+        private static void SaveToMsgPackFile(string fname, IPlotterViewModel vm)
         {
             PlotterController pc = vm.Controller;
 
@@ -110,7 +110,7 @@ namespace TCad.ViewModel
             MpCadFile.Save(fname, cd);
         }
 
-        private static void LoadFromMsgPackFile(string fname, PlotterViewModel vm)
+        private static void LoadFromMsgPackFile(string fname, IPlotterViewModel vm)
         {
             PlotterController pc = vm.Controller;
 
@@ -132,7 +132,7 @@ namespace TCad.ViewModel
         }
 
 
-        private static void SaveToMsgPackJsonFile(string fname, PlotterViewModel vm)
+        private static void SaveToMsgPackJsonFile(string fname, IPlotterViewModel vm)
         {
             PlotterController pc = vm.Controller;
 
@@ -145,7 +145,7 @@ namespace TCad.ViewModel
             MpCadFile.SaveAsJson(fname, cd);
         }
 
-        private static void LoadFromMsgPackJsonFile(string fname, PlotterViewModel vm)
+        private static void LoadFromMsgPackJsonFile(string fname, IPlotterViewModel vm)
         {
             CadData? cd = MpCadFile.LoadJson(fname);
 

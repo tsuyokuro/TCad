@@ -40,6 +40,16 @@ namespace TCad.ViewModel
             get;
         }
 
+        SettingsVeiwModel Settings
+        {
+            get;
+        }
+
+        ViewManager ViewManager
+        {
+            get;
+        }
+
         void Redraw();
 
         void DrawModeUpdated(DrawTools.DrawMode mode);
@@ -69,6 +79,7 @@ namespace TCad.ViewModel
 
         void ShowContextMenu(MenuInfo menuInfo, int x, int y);
 
+        void SetWorldScale(double scale);
 
         public static readonly IPlotterViewModel Dummy = new DummyPlotterViewModel();
     }
@@ -87,6 +98,10 @@ namespace TCad.ViewModel
 
         public ICadMainWindow MainWindow => throw new System.NotImplementedException();
 
+        public ViewManager ViewManager => throw new System.NotImplementedException();
+
+        public SettingsVeiwModel Settings => throw new System.NotImplementedException();
+
         public void ChangeMouseCursor(UITypes.MouseCursorType cursorType) { }
         public void ClosePopupMessage() { }
         public void CursorLocked(bool locked) { }
@@ -98,6 +113,7 @@ namespace TCad.ViewModel
         public void OpenPopupMessage(string text, UITypes.MessageType messageType) { }
         public void Redraw() { }
         public void SetTreeViewPos(int index) { }
+        public void SetWorldScale(double scale) { }
         public void ShowContextMenu(MenuInfo menuInfo, int x, int y) { }
         public void StateChanged(StateChangedParam si) { }
         public void UpdateTreeView(bool remakeTree) { }

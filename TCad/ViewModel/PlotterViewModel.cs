@@ -69,6 +69,10 @@ namespace TCad.ViewModel
         public LayerListViewModel LayerListVM;
 
         public ViewManager mViewManager;
+        public ViewManager ViewManager
+        {
+            get => mViewManager;
+        }
 
         private SelectModes mSelectMode = SelectModes.OBJECT;
         public SelectModes SelectMode
