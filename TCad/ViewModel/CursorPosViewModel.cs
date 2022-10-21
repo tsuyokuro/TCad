@@ -1,82 +1,81 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace TCad.ViewModel
+namespace TCad.ViewModel;
+
+public class CursorPosViewModel : INotifyPropertyChanged
 {
-    public class CursorPosViewModel : INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private string mStrCursorPos = "";
+
+    public string StrCursorPos
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string mStrCursorPos = "";
-
-        public string StrCursorPos
+        set
         {
-            set
-            {
-                mStrCursorPos = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StrCursorPos)));
-            }
-
-            get => mStrCursorPos;
+            mStrCursorPos = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StrCursorPos)));
         }
 
-        private string mStrCursorPos2 = "";
+        get => mStrCursorPos;
+    }
 
-        public string StrCursorPos2
+    private string mStrCursorPos2 = "";
+
+    public string StrCursorPos2
+    {
+        set
         {
-            set
-            {
-                mStrCursorPos2 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StrCursorPos2)));
-            }
-
-            get => mStrCursorPos2;
+            mStrCursorPos2 = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StrCursorPos2)));
         }
 
-        private Vector3d mCursorPos;
+        get => mStrCursorPos2;
+    }
 
-        public Vector3d CursorPos
+    private Vector3d mCursorPos;
+
+    public Vector3d CursorPos
+    {
+        set
         {
-            set
+            if (!String.IsNullOrEmpty(mStrCursorPos) && mCursorPos.Equals(value))
             {
-                if (!String.IsNullOrEmpty(mStrCursorPos) && mCursorPos.Equals(value))
-                {
-                    return;
-                }
-
-                mCursorPos = value;
-
-                String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
-                    mCursorPos.X, mCursorPos.Y, mCursorPos.Z);
-
-                StrCursorPos = s;
+                return;
             }
 
-            get => mCursorPos;
+            mCursorPos = value;
+
+            String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+                mCursorPos.X, mCursorPos.Y, mCursorPos.Z);
+
+            StrCursorPos = s;
         }
 
-        private Vector3d mCursorPos2;
+        get => mCursorPos;
+    }
 
-        public Vector3d CursorPos2
+    private Vector3d mCursorPos2;
+
+    public Vector3d CursorPos2
+    {
+        set
         {
-            set
+            if (!String.IsNullOrEmpty(mStrCursorPos2) && mCursorPos2.Equals(value))
             {
-                if (!String.IsNullOrEmpty(mStrCursorPos2) && mCursorPos2.Equals(value))
-                {
-                    return;
-                }
-
-                mCursorPos2 = value;
-
-                String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
-                    mCursorPos2.X, mCursorPos2.Y, mCursorPos2.Z);
-
-                StrCursorPos2 = s;
+                return;
             }
 
-            get => mCursorPos2;
+            mCursorPos2 = value;
+
+            String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+                mCursorPos2.X, mCursorPos2.Y, mCursorPos2.Z);
+
+            StrCursorPos2 = s;
         }
+
+        get => mCursorPos2;
     }
 }
