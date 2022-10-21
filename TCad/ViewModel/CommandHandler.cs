@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 using System.Xml.Linq;
 using TCad.Controls;
 using TCad.Dialogs;
@@ -47,7 +48,7 @@ public class CommandHandler
     public CommandHandler(IPlotterViewModel vm)
     {
         ViewModel = vm;
-        Controller = Controller;
+        Controller = vm.Controller;
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
@@ -110,6 +111,7 @@ public class CommandHandler
         {
             { "ctrl+z", new KeyAction(Undo , null, "Undo")},
             { "ctrl+y", new KeyAction(Redo , null, "Redo")},
+            { "shift+ctrl+z", new KeyAction(Redo , null, "Redo")},
             { "ctrl+c", new KeyAction(Copy , null, "Copy")},
             { "ctrl+insert", new KeyAction(Copy , null, "Copy")},
             { "ctrl+v", new KeyAction(Paste ,null, "Paste")},
@@ -163,6 +165,51 @@ public class CommandHandler
         }
 
         return true;
+    }
+
+    public bool OnKeyDown(object sender, KeyEventArgs e)
+    {
+        string ks = KeyString(e);
+        return ExecShortcutKey(ks, true);
+    }
+
+    public bool OnKeyUp(object sender, KeyEventArgs e)
+    {
+        string ks = KeyString(e);
+        return ExecShortcutKey(ks, false);
+    }
+
+    private string GetModifyerKeysString()
+    {
+        ModifierKeys modifierKeys = Keyboard.Modifiers;
+
+        string s = "";
+
+        if ((modifierKeys & ModifierKeys.Shift) != ModifierKeys.None)
+        {
+            s += "shift+";
+        }
+
+        if ((modifierKeys & ModifierKeys.Control) != ModifierKeys.None)
+        {
+            s += "ctrl+";
+        }
+
+        if ((modifierKeys & ModifierKeys.Alt) != ModifierKeys.None)
+        {
+            s += "alt+";
+        }
+
+        return s;
+    }
+
+    private string KeyString(KeyEventArgs e)
+    {
+        string ks = GetModifyerKeysString();
+
+        ks += e.Key.ToString().ToLower();
+
+        return ks;
     }
 
     private string GetDisplayKeyString(string s)

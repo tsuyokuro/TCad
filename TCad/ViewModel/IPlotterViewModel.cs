@@ -81,6 +81,8 @@ namespace TCad.ViewModel
 
         void SetWorldScale(double scale);
 
+        void ExecCommand(string cmd);
+
         public static readonly IPlotterViewModel Dummy = new DummyPlotterViewModel();
     }
 
@@ -107,6 +109,8 @@ namespace TCad.ViewModel
         public void CursorLocked(bool locked) { }
         public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type) { }
         public void DrawModeUpdated(DrawTools.DrawMode mode) { }
+
+        public void ExecCommand(string cmd) { }
         public int FindTreeViewItemIndex(uint id) { return -1; }
         public List<string> HelpOfKey(string keyword) { return EmptyList; }
         public void LayerListChanged(LayerListInfo layerListInfo) { }

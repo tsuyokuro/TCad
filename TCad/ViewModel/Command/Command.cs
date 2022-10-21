@@ -31,9 +31,9 @@ namespace TCad.ViewModel
             mViewModel.ExecCommand(parameter as string);
         }
 
-        private PlotterViewModel mViewModel;
+        private IPlotterViewModel mViewModel;
 
-        public CurrentFigCommand(PlotterViewModel vm)
+        public CurrentFigCommand(IPlotterViewModel vm)
         {
             mViewModel = vm;
             CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
@@ -62,9 +62,9 @@ namespace TCad.ViewModel
             mViewModel.ExecCommand(parameter as string);
         }
 
-        private PlotterViewModel mViewModel;
+        private IPlotterViewModel mViewModel;
 
-        public SimpleCommand(PlotterViewModel vm)
+        public SimpleCommand(IPlotterViewModel vm)
         {
             mViewModel = vm;
             CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
