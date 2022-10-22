@@ -6,6 +6,7 @@ using System.Windows.Input;
 using TCad.Controls;
 using Plotter.Controller;
 using Plotter;
+using System.Windows.Forms.Design;
 
 namespace TCad.ViewModel;
 
@@ -40,6 +41,18 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public ViewManager ViewManager
     {
         get => mViewManager;
+    }
+
+    private string mCaptionFileName = "";
+    public string CaptionFileName
+    {
+        set
+        {
+            mCaptionFileName = value ?? "----";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CaptionFileName)));
+        }
+
+        get => mCaptionFileName;
     }
 
     private SelectModes mSelectMode = SelectModes.OBJECT;
@@ -111,7 +124,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         set
         {
             mCurrentFileName = value;
-            ChangeCurrentFileName(mCurrentFileName);
+            CaptionFileName = value;
         }
     }
 
@@ -156,17 +169,6 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
 
     #region handling IMainWindow
-    private void ChangeCurrentFileName(string fname)
-    {
-        if (fname != null)
-        {
-            mMainWindow.SetCurrentFileName(fname);
-        }
-        else
-        {
-            mMainWindow.SetCurrentFileName("");
-        }
-    }
 
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {

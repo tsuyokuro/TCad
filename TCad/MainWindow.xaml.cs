@@ -99,15 +99,14 @@ public partial class MainWindow : Window, ICadMainWindow
         textBlockXYZ.DataContext = ViewModel.CursorPosVM;
         textBlockXYZ2.DataContext = ViewModel.CursorPosVM;
 
-        FileMenu.DataContext = ViewModel;
-        EditMenu.DataContext = ViewModel;
-        SettingsMenu.DataContext = ViewModel;
+        MainMenu.DataContext = ViewModel;
+
         ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
         SnapMenu.DataContext = ViewModel.Settings;
         DrawModeMenu.DataContext = ViewModel.Settings;
         DrawOptionMenu.DataContext = ViewModel.Settings;
-        ScripMenu.DataContext = ViewModel;
-        ExperimentalMenu.DataContext = ViewModel;
+
+        FileName.DataContext = ViewModel;
 
         ViewModePanel.DataContext = ViewModel.mViewManager;
 

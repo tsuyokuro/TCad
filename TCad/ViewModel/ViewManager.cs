@@ -1,5 +1,3 @@
-//#define USE_GDI_VIEW
-
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter;
@@ -25,11 +23,7 @@ public class ViewManager : INotifyPropertyChanged
         get => mPlotterView.DrawContext;
     }
 
-#if USE_GDI_VIEW
-    private PlotterViewGDI PlotterViewGDI1 = null;
-#endif
     private PlotterViewGL PlotterViewGL1 = null;
-
 
     private ViewModes mViewMode = ViewModes.NONE;
     public ViewModes ViewMode
@@ -83,9 +77,6 @@ public class ViewManager : INotifyPropertyChanged
 
     public void DrawModeUpdated(DrawTools.DrawMode mode)
     {
-#if USE_GDI_VIEW
-        PlotterViewGDI1.DrawModeUpdated(mode);
-#endif
         PlotterViewGL1.DrawModeUpdated(mode);
     }
 
@@ -205,90 +196,6 @@ public class ViewManager : INotifyPropertyChanged
         return true;
     }
 
-#if (USE_GDI_VIEW)
-    private bool ChangeViewModeGdi(ViewModes newMode)
-    {
-        if (mViewMode == newMode)
-        {
-            return false;
-        }
-
-        mViewMode = newMode;
-
-        DrawContext currentDC = mPlotterView == null ? null : mPlotterView.DrawContext;
-        DrawContext nextDC = mPlotterView == null ? null : mPlotterView.DrawContext;
-        IPlotterView view = mPlotterView;
-
-        switch (mViewMode)
-        {
-            case ViewModes.FRONT:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    Vector3d.UnitZ * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.BACK:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    -Vector3d.UnitZ * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
-
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.TOP:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    Vector3d.UnitY * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, -Vector3d.UnitZ);
-
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.BOTTOM:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    -Vector3d.UnitY * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitZ);
-
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.RIGHT:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    Vector3d.UnitX * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
-
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.LEFT:
-                view = PlotterViewGDI1;
-                view.DrawContext.SetCamera(
-                    -Vector3d.UnitX * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
-
-                nextDC = view.DrawContext;
-                break;
-
-            case ViewModes.FREE:
-                PlotterViewGL1.EnablePerse(true);
-                view = PlotterViewGL1;
-                nextDC = view.DrawContext;
-                break;
-        }
-
-        if (currentDC != null) currentDC.Deactive();
-        if (nextDC != null) nextDC.Active();
-
-        SetView(view);
-        mContext.Redraw();
-        return true;
-    }
-#endif
     private void SetView(IPlotterView view)
     {
         mPlotterView = view;
