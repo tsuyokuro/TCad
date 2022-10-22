@@ -1,4 +1,4 @@
-﻿
+
 using CadDataTypes;
 using MyCollections;
 using OpenTK.Mathematics;
@@ -158,8 +158,6 @@ namespace HalfEdgeNS
             int i;
             for (i = 0; i < FaceStore.Count; i++)
             {
-                HeFace face = FaceStore[i];
-
                 HalfEdge head = FaceStore[i].Head;
                 HalfEdge c = head;
 
@@ -173,11 +171,6 @@ namespace HalfEdgeNS
                     c = next;
                     if (c == head) break;
                 }
-            }
-
-            for (i = 0; i<NormalStore.Count; i++)
-            {
-                NormalStore[i] = -NormalStore[i];
             }
         }
 

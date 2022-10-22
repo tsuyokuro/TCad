@@ -281,20 +281,23 @@ namespace Plotter
                 vl[i] = v;
             }
 
-            Vector3dList nl = mHeModel.NormalStore;
+            mHeModel.InvertAllFace();
+            mHeModel.RecreateNormals();
 
-            for (int i = 0; i < nl.Count; i++)
-            {
-                Vector3d v = nl[i];
+            //Vector3dList nl = mHeModel.NormalStore;
 
-                Vector3d cp = CadMath.CrossPlane(v, Vector3d.Zero, normal);
+            //for (int i = 0; i < nl.Count; i++)
+            //{
+            //    Vector3d v = nl[i];
 
-                Vector3d d = v - cp;
+            //    Vector3d cp = CadMath.CrossPlane(v, Vector3d.Zero, normal);
 
-                v = cp - d;
+            //    Vector3d d = v - cp;
 
-                nl[i] = v;
-            }
+            //    v = cp - d;
+
+            //    nl[i] = v;
+            //}
         }
 
         public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)

@@ -778,6 +778,8 @@ namespace Plotter
 
         public virtual void FlipWithPlane(Vector3d p0, Vector3d normal)
         {
+            DOut.plx("in");
+
             VertexList vl = PointList;
 
             for (int i = 0; i < vl.Count; i++)
@@ -797,6 +799,8 @@ namespace Plotter
             }
 
             RecalcNormal();
+
+            DOut.plx("out");
         }
 
         #region Serialize
