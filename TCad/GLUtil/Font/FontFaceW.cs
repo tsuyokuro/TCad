@@ -1,208 +1,207 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SharpFont;
 using System.Windows.Resources;
 using System.Windows;
 using System.IO;
 
-namespace GLFont
+namespace GLFont;
+
+public class FontFaceW
 {
-    public class FontFaceW
+    private Library mLib;
+
+    private Face FontFace;
+
+    private float Size;
+
+    private Dictionary<char, FontTex> Cache = new Dictionary<char, FontTex>();
+
+    private FontFaceW()
     {
-        private Library mLib;
+        mLib = new Library();
+        Size = 8.25f;
+    }
 
-        private Face FontFace;
+    private void SetFont(string filename, int face_index = 0)
+    {
+        FontFace = new Face(mLib, filename, face_index);
+        SetSize(this.Size);
 
-        private float Size;
+        Cache.Clear();
+    }
 
-        private Dictionary<char, FontTex> Cache = new Dictionary<char, FontTex>();
+    private void SetFont(byte[] data, int face_index = 0)
+    {
+        FontFace = new Face(mLib, data, face_index);
+        SetSize(this.Size);
 
-        private FontFaceW()
+        Cache.Clear();
+    }
+
+    // url e.g. "/Fonts/mplus-1m-thin.ttf"
+    private void SetResourceFont(string url, int face_index = 0)
+    {
+        Uri fileUri = new Uri(url, UriKind.Relative);
+        StreamResourceInfo info = Application.GetResourceStream(fileUri);
+        Stream stream = info.Stream;
+
+        long len = stream.Length;
+
+        byte[] data = new byte[len];
+
+        int read = stream.Read(data, 0, (int)len);
+
+        SetFont(data, face_index);
+    }
+
+    private void SetSize(float size)
+    {
+        Size = size;
+        if (FontFace != null)
         {
-            mLib = new Library();
-            Size = 8.25f;
+            FontFace.SetCharSize(0, size, 0, 96);
         }
 
-        private void SetFont(string filename, int face_index = 0)
+        Cache.Clear();
+    }
+
+    public FontTex CreateTexture(char c)
+    {
+        FontTex ft;
+
+        if (Cache.TryGetValue(c, out ft))
         {
-            FontFace = new Face(mLib, filename, face_index);
-            SetSize(this.Size);
-
-            Cache.Clear();
-        }
-
-        private void SetFont(byte[] data, int face_index = 0)
-        {
-            FontFace = new Face(mLib, data, face_index);
-            SetSize(this.Size);
-
-            Cache.Clear();
-        }
-
-        // url e.g. "/Fonts/mplus-1m-thin.ttf"
-        private void SetResourceFont(string url, int face_index = 0)
-        {
-            Uri fileUri = new Uri(url, UriKind.Relative);
-            StreamResourceInfo info = Application.GetResourceStream(fileUri);
-            Stream stream = info.Stream;
-
-            long len = stream.Length;
-
-            byte[] data = new byte[len];
-
-            int read = stream.Read(data, 0, (int)len);
-
-            SetFont(data, face_index);
-        }
-
-        private void SetSize(float size)
-        {
-            Size = size;
-            if (FontFace != null)
-            {
-                FontFace.SetCharSize(0, size, 0, 96);
-            }
-
-            Cache.Clear();
-        }
-
-        public FontTex CreateTexture(char c)
-        {
-            FontTex ft;
-
-            if (Cache.TryGetValue(c, out ft))
-            {
-                return ft;
-            }
-
-            uint glyphIndex = FontFace.GetCharIndex(c);
-            FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
-            FontFace.Glyph.RenderGlyph(RenderMode.Light);
-            FTBitmap ftbmp = FontFace.Glyph.Bitmap;
-
-            int fontW = (int)((float)FontFace.Glyph.Metrics.HorizontalAdvance);
-            int fontH = (int)((float)FontFace.Glyph.Metrics.VerticalAdvance);
-
-            if (ftbmp.Width > 0 && ftbmp.Rows > 0)
-            {
-                ft = FontTex.Create(ftbmp);
-
-                ft.PosX = (int)((float)FontFace.Glyph.Metrics.HorizontalBearingX);
-                if (ft.PosX < 0)
-                {
-                    ft.PosX = 0;
-                };
-
-                float top = (float)FontFace.Size.Metrics.Ascender;
-                float bottom = (float)(FontFace.Glyph.Metrics.Height - FontFace.Glyph.Metrics.HorizontalBearingY);
-
-                int y = (int)(top - (float)FontFace.Glyph.Metrics.HorizontalBearingY);
-
-                ft.PosY = y;
-
-                ft.FontW = Math.Max(fontW, ft.ImgW);
-                ft.FontH = (int)(top + bottom);
-            }
-            else
-            {
-                ft = FontTex.CreateSpace((int)FontFace.Glyph.Advance.X, (int)FontFace.Glyph.Advance.Y);
-                ft.FontW = fontW;
-                ft.FontH = fontH;
-            }
-
-            Cache.Add(c, ft);
-
-            //ft.dump_b();
-            //Console.WriteLine();
-
             return ft;
         }
 
-        public FontTex CreateTexture(string s)
+        uint glyphIndex = FontFace.GetCharIndex(c);
+        FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+        FontFace.Glyph.RenderGlyph(RenderMode.Light);
+        FTBitmap ftbmp = FontFace.Glyph.Bitmap;
+
+        int fontW = (int)((float)FontFace.Glyph.Metrics.HorizontalAdvance);
+        int fontH = (int)((float)FontFace.Glyph.Metrics.VerticalAdvance);
+
+        if (ftbmp.Width > 0 && ftbmp.Rows > 0)
         {
-            List<FontTex> ta = new List<FontTex>();
+            ft = FontTex.Create(ftbmp);
 
-            int fw = 0;
-            int fh = 0;
-
-            foreach (char c in s)
+            ft.PosX = (int)((float)FontFace.Glyph.Metrics.HorizontalBearingX);
+            if (ft.PosX < 0)
             {
-                FontTex ft = CreateTexture(c);
+                ft.PosX = 0;
+            };
 
-                fw += ft.FontW;
-                if (ft.FontH > fh)
-                {
-                    fh = ft.FontH;
-                }
+            float top = (float)FontFace.Size.Metrics.Ascender;
+            float bottom = (float)(FontFace.Glyph.Metrics.Height - FontFace.Glyph.Metrics.HorizontalBearingY);
 
-                ta.Add(ft);
-            }
+            int y = (int)(top - (float)FontFace.Glyph.Metrics.HorizontalBearingY);
 
-            FontTex mft = new FontTex(fw, fh);
+            ft.PosY = y;
 
-            int x = 0;
-            int y = 0;
-
-            foreach (FontTex ft in ta)
-            {
-                mft.Paste(x + ft.PosX, y + ft.PosY, ft);
-                x += ft.FontW;
-            }
-
-            //mft.dump_b();
-            //Console.WriteLine("");
-
-            return mft;
+            ft.FontW = Math.Max(fontW, ft.ImgW);
+            ft.FontH = (int)(top + bottom);
+        }
+        else
+        {
+            ft = FontTex.CreateSpace((int)FontFace.Glyph.Advance.X, (int)FontFace.Glyph.Advance.Y);
+            ft.FontW = fontW;
+            ft.FontH = fontH;
         }
 
-        public class Provider
+        Cache.Add(c, ft);
+
+        //ft.dump_b();
+        //Console.WriteLine();
+
+        return ft;
+    }
+
+    public FontTex CreateTexture(string s)
+    {
+        List<FontTex> ta = new List<FontTex>();
+
+        int fw = 0;
+        int fh = 0;
+
+        foreach (char c in s)
         {
-            private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
+            FontTex ft = CreateTexture(c);
 
-            public static FontFaceW GetFromFile(string fname, float size)
+            fw += ft.FontW;
+            if (ft.FontH > fh)
             {
-                string key = GetKey(fname, size);
+                fh = ft.FontH;
+            }
 
-                FontFaceW face;
+            ta.Add(ft);
+        }
 
-                if (FaceMap.TryGetValue(key, out face)) {
-                    return face;
-                }
+        FontTex mft = new FontTex(fw, fh);
 
-                face = new FontFaceW();
-                face.SetFont(fname);
-                face.SetSize(size);
+        int x = 0;
+        int y = 0;
 
-                FaceMap.Add(key, face);
+        foreach (FontTex ft in ta)
+        {
+            mft.Paste(x + ft.PosX, y + ft.PosY, ft);
+            x += ft.FontW;
+        }
 
+        //mft.dump_b();
+        //Console.WriteLine("");
+
+        return mft;
+    }
+
+    public class Provider
+    {
+        private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
+
+        public static FontFaceW GetFromFile(string fname, float size)
+        {
+            string key = GetKey(fname, size);
+
+            FontFaceW face;
+
+            if (FaceMap.TryGetValue(key, out face)) {
                 return face;
             }
 
-            public static FontFaceW GetFromResource(string uri, float size)
+            face = new FontFaceW();
+            face.SetFont(fname);
+            face.SetSize(size);
+
+            FaceMap.Add(key, face);
+
+            return face;
+        }
+
+        public static FontFaceW GetFromResource(string uri, float size)
+        {
+            string key = GetKey(uri, size);
+
+            FontFaceW face;
+
+            if (FaceMap.TryGetValue(key, out face))
             {
-                string key = GetKey(uri, size);
-
-                FontFaceW face;
-
-                if (FaceMap.TryGetValue(key, out face))
-                {
-                    return face;
-                }
-
-                face = new FontFaceW();
-                face.SetResourceFont(uri);
-                face.SetSize(size);
-
-                FaceMap.Add(key, face);
-
                 return face;
             }
 
+            face = new FontFaceW();
+            face.SetResourceFont(uri);
+            face.SetSize(size);
 
-            private static string GetKey(string name, float size)
-            {
-                return name + "_" + size.ToString();
-            }
+            FaceMap.Add(key, face);
+
+            return face;
+        }
+
+
+        private static string GetKey(string name, float size)
+        {
+            return name + "_" + size.ToString();
         }
     }
 }

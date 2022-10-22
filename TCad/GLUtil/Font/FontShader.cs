@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GLFont
+namespace GLFont;
+
+public class FontShader
 {
-    public class FontShader
-    {
-        public static string VertexShaderSrc =
+    public static string VertexShaderSrc =
 @"
 void main(void)
 {
@@ -22,7 +22,7 @@ void main(void)
 }
 ";
 
-        public static string FragmentShaderSrc =
+    public static string FragmentShaderSrc =
 @"
 uniform sampler2D tex;
 
@@ -35,88 +35,87 @@ void main()
 }
 ";
 
-        private int ShaderProgram = -1;
+    private int ShaderProgram = -1;
 
-        private static FontShader sInstance;
+    private static FontShader sInstance;
 
-        public static FontShader GetInstance()
+    public static FontShader GetInstance()
+    {
+        if (sInstance == null)
         {
-            if (sInstance == null)
-            {
-                sInstance = new FontShader();
-                sInstance.SetupShader();
-            }
-
-            return sInstance;
+            sInstance = new FontShader();
+            sInstance.SetupShader();
         }
 
-        private void SetupShader()
+        return sInstance;
+    }
+
+    private void SetupShader()
+    {
+        string vertexSrc = VertexShaderSrc;
+        string fragmentSrc = FragmentShaderSrc;
+
+        int status;
+
+        int vertexShader = GL.CreateShader(ShaderType.VertexShader);
+        GL.ShaderSource(vertexShader, vertexSrc);
+        GL.CompileShader(vertexShader);
+        GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out status);
+        if (status == 0)
         {
-            string vertexSrc = VertexShaderSrc;
-            string fragmentSrc = FragmentShaderSrc;
-
-            int status;
-
-            int vertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShader, vertexSrc);
-            GL.CompileShader(vertexShader);
-            GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out status);
-            if (status == 0)
-            {
-                throw new ApplicationException(GL.GetShaderInfoLog(vertexShader));
-            }
-
-            int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, fragmentSrc);
-            GL.CompileShader(fragmentShader);
-            GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out status);
-            if (status == 0)
-            {
-                throw new ApplicationException(GL.GetShaderInfoLog(fragmentShader));
-            }
-
-            int shaderProgram = GL.CreateProgram();
-
-            //各シェーダオブジェクトをシェーダプログラムへ登録
-            GL.AttachShader(shaderProgram, vertexShader);
-            GL.AttachShader(shaderProgram, fragmentShader);
-
-            //不要になった各シェーダオブジェクトを削除
-            GL.DeleteShader(vertexShader);
-            GL.DeleteShader(fragmentShader);
-
-            //シェーダプログラムのリンク
-            GL.LinkProgram(shaderProgram);
-
-            GL.GetProgram(shaderProgram, GetProgramParameterName.LinkStatus, out status);
-
-            //シェーダプログラムのリンクのチェック
-            if (status == 0)
-            {
-                throw new ApplicationException(GL.GetProgramInfoLog(shaderProgram));
-            }
-
-            ShaderProgram = shaderProgram;
+            throw new ApplicationException(GL.GetShaderInfoLog(vertexShader));
         }
 
-        public void Dispose()
+        int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+        GL.ShaderSource(fragmentShader, fragmentSrc);
+        GL.CompileShader(fragmentShader);
+        GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out status);
+        if (status == 0)
         {
-            if (ShaderProgram != -1)
-            {
-                GL.DeleteProgram(ShaderProgram);
-            }
+            throw new ApplicationException(GL.GetShaderInfoLog(fragmentShader));
         }
 
-        public void Start(int texUnitNumber)
+        int shaderProgram = GL.CreateProgram();
+
+        //各シェーダオブジェクトをシェーダプログラムへ登録
+        GL.AttachShader(shaderProgram, vertexShader);
+        GL.AttachShader(shaderProgram, fragmentShader);
+
+        //不要になった各シェーダオブジェクトを削除
+        GL.DeleteShader(vertexShader);
+        GL.DeleteShader(fragmentShader);
+
+        //シェーダプログラムのリンク
+        GL.LinkProgram(shaderProgram);
+
+        GL.GetProgram(shaderProgram, GetProgramParameterName.LinkStatus, out status);
+
+        //シェーダプログラムのリンクのチェック
+        if (status == 0)
         {
-            GL.UseProgram(ShaderProgram);
-            int texLoc = GL.GetUniformLocation(ShaderProgram, "tex");
-            GL.Uniform1(texLoc, texUnitNumber);
+            throw new ApplicationException(GL.GetProgramInfoLog(shaderProgram));
         }
 
-        public void End()
+        ShaderProgram = shaderProgram;
+    }
+
+    public void Dispose()
+    {
+        if (ShaderProgram != -1)
         {
-            GL.UseProgram(0);
+            GL.DeleteProgram(ShaderProgram);
         }
+    }
+
+    public void Start(int texUnitNumber)
+    {
+        GL.UseProgram(ShaderProgram);
+        int texLoc = GL.GetUniformLocation(ShaderProgram, "tex");
+        GL.Uniform1(texLoc, texUnitNumber);
+    }
+
+    public void End()
+    {
+        GL.UseProgram(0);
     }
 }

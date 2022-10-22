@@ -12,412 +12,411 @@ using Plotter.Controller;
 using TCad.ViewModel;
 using TCad.Util;
 
-namespace Plotter
+namespace Plotter;
+
+public partial class PlotterViewGDI : PictureBox, IPlotterView, IPlotterViewForDC
 {
-    public partial class PlotterViewGDI : PictureBox, IPlotterView, IPlotterViewForDC
+    private PlotterController mController = null;
+
+    private IPlotterViewModel mVM;
+
+    private bool firstSizeChange = true;
+
+    ContextMenuEx mCurrentContextMenu = null;
+    ContextMenuEx mContextMenu = null;
+
+    MyEventHandler mEventSequencer;
+
+    private DrawContextGDI mDrawContext = null;
+
+    private Cursor PointCursor;
+
+    public DrawContext DrawContext => mDrawContext;
+
+    public Control FormsControl => this;
+
+    public static PlotterViewGDI Create(IPlotterViewModel vm)
     {
-        private PlotterController mController = null;
+        return new PlotterViewGDI(vm);
+    }
 
-        private IPlotterViewModel mVM;
+    private PlotterViewGDI(IPlotterViewModel vm)
+    {
+        mVM = vm;
 
-        private bool firstSizeChange = true;
+        mController = vm.Controller;
 
-        ContextMenuEx mCurrentContextMenu = null;
-        ContextMenuEx mContextMenu = null;
+        mDrawContext = new DrawContextGDI(this);
+        mDrawContext.SetupTools(DrawTools.DrawMode.DARK);
 
-        MyEventHandler mEventSequencer;
+        SetupContextMenu();
 
-        private DrawContextGDI mDrawContext = null;
+        DoubleBuffered = false;
 
-        private Cursor PointCursor;
+        SizeChanged += onSizeChanged;
 
-        public DrawContext DrawContext => mDrawContext;
+        mEventSequencer = new MyEventHandler(this, 100);
 
-        public Control FormsControl => this;
+        mEventSequencer.Start();
 
-        public static PlotterViewGDI Create(IPlotterViewModel vm)
+        mDrawContext.PlotterView = this;
+
+        MouseMove += OnMouseMove;
+        MouseDown += OnMouseDown;
+        MouseUp += OnMouseUp;
+        MouseWheel += OnMouseWheel;
+
+        Disposed += OnDisposed;
+
+        SetupCursor();
+    }
+
+    private void OnDisposed(object sender, EventArgs e)
+    {
+        mDrawContext.Dispose();
+    }
+
+    protected void SetupCursor()
+    {
+        StreamResourceInfo si = System.Windows.Application.GetResourceStream(
+            new Uri("/TCad;component/Resources/Cursors/dot.cur", UriKind.Relative));
+
+        PointCursor = new Cursor(si.Stream);
+
+        base.Cursor = PointCursor;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        mDrawContext.Dispose();
+
+        base.Dispose(disposing);
+    }
+
+    public void SetWorldScale(double scale)
+    {
+        mDrawContext.WorldScale = scale;
+    }
+
+    override protected void OnPaintBackground(PaintEventArgs pevent)
+    {
+        mController.Redraw();
+    }
+
+    private void onSizeChanged(object sender, System.EventArgs e)
+    {
+        if (Width > 0 && Height > 0)
         {
-            return new PlotterViewGDI(vm);
-        }
+            mDrawContext.SetViewSize(Width, Height);
 
-        private PlotterViewGDI(IPlotterViewModel vm)
-        {
-            mVM = vm;
-
-            mController = vm.Controller;
-
-            mDrawContext = new DrawContextGDI(this);
-            mDrawContext.SetupTools(DrawTools.DrawMode.DARK);
-
-            SetupContextMenu();
-
-            DoubleBuffered = false;
-
-            SizeChanged += onSizeChanged;
-
-            mEventSequencer = new MyEventHandler(this, 100);
-
-            mEventSequencer.Start();
-
-            mDrawContext.PlotterView = this;
-
-            MouseMove += OnMouseMove;
-            MouseDown += OnMouseDown;
-            MouseUp += OnMouseUp;
-            MouseWheel += OnMouseWheel;
-
-            Disposed += OnDisposed;
-
-            SetupCursor();
-        }
-
-        private void OnDisposed(object sender, EventArgs e)
-        {
-            mDrawContext.Dispose();
-        }
-
-        protected void SetupCursor()
-        {
-            StreamResourceInfo si = System.Windows.Application.GetResourceStream(
-                new Uri("/TCad;component/Resources/Cursors/dot.cur", UriKind.Relative));
-
-            PointCursor = new Cursor(si.Stream);
-
-            base.Cursor = PointCursor;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            mDrawContext.Dispose();
-
-            base.Dispose(disposing);
-        }
-
-        public void SetWorldScale(double scale)
-        {
-            mDrawContext.WorldScale = scale;
-        }
-
-        override protected void OnPaintBackground(PaintEventArgs pevent)
-        {
-            mController.Redraw();
-        }
-
-        private void onSizeChanged(object sender, System.EventArgs e)
-        {
-            if (Width > 0 && Height > 0)
+            if (firstSizeChange)
             {
-                mDrawContext.SetViewSize(Width, Height);
+                Vector3d org = default;
+                org.X = Width / 2;
+                org.Y = Height / 2;
 
-                if (firstSizeChange)
-                {
-                    Vector3d org = default;
-                    org.X = Width / 2;
-                    org.Y = Height / 2;
+                mDrawContext.SetViewOrg(org);
 
-                    mDrawContext.SetViewOrg(org);
+                //DOut.pl($"{GetType().Name} onSizeChanged firstChange {Width}, {Height}");
 
-                    //DOut.pl($"{GetType().Name} onSizeChanged firstChange {Width}, {Height}");
+                mController.SetCursorWoldPos(Vector3d.Zero);
 
-                    mController.SetCursorWoldPos(Vector3d.Zero);
+                firstSizeChange = false;
+            }
 
-                    firstSizeChange = false;
-                }
+            Redraw();
+        }
+    }
 
-                Redraw();
+    public void PushToFront(DrawContext dc)
+    {
+        //DOut.tpl("PushDraw");
+
+        ThreadUtil.RunOnMainThread(() =>
+        {
+            if (dc == mDrawContext)
+            {
+                //Image = mDrawContext.Image;
+                mDrawContext.Render();
+            }
+        }, true);
+    }
+
+    private void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+#if MOUSE_THREAD
+        // Mouse eventを別スレッドで処理
+        // 未処理のEventは破棄
+        mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_MOVE);
+
+        MyEvent evt = mEventSequencer.ObtainEvent();
+
+        evt.What = MyEventSequencer.MOUSE_MOVE;
+        evt.x = e.X;
+        evt.y = e.Y;
+
+        mEventSequencer.Post(evt);
+#else
+        // Mouse eventを直接処理
+        mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+        Redraw();
+#endif
+    }
+
+    private void OnMouseWheel(object sender, MouseEventArgs e)
+    {
+#if MOUSE_THREAD
+        mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_WHEEL);
+
+        MyEvent evt = mEventSequencer.ObtainEvent();
+
+        evt.What = MyEventSequencer.MOUSE_WHEEL;
+        evt.EventArgs = e;
+
+        mEventSequencer.Post(evt);
+#else
+        // 直接描画
+        mController.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
+        Redraw();
+#endif
+    }
+
+    private void OnMouseDown(Object sender, MouseEventArgs e)
+    {
+        if (mCurrentContextMenu != null)
+        {
+            if (mCurrentContextMenu.Visible)
+            {
+                mCurrentContextMenu.Close();
+                return;
             }
         }
 
-        public void PushToFront(DrawContext dc)
-        {
-            //DOut.tpl("PushDraw");
-
-            ThreadUtil.RunOnMainThread(() =>
-            {
-                if (dc == mDrawContext)
-                {
-                    //Image = mDrawContext.Image;
-                    mDrawContext.Render();
-                }
-            }, true);
-        }
-
-        private void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
 #if MOUSE_THREAD
-            // Mouse eventを別スレッドで処理
-            // 未処理のEventは破棄
-            mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_MOVE);
+        mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_DOWN);
 
-            MyEvent evt = mEventSequencer.ObtainEvent();
+        MyEvent evt = mEventSequencer.ObtainEvent();
 
-            evt.What = MyEventSequencer.MOUSE_MOVE;
-            evt.x = e.X;
-            evt.y = e.Y;
+        evt.What = MyEventSequencer.MOUSE_DOWN;
+        evt.EventArgs = e;
 
-            mEventSequencer.Post(evt);
+        mEventSequencer.Post(evt);
 #else
-            // Mouse eventを直接処理
-            mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
-            Redraw();
+        mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+        Redraw();
 #endif
-        }
+    }
 
-        private void OnMouseWheel(object sender, MouseEventArgs e)
-        {
+    private void OnMouseUp(Object sender, MouseEventArgs e)
+    {
 #if MOUSE_THREAD
-            mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_WHEEL);
+        mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_UP);
 
-            MyEvent evt = mEventSequencer.ObtainEvent();
+        MyEvent evt = mEventSequencer.ObtainEvent();
 
-            evt.What = MyEventSequencer.MOUSE_WHEEL;
-            evt.EventArgs = e;
+        evt.What = MyEventSequencer.MOUSE_UP;
+        evt.EventArgs = e;
 
-            mEventSequencer.Post(evt);
+        mEventSequencer.Post(evt);
 #else
-            // 直接描画
-            mController.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
-            Redraw();
+        mController.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
+        Redraw();
 #endif
-        }
+    }
 
-        private void OnMouseDown(Object sender, MouseEventArgs e)
+    private void SetupContextMenu()
+    {
+        mContextMenu = new ContextMenuEx();
+
+        mContextMenu.StateChanged = (s) =>
         {
-            if (mCurrentContextMenu != null)
-            {
-                if (mCurrentContextMenu.Visible)
-                {
-                    mCurrentContextMenu.Close();
-                    return;
-                }
-            }
-
-#if MOUSE_THREAD
-            mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_DOWN);
-
-            MyEvent evt = mEventSequencer.ObtainEvent();
-
-            evt.What = MyEventSequencer.MOUSE_DOWN;
-            evt.EventArgs = e;
-
-            mEventSequencer.Post(evt);
-#else
-            mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
-            Redraw();
-#endif
-        }
-
-        private void OnMouseUp(Object sender, MouseEventArgs e)
-        {
-#if MOUSE_THREAD
-            mEventSequencer.RemoveAll(MyEventSequencer.MOUSE_UP);
-
-            MyEvent evt = mEventSequencer.ObtainEvent();
-
-            evt.What = MyEventSequencer.MOUSE_UP;
-            evt.EventArgs = e;
-
-            mEventSequencer.Post(evt);
-#else
-            mController.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
-            Redraw();
-#endif
-        }
-
-        private void SetupContextMenu()
-        {
-            mContextMenu = new ContextMenuEx();
-
-            mContextMenu.StateChanged = (s) =>
-            {
-                if (s == ContextMenuEx.State.OPENED)
-                {
-                    base.Cursor = Cursors.Arrow;
-                }
-                else if (s == ContextMenuEx.State.CLOSED)
-                {
-                    base.Cursor = PointCursor;
-                }
-            };
-        }
-
-        public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
-        {
-            ThreadUtil.RunOnMainThread(() => {
-                ShowContextMenuProc(menuInfo, x, y);
-            }, true);
-        }
-
-        private void ShowContextMenuProc(MenuInfo menuInfo, int x, int y)
-        {
-            mContextMenu.Items.Clear();
-
-            foreach (MenuInfo.Item item in menuInfo.Items)
-            {
-                ToolStripMenuItem m = new ToolStripMenuItem(item.Text);
-                m.Tag = item;
-                m.Click += ContextMenueClick;
-
-                mContextMenu.Items.Add(m);
-            }
-
-            mCurrentContextMenu = mContextMenu;
-            mCurrentContextMenu.Show(this, new Point(x, y));
-        }
-
-        private void ContextMenueClick(object sender, System.EventArgs e)
-        {
-            ToolStripMenuItem item = sender as ToolStripMenuItem;
-
-            MenuInfo.Item infoItem = item.Tag as MenuInfo.Item;
-
-            if (infoItem != null)
-            {
-                mController.ContextMenuMan.ContextMenuEvent(infoItem);
-            }
-        }
-
-        public void Redraw()
-        {
-            //DOut.tpl("Redraw");
-
-            // PushDraw is called to redraw
-            // PushDrawが呼ばれて再描画が行われる
-            mController.Redraw();
-        }
-
-        public void CursorLocked(bool locked)
-        {
-            if (locked)
+            if (s == ContextMenuEx.State.OPENED)
             {
                 base.Cursor = Cursors.Arrow;
             }
-            else
+            else if (s == ContextMenuEx.State.CLOSED)
             {
                 base.Cursor = PointCursor;
             }
+        };
+    }
+
+    public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
+    {
+        ThreadUtil.RunOnMainThread(() => {
+            ShowContextMenuProc(menuInfo, x, y);
+        }, true);
+    }
+
+    private void ShowContextMenuProc(MenuInfo menuInfo, int x, int y)
+    {
+        mContextMenu.Items.Clear();
+
+        foreach (MenuInfo.Item item in menuInfo.Items)
+        {
+            ToolStripMenuItem m = new ToolStripMenuItem(item.Text);
+            m.Tag = item;
+            m.Click += ContextMenueClick;
+
+            mContextMenu.Items.Add(m);
         }
 
-        public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
+        mCurrentContextMenu = mContextMenu;
+        mCurrentContextMenu.Show(this, new Point(x, y));
+    }
+
+    private void ContextMenueClick(object sender, System.EventArgs e)
+    {
+        ToolStripMenuItem item = sender as ToolStripMenuItem;
+
+        MenuInfo.Item infoItem = item.Tag as MenuInfo.Item;
+
+        if (infoItem != null)
         {
-            switch (cursorType)
+            mController.ContextMenuMan.ContextMenuEvent(infoItem);
+        }
+    }
+
+    public void Redraw()
+    {
+        //DOut.tpl("Redraw");
+
+        // PushDraw is called to redraw
+        // PushDrawが呼ばれて再描画が行われる
+        mController.Redraw();
+    }
+
+    public void CursorLocked(bool locked)
+    {
+        if (locked)
+        {
+            base.Cursor = Cursors.Arrow;
+        }
+        else
+        {
+            base.Cursor = PointCursor;
+        }
+    }
+
+    public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
+    {
+        switch (cursorType)
+        {
+            case UITypes.MouseCursorType.CROSS:
+                base.Cursor = PointCursor;
+                break;
+            case UITypes.MouseCursorType.NORMAL_ARROW:
+                base.Cursor = Cursors.Arrow;
+                break;
+            case UITypes.MouseCursorType.HAND:
+                base.Cursor = Cursors.Hand;
+                break;
+        }
+    }
+
+    public void DrawModeUpdated(DrawTools.DrawMode mode)
+    {
+        if (mDrawContext != null)
+        {
+            mDrawContext.SetupTools(mode);
+        }
+    }
+
+    public void GLMakeCurrent()
+    {
+        // NOP
+    }
+
+    class MyEvent : EventHandlerEvent
+    {
+        public MouseEventArgs EventArgs = null;
+        public int x = 0;
+        public int y = 0;
+    }
+
+    class MyEventHandler : TCad.Util.EventHandler<MyEvent>
+    {
+        public const int MOUSE_MOVE = 1;
+        public const int MOUSE_WHEEL = 2;
+        public const int MOUSE_DOWN = 3;
+        public const int MOUSE_UP = 4;
+
+        private PlotterViewGDI mPlotterView;
+
+        public MyEventHandler(PlotterViewGDI view, int queueSize) : base(queueSize)
+        {
+            mPlotterView = view;
+        }
+
+        public override void HandleEvent(MyEvent msg)
+        {
+            if (msg.What == MOUSE_MOVE)
             {
-                case UITypes.MouseCursorType.CROSS:
-                    base.Cursor = PointCursor;
-                    break;
-                case UITypes.MouseCursorType.NORMAL_ARROW:
-                    base.Cursor = Cursors.Arrow;
-                    break;
-                case UITypes.MouseCursorType.HAND:
-                    base.Cursor = Cursors.Hand;
-                    break;
+                HandleMouseMove(msg.x, msg.y);
+            }
+            else if (msg.What == MOUSE_WHEEL)
+            {
+                HandleMouseWheel(msg.EventArgs);
+            }
+            else if (msg.What == MOUSE_DOWN)
+            {
+                HandleMouseDown(msg.EventArgs);
+            }
+            else if (msg.What == MOUSE_UP)
+            {
+                HandleMouseUp(msg.EventArgs);
             }
         }
 
-        public void DrawModeUpdated(DrawTools.DrawMode mode)
+        public void HandleMouseMove(int x, int y)
         {
-            if (mDrawContext != null)
+            try
             {
-                mDrawContext.SetupTools(mode);
+                mPlotterView.mController.Mouse.MouseMove(mPlotterView.mDrawContext, x, y);
+                mPlotterView.Redraw();
+            }
+            catch (Exception ex)
+            {
+                App.ThrowException(ex);
             }
         }
 
-        public void GLMakeCurrent()
+        public void HandleMouseWheel(MouseEventArgs e)
         {
-            // NOP
+            try
+            {
+                mPlotterView.mController.Mouse.MouseWheel(mPlotterView.mDrawContext, e.X, e.Y, e.Delta);
+                mPlotterView.Redraw();
+            }
+            catch (Exception ex)
+            {
+                App.ThrowException(ex);
+            }
         }
 
-        class MyEvent : EventHandlerEvent
+        public void HandleMouseDown(MouseEventArgs e)
         {
-            public MouseEventArgs EventArgs = null;
-            public int x = 0;
-            public int y = 0;
+            try
+            {
+                mPlotterView.mController.Mouse.MouseDown(mPlotterView.mDrawContext, e.Button, e.X, e.Y);
+                mPlotterView.Redraw();
+            }
+            catch (Exception ex)
+            {
+                App.ThrowException(ex);
+            }
         }
 
-        class MyEventHandler : TCad.Util.EventHandler<MyEvent>
+        public void HandleMouseUp(MouseEventArgs e)
         {
-            public const int MOUSE_MOVE = 1;
-            public const int MOUSE_WHEEL = 2;
-            public const int MOUSE_DOWN = 3;
-            public const int MOUSE_UP = 4;
-
-            private PlotterViewGDI mPlotterView;
-
-            public MyEventHandler(PlotterViewGDI view, int queueSize) : base(queueSize)
+            try
             {
-                mPlotterView = view;
+                mPlotterView.mController.Mouse.MouseUp(mPlotterView.mDrawContext, e.Button, e.X, e.Y);
+                mPlotterView.Redraw();
             }
-
-            public override void HandleEvent(MyEvent msg)
+            catch (Exception ex)
             {
-                if (msg.What == MOUSE_MOVE)
-                {
-                    HandleMouseMove(msg.x, msg.y);
-                }
-                else if (msg.What == MOUSE_WHEEL)
-                {
-                    HandleMouseWheel(msg.EventArgs);
-                }
-                else if (msg.What == MOUSE_DOWN)
-                {
-                    HandleMouseDown(msg.EventArgs);
-                }
-                else if (msg.What == MOUSE_UP)
-                {
-                    HandleMouseUp(msg.EventArgs);
-                }
-            }
-
-            public void HandleMouseMove(int x, int y)
-            {
-                try
-                {
-                    mPlotterView.mController.Mouse.MouseMove(mPlotterView.mDrawContext, x, y);
-                    mPlotterView.Redraw();
-                }
-                catch (Exception ex)
-                {
-                    App.ThrowException(ex);
-                }
-            }
-
-            public void HandleMouseWheel(MouseEventArgs e)
-            {
-                try
-                {
-                    mPlotterView.mController.Mouse.MouseWheel(mPlotterView.mDrawContext, e.X, e.Y, e.Delta);
-                    mPlotterView.Redraw();
-                }
-                catch (Exception ex)
-                {
-                    App.ThrowException(ex);
-                }
-            }
-
-            public void HandleMouseDown(MouseEventArgs e)
-            {
-                try
-                {
-                    mPlotterView.mController.Mouse.MouseDown(mPlotterView.mDrawContext, e.Button, e.X, e.Y);
-                    mPlotterView.Redraw();
-                }
-                catch (Exception ex)
-                {
-                    App.ThrowException(ex);
-                }
-            }
-
-            public void HandleMouseUp(MouseEventArgs e)
-            {
-                try
-                {
-                    mPlotterView.mController.Mouse.MouseUp(mPlotterView.mDrawContext, e.Button, e.X, e.Y);
-                    mPlotterView.Redraw();
-                }
-                catch (Exception ex)
-                {
-                    App.ThrowException(ex);
-                }
+                App.ThrowException(ex);
             }
         }
     }

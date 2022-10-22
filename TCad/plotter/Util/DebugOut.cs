@@ -2,106 +2,105 @@ using System;
 using System.Security.Cryptography;
 using System.Threading;
 
-namespace Plotter
+namespace Plotter;
+
+public static class DOut
 {
-    public static class DOut
+    public static ulong PutCount = 0;
+
+    public static int mIndent = 0;
+    public static int IndentUnit = 2;
+
+    public static String space = "";
+
+    public static Action<string> Print = (s)=> { };
+    public static Action<string> PrintLn = (s)=> { };
+
+    public static Mutex Lock = new Mutex();
+
+    public static int Indent
     {
-        public static ulong PutCount = 0;
-
-        public static int mIndent = 0;
-        public static int IndentUnit = 2;
-
-        public static String space = "";
-
-        public static Action<string> Print = (s)=> { };
-        public static Action<string> PrintLn = (s)=> { };
-
-        public static Mutex Lock = new Mutex();
-
-        public static int Indent
+        set
         {
-            set
-            {
-                mIndent = value;
-                space = new string(' ', mIndent * IndentUnit);
-            }
-
-            get
-            {
-                return mIndent;
-            }
+            mIndent = value;
+            space = new string(' ', mIndent * IndentUnit);
         }
 
-        public static void reset()
+        get
         {
-            Begin();
-            mIndent = 0;
-            IndentUnit = 2;
-            space = "";
-            End();
+            return mIndent;
         }
+    }
 
-        public static void Begin()
-        {
-            Lock.WaitOne();
-        }
+    public static void reset()
+    {
+        Begin();
+        mIndent = 0;
+        IndentUnit = 2;
+        space = "";
+        End();
+    }
 
-        public static void End()
-        {
-            Lock.ReleaseMutex();
-        }
+    public static void Begin()
+    {
+        Lock.WaitOne();
+    }
 
-        public static void printIndent()
-        {
-            p(space);
-        }
+    public static void End()
+    {
+        Lock.ReleaseMutex();
+    }
 
-        // Print without new line
-        public static void p(String s)
-        {
-            Begin();
-            PutCount++;
-            Print(s);
-            End();
-        }
+    public static void printIndent()
+    {
+        p(space);
+    }
 
-        // Print with new line
-        public static void pl(String s)
-        {
-            Begin();
-            PutCount++;
-            PrintLn(space + s);
-            End();
-        }
+    // Print without new line
+    public static void p(String s)
+    {
+        Begin();
+        PutCount++;
+        Print(s);
+        End();
+    }
 
-        // Print with new line
-        public static void tpl(String s)
-        {
-            DateTime dt = DateTime.Now;
+    // Print with new line
+    public static void pl(String s)
+    {
+        Begin();
+        PutCount++;
+        PrintLn(space + s);
+        End();
+    }
 
-            int tid = Thread.CurrentThread.ManagedThreadId;
+    // Print with new line
+    public static void tpl(String s)
+    {
+        DateTime dt = DateTime.Now;
 
-            Begin();
-            PutCount++;
-            PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " + space + s);
-            End();
-        }
+        int tid = Thread.CurrentThread.ManagedThreadId;
 
-        public static void plx(String s)
-        {
-            System.Diagnostics.StackFrame stackFrame = new System.Diagnostics.StackFrame(1);
+        Begin();
+        PutCount++;
+        PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " + space + s);
+        End();
+    }
 
-            string method = stackFrame.GetMethod().Name;
-            string klass = stackFrame.GetMethod().ReflectedType.Name;
+    public static void plx(String s)
+    {
+        System.Diagnostics.StackFrame stackFrame = new System.Diagnostics.StackFrame(1);
 
-            DateTime dt = DateTime.Now;
-            int tid = Thread.CurrentThread.ManagedThreadId;
+        string method = stackFrame.GetMethod().Name;
+        string klass = stackFrame.GetMethod().ReflectedType.Name;
 
-            Begin();
-            PutCount++;
-            PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " +
-                space + klass + "," + method + " " + s);
-            End();
-        }
+        DateTime dt = DateTime.Now;
+        int tid = Thread.CurrentThread.ManagedThreadId;
+
+        Begin();
+        PutCount++;
+        PrintLn(dt.ToString("HH:mm:ss.fff") + " " + tid + " " +
+            space + klass + "," + method + " " + s);
+        End();
     }
 }

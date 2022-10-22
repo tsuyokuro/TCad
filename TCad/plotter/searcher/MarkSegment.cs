@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,136 +6,134 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace Plotter
+namespace Plotter;
+
+public struct MarkSegment
 {
+    public FigureSegment FigSeg;
 
-    public struct MarkSegment
+    public CadFigure Figure
     {
-        public FigureSegment FigSeg;
-
-        public CadFigure Figure
+        get
         {
-            get
-            {
-                return FigSeg.Figure;
-            }
+            return FigSeg.Figure;
         }
+    }
 
-        public uint FigureID
+    public uint FigureID
+    {
+        get
         {
-            get
-            {
-                return FigSeg.FigureID;
-            }
+            return FigSeg.FigureID;
         }
+    }
 
-        public int PtIndexA
+    public int PtIndexA
+    {
+        get
         {
-            get
-            {
-                return FigSeg.Index0;
-            }
+            return FigSeg.Index0;
         }
+    }
 
-        public CadVertex pA
+    public CadVertex pA
+    {
+        get
         {
-            get
-            {
-                return FigSeg.Point0;
-            }
+            return FigSeg.Point0;
         }
+    }
 
-        public int PtIndexB
+    public int PtIndexB
+    {
+        get
         {
-            get
-            {
-                return FigSeg.Index1;
-            }
+            return FigSeg.Index1;
         }
+    }
 
-        public CadVertex pB
+    public CadVertex pB
+    {
+        get
         {
-            get
-            {
-                return FigSeg.Point1;
-            }
+            return FigSeg.Point1;
         }
+    }
 
 
-        public CadLayer Layer;
+    public CadLayer Layer;
 
-        public uint LayerID
+    public uint LayerID
+    {
+        get
         {
-            get
+            if (Layer == null)
             {
-                if (Layer == null)
-                {
-                    return 0;
-                }
-
-                return Layer.ID;
+                return 0;
             }
+
+            return Layer.ID;
         }
+    }
 
-        public Vector3d CrossPoint;
+    public Vector3d CrossPoint;
 
-        public Vector3d CrossPointScrn;
+    public Vector3d CrossPointScrn;
 
-        public Vector3d CenterPoint
+    public Vector3d CenterPoint
+    {
+        get
         {
-            get
-            {
-                return CadMath.CenterPoint(FigSeg.Point0.vector, FigSeg.Point1.vector);
-            }
+            return CadMath.CenterPoint(FigSeg.Point0.vector, FigSeg.Point1.vector);
         }
+    }
 
-        public double Distance;
+    public double Distance;
 
-        public bool Valid { get { return FigureID != 0; } }
+    public bool Valid { get { return FigureID != 0; } }
 
-        public void dump(string name= "MarkSeg")
+    public void dump(string name= "MarkSeg")
+    {
+        DOut.pl(name + " {");
+        DOut.Indent++;
+        FigSeg.dump("FSegment");
+        DOut.Indent--;
+        DOut.pl("}");
+    }
+
+    public bool Update()
+    {
+        if (FigSeg.Figure == null)
         {
-            DOut.pl(name + " {");
-            DOut.Indent++;
-            FigSeg.dump("FSegment");
-            DOut.Indent--;
-            DOut.pl("}");
-        }
-
-        public bool Update()
-        {
-            if (FigSeg.Figure == null)
-            {
-                return true;
-            }
-
-            if (PtIndexA >= FigSeg.Figure.PointList.Count)
-            {
-                return false;
-            }
-
-            if (PtIndexB >= FigSeg.Figure.PointList.Count)
-            {
-                return false;
-            }
-
             return true;
         }
 
-        public void Clean()
+        if (PtIndexA >= FigSeg.Figure.PointList.Count)
         {
-            CrossPoint = VectorExt.InvalidVector3d;
-            CrossPointScrn = VectorExt.InvalidVector3d;
+            return false;
         }
 
-        public bool IsSelected()
+        if (PtIndexB >= FigSeg.Figure.PointList.Count)
         {
-            if (Figure == null)
-            {
-                return false;
-            }
-
-            return Figure.IsPointSelected(PtIndexA) && Figure.IsPointSelected(PtIndexB);
+            return false;
         }
+
+        return true;
+    }
+
+    public void Clean()
+    {
+        CrossPoint = VectorExt.InvalidVector3d;
+        CrossPointScrn = VectorExt.InvalidVector3d;
+    }
+
+    public bool IsSelected()
+    {
+        if (Figure == null)
+        {
+            return false;
+        }
+
+        return Figure.IsPointSelected(PtIndexA) && Figure.IsPointSelected(PtIndexB);
     }
 }

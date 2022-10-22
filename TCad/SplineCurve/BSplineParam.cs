@@ -1,67 +1,66 @@
-﻿
-namespace SplineCurve
+
+namespace SplineCurve;
+
+public class BSplineParam
 {
-    public class BSplineParam
+    // 次数
+    public int Degree = 3;
+
+    // 分割数
+    public int DivCnt = 0;
+
+    // 出力Point数
+    public int OutputCnt = 0;
+
+    // Knot数
+    public int KnotCnt;
+
+    public double[] Knots;
+
+    public double LowKnot = 0;
+
+    public double HighKnot = 0;
+
+    public double Step = 0;
+
+    // i: Knot番号
+    // t: 媒介変数
+    public double BasisFunc(int i, double t)
     {
-        // 次数
-        public int Degree = 3;
+        return BSpline.BasisFunc(i, Degree, t, Knots);
+    }
 
-        // 分割数
-        public int DivCnt = 0;
+    public void Setup(int degree, int ctrlCnt, int divCnt, bool passOnEdge)
+    {
+        Degree = degree;
+        //CtrlCnt = ctrlCnt;
+        KnotCnt = ctrlCnt + Degree + 1;
+        DivCnt = divCnt;
+        OutputCnt = DivCnt + 1;
 
-        // 出力Point数
-        public int OutputCnt = 0;
+        CreateDefaultKnots(passOnEdge);
 
-        // Knot数
-        public int KnotCnt;
+        LowKnot = Knots[Degree];
+        HighKnot = Knots[ctrlCnt];
+        Step = (HighKnot - LowKnot) / (double)DivCnt;
+    }
 
-        public double[] Knots;
+    public void CreateDefaultKnots(bool passOnEdge)
+    {
+        Knots = new double[KnotCnt];
 
-        public double LowKnot = 0;
+        double x = 0.0;
 
-        public double HighKnot = 0;
-
-        public double Step = 0;
-
-        // i: Knot番号
-        // t: 媒介変数
-        public double BasisFunc(int i, double t)
+        for (int i = 0; i < KnotCnt; i++)
         {
-            return BSpline.BasisFunc(i, Degree, t, Knots);
-        }
-
-        public void Setup(int degree, int ctrlCnt, int divCnt, bool passOnEdge)
-        {
-            Degree = degree;
-            //CtrlCnt = ctrlCnt;
-            KnotCnt = ctrlCnt + Degree + 1;
-            DivCnt = divCnt;
-            OutputCnt = DivCnt + 1;
-
-            CreateDefaultKnots(passOnEdge);
-
-            LowKnot = Knots[Degree];
-            HighKnot = Knots[ctrlCnt];
-            Step = (HighKnot - LowKnot) / (double)DivCnt;
-        }
-
-        public void CreateDefaultKnots(bool passOnEdge)
-        {
-            Knots = new double[KnotCnt];
-
-            double x = 0.0;
-
-            for (int i = 0; i < KnotCnt; i++)
+            if (passOnEdge && (i < Degree || i > (KnotCnt - Degree - 2)))
             {
-                if (passOnEdge && (i < Degree || i > (KnotCnt - Degree - 2)))
-                {
-                    Knots[i] = x;
-                }
-                else
-                {
-                    Knots[i] = x;
-                    x += 1.0;
-                }
+                Knots[i] = x;
+            }
+            else
+            {
+                Knots[i] = x;
+                x += 1.0;
             }
         }
     }

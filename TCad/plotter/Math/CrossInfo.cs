@@ -1,13 +1,12 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Mathematics;
 
-namespace Plotter
+namespace Plotter;
+
+public struct CrossInfo
 {
-    public struct CrossInfo
-    {
-        public bool IsCross;
-        public Vector3d CrossPoint;
-        public double Distance;
-    }
+    public bool IsCross;
+    public Vector3d CrossPoint;
+    public double Distance;
 }
 

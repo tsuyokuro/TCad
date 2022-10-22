@@ -1,52 +1,51 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Plotter
+namespace Plotter;
+
+public class ItemCursor<T> where T : class
 {
-    public class ItemCursor<T> where T : class
+    public List<T> ItemList;
+
+    public int Pos = 0;
+
+    public ItemCursor(List<T> list)
     {
-        public List<T> ItemList;
+        Attach(list);
+    }
 
-        public int Pos = 0;
+    public void Attach(List<T> list)
+    {
+        ItemList = list;
+        Pos = 0;
+    }
 
-        public ItemCursor(List<T> list)
+    public T Next()
+    {
+        if (Pos >= ItemList.Count)
         {
-            Attach(list);
+            return null;
         }
 
-        public void Attach(List<T> list)
+        T ret = ItemList[Pos];
+
+        Pos++;
+
+        return ret;
+    }
+
+    public T LoopNext()
+    {
+        if (ItemList.Count == 0)
         {
-            ItemList = list;
-            Pos = 0;
+            return null;
         }
 
-        public T Next()
-        {
-            if (Pos >= ItemList.Count)
-            {
-                return null;
-            }
+        T ret = ItemList[Pos];
 
-            T ret = ItemList[Pos];
+        Pos++;
 
-            Pos++;
+        Pos = Pos % ItemList.Count;
 
-            return ret;
-        }
-
-        public T LoopNext()
-        {
-            if (ItemList.Count == 0)
-            {
-                return null;
-            }
-
-            T ret = ItemList[Pos];
-
-            Pos++;
-
-            Pos = Pos % ItemList.Count;
-
-            return ret;
-        }
+        return ret;
     }
 }

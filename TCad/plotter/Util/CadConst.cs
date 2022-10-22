@@ -1,8 +1,7 @@
-﻿namespace Plotter
+namespace Plotter;
+
+public static class CadConst
 {
-    public static class CadConst
-    {
-        public const double MaxValue = double.MaxValue;
-        public const double MinValue = double.MinValue;
-    }
+    public const double MaxValue = double.MaxValue;
+    public const double MinValue = double.MinValue;
 }

@@ -3,48 +3,47 @@ using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public struct LayerListInfo
 {
-    public struct LayerListInfo
+    public List<CadLayer> LayerList;
+    public uint CurrentID;
+}
+
+public enum StateChangedType
+{
+    CURRENT_FIG_CHANGED,
+    CREATING_FIG_TYPE_CHANGED,
+    MESURE_MODE_CHANGED,
+    SELECTION_CHANGED,
+}
+
+public struct StateChangedParam
+{
+    public StateChangedType Type
     {
-        public List<CadLayer> LayerList;
-        public uint CurrentID;
+        get; set;
     }
 
-    public enum StateChangedType
+    public StateChangedParam(StateChangedType type)
     {
-        CURRENT_FIG_CHANGED,
-        CREATING_FIG_TYPE_CHANGED,
-        MESURE_MODE_CHANGED,
-        SELECTION_CHANGED,
+        Type = type;
     }
+}
 
-    public struct StateChangedParam
-    {
-        public StateChangedType Type
-        {
-            get; set;
-        }
+public struct SelectContext
+{
+    public DrawContext DC;
 
-        public StateChangedParam(StateChangedType type)
-        {
-            Type = type;
-        }
-    }
+    public Vector3d CursorScrPt;
+    public Vector3d CursorWorldPt;
 
-    public struct SelectContext
-    {
-        public DrawContext DC;
+    public CadCursor Cursor;
 
-        public Vector3d CursorScrPt;
-        public Vector3d CursorWorldPt;
+    public bool PointSelected;
+    public MarkPoint MarkPt;
 
-        public CadCursor Cursor;
-
-        public bool PointSelected;
-        public MarkPoint MarkPt;
-
-        public bool SegmentSelected;
-        public MarkSegment MarkSeg;
-    }
+    public bool SegmentSelected;
+    public MarkSegment MarkSeg;
 }

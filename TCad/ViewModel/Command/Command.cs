@@ -2,80 +2,79 @@ using System;
 using System.Windows.Input;
 using Plotter;
 
-namespace TCad.ViewModel
+namespace TCad.ViewModel;
+
+public class CurrentFigCommand : ICommand
 {
-    public class CurrentFigCommand : ICommand
+    public event EventHandler CanExecuteChanged;
+
+    public bool CanExecute(object parameter)
     {
-        public event EventHandler CanExecuteChanged;
+        string cmd = parameter as string;
 
-        public bool CanExecute(object parameter)
+        if (cmd == "set_line_color")
         {
-            string cmd = parameter as string;
+            return mViewModel.Controller.CurrentFigure != null;
+        }
+        else if (cmd == "set_fill_color")
+        {
+            if (mViewModel.Controller.CurrentFigure == null) return false;
 
-            if (cmd == "set_line_color")
-            {
-                return mViewModel.Controller.CurrentFigure != null;
-            }
-            else if (cmd == "set_fill_color")
-            {
-                if (mViewModel.Controller.CurrentFigure == null) return false;
-
-                return mViewModel.Controller.CurrentFigure.Type == CadFigure.Types.MESH;
-            }
-
-            return true;
+            return mViewModel.Controller.CurrentFigure.Type == CadFigure.Types.MESH;
         }
 
-        public void Execute(object parameter)
-        {
-            mViewModel.ExecCommand(parameter as string);
-        }
-
-        private IPlotterViewModel mViewModel;
-
-        public CurrentFigCommand(IPlotterViewModel vm)
-        {
-            mViewModel = vm;
-            CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
-        }
-
-        public void UpdateCanExecute()
-        {
-            if (CanExecuteChanged != null)
-            {
-                CanExecuteChanged(this, EventArgs.Empty);
-            }
-        }
+        return true;
     }
 
-    public class SimpleCommand : ICommand
+    public void Execute(object parameter)
     {
-        public event EventHandler CanExecuteChanged;
+        mViewModel.ExecCommand(parameter as string);
+    }
 
-        public bool CanExecute(object parameter)
+    private IPlotterViewModel mViewModel;
+
+    public CurrentFigCommand(IPlotterViewModel vm)
+    {
+        mViewModel = vm;
+        CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
+    }
+
+    public void UpdateCanExecute()
+    {
+        if (CanExecuteChanged != null)
         {
-            return true;
+            CanExecuteChanged(this, EventArgs.Empty);
         }
+    }
+}
 
-        public void Execute(object parameter)
+public class SimpleCommand : ICommand
+{
+    public event EventHandler CanExecuteChanged;
+
+    public bool CanExecute(object parameter)
+    {
+        return true;
+    }
+
+    public void Execute(object parameter)
+    {
+        mViewModel.ExecCommand(parameter as string);
+    }
+
+    private IPlotterViewModel mViewModel;
+
+    public SimpleCommand(IPlotterViewModel vm)
+    {
+        mViewModel = vm;
+        CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
+    }
+
+    public void UpdateCanExecute()
+    {
+        if (CanExecuteChanged != null)
         {
-            mViewModel.ExecCommand(parameter as string);
-        }
-
-        private IPlotterViewModel mViewModel;
-
-        public SimpleCommand(IPlotterViewModel vm)
-        {
-            mViewModel = vm;
-            CanExecuteChanged += (sender, e) => { /*DUMMY*/ };
-        }
-
-        public void UpdateCanExecute()
-        {
-            if (CanExecuteChanged != null)
-            {
-                CanExecuteChanged(this, EventArgs.Empty);
-            }
+            CanExecuteChanged(this, EventArgs.Empty);
         }
     }
 }

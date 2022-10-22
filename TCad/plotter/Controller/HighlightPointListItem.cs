@@ -1,18 +1,17 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace Plotter
-{
-    public class HighlightPointListItem
-    {
-        public Vector3d Point;
-        public DrawPen Pen;
+namespace Plotter;
 
-        public HighlightPointListItem(Vector3d p, DrawPen pen)
-        {
-            Point = p;
-            Pen = pen;
-        }
+public class HighlightPointListItem
+{
+    public Vector3d Point;
+    public DrawPen Pen;
+
+    public HighlightPointListItem(Vector3d p, DrawPen pen)
+    {
+        Point = p;
+        Pen = pen;
     }
 }

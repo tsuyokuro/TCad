@@ -5,31 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Plotter
+namespace Plotter;
+
+public static class ThreadUtil
 {
-    public static class ThreadUtil
+    public static void RunOnMainThread(Action action)
     {
-        public static void RunOnMainThread(Action action)
+        RunOnMainThread(action, true);
+    }
+
+    public static void RunOnMainThread(Action action, bool wait)
+    {
+        if (Application.Current.CheckAccess())
         {
-            RunOnMainThread(action, true);
+            action();
+            return;
         }
 
-        public static void RunOnMainThread(Action action, bool wait)
+        if (wait)
         {
-            if (Application.Current.CheckAccess())
-            {
-                action();
-                return;
-            }
-
-            if (wait)
-            {
-                Application.Current.Dispatcher.Invoke(action);
-            }
-            else
-            {
-                Application.Current.Dispatcher.InvokeAsync(action);
-            }
+            Application.Current.Dispatcher.Invoke(action);
+        }
+        else
+        {
+            Application.Current.Dispatcher.InvokeAsync(action);
         }
     }
 }

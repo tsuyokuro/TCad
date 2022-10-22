@@ -1,142 +1,141 @@
 using System.Collections.Generic;
 using TCad.Properties;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public class ContextMenuManager
 {
-    public class ContextMenuManager
+    MenuInfo mContextMenuInfo = new MenuInfo();
+
+    PlotterController mController;
+
+    public static MenuInfo.Item CreatingFigureQuit = new MenuInfo.Item(Resources.menu_quit_create, "quit_create");
+    public static MenuInfo.Item CreatingFigureEnd = new MenuInfo.Item(Resources.menu_end_create, "end_create");
+    public static MenuInfo.Item CreatingFigureClose = new MenuInfo.Item(Resources.menu_to_loop, "to_loop");
+    public static MenuInfo.Item Copy = new MenuInfo.Item(Resources.menu_copy, "copy");
+    public static MenuInfo.Item Paste = new MenuInfo.Item(Resources.menu_paste, "paste");
+    public static MenuInfo.Item InsertPoint = new MenuInfo.Item(Resources.menu_insert_point, "insert_point");
+
+    public ContextMenuManager(PlotterController controller)
     {
-        MenuInfo mContextMenuInfo = new MenuInfo();
+        mController = controller;
+    }
 
-        PlotterController mController;
+    public void RequestContextMenu(double x, double y)
+    {
+        mContextMenuInfo.Items.Clear();
 
-        public static MenuInfo.Item CreatingFigureQuit = new MenuInfo.Item(Resources.menu_quit_create, "quit_create");
-        public static MenuInfo.Item CreatingFigureEnd = new MenuInfo.Item(Resources.menu_end_create, "end_create");
-        public static MenuInfo.Item CreatingFigureClose = new MenuInfo.Item(Resources.menu_to_loop, "to_loop");
-        public static MenuInfo.Item Copy = new MenuInfo.Item(Resources.menu_copy, "copy");
-        public static MenuInfo.Item Paste = new MenuInfo.Item(Resources.menu_paste, "paste");
-        public static MenuInfo.Item InsertPoint = new MenuInfo.Item(Resources.menu_insert_point, "insert_point");
 
-        public ContextMenuManager(PlotterController controller)
+        if (mController.FigureCreator != null)
         {
-            mController = controller;
+            switch (mController.CreatingFigType)
+            {
+                case CadFigure.Types.POLY_LINES:
+                    if (mController.FigureCreator.Figure.PointCount > 2)
+                    {
+                        mContextMenuInfo.Items.Add(CreatingFigureClose);
+                    }
+
+                    mContextMenuInfo.Items.Add(CreatingFigureEnd);
+
+                    break;
+
+                case CadFigure.Types.RECT:
+                    mContextMenuInfo.Items.Add(CreatingFigureQuit);
+                    break;
+            }
         }
-
-        public void RequestContextMenu(double x, double y)
+        else
         {
-            mContextMenuInfo.Items.Clear();
-
-
-            if (mController.FigureCreator != null)
+            if (SegSelected())
             {
-                switch (mController.CreatingFigType)
-                {
-                    case CadFigure.Types.POLY_LINES:
-                        if (mController.FigureCreator.Figure.PointCount > 2)
-                        {
-                            mContextMenuInfo.Items.Add(CreatingFigureClose);
-                        }
-
-                        mContextMenuInfo.Items.Add(CreatingFigureEnd);
-
-                        break;
-
-                    case CadFigure.Types.RECT:
-                        mContextMenuInfo.Items.Add(CreatingFigureQuit);
-                        break;
-                }
-            }
-            else
-            {
-                if (SegSelected())
-                {
-                    mContextMenuInfo.Items.Add(InsertPoint);
-                }
-
-                bool hasSelect = mController.HasSelect();
-                bool hasCopyData = PlotterClipboard.HasCopyData();
-
-                if (hasSelect)
-                {
-                    mContextMenuInfo.Items.Add(Copy);
-                }
-
-                if (hasCopyData)
-                {
-                    mContextMenuInfo.Items.Add(Paste);
-                }
+                mContextMenuInfo.Items.Add(InsertPoint);
             }
 
-            if (mContextMenuInfo.Items.Count > 0)
+            bool hasSelect = mController.HasSelect();
+            bool hasCopyData = PlotterClipboard.HasCopyData();
+
+            if (hasSelect)
             {
-                mController.ViewIF.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
+                mContextMenuInfo.Items.Add(Copy);
+            }
+
+            if (hasCopyData)
+            {
+                mContextMenuInfo.Items.Add(Paste);
             }
         }
 
-        private bool SegSelected()
+        if (mContextMenuInfo.Items.Count > 0)
         {
-            if (mController.LastSelSegment == null)
-            {
-                return false;
-            }
+            mController.ViewIF.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
+        }
+    }
 
-            MarkSegment seg = mController.LastSelSegment.Value;
-
-            CadFigure fig = mController.DB.GetFigure(seg.FigureID);
-
-            if (fig == null)
-            {
-                return false;
-            }
-
-            if (fig.Type != CadFigure.Types.POLY_LINES)
-            {
-                return false;
-            }
-
-            bool handle = false;
-
-            handle |= fig.GetPointAt(seg.PtIndexA).IsHandle;
-            handle |= fig.GetPointAt(seg.PtIndexB).IsHandle;
-
-            if (handle)
-            {
-                return false;
-            }
-
-            return true;
+    private bool SegSelected()
+    {
+        if (mController.LastSelSegment == null)
+        {
+            return false;
         }
 
+        MarkSegment seg = mController.LastSelSegment.Value;
 
-        public void ContextMenuEvent(MenuInfo.Item menuItem)
+        CadFigure fig = mController.DB.GetFigure(seg.FigureID);
+
+        if (fig == null)
         {
-            string tag = (string)menuItem.Tag;
+            return false;
+        }
 
-            switch (tag)
-            {
-                case "to_loop":
-                    mController.CloseFigure();
-                    break;
+        if (fig.Type != CadFigure.Types.POLY_LINES)
+        {
+            return false;
+        }
 
-                case "end_create":
-                    mController.EndCreateFigure();
+        bool handle = false;
 
-                    break;
-                case "quit_create":
-                    mController.EndCreateFigure();
-                    break;
+        handle |= fig.GetPointAt(seg.PtIndexA).IsHandle;
+        handle |= fig.GetPointAt(seg.PtIndexB).IsHandle;
 
-                case "copy":
-                    mController.Copy();
-                    break;
+        if (handle)
+        {
+            return false;
+        }
 
-                case "paste":
-                    mController.Paste();
-                    break;
+        return true;
+    }
 
-                case "insert_point":
-                    mController.InsPoint();
-                    break;
-            }
+
+    public void ContextMenuEvent(MenuInfo.Item menuItem)
+    {
+        string tag = (string)menuItem.Tag;
+
+        switch (tag)
+        {
+            case "to_loop":
+                mController.CloseFigure();
+                break;
+
+            case "end_create":
+                mController.EndCreateFigure();
+
+                break;
+            case "quit_create":
+                mController.EndCreateFigure();
+                break;
+
+            case "copy":
+                mController.Copy();
+                break;
+
+            case "paste":
+                mController.Paste();
+                break;
+
+            case "insert_point":
+                mController.InsPoint();
+                break;
         }
     }
 }

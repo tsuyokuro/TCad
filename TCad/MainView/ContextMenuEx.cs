@@ -1,48 +1,47 @@
-﻿#define MOUSE_THREAD
+#define MOUSE_THREAD
 
 using System;
 using System.Windows.Forms;
 
-namespace Plotter
+namespace Plotter;
+
+public class ContextMenuEx : ContextMenuStrip
 {
-    public class ContextMenuEx : ContextMenuStrip
+    public enum State
     {
-        public enum State
+        OPENED,
+        CLOSED,
+    }
+
+    private Action<State> mStateChanged = (a) => { };
+
+    public Action<State> StateChanged
+    {
+        get => mStateChanged;
+
+        set
         {
-            OPENED,
-            CLOSED,
+            mStateChanged = value == null ? (a) => { } : value;
         }
+    }
 
-        private Action<State> mStateChanged = (a) => { };
+    public ContextMenuEx()
+    {
+    }
 
-        public Action<State> StateChanged
-        {
-            get => mStateChanged;
+    protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
+    {
+        Close();
+        base.OnItemClicked(e);
+    }
 
-            set
-            {
-                mStateChanged = value == null ? (a) => { } : value;
-            }
-        }
+    protected override void OnOpened(EventArgs e)
+    {
+        StateChanged(State.OPENED);
+    }
 
-        public ContextMenuEx()
-        {
-        }
-
-        protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
-        {
-            Close();
-            base.OnItemClicked(e);
-        }
-
-        protected override void OnOpened(EventArgs e)
-        {
-            StateChanged(State.OPENED);
-        }
-
-        protected override void OnClosed(ToolStripDropDownClosedEventArgs e)
-        {
-            StateChanged(State.CLOSED);
-        }
+    protected override void OnClosed(ToolStripDropDownClosedEventArgs e)
+    {
+        StateChanged(State.CLOSED);
     }
 }

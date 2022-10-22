@@ -2,37 +2,36 @@
 
 using CadDataTypes;
 
-namespace Plotter
+namespace Plotter;
+
+public class CadFigureGroup : CadFigure
 {
-    public class CadFigureGroup : CadFigure
+    public CadFigureGroup()
     {
-        public CadFigureGroup()
-        {
-            Type = Types.GROUP;
-        }
+        Type = Types.GROUP;
+    }
 
-        public override void Draw(DrawContext dc, DrawOption dp)
-        {
-        }
+    public override void Draw(DrawContext dc, DrawOption dp)
+    {
+    }
 
-        public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
-        {
-        }
+    public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
+    {
+    }
 
-        public override void DrawSelected(DrawContext dc)
-        {
-        }
+    public override void DrawSelected(DrawContext dc)
+    {
+    }
 
-        public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)
-        {
-        }
+    public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)
+    {
+    }
 
-        public override void EndCreate(DrawContext dc)
-        {
-        }
+    public override void EndCreate(DrawContext dc)
+    {
+    }
 
-        public override void StartCreate(DrawContext dc)
-        {
-        }
+    public override void StartCreate(DrawContext dc)
+    {
     }
 }

@@ -1,72 +1,71 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace Plotter
+namespace Plotter;
+
+class DrawContextPrinter : DrawContextGDI
 {
-    class DrawContextPrinter : DrawContextGDI
+    public DrawContextPrinter(DrawContext currentDC, Graphics g, CadSize2D pageSize, CadSize2D deviceSize)
     {
-        public DrawContextPrinter(DrawContext currentDC, Graphics g, CadSize2D pageSize, CadSize2D deviceSize)
+        GdiGraphics = g;
+
+        GdiGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        GdiGraphics.SmoothingMode = SmoothingMode.HighQuality;
+
+        if (currentDC.GetType() == typeof(DrawContextGLPers))
         {
-            GdiGraphics = g;
+            mUnitPerMilli = deviceSize.Width / pageSize.Width;
+            CopyCamera(currentDC);
+            CopyProjectionMatrix(currentDC);
 
-            GdiGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            GdiGraphics.SmoothingMode = SmoothingMode.HighQuality;
-
-            if (currentDC.GetType() == typeof(DrawContextGLPers))
-            {
-                mUnitPerMilli = deviceSize.Width / pageSize.Width;
-                CopyCamera(currentDC);
-                CopyProjectionMatrix(currentDC);
-
-                DeviceScaleX = currentDC.ViewWidth / 4;
-                DeviceScaleY = -(currentDC.ViewHeight / 4);
-            }
-            else
-            {
-                CopyProjectionMetrics(currentDC);
-                CopyCamera(currentDC);
-                UnitPerMilli = deviceSize.Width / pageSize.Width;
-                SetViewSize(deviceSize.Width, deviceSize.Height);
-            }
-
-            Vector3d org = default;
-
-            org.X = deviceSize.Width / 2.0;
-            org.Y = deviceSize.Height / 2.0;
-            
-            SetViewOrg(org);
-
-            SetupDrawing();
+            DeviceScaleX = currentDC.ViewWidth / 4;
+            DeviceScaleY = -(currentDC.ViewHeight / 4);
+        }
+        else
+        {
+            CopyProjectionMetrics(currentDC);
+            CopyCamera(currentDC);
+            UnitPerMilli = deviceSize.Width / pageSize.Width;
+            SetViewSize(deviceSize.Width, deviceSize.Height);
         }
 
-        public DrawContextPrinter()
-        {
-        }
+        Vector3d org = default;
 
-        protected override void DisposeGraphics()
-        {
-            // NOP
-        }
+        org.X = deviceSize.Width / 2.0;
+        org.Y = deviceSize.Height / 2.0;
+        
+        SetViewOrg(org);
 
-        protected override void CreateGraphics()
-        {
-            // NOP
-        }
+        SetupDrawing();
+    }
 
-        public override DrawContext Clone()
-        {
-            DrawContextPrinter dc = new DrawContextPrinter();
+    public DrawContextPrinter()
+    {
+    }
 
-            dc.CopyProjectionMetrics(this);
-            dc.CopyCamera(this);
-            dc.SetViewSize(ViewWidth, ViewHeight);
+    protected override void DisposeGraphics()
+    {
+        // NOP
+    }
 
-            dc.SetViewOrg(ViewOrg);
+    protected override void CreateGraphics()
+    {
+        // NOP
+    }
 
-            return dc;
-        }
+    public override DrawContext Clone()
+    {
+        DrawContextPrinter dc = new DrawContextPrinter();
+
+        dc.CopyProjectionMetrics(this);
+        dc.CopyCamera(this);
+        dc.SetViewSize(ViewWidth, ViewHeight);
+
+        dc.SetViewOrg(ViewOrg);
+
+        return dc;
     }
 }

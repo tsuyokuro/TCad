@@ -1,109 +1,108 @@
-﻿
+
 using MyCollections;
 using CadDataTypes;
 using System.Collections.Generic;
 
-namespace HalfEdgeNS
+namespace HalfEdgeNS;
+
+public class HeModelConverter
 {
-    public class HeModelConverter
+    public static HeModel ToHeModel(CadMesh src)
     {
-        public static HeModel ToHeModel(CadMesh src)
+        HeModel m = new HeModel();
+
+        m.VertexStore = src.VertexStore;
+
+        Dictionary<uint, HalfEdge> map = new Dictionary<uint, HalfEdge>();
+
+        for (int fi = 0; fi < src.FaceStore.Count; fi++)
         {
-            HeModel m = new HeModel();
+            CadFace f = src.FaceStore[fi];
 
-            m.VertexStore = src.VertexStore;
+            int vi = f.VList[0];
+            HalfEdge head = m.CreateHalfEdge(vi);
+            HalfEdge current_he = head;
 
-            Dictionary<uint, HalfEdge> map = new Dictionary<uint, HalfEdge>();
+            HeFace face = m.CreateFace(head);
+            int faceIndex = m.FaceStore.Add(face);
 
-            for (int fi = 0; fi < src.FaceStore.Count; fi++)
+            current_he.Face = faceIndex;
+
+            HalfEdge next_he;
+
+            for (int pi = 1; pi < f.VList.Count; pi++)
             {
-                CadFace f = src.FaceStore[fi];
+                vi = f.VList[pi];
+                next_he = m.CreateHalfEdge(vi);
 
-                int vi = f.VList[0];
-                HalfEdge head = m.CreateHalfEdge(vi);
-                HalfEdge current_he = head;
+                current_he.Next = next_he;
+                next_he.Prev = current_he;
 
-                HeFace face = m.CreateFace(head);
-                int faceIndex = m.FaceStore.Add(face);
+                next_he.Face = faceIndex;
 
-                current_he.Face = faceIndex;
-
-                HalfEdge next_he;
-
-                for (int pi = 1; pi < f.VList.Count; pi++)
-                {
-                    vi = f.VList[pi];
-                    next_he = m.CreateHalfEdge(vi);
-
-                    current_he.Next = next_he;
-                    next_he.Prev = current_he;
-
-                    next_he.Face = faceIndex;
-
-                    current_he = next_he;
-                }
-
-                head.Prev = current_he;
-                current_he.Next = head;
-
-
-                HalfEdge c = head;
-
-                for (; ; )
-                {
-                    HeConnector.SetHalfEdgePair(c, map);
-
-                    map[HeConnector.GetHeKey(c)] = c;
-
-                    c = c.Next;
-                    if (c == head) break;
-                }
+                current_he = next_he;
             }
 
-            m.RecreateNormals();
+            head.Prev = current_he;
+            current_he.Next = head;
 
-            return m;
-        }
 
-        public static CadMesh ToCadMesh(HeModel hem)
-        {
-            CadMesh cm = new CadMesh();
-
-            cm.VertexStore = new VertexList(hem.VertexStore);
-            cm.FaceStore = new FlexArray<CadFace>();
-
-            for (int i=0; i < hem.FaceStore.Count;i++)
-            {
-                CadFace cf = ToCadFace(hem.FaceStore[i]);
-                if (cf != null)
-                {
-                    cm.FaceStore.Add(cf);
-                }
-            }
-
-            return cm;
-        }
-
-        public static CadFace ToCadFace(HeFace hef)
-        {
-            CadFace ret = new CadFace();
-
-            HalfEdge head = hef.Head;
             HalfEdge c = head;
 
-            while (c!=null)
+            for (; ; )
             {
-                ret.VList.Add(c.Vertex);
+                HeConnector.SetHalfEdgePair(c, map);
+
+                map[HeConnector.GetHeKey(c)] = c;
 
                 c = c.Next;
-
-                if (c == head)
-                {
-                    break;
-                }
+                if (c == head) break;
             }
-
-            return ret;
         }
+
+        m.RecreateNormals();
+
+        return m;
+    }
+
+    public static CadMesh ToCadMesh(HeModel hem)
+    {
+        CadMesh cm = new CadMesh();
+
+        cm.VertexStore = new VertexList(hem.VertexStore);
+        cm.FaceStore = new FlexArray<CadFace>();
+
+        for (int i=0; i < hem.FaceStore.Count;i++)
+        {
+            CadFace cf = ToCadFace(hem.FaceStore[i]);
+            if (cf != null)
+            {
+                cm.FaceStore.Add(cf);
+            }
+        }
+
+        return cm;
+    }
+
+    public static CadFace ToCadFace(HeFace hef)
+    {
+        CadFace ret = new CadFace();
+
+        HalfEdge head = hef.Head;
+        HalfEdge c = head;
+
+        while (c!=null)
+        {
+            ret.VList.Add(c.Vertex);
+
+            c = c.Next;
+
+            if (c == head)
+            {
+                break;
+            }
+        }
+
+        return ret;
     }
 }
