@@ -1,6 +1,10 @@
 using Plotter;
+using System;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace TCad.Controls;
@@ -50,6 +54,11 @@ public partial class ColorMaker : UserControl
             ColorSpaceUtil.RgbToHsl(R, G, B, out H, out S, out Y);
 
             SetValue(SelectedColorProperty, value);
+
+            if (!ignoreSelectedColorChangedEvent)
+            {
+                ForceUpdateWithRGB(null);
+            }
         }
     }
 
@@ -69,6 +78,7 @@ public partial class ColorMaker : UserControl
     private double Y = 1.0;
 
     private bool ignoreValueChangeEvent = false;
+    private bool ignoreSelectedColorChangedEvent = false;
 
     static ColorMaker()
     {
@@ -151,9 +161,6 @@ public partial class ColorMaker : UserControl
 
     protected virtual void OnSelectedColorChanged(RoutedPropertyChangedEventArgs<Color> args)
     {
-        DOut.plx("in");
-
-        ForceUpdateWithRGB();
         RaiseEvent(args);
     }
 
@@ -165,6 +172,7 @@ public partial class ColorMaker : UserControl
 
         ColorSpaceUtil.HslToRgb(H, S, Y, out R, out G, out B);
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -176,6 +184,7 @@ public partial class ColorMaker : UserControl
 
         ColorSpaceUtil.HslToRgb(H, S, Y, out R, out G, out B);
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -187,6 +196,7 @@ public partial class ColorMaker : UserControl
 
         ColorSpaceUtil.HslToRgb(H, S, Y, out R, out G, out B);
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -196,6 +206,7 @@ public partial class ColorMaker : UserControl
 
         R = r_slider.Value;
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -205,6 +216,7 @@ public partial class ColorMaker : UserControl
 
         G = g_slider.Value;
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -214,6 +226,7 @@ public partial class ColorMaker : UserControl
 
         B = b_slider.Value;
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
@@ -223,51 +236,178 @@ public partial class ColorMaker : UserControl
 
         A = a_slider.Value;
 
+        ForceUpdateWithRGB(sender);
         UpdateSelectedColor();
     }
 
-    private void ForceUpdateWithRGB()
+    private void ForceUpdateWithRGB(Object triger)
     {
         ignoreValueChangeEvent = true;
 
         ColorSpaceUtil.RgbToHsl(R, G, B, out H, out S, out Y);
 
-        r_slider.Value = R;
-        r_value.Content = string.Format("{0:0.000}", R);
-        r_byte_value.Content = (int)(R * 255.0);
+        SetSliderValue(triger, r_slider, R);
+        SetValueText(triger, r_value, r_byte_value, R);
 
-        g_slider.Value = G;
-        g_value.Content = string.Format("{0:0.000}", G);
-        g_byte_value.Content = (int)(G * 255.0);
+        SetSliderValue(triger, g_slider, G);
+        SetValueText(triger, g_value, g_byte_value, G);
 
-        b_slider.Value = B;
-        b_value.Content = string.Format("{0:0.000}", B);
-        b_byte_value.Content = (int)(B * 255.0);
+        SetSliderValue(triger, b_slider, B);
+        SetValueText(triger, b_value, b_byte_value, B);
 
-        a_slider.Value = A;
-        a_value.Content = string.Format("{0:0.000}", A);
-        a_byte_value.Content = (int)(A * 255.0);
+        SetSliderValue(triger, a_slider, A);
+        SetValueText(triger, a_value, a_byte_value, A);
 
-
-        hue_slider.Value = H;
+        SetSliderValue(triger, hue_slider, H);
         hue_value.Content = string.Format("{0:0.0}", H);
 
-        s_slider.Value = S;
+        SetSliderValue(triger, s_slider, S);
         s_value.Content = string.Format("{0:0.000}", S);
 
-        y_slider.Value = Y;
+        SetSliderValue(triger, y_slider, Y);
         y_value.Content = string.Format("{0:0.000}", Y);
 
         ignoreValueChangeEvent = false;
     }
 
+    private void SetSliderValue(Object triger, Slider slider, double v)
+    {
+        if (!ReferenceEquals(triger, slider))
+        {
+            slider.Value = v;
+        }
+    }
+
+    private void SetValueText(Object triger, TextBox fText, TextBox iText, double v)
+    {
+        if (!ReferenceEquals(triger, fText))
+        {
+            fText.Text = string.Format("{0:0.000}", v);
+        }
+
+        if (!ReferenceEquals(triger, iText))
+        {
+            iText.Text = "" + (int)(v * 255.0);
+        }
+    }
+
+
     private void UpdateSelectedColor()
     {
+        ignoreSelectedColorChangedEvent = true;
+
         SelectedColor = new Color((float)R, (float)G, (float)B, (float)A);
+
+        ignoreSelectedColorChangedEvent = false;
     }
 
     private void ColorPicker_Loaded(object sender, RoutedEventArgs e)
     {
         
+    }
+
+    private void TextChangedI(object sender, TextChangedEventArgs args)
+    {
+        if (ignoreValueChangeEvent)
+        {
+            return;
+        }
+
+        SetTextValueI(sender, r_byte_value, out R, R);
+        SetTextValueI(sender, g_byte_value, out G, G);
+        SetTextValueI(sender, b_byte_value, out B, B);
+        SetTextValueI(sender, a_byte_value, out A, A);
+    }
+
+    private void TextChangedF(object sender, TextChangedEventArgs args)
+    {
+        if (ignoreValueChangeEvent)
+        {
+            return;
+        }
+
+        SetTextValueF(sender, r_value, out R, R);
+        SetTextValueF(sender, g_value, out G, G);
+        SetTextValueF(sender, b_value, out B, B);
+        SetTextValueF(sender, a_value, out A, A);
+    }
+
+    void SetTextValueF(Object sender, TextBox t, out double outV, double current)
+    {
+        outV = current;
+        if (!ReferenceEquals(sender, t))
+        {
+            return;
+        }
+
+        string s;
+        double v;
+        object triger = null;
+
+        s = t.Text;
+        if (double.TryParse(s, out v))
+        {
+            if (v < 0 || v > 1.0)
+            {
+                t.Text = string.Format("{0:0.000}", current);
+            }
+            else
+            {
+                outV = v;
+                triger = t;
+            }
+        }
+
+        if (triger != null)
+        {
+            ForceUpdateWithRGB(triger);
+            UpdateSelectedColor();
+        }
+    }
+
+    void SetTextValueI(Object sender, TextBox t, out double outV, double current)
+    {
+        outV = current;
+        if (!ReferenceEquals(sender, t))
+        {
+            return;
+        }
+
+        string s;
+        int v;
+        object triger = null;
+
+        s = t.Text;
+        if (int.TryParse(s, out v))
+        {
+            if (v < 0 || v > 255)
+            {
+                t.Text = "" + (int)(current * 255.0);
+            }
+            else
+            {
+                outV = (double)v / 255.0;
+                triger = t;
+            }
+        }
+
+        if (triger != null)
+        {
+            ForceUpdateWithRGB(triger);
+            UpdateSelectedColor();
+        }
+    }
+
+    private Regex IntRegex = new Regex("[0-9]");
+    private Regex FloatRegex = new Regex("[0-9.]");
+
+    private void PreviewTextInputI(object sender, TextCompositionEventArgs e)
+    {
+        e.Handled = !IntRegex.IsMatch(e.Text);
+    }
+
+    private void PreviewTextInputF(object sender, TextCompositionEventArgs e)
+    {
+        e.Handled = !FloatRegex.IsMatch(e.Text);
     }
 }

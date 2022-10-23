@@ -101,8 +101,21 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="R"/>
                 <Slider Name="r_slider" Grid.Column="1" VerticalAlignment="Center"/>
-                <Label Grid.Column="2" Name="r_value" VerticalContentAlignment="Center" Content="1.0000"/>
-                <Label Grid.Column="3" Name="r_byte_value" VerticalContentAlignment="Center" Content="255"/>
+                <TextBox Grid.Column="2"
+                         Name="r_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+
+                <TextBox Grid.Column="3"
+                         Name="r_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
             </Grid>
         </Border>
 
@@ -117,8 +130,20 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="G"/>
                 <Slider Grid.Column="1" Name="g_slider" VerticalAlignment="Center"/>
-                <Label Grid.Column="2" Name="g_value" VerticalContentAlignment="Center" Content="1.0000"/>
-                <Label Grid.Column="3" Name="g_byte_value" VerticalContentAlignment="Center" Content="255"/>
+                <TextBox Grid.Column="2"
+                         Name="g_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="g_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
             </Grid>
         </Border>
 
@@ -133,8 +158,20 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="B"/>
                 <Slider Grid.Column="1" Name="b_slider" VerticalAlignment="Center"/>
-                <Label Grid.Column="2" Name="b_value" VerticalContentAlignment="Center" Content="1.0000"/>
-                <Label Grid.Column="3" Name="b_byte_value" VerticalContentAlignment="Center" Content="255"/>
+                <TextBox Grid.Column="2"
+                         Name="b_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="b_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
             </Grid>
         </Border>
 
@@ -151,8 +188,20 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="A"/>
                 <Slider Grid.Column="1" Name="a_slider" VerticalAlignment="Center"/>
-                <Label Grid.Column="2" Name="a_value" VerticalContentAlignment="Center" Content="1.0000"/>
-                <Label Grid.Column="3" Name="a_byte_value" VerticalContentAlignment="Center" Content="255"/>
+                <TextBox Grid.Column="2"
+                         Name="a_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="a_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
             </Grid>
         </Border>
     </Grid>
