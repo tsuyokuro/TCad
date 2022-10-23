@@ -81,11 +81,6 @@ public class AutoCompleteTextBox : TextBox
             typeof(AutoCompleteTextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
     }
 
-    public class TextEventArgs : EventArgs
-    {
-        public string Text;
-    }
-
     private CandidatePopup mCandidatePopup = new CandidatePopup();
 
     public Style CandidateListBorderStyle
@@ -145,10 +140,26 @@ public class AutoCompleteTextBox : TextBox
         set;
     } = 2;
 
-    public event Action<object, TextEventArgs> Determine;
+    public event Action<string> Determined;
 
     public AutoCompleteTextBox()
     {
+    }
+
+    public void Determine()
+    {
+        string v = Text.Trim('\r', '\n', ' ', '\t');
+
+        if (v.Length == 0)
+        {
+            return;
+        }
+
+        History.Add(Text);
+
+        Determined?.Invoke(Text);
+
+        Text = "";
     }
 
     protected override void OnInitialized(EventArgs e)
@@ -210,14 +221,14 @@ public class AutoCompleteTextBox : TextBox
             }
             else if (e.Key == Key.Enter)
             {
-                NotifyDetermine();
+                Determine();
             }
         }
         else
         {
             if (e.Key == Key.Enter)
             {
-                NotifyDetermine();
+                Determine();
             }
 
             if (History != null)
@@ -236,24 +247,6 @@ public class AutoCompleteTextBox : TextBox
                 }
             }
         }
-    }
-
-    private void NotifyDetermine()
-    {
-        TextEventArgs ea = new TextEventArgs();
-
-        string v = Text.Trim('\r', '\n', ' ', '\t');
-
-        if (v.Length == 0)
-        {
-            return;
-        }
-
-        ea.Text = v;
-
-        History.Add(Text);
-
-        Determine(this, ea);
     }
 
     protected override void OnTextChanged(TextChangedEventArgs e)

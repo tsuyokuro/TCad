@@ -323,7 +323,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.DrawMode = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawMode)));
 
-            UpdateDrawMode(value);
+            mContext.DrawModeUpdated(value);
             Redraw();
         }
 
@@ -374,11 +374,6 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     private void Redraw()
     {
         mContext.Controller.Redraw();
-    }
-
-    private void UpdateDrawMode(DrawTools.DrawMode mode)
-    {
-        mContext.DrawModeUpdated(mode);
     }
 
     public void Load()

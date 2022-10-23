@@ -7,9 +7,7 @@ namespace TCad.ViewModel;
 
 public interface ICadMainWindow
 {
-    Window GetWindow();
     void OpenPopupMessage(string text, UITypes.MessageType messageType);
     void ClosePopupMessage();
     void SetPlotterView(IPlotterView view);
-    void DrawModeUpdated(DrawTools.DrawMode drawMode);
 }

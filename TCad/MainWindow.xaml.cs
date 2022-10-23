@@ -1,6 +1,4 @@
-using TCad.Util;
 using Plotter;
-using Plotter.Controller;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,17 +26,22 @@ public partial class MainWindow : Window, ICadMainWindow
 
         InitializeComponent();
 
-        SetupInteractionConsole();
-
         ViewModel = new PlotterViewModel(this);
-        ViewModel.Open();
 
-        viewContainer.Focusable = true;
+        ViewModel.DrawModeChanged += DrawModeChanged;
+
+        ViewModel.Open();
 
         ViewModel.ObjTreeVM.ObjectTree = ObjTree;
 
         ViewModel.SetupTextCommandView(textCommand);
-        textCommand.Determine += TextCommand_OnDetermine;
+
+
+        SetupInteractionConsole();
+
+        viewContainer.Focusable = true;
+
+        textCommand.Determined += ViewModel.TextCommand;
 
         KeyDown += OnKeyDown;
         KeyUp += OnKeyUp;
@@ -216,28 +219,7 @@ public partial class MainWindow : Window, ICadMainWindow
     #region TextCommand
     public void RunTextCommandButtonClicked(object sender, RoutedEventArgs e)
     {
-        var s = textCommand.Text;
-
-        textCommand.Text = "";
-
-        if (s.Length > 0)
-        {
-            ViewModel.TextCommand(s);
-            textCommand.History.Add(s);
-            textCommand.Focus();
-        }
-    }
-
-    private void TextCommand_OnDetermine(object sender, AutoCompleteTextBox.TextEventArgs e)
-    {
-        var s = e.Text;
-
-        textCommand.Text = "";
-
-        if (s.Length > 0)
-        {
-            ViewModel.TextCommand(s);
-        }
+        textCommand.Determine();
     }
     #endregion
 
@@ -265,11 +247,6 @@ public partial class MainWindow : Window, ICadMainWindow
         }
     }
     #endregion
-
-    public void SetPlotterView(IPlotterView view)
-    {
-        viewContainer.Child = view.FormsControl;
-    }
 
     IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
@@ -310,48 +287,37 @@ public partial class MainWindow : Window, ICadMainWindow
         return IntPtr.Zero;
     }
 
-    #region IMainWindow
-    public Window GetWindow()
-    {
-        return this;
-    }
 
-    public void SetCurrentFileName(string file_name)
+    #region IMainWindow
+    public void SetPlotterView(IPlotterView view)
     {
-        FileName.Content = file_name;
+        viewContainer.Child = view.FormsControl;
     }
 
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
-        Application.Current.Dispatcher.Invoke(() => {
-            if (PopupMessage.IsOpen)
-            {
-                return;
-            }
+        ThreadUtil.RunOnMainThread(() => {
+            if (PopupMessage.IsOpen) return;
 
             PopupMessageIcon.Source = SelectPopupMessageIcon(messageType);
-
             PopupMessageText.Text = text;
             PopupMessage.IsOpen = true;
-        });
+        }, true);
     }
 
     public void ClosePopupMessage()
     {
-        if (Application.Current.Dispatcher.Thread.ManagedThreadId ==
-            Thread.CurrentThread.ManagedThreadId)
+        ThreadUtil.RunOnMainThread(() =>
         {
             PopupMessage.IsOpen = false;
-            return;
-        }
-
-        Application.Current.Dispatcher.Invoke(() => {
-            PopupMessage.IsOpen = false;
-        });
+        }, true);
     }
+    #endregion
 
-    public void DrawModeUpdated(DrawTools.DrawMode drawMode)
+    #region PlotterViewModel Event
+    public void DrawModeChanged(DrawTools.DrawMode drawMode)
     {
+        DOut.plx("_in");
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         viewRoot.Background = new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B));
     }

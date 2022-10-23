@@ -12,11 +12,6 @@ namespace TCad.ViewModel;
 
 public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 {
-    public enum CmdNames
-    {
-        new_doc,
-    }
-
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected PlotterController mController;
@@ -133,6 +128,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public SimpleCommand SimpleCmd{ get; set; }
 
     private CommandHandler mCommandHandler;
+
+    public delegate void DrawModeChangeEventHandler(DrawTools.DrawMode mode);
+    public event DrawModeChangeEventHandler DrawModeChanged;
 
     public PlotterViewModel(ICadMainWindow mainWindow)
     {
@@ -379,7 +377,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public void DrawModeUpdated(DrawTools.DrawMode mode)
     {
         mViewManager.DrawModeUpdated(mode);
-        mMainWindow.DrawModeUpdated(mode);
+        DrawModeChanged?.Invoke(mode);
     }
 
     public void Redraw()

@@ -458,7 +458,7 @@ public class CommandHandler
         GridSettingsDialog dlg = new();
 
         dlg.GridSize = ViewModel.Settings.GridSize;
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         bool? result = dlg.ShowDialog();
 
@@ -473,7 +473,7 @@ public class CommandHandler
     {
         SnapSettingsDialog dlg = new();
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         dlg.PointSnapRange = ViewModel.Settings.PointSnapRange;
         dlg.LineSnapRange = ViewModel.Settings.LineSnapRange;
@@ -493,7 +493,7 @@ public class CommandHandler
     {
         PrintSettingsDialog dlg = new();
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         dlg.PrintWithBitmap = ViewModel.Settings.PrintWithBitmap;
         dlg.MagnificationBitmapPrinting = ViewModel.Settings.MagnificationBitmapPrinting;
@@ -513,7 +513,7 @@ public class CommandHandler
     {
         MoveKeySettingsDialog dlg = new();
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         dlg.MoveX = ViewModel.Settings.MoveKeyUnitX;
         dlg.MoveY = ViewModel.Settings.MoveKeyUnitY;
@@ -538,7 +538,7 @@ public class CommandHandler
 
         dlg.SelectedColor = Controller.CurrentFigure.LinePen.Color4;
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         bool? result = dlg.ShowDialog();
 
@@ -566,7 +566,7 @@ public class CommandHandler
 
         dlg.SelectedColor = Controller.CurrentFigure.FillBrush.Color4;
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         bool? result = dlg.ShowDialog();
 
@@ -587,7 +587,7 @@ public class CommandHandler
     {
         ColorPickerDialog dlg = new();
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         bool? result = dlg.ShowDialog();
 
@@ -601,7 +601,7 @@ public class CommandHandler
         if (mEditorWindow == null)
         {
             mEditorWindow = new EditorWindow(Controller.ScriptEnv);
-            mEditorWindow.Owner = ViewModel.MainWindow.GetWindow();
+            mEditorWindow.Owner = Application.Current.MainWindow;
             mEditorWindow.Show();
 
             mEditorWindow.Closed += delegate
@@ -801,7 +801,7 @@ public class CommandHandler
     {
         DocumentSettingsDialog dlg = new();
 
-        dlg.Owner = ViewModel.MainWindow.GetWindow();
+        dlg.Owner = Application.Current.MainWindow;
 
         dlg.WorldScale = ViewModel.ViewManager.DrawContext.WorldScale_;
 
