@@ -529,14 +529,16 @@ public class CommandHandler
 
     public void SetLineColor()
     {
-        if (Controller.CurrentFigure == null)
+        CadFigure fig = Controller.CurrentFigure;
+
+        if (fig == null)
         {
             return;
         }
 
         ColorPickerDialog dlg = new();
 
-        dlg.SelectedColor = Controller.CurrentFigure.LinePen.Color4;
+        dlg.SelectedColor = fig.LinePen.Color4;
 
         dlg.Owner = Application.Current.MainWindow;
 
@@ -544,27 +546,36 @@ public class CommandHandler
 
         if (result.Value)
         {
+            DrawPen oldPen = fig.LinePen;
+            DrawPen newPen = default;
+
             if (dlg.InvalidColor)
             {
-                Controller.CurrentFigure.LinePen.Color4 = DrawPen.InvalidPen.Color4;
+                fig.LinePen.Color4 = DrawPen.InvalidPen.Color4;
             }
             else
             {
-                Controller.CurrentFigure.LinePen.Color4 = dlg.SelectedColor;
+                fig.LinePen.Color4 = dlg.SelectedColor;
             }
+
+            newPen = fig.LinePen;
+            CadOpe ope = new CadChangeFilgLinePen(fig.ID, oldPen, newPen);
+            Controller.HistoryMan.foward(ope);
         }
     }
 
     public void SetFillColor()
     {
-        if (Controller.CurrentFigure == null)
+        CadFigure fig = Controller.CurrentFigure;
+
+        if (fig == null)
         {
             return;
         }
 
         ColorPickerDialog dlg = new();
 
-        dlg.SelectedColor = Controller.CurrentFigure.FillBrush.Color4;
+        dlg.SelectedColor = fig.FillBrush.Color4;
 
         dlg.Owner = Application.Current.MainWindow;
 
@@ -572,6 +583,9 @@ public class CommandHandler
 
         if (result.Value)
         {
+            DrawBrush oldBrush = fig.FillBrush;
+            DrawBrush newBrush = default;
+
             if (dlg.InvalidColor)
             {
                 Controller.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
@@ -580,6 +594,10 @@ public class CommandHandler
             {
                 Controller.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
             }
+
+            newBrush = fig.FillBrush;
+            CadOpe ope = new CadChangeFilgFillBrush(fig.ID, oldBrush, newBrush);
+            Controller.HistoryMan.foward(ope);
         }
     }
 

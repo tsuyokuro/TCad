@@ -8,6 +8,7 @@ using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1001;
 using Plotter.Controller;
+using System.Windows.Documents;
 
 namespace Plotter;
 
@@ -613,3 +614,56 @@ public class CadOpeChangeFigureList : CadOpe
         Layer.FigureList = OldList;
     }
 }
+
+public class CadChangeFilgLinePen : CadOpe
+{
+    private DrawPen OldPen;
+    private DrawPen NewPen;
+    private uint FigureID;
+
+    public CadChangeFilgLinePen(uint figureID, DrawPen oldPen, DrawPen newPen)
+    {
+        FigureID = figureID;
+        OldPen = oldPen;
+        NewPen = newPen;
+    }
+
+    public override void Redo(PlotterController pc)
+    {
+        CadFigure fig = pc.DB.GetFigure(FigureID);
+        fig.LinePen = NewPen;
+    }
+
+    public override void Undo(PlotterController pc)
+    {
+        CadFigure fig = pc.DB.GetFigure(FigureID);
+        fig.LinePen = OldPen;
+    }
+}
+
+public class CadChangeFilgFillBrush : CadOpe
+{
+    private DrawBrush OldBrush;
+    private DrawBrush NewBrush;
+    private uint FigureID;
+
+    public CadChangeFilgFillBrush(uint figureID, DrawBrush oldBrush, DrawBrush newBrush)
+    {
+        FigureID = figureID;
+        OldBrush = oldBrush;
+        NewBrush = newBrush;
+    }
+
+    public override void Redo(PlotterController pc)
+    {
+        CadFigure fig = pc.DB.GetFigure(FigureID);
+        fig.FillBrush = NewBrush;
+    }
+
+    public override void Undo(PlotterController pc)
+    {
+        CadFigure fig = pc.DB.GetFigure(FigureID);
+        fig.FillBrush = OldBrush;
+    }
+}
+
