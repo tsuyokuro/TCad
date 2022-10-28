@@ -159,6 +159,8 @@ public partial class ScriptEnvironment
         Controller.PushToView();
     }
 
+    private Thread mScriptThread = null;
+
     public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
     {
         if (callback != null)
@@ -170,8 +172,13 @@ public partial class ScriptEnvironment
 
         await Task.Run(() =>
         {
-            Engine.SetTrace(OnTraceback);
-            RunScript(s, snapshotDB);
+            //Engine.SetTrace(OnTraceback);
+            mScriptThread = new Thread(() => {
+                RunScript(s, snapshotDB);
+                });
+
+            mScriptThread.Start();
+            mScriptThread.Join();
         });
 
         Controller.Clear();
@@ -264,6 +271,18 @@ public partial class ScriptEnvironment
     public void CancelScript()
     {
         StopScript = true;
+
+        if (mScriptThread != null)
+        {
+            try
+            {
+                mScriptThread.Interrupt();
+                mScriptThread = null;
+            }
+            catch
+            {
+            }
+        }
     }
 
     public class RunCallback
