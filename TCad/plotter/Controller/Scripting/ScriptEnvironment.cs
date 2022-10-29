@@ -17,6 +17,7 @@ using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
 using TCad.ViewModel;
+using static Community.CsharpSqlite.Sqlite3;
 
 namespace Plotter.Controller;
 
@@ -116,20 +117,15 @@ public partial class ScriptEnvironment
         mAutoCompleteList.AddRange(mSimpleCommands.GetAutoCompleteForSimpleCmd());
     }
 
-    bool StopScript = false;
-
-    /*
-    private TracebackDelegate OnTraceback
-        (TraceBackFrame frame, string result, object payload)
+    public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        if (StopScript)
-        {
-            throw new KeyboardInterruptException("");
-        }
-
-        return OnTraceback;
+        Controller.ViewIF.OpenPopupMessage(text, type);
     }
-    */
+
+    public void ClosePopupMessage()
+    {
+        Controller.ViewIF.ClosePopupMessage();
+    }
 
     public async void ExecuteCommandAsync(string s)
     {
@@ -160,25 +156,43 @@ public partial class ScriptEnvironment
     }
 
     private Thread mScriptThread = null;
+    private TraceBack mTraceBack = null;
 
     public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
     {
+        if (mScriptThread != null)
+        {
+            callback.OnStart();
+            callback.OnEnd();
+            return;
+        }
+
         if (callback != null)
         {
             callback.OnStart();
         }
 
-        StopScript = false;
+        PrepareRunScript();
+
+        //mTraceBack = new TraceBack(this, callback);
 
         await Task.Run(() =>
         {
-            //Engine.SetTrace(OnTraceback);
-            mScriptThread = new Thread(() => {
+            mScriptThread = new Thread(() =>
+            {
+                if (mTraceBack != null)
+                {
+                    Engine.SetTrace(mTraceBack.OnTraceback);
+                }
+
                 RunScript(s, snapshotDB);
-                });
+            });
 
             mScriptThread.Start();
             mScriptThread.Join();
+
+            mScriptThread = null;
+            mTraceBack = null;
         });
 
         Controller.Clear();
@@ -189,25 +203,6 @@ public partial class ScriptEnvironment
         if (callback != null)
         {
             callback.OnEnd();
-        }
-
-        TracebackDelegate OnTraceback
-            (TraceBackFrame frame, string result, object payload)
-        {
-            if (StopScript)
-            {
-                throw new KeyboardInterruptException("");
-            }
-
-            if (callback != null && callback.onTrace != null)
-            {
-                if (!callback.onTrace(frame, result, payload))
-                {
-                    throw new KeyboardInterruptException("");
-                }
-            }
-
-            return OnTraceback;
         }
     }
 
@@ -268,20 +263,32 @@ public partial class ScriptEnvironment
         return ret;
     }
 
+    public void PrepareRunScript()
+    {
+        Engine.Execute("reset_stop()", mScope);
+    }
+
     public void CancelScript()
     {
-        StopScript = true;
-
-        if (mScriptThread != null)
+        if (mTraceBack != null)
         {
-            try
+            mTraceBack.StopScript = true;
+        }
+        else
+        {
+            if (mScriptThread != null)
             {
-                mScriptThread.Interrupt();
-                mScriptThread = null;
+                try
+                {
+                    mScriptThread.Interrupt();
+                    mScriptThread = null;
+                }
+                catch
+                {
+                }
             }
-            catch
-            {
-            }
+
+            Engine.Execute("raise_stop()", mScope);
         }
     }
 
@@ -293,18 +300,38 @@ public partial class ScriptEnvironment
             (frame, result, payload) => { return true; };
     }
 
-    public void RunOnMainThread(Action action)
+    public class TraceBack
     {
-        ThreadUtil.RunOnMainThread(action, true);
-    }
+        private ScriptEnvironment Env;
 
-    public void OpenPopupMessage(string text, UITypes.MessageType type)
-    {
-        Controller.ViewIF.OpenPopupMessage(text, type);
-    }
+        public bool StopScript = false;
 
-    public void ClosePopupMessage()
-    {
-        Controller.ViewIF.ClosePopupMessage();
+        public RunCallback CallBack;
+
+        public TracebackDelegate OnTraceback(TraceBackFrame frame, string result, object payload)
+        {
+            if (StopScript)
+            {
+                //throw new KeyboardInterruptException("");
+                Env.Engine.Execute("sys.exit()", Env.mScope);
+            }
+
+            if (CallBack != null && CallBack.onTrace != null)
+            {
+                if (!CallBack.onTrace(frame, result, payload))
+                {
+                    //throw new KeyboardInterruptException("");
+                    Env.Engine.Execute("sys.exit()", Env.mScope);
+                }
+            }
+
+            return OnTraceback;
+        }
+
+        public TraceBack(ScriptEnvironment env, RunCallback callback)
+        {
+            Env = env;
+            CallBack = callback;
+        }
     }
 }

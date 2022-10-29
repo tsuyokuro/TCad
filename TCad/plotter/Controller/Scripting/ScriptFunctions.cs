@@ -1073,7 +1073,7 @@ public class ScriptFunctions
         dp.MeshEdgePen = drawPen;
         dp.MeshLinePen = drawPen;
 
-        Env.RunOnMainThread((Action)(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             tdc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
 
@@ -1094,7 +1094,7 @@ public class ScriptFunctions
             }
 
             tdc.Dispose();
-        }));
+        }, true);
     }
 
     public void CreateBitmap(int w, int h, uint argb, int lineW, string fname)
@@ -1447,10 +1447,10 @@ public class ScriptFunctions
 
         Controller.CurrentLayer.RemoveFigureByID(fig.ID);
 
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Controller.ClearSelection();
-        });
+        }, true);
 
         Session.PostRemakeObjectTree();
     }
@@ -1511,10 +1511,10 @@ public class ScriptFunctions
 
         Session.AddOpe(opeRoot);
 
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Controller.ClearSelection();
-        });
+        }, true);
 
         Session.PostRemakeObjectTree();
         //PrintSuccess();
@@ -1953,20 +1953,20 @@ public class ScriptFunctions
 
     public void UpdateTV()
     {
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-        });
+        }, true);
     }
 
     public void Redraw()
     {
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Controller.Clear();
             Controller.DrawAll();
             Controller.PushToView();
-        });
+        }, true);
     }
 
     public CadFigure CreatePolyLines()

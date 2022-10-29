@@ -499,3 +499,14 @@ esc_bg_b_magenta = "\x1b[105m";
 esc_bg_b_cyan = "\x1b[106m";
 esc_bg_b_white = "\x1b[107m";
 
+global _STOP_
+_STOP_ = False
+
+def raise_stop():
+    global _STOP_
+    _STOP_ = True
+
+def reset_stop():
+    global _STOP_
+    _STOP_ = False
+

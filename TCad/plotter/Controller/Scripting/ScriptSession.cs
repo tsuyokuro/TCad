@@ -106,19 +106,19 @@ public class ScriptSession
 
     public void UpdateTV(bool remakeTree)
     {
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Env.Controller.UpdateObjectTree(remakeTree);
-        });
+        }, true);
     }
 
     public void Redraw()
     {
-        Env.RunOnMainThread(() =>
+        ThreadUtil.RunOnMainThread(() =>
         {
             Env.Controller.Clear();
             Env.Controller.DrawAll();
             Env.Controller.PushToView();
-        });
+        }, true);
     }
 }
