@@ -499,14 +499,17 @@ esc_bg_b_magenta = "\x1b[105m";
 esc_bg_b_cyan = "\x1b[106m";
 esc_bg_b_white = "\x1b[107m";
 
-global _STOP_
-_STOP_ = False
+global _cancel_
+_cancel_ = False
 
-def raise_stop():
-    global _STOP_
-    _STOP_ = True
+def raise_cancel():
+    global _cancel_
+    _cancel_ = True
 
-def reset_stop():
-    global _STOP_
-    _STOP_ = False
+def reset_cancel():
+    global _cancel_
+    _cancel_ = False
 
+def check_cancel():
+    if (_cancel_):
+        sys.exit()

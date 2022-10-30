@@ -3,6 +3,7 @@ using System;
 using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -571,11 +572,15 @@ public partial class CadConsoleView : FrameworkElement
         }
         else
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                Print(s);
-                NewLine();
-            }));
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    Print(s);
+                    NewLine();
+                }));
+            }
+            catch { }
         }
     }
 
@@ -587,10 +592,14 @@ public partial class CadConsoleView : FrameworkElement
         }
         else
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                PrintString(s);
-            }));
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    PrintString(s);
+                }));
+            }
+            catch { }
         }
     }
 
@@ -656,10 +665,14 @@ public partial class CadConsoleView : FrameworkElement
         }
         else
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                HandleClear();
-            }));
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    HandleClear();
+                }));
+            }
+            catch { }
         }
     }
 

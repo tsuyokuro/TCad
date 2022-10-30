@@ -23,6 +23,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using TCad.ViewModel;
 using static IronPython.Modules.CTypes;
+using System.Threading;
 
 namespace Plotter.Controller;
 
@@ -2041,6 +2042,11 @@ public class ScriptFunctions
     public List<CadFigure> GetSlectedFigList()
     {
         return Controller.DB.GetSelectedFigList();
+    }
+
+    public void Sleep(int t)
+    {
+        Thread.Sleep(t);
     }
 
     public void Test()

@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="TCad.ScriptEditor.EditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -24,7 +24,6 @@
                 <ResourceDictionary Source="/Resources/MenuStyle.xaml" />
                 <ResourceDictionary Source="/Resources/ScrollBarStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
 
             <Style x:Key="MyMenu" TargetType="Menu">
                 <Setter Property="Foreground" Value="{StaticResource MenuTextColor}" />
@@ -137,10 +136,11 @@
                                         Run
                                     </Label>
                                     <Polygon
+                                        x:Name = "icon"
                                         VerticalAlignment="Center"
                                         Fill="YellowGreen"
-                                        Points="0,0 8,5, 0,10"
-                                        Stroke="Black" />
+                                        Points="0,0 10,6, 0,12"
+                                        />
                                 </StackPanel>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -156,6 +156,7 @@
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="border" Property="Background" Value="Gray" />
                                     <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                    <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -170,8 +171,6 @@
                     Margin="2,2,2,2"
                     Padding="0,0,0,0"
                     HorizontalAlignment="Left">
-                    <!--  Visibility="Hidden"  -->
-                    <!--  停止の方法がわかったら上のHiddenを消す  -->
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
@@ -189,10 +188,11 @@
                                         Stop
                                     </Label>
                                     <Polygon
+                                        Name="icon"
                                         VerticalAlignment="Center"
                                         Fill="Red"
-                                        Points="0,0 0,10 10,10 10,0"
-                                        Stroke="Black" />
+                                        Points="0,0 0,12 12,12 12,0"
+                                        />
                                 </StackPanel>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -208,6 +208,7 @@
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="border" Property="Background" Value="Gray" />
                                     <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                    <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -215,7 +216,7 @@
                     </Button.Template>
                 </Button>
 
-                <Label Grid.Column="2" />
+                <Label Grid.Column="2" x:Name="info" Foreground="White"/>
 
                 <Label
                     x:Name="LblCaretPos"

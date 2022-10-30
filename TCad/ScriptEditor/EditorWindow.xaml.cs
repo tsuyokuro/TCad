@@ -51,6 +51,8 @@ namespace TCad.ScriptEditor
 
             BtnStop.Click += BtnStop_Click;
 
+            BtnStop.IsEnabled = false;
+
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
 
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
@@ -273,11 +275,22 @@ namespace TCad.ScriptEditor
             callback.OnStart = () =>
             {
                 BtnRun.IsEnabled = false;
+                BtnStop.IsEnabled = true;
+                info.Content = "Running...";
             };
 
             callback.OnEnd = () =>
             {
                 BtnRun.IsEnabled = true;
+                BtnStop.IsEnabled = false;
+                info.Content = "";
+            };
+
+            callback.OnEnding = () =>
+            {
+                BtnRun.IsEnabled = false;
+                BtnStop.IsEnabled = false;
+                info.Content = "Ending...";
             };
 
             callback.onTrace = (frame, result, payload) =>

@@ -147,7 +147,7 @@ public partial class ScriptEnvironment
 
         await Task.Run( () =>
         {
-            RunScript(s);
+            RunScript(s, false);
         });
 
         Controller.Clear();
@@ -167,6 +167,8 @@ public partial class ScriptEnvironment
             return;
         }
 
+        mScriptFunctions.StartSession(snapshotDB);
+
         if (callback != null)
         {
             callback.OnStart();
@@ -185,7 +187,7 @@ public partial class ScriptEnvironment
                     Engine.SetTrace(mTraceBack.OnTraceback);
                 }
 
-                RunScript(s, snapshotDB);
+                InternalRunScript(s);
             });
 
             mScriptThread.Start();
@@ -204,12 +206,23 @@ public partial class ScriptEnvironment
         {
             callback.OnEnd();
         }
+
+        mScriptFunctions.EndSession();
     }
 
-    public dynamic RunScript(string s, bool snapshotDB = false)
+    public dynamic RunScript(string s, bool snapshotDB)
     {
         mScriptFunctions.StartSession(snapshotDB);
 
+        dynamic ret = InternalRunScript(s);
+
+        mScriptFunctions.EndSession();
+
+        return ret;
+    }
+
+    private dynamic InternalRunScript(string s)
+    {
         dynamic ret = null;
 
         try
@@ -249,23 +262,23 @@ public partial class ScriptEnvironment
         }
         catch (KeyboardInterruptException)
         {
-            mScriptFunctions.EndSession();
             ItConsole.println(AnsiEsc.BRed + "Canceled");
+        }
+        catch (ThreadInterruptedException e)
+        {
+            // NOP
         }
         catch (Exception e)
         {
-            mScriptFunctions.EndSession();
-            ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
+            ItConsole.println(AnsiEsc.BRed + "Error: " + e?.Message);
         }
-
-        mScriptFunctions.EndSession();
 
         return ret;
     }
 
     public void PrepareRunScript()
     {
-        Engine.Execute("reset_stop()", mScope);
+        Engine.Execute("reset_cancel()", mScope);
     }
 
     public void CancelScript()
@@ -288,13 +301,14 @@ public partial class ScriptEnvironment
                 }
             }
 
-            Engine.Execute("raise_stop()", mScope);
+            Engine.Execute("raise_cancel()", mScope);
         }
     }
 
     public class RunCallback
     {
         public Action OnStart = () => { };
+        public Action OnEnding = () => { };
         public Action OnEnd = () => { };
         public Func<TraceBackFrame, string, object, bool> onTrace = 
             (frame, result, payload) => { return true; };
