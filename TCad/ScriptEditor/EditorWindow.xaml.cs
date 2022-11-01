@@ -3,6 +3,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.AvalonEdit.Utils;
+using Microsoft.Win32;
 using OpenTK.Graphics.OpenGL;
 using Plotter;
 using Plotter.Controller;
@@ -48,7 +49,6 @@ namespace TCad.ScriptEditor
             mSearchPanel = SearchPanel.Install(textEditor);
 
             BtnRun.Click += BtnRun_Click;
-
             BtnStop.Click += BtnStop_Click;
 
             BtnStop.IsEnabled = false;
@@ -97,15 +97,20 @@ namespace TCad.ScriptEditor
         {
             if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.S)
             {
-                if (FileName != null)
-                {
-                    textEditor.Save(FileName);
-                    UpdateTitle(false, true);
-                }
-                else
-                {
-                    SaveWithDialog();
-                }
+                SaveFile();
+            }
+        }
+
+        private void SaveFile()
+        {
+            if (FileName != null)
+            {
+                textEditor.Save(FileName);
+                UpdateTitle(false, true);
+            }
+            else
+            {
+                SaveWithDialog();
             }
         }
 
@@ -306,32 +311,47 @@ namespace TCad.ScriptEditor
             ScriptEnv.CancelScript();
         }
 
+        private void ToolBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement btn = sender as FrameworkElement;
+            if (btn == null) return;
+
+            string cmd = btn.Tag.ToString();
+
+            ExecuteCommand(cmd);
+        }
+
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is FrameworkElement))
+            FrameworkElement element = sender as FrameworkElement;
+            if (element == null)
             {
                 return;
             }
 
-            FrameworkElement element = (FrameworkElement)sender;
+            string cmd = element.Tag.ToString();
 
-            if (element.Tag.ToString() == "load_script")
+            ExecuteCommand(cmd);
+        }
+
+        private void ExecuteCommand(string cmd) {
+            if (cmd == "open_script")
             {
-                LoadWithDialog();
+                OpenFile();
             }
-            else if (element.Tag.ToString() == "save_script")
+            else if (cmd == "save_script")
             {
-                SaveWithDialog();
+                SaveFile();
             }
-            else if (element.Tag.ToString() == "search_text")
+            else if (cmd == "search_text")
             {
                 mSearchPanel.Open();
             }
-            else if (element.Tag.ToString() == "copy_text")
+            else if (cmd == "copy_text")
             {
                 textEditor.Copy();
             }
-            else if (element.Tag.ToString() == "paste_text")
+            else if (cmd == "paste_text")
             {
                 textEditor.Paste();
             }
@@ -352,7 +372,7 @@ namespace TCad.ScriptEditor
             return Directory.Exists(path);
         }
 
-        public void LoadWithDialog()
+        public void OpenFile()
         {
             System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
 

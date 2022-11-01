@@ -46,6 +46,7 @@
     <Grid Name="MaineContainer">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -53,9 +54,9 @@
             <MenuItem Header="File" Style="{StaticResource MyMenuItem}">
                 <MenuItem
                     Click="MenuItem_Click"
-                    Header="Load"
+                    Header="Open"
                     Style="{StaticResource MyMenuItem}"
-                    Tag="load_script" />
+                    Tag="open_script" />
                 <MenuItem
                     Click="MenuItem_Click"
                     Header="Save"
@@ -70,10 +71,32 @@
                     Tag="search_text" />
             </MenuItem>
         </Menu>
+        <Grid Grid.Row="1" Background="{StaticResource MenuBGColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Margin="4,0,0,0"  Padding="1,0,0,1" Grid.Column="0" Height="24">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="BtnOpen"
+                            Click="ToolBtn_Click"
+                            Tag="open_script"
+                            Style="{StaticResource ToolButton3}">
+                        <Image Source="{StaticResource OpenFileDrawingImage}" />
 
+                    </Button>
+                    <Button x:Name="BtnSave"
+                            Click="ToolBtn_Click"
+                            Tag="save_script"
+                            Margin="2,0,0,0"
+                            Style="{StaticResource ToolButton3}">
+                        <Image Source="{StaticResource SaveFileDrawingImage}" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
         <avalonEdit:TextEditor
             x:Name="textEditor"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="0"
             Background="#FF1E1E1E"
             BorderBrush="Black"
@@ -101,7 +124,7 @@
             </avalonEdit:TextEditor.ContextMenu>
         </avalonEdit:TextEditor>
 
-        <Border Grid.Row="2" Background="#FF1E1E1E">
+        <Border Grid.Row="3" Background="#FF1E1E1E">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
