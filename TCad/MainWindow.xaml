@@ -18,7 +18,7 @@
     mc:Ignorable="d">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="26" ResizeBorderThickness="4" />
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="4" />
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
@@ -157,7 +157,7 @@
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
             <RowDefinition Height="100*" />
         </Grid.RowDefinitions>
 
@@ -210,14 +210,15 @@
                 <Image
                     Grid.Column="0"
                     Width="{StaticResource AppIconSize}"
+                    Height="{StaticResource AppIconSize}"
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     Source="{StaticResource traiangle2DrawingImage}" />
-                <Label
+                <TextBlock
                     Grid.Column="1"
-                    Margin="4,0,0,0"
+                    Margin="4,0,4,0"
                     VerticalAlignment="Center"
-                    Content="TCad"
+                    Text="TCad"
                     FontSize="{StaticResource CaptionFontSize}"
                     FontWeight="ExtraBold"
                     Foreground="{StaticResource AppTitleColor}" />
@@ -243,10 +244,10 @@
                                     Command="{Binding SimpleCmd}" CommandParameter="new_doc" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_load}"
-                                    Command="{Binding SimpleCmd}" CommandParameter="load" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="open_file" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_save}"
-                                    Command="{Binding SimpleCmd}" CommandParameter="save" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="save_file" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_save_as}"
                                     Command="{Binding SimpleCmd}" CommandParameter="save_as" />
@@ -512,112 +513,125 @@
                 Background="{StaticResource MenuBGColor}" />
 
             <!--  Tool bar area  -->
-            <StackPanel
+            <Border
                 Grid.Row="1"
                 Height="Auto"
                 HorizontalAlignment="Stretch"
-                Background="{StaticResource ToolBarBGColor}"
-                Orientation="Vertical">
+                BorderThickness="0"
+                Padding="0,2,0,3"
+                Background="{StaticResource ToolBarBGColor}">
+                <StackPanel Orientation ="Horizontal">
 
-                <StackPanel
-                    x:Name="SnapToolBar"
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="0,3,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    Orientation="Horizontal">
+                    <!-- File Tool Bar -->
+                    <StackPanel x:Name = "FileToolBar"
+                                Orientation="Horizontal" Margin="8,0,0,0"
+                                Background="Transparent">
+                        <Button x:Name="BtnOpen"
+                            Width="22" Height="22"
+                            Tag="open_script"
+                            Style="{StaticResource ToolButton3}"
+                            Command="{Binding SimpleCmd}" CommandParameter="open_file">
+                            <Image Source="{StaticResource OpenFileDrawingImage}" />
 
-                    <Label Width="4" Height="Auto" />
+                        </Button>
+                        <Button x:Name="BtnSave"
+                            Tag="save_script"
+                            Width="22" Height="22"
+                            Margin="4,0,0,0"
+                            Style="{StaticResource ToolButton3}"
+                            Command="{Binding SimpleCmd}" CommandParameter="save_file" >
+                            <Image Source="{StaticResource SaveFileDrawingImage}" />
+                        </Button>
+                    </StackPanel>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="1,2,0,2"
-                        IsChecked="{Binding SnapToPoint}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToPointDrawingImage}" />
-                    </ToggleButton>
+                    <!-- Snap Tool Bar -->
+                    <StackPanel x:Name="SnapToolBar"
+                        Margin="8,0,0,0"
+                        Width="Auto"
+                        Height="Auto"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        Orientation="Horizontal">
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            IsChecked="{Binding SnapToPoint}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                Width="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{StaticResource SnapToPointDrawingImage}" />
+                        </ToggleButton>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="4,2,0,2"
-                        IsChecked="{Binding SnapToSegment}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToSegDrawingImage}" />
-                    </ToggleButton>
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            Margin="4,0,0,0"
+                            IsChecked="{Binding SnapToSegment}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                Width="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{StaticResource SnapToSegDrawingImage}" />
+                        </ToggleButton>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="4,2,0,2"
-                        IsChecked="{Binding SnapToLine}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToLineDrawingImage}" />
-                    </ToggleButton>
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            Margin="4,0,0,0"
+                            IsChecked="{Binding SnapToLine}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                Width="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{StaticResource SnapToLineDrawingImage}" />
+                        </ToggleButton>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="4,2,0,2"
-                        IsChecked="{Binding SnapToZero}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToZeroDrawingImage}" />
-                    </ToggleButton>
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            Margin="4,0,0,0"
+                            IsChecked="{Binding SnapToZero}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                    Width="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{StaticResource SnapToZeroDrawingImage}" />
+                        </ToggleButton>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="4,2,0,2"
-                        IsChecked="{Binding SnapToLastDownPoint}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToLastDownDrawingImage}" />
-                    </ToggleButton>
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            Margin="4,0,0,0"
+                            IsChecked="{Binding SnapToLastDownPoint}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                Width="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{StaticResource SnapToLastDownDrawingImage}" />
+                        </ToggleButton>
 
-                    <ToggleButton
-                        Width="22"
-                        Height="22"
-                        Margin="4,2,0,2"
-                        IsChecked="{Binding SnapToGrid}"
-                        Style="{StaticResource SnapSettingToggleButton}">
-                        <Image
-                            Width="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{StaticResource SnapToGridDrawingImage}" />
-                    </ToggleButton>
-
-                    <Label Width="4" Height="Auto" />
+                        <ToggleButton
+                            Width="22"
+                            Height="22"
+                            Margin="4,0,0,0"
+                            IsChecked="{Binding SnapToGrid}"
+                            Style="{StaticResource SnapSettingToggleButton}">
+                            <Image
+                                Width="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{StaticResource SnapToGridDrawingImage}" />
+                        </ToggleButton>
+                    </StackPanel>
                 </StackPanel>
-
-                <Label
-                    Height="3"
-                    HorizontalAlignment="Stretch"
-                    Background="{StaticResource BoarderColor}" />
-
-            </StackPanel>
+            </Border>
 
             <!--  Work area and Console area  -->
             <Grid Grid.Row="2" Grid.RowSpan="2">

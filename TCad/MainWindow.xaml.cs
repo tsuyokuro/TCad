@@ -104,6 +104,8 @@ public partial class MainWindow : Window, ICadMainWindow
 
         MainMenu.DataContext = ViewModel;
 
+        FileToolBar.DataContext = ViewModel;
+
         ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
         SnapMenu.DataContext = ViewModel.Settings;
         DrawModeMenu.DataContext = ViewModel.Settings;
