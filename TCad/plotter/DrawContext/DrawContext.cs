@@ -173,6 +173,7 @@ public abstract class DrawContext : IDisposable
     public void SetupTools(DrawTools.DrawMode type, int penW = 0)
     {
         Tools.Setup(type, penW);
+        OptionSet.Initialize();
     }
 
     public virtual void SetViewSize(double w, double h)

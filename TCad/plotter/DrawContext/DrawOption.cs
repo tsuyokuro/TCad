@@ -18,6 +18,9 @@ public class DrawOption
     public DrawBrush MeshBrush = default;
     public DrawBrush TextBrush = default;
 
+    public DrawPen SelectedPointPen = default;
+    public DrawBrush SelectedPointBrush = default;
+
     public bool ForcePen
     {
         set => Flag = value ? (byte)(Flag | FORCE_PEN) : (byte)(Flag & ~FORCE_PEN);
@@ -62,9 +65,27 @@ public class DrawOptionSet
     public DrawOption Measure = new DrawOption();
     public DrawOption Before = new DrawOption();
 
+    private DrawOption[] Tbl;
+
     public DrawOptionSet(DrawContext dc)
     {
         DC = dc;
+
+        Tbl = new DrawOption[]
+        {
+            Normal, Pale, Temp, Current, Measure, Before,
+        };
+    }
+
+    public void Initialize()
+    {
+        foreach (DrawOption opt in Tbl)
+        {
+            opt.SelectedPointPen = DC.GetPen(DrawTools.PEN_SELECTED_POINT);
+            opt.SelectedPointBrush = DC.GetBrush(DrawTools.BRUSH_SELECTED_POINT);
+        }
+
+        //Current.SelectedPointPen = DC.GetPen(DrawTools.PEN_CURRENT_FIG_SELECTED_POINT);
     }
 
     public void Update()

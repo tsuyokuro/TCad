@@ -4,6 +4,7 @@ using MyCollections;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
+using System.Collections.Generic;
 
 namespace Plotter.Controller;
 
@@ -256,10 +257,27 @@ public partial class PlotterController
 
     private void DrawSelectedItems(DrawContext dc)
     {
+        DrawOption current_dp = dc.OptionSet.Current;
+        DrawOption normal_dp = dc.OptionSet.Normal;
+
+        dc.DisableLight();
+
         foreach (CadLayer layer in mDB.LayerList)
         {
-            dc.Drawing.DrawSelected(layer.FigureList);
+            foreach (CadFigure fig in layer.FigureList)
+            {
+                if (fig.Current)
+                {
+                    fig.DrawSelectedEach(DC, current_dp);
+                }
+                else
+                {
+                    fig.DrawSelectedEach(DC, normal_dp);
+                }
+            }
         }
+
+        dc.EnableLight();
     }
 
     private void DrawLastPoint(DrawContext dc)

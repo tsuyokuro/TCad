@@ -149,7 +149,7 @@ public class CadFigureNurbsLine : CadFigure
     {
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
     }
 

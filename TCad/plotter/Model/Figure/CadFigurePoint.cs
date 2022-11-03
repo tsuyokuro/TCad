@@ -59,7 +59,7 @@ public class CadFigurePoint : CadFigure
         // NOP
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
         drawSelected_Point(dc);
     }
@@ -92,7 +92,7 @@ public class CadFigurePoint : CadFigure
         {
             if (PointList[0].Selected)
             {
-                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }

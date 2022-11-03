@@ -72,13 +72,13 @@ public class CadFigureDimLine : CadFigure
     {
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
         foreach (CadVertex p in PointList)
         {
             if (p.Selected)
             {
-                dc.Drawing.DrawSelectedPoint(p.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                dc.Drawing.DrawSelectedPoint(p.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }

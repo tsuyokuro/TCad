@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 
 namespace Plotter;
 
-public class HighlightPointListItem
+public struct HighlightPointListItem
 {
     public Vector3d Point;
     public DrawPen Pen;

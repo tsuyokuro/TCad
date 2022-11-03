@@ -136,9 +136,9 @@ public class CadFigurePolyLines : CadFigure
         }
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        DrawSelectedLines(dc);
+        DrawSelectedLines(dc, dp);
     }
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
@@ -197,7 +197,7 @@ public class CadFigurePolyLines : CadFigure
         return PolyLineExpander.GetExpandList(mPointList, curveSplitNum);
     }
 
-    private void DrawSelectedLines(DrawContext dc)
+    private void DrawSelectedLines(DrawContext dc, DrawOption dp)
     {
         int i;
         int num = PointList.Count;
@@ -208,7 +208,7 @@ public class CadFigurePolyLines : CadFigure
 
             if (!p.Selected) continue;
 
-            dc.Drawing.DrawSelectedPoint(p.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+            dc.Drawing.DrawSelectedPoint(p.vector, dp.SelectedPointPen);
 
 
             if (p.IsHandle)
@@ -222,7 +222,7 @@ public class CadFigurePolyLines : CadFigure
                 {
                     // Draw handle
                     dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_HANDLE_LINE), p.vector, next.vector);
-                    dc.Drawing.DrawSelectedPoint(next.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                    dc.Drawing.DrawSelectedPoint(next.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
                 }
 
                 idx = i - 1;
@@ -234,7 +234,7 @@ public class CadFigurePolyLines : CadFigure
                     {
                         // Draw handle
                         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_HANDLE_LINE), p.vector, prev.vector);
-                        dc.Drawing.DrawSelectedPoint(prev.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                        dc.Drawing.DrawSelectedPoint(prev.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
                     }
                 }
             }
@@ -248,7 +248,7 @@ public class CadFigurePolyLines : CadFigure
                     if (np.IsHandle)
                     {
                         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_MATCH_SEG), p.vector, np.vector);
-                        dc.Drawing.DrawSelectedPoint(np.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                        dc.Drawing.DrawSelectedPoint(np.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
                     }
                 }
 
@@ -260,7 +260,7 @@ public class CadFigurePolyLines : CadFigure
                     if (np.IsHandle)
                     {
                         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_MATCH_SEG), p.vector, np.vector);
-                        dc.Drawing.DrawSelectedPoint(np.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                        dc.Drawing.DrawSelectedPoint(np.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
                     }
                 }
             }

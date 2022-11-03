@@ -13,7 +13,7 @@ public class LightColors : ColorSet
     private LightColors()
     {
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.Black;
-        PenColorTbl[DrawTools.PEN_SELECT_POINT] = Color.FromArgb(128, 255, 0);
+        PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.FromArgb(64, 192, 192);
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.Black;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.CadetBlue;
@@ -46,6 +46,8 @@ public class LightColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(60, 128, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(60, 60, 192);
 
+        PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.HotPink;
+
 
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.FromArgb(128, 128, 128);
         BrushColorTbl[DrawTools.BRUSH_BACKGROUND] = Color.FromArgb(245, 245, 255);
@@ -64,5 +66,8 @@ public class LightColors : ColorSet
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_X] = AxisLabel_X;
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Y] = AxisLabel_Y;
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Z] = AxisLabel_Z;
+
+        BrushColorTbl[DrawTools.BRUSH_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
+        BrushColorTbl[DrawTools.BRUSH_CURRENT_FIG_SELECTED_POINT] = Color.HotPink;
     }
 }

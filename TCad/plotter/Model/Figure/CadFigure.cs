@@ -625,7 +625,7 @@ public abstract partial class CadFigure
 
     public abstract void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB);
 
-    public abstract void DrawSelected(DrawContext dc);
+    public abstract void DrawSelected(DrawContext dc, DrawOption dp);
 
     public abstract void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen);
 
@@ -643,13 +643,13 @@ public abstract partial class CadFigure
         }
     }
 
-    public void DrawSelectedEach(DrawContext dc)
+    public void DrawSelectedEach(DrawContext dc, DrawOption dp)
     {
-        DrawSelected(dc);
+        DrawSelected(dc, dp);
 
         foreach (CadFigure c in ChildList)
         {
-            c.DrawSelectedEach(dc);
+            c.DrawSelectedEach(dc, dp);
         }
     }
 

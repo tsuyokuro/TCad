@@ -180,9 +180,9 @@ public class CadFigureMesh : CadFigure
             mHeModel);
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        dc.Drawing.DrawSelectedPoints(PointList, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+        dc.Drawing.DrawSelectedPoints(PointList, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
     }
 
     public override void SelectPointAt(int index, bool sel)

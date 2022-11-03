@@ -12,7 +12,7 @@ public class DrawTools : IDisposable
 {
     public const int PEN_DEFAULT            = 1;
     public const int PEN_DEFAULT_FIGURE     = 2;
-    public const int PEN_SELECT_POINT       = 3;
+    public const int PEN_SELECTED_POINT     = 3;
     public const int PEN_CROSS_CURSOR       = 4;
     public const int PEN_TEMP_FIGURE        = 5;
     public const int PEN_POINT_HIGHLIGHT    = 6;
@@ -43,7 +43,10 @@ public class DrawTools : IDisposable
     public const int PEN_COMPASS_Y          = 31;
     public const int PEN_COMPASS_Z          = 32;
     public const int PEN_MESH_EDGE_LINE     = 33;
-    public const int PEN_TBL_SIZE           = 34;
+    public const int PEN_CURRENT_FIG_SELECTED_POINT = 34;
+
+    public const int PEN_TBL_SIZE           = 35;
+
 
     public const int BRUSH_DEFAULT = 1;
     public const int BRUSH_BACKGROUND = 2;
@@ -57,7 +60,10 @@ public class DrawTools : IDisposable
     public const int BRUSH_COMPASS_LABEL_X = 9;
     public const int BRUSH_COMPASS_LABEL_Y = 10;
     public const int BRUSH_COMPASS_LABEL_Z = 11;
-    public const int BRUSH_TBL_SIZE = 12;
+    public const int BRUSH_SELECTED_POINT = 12;
+    public const int BRUSH_CURRENT_FIG_SELECTED_POINT = 13;
+
+    public const int BRUSH_TBL_SIZE = 14;
 
     public const int FONT_DEFAULT = 1;
     public const int FONT_SMALL = 2;

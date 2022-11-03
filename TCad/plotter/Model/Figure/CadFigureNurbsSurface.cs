@@ -118,7 +118,7 @@ public class CadFigureNurbsSurface : CadFigure
             dc.GetPen(DrawTools.PEN_NURBS_CTRL_LINE));
     }
 
-    public override void DrawSelected(DrawContext dc)
+    public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
         for (int i=0; i<mPointList.Count; i++)
         {
@@ -126,7 +126,7 @@ public class CadFigureNurbsSurface : CadFigure
 
             if (p0.Selected)
             {
-                dc.Drawing.DrawSelectedPoint(p0.vector, dc.GetPen(DrawTools.PEN_SELECT_POINT));
+                dc.Drawing.DrawSelectedPoint(p0.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }

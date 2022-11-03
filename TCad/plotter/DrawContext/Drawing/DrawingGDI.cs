@@ -32,14 +32,6 @@ public class DrawingGDI : IDrawing
             0, 0, (int)DC.ViewWidth, (int)DC.ViewHeight);
     }
 
-    public void DrawSelected(List<CadFigure> list)
-    {
-        foreach (CadFigure fig in list)
-        {
-            fig.DrawSelectedEach(DC);
-        }
-    }
-
     #region "Draw base"
     public void DrawAxis()
     {

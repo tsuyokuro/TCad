@@ -13,7 +13,7 @@ public class PrintColors : ColorSet
     private PrintColors()
     {
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.Black;
-        PenColorTbl[DrawTools.PEN_SELECT_POINT] = Color.Black;
+        PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.Black;
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.Gray;
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.Black;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.Black;
@@ -47,6 +47,8 @@ public class PrintColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(60, 128, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(60, 60, 192);
 
+        PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.Transparent;
+
 
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.Gray;
         BrushColorTbl[DrawTools.BRUSH_BACKGROUND] = Color.Transparent;
@@ -60,5 +62,8 @@ public class PrintColors : ColorSet
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_X] = Color.FromArgb(0x00, 0x00, 0x00);
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Y] = Color.FromArgb(0x00, 0x00, 0x00);
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Z] = Color.FromArgb(0x00, 0x00, 0x00);
+
+        BrushColorTbl[DrawTools.BRUSH_SELECTED_POINT] = Color.Transparent;
+        BrushColorTbl[DrawTools.BRUSH_CURRENT_FIG_SELECTED_POINT] = Color.Transparent;
     }
 }

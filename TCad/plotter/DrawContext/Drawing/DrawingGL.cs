@@ -52,16 +52,6 @@ public class DrawingGL : IDrawing
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
     }
 
-    public void DrawSelected(List<CadFigure> list)
-    {
-        DisableLight();
-
-        foreach (CadFigure fig in list)
-        {
-            fig.DrawSelectedEach(DC);
-        }
-    }
-
     public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
     {
         GL.Color4(pen.Color4);

@@ -38,8 +38,6 @@ public interface IDrawing : IDisposable
 {
     void Clear(DrawBrush brush);
 
-    void DrawSelected(List<CadFigure> list);
-
     void DrawAxis();
 
     void DrawAxisLabel();

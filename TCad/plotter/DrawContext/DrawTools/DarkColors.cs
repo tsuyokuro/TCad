@@ -13,7 +13,7 @@ public class DarkColors : ColorSet
     private DarkColors()
     {
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.White;
-        PenColorTbl[DrawTools.PEN_SELECT_POINT] = Color.FromArgb(128, 255, 0);
+        PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.FromArgb(32, 64, 64);
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.White;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.CadetBlue;
@@ -49,6 +49,9 @@ public class DarkColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(92, 192, 92);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(92, 92, 255);
 
+        PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.FromArgb(255, 92, 192);
+
+
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.FromArgb(255, 255, 255);
         BrushColorTbl[DrawTools.BRUSH_BACKGROUND] = Color.FromArgb(0x8, 0x8, 0x8);
         BrushColorTbl[DrawTools.BRUSH_TEXT] = Color.White;
@@ -66,5 +69,8 @@ public class DarkColors : ColorSet
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_X] = AxisLabel_X;
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Y] = AxisLabel_Y;
         BrushColorTbl[DrawTools.BRUSH_COMPASS_LABEL_Z] = AxisLabel_Z;
+
+        BrushColorTbl[DrawTools.BRUSH_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
+        BrushColorTbl[DrawTools.BRUSH_CURRENT_FIG_SELECTED_POINT] = Color.FromArgb(255, 92, 192);
     }
 }
