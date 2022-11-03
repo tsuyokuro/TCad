@@ -157,8 +157,12 @@
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
+            <!-- Caption -->
             <RowDefinition Height="32" />
+
+            <!-- Client -->
             <RowDefinition Height="100*" />
+
         </Grid.RowDefinitions>
 
         <cc:PopupEx
@@ -191,9 +195,8 @@
         </cc:PopupEx>
 
         <!--  Caption area  -->
-        <Border Padding="2" Background="{StaticResource CaptionColor}">
+        <Border Grid.Row="0" Padding="2" Background="{StaticResource CaptionColor}">
             <Grid
-                Grid.Row="0"
                 Height="Auto"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Top"
@@ -449,12 +452,12 @@
                 </Border>
 
 
-                <Label
+                <TextBlock
                     x:Name="FileName"
                     Grid.Column="3"
                     Margin="12,0,0,0"
                     VerticalAlignment="Center"
-                    Content="{Binding CaptionFileName}"
+                    Text="{Binding CaptionFileName}"
                     FontSize="{StaticResource CaptionFontSize}"
                     Foreground="#FFB0B0B0" />
 
@@ -499,22 +502,21 @@
         <!--  Client area  -->
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
+                <!-- Menu Area -->
                 <RowDefinition Height="auto" />
+
+                <!-- Tool bar Area -->
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="81*" />
-                <RowDefinition Height="550*" />
+
+                <!-- Work Area -->
+                <RowDefinition Height="10*" />
+
+                <!--  Status bar area  -->
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <!--  Menu area place holder  -->
-            <Border
-                Grid.Row="0"
-                Height="0"
-                Background="{StaticResource MenuBGColor}" />
-
             <!--  Tool bar area  -->
-            <Border
-                Grid.Row="1"
+            <Border Grid.Row="1"
                 Height="Auto"
                 HorizontalAlignment="Stretch"
                 BorderThickness="0"
@@ -634,38 +636,38 @@
             </Border>
 
             <!--  Work area and Console area  -->
-            <Grid Grid.Row="2" Grid.RowSpan="2">
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
+                    <!--  Left panel  -->
                     <ColumnDefinition Width="10*" />
+
+                    <!-- Left Grid Splitter -->
                     <ColumnDefinition Width="Auto" />
+
+                    <!--  Plotter view and Command view  -->
                     <ColumnDefinition Width="100*" />
+
+                    <!-- Right Grid Splitter -->
                     <ColumnDefinition Width="Auto" />
+
+                    <!-- Right Panel -->
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
 
                 <!--  Left panel  -->
-                <Border
-                    Grid.Column="0"
-                    BorderBrush="{StaticResource BoarderColor}"
-                    BorderThickness="1">
-                    <Grid
+                <Border Grid.Column="0"
+                    BorderThickness="0">
+                    <StackPanel
                         x:Name="LeftPanel"
-                        Grid.Column="0"
                         Background="{StaticResource BaseColor}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="100*" />
-                        </Grid.RowDefinitions>
 
-                        <StackPanel x:Name="SelectModePanel" Grid.Row="0">
+                        <StackPanel x:Name="SelectModePanel">
                             <Label
-                                Height="Auto"
+                                Height="24"
                                 Content="Select mode"
                                 FontSize="9"
-                                Foreground="DarkGray" />
+                                VerticalContentAlignment="Center"
+                                Foreground="DarkGray"/>
                             <RadioButton
                                 Height="{StaticResource ButtonHeight}"
                                 Margin="1,0,1,3"
@@ -681,10 +683,10 @@
                                 Style="{StaticResource ToolRadioButton}" />
                         </StackPanel>
 
-                        <StackPanel x:Name="FigurePanel" Grid.Row="1">
+                        <StackPanel x:Name="FigurePanel">
 
                             <Label
-                                Height="Auto"
+                                Height="24"
                                 Content="Create figure"
                                 FontSize="9"
                                 Foreground="DarkGray" />
@@ -747,13 +749,11 @@
                                 Style="{StaticResource ToolRadioButton}"
                                 Tag="POLY_LINE" />
                         </StackPanel>
-
-                        <Label Grid.Row="2" Height="4" />
-                    </Grid>
+                    </StackPanel>
                 </Border>
 
-                <GridSplitter
-                    Grid.Column="1"
+                <!-- Left Grid Splitter -->
+                <GridSplitter Grid.Column="1"
                     Width="{StaticResource SplitterSize}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Stretch"
@@ -761,25 +761,28 @@
                     ShowsPreview="false" />
 
                 <!--  Plotter view and Command view  -->
-                <Grid
-                    x:Name="viewRoot"
-                    Grid.Column="2"
+                <Grid x:Name="viewRoot" Grid.Column="2"
                     Background="{StaticResource BGColor}">
                     <Grid.RowDefinitions>
+                        <!-- Main view -->
                         <RowDefinition Height="100*" />
+
+                        <!-- Bottom Splitter -->
+                        <!--  Grip for splitter  -->
                         <RowDefinition Height="auto" />
+
+                        <!-- Prompt and Command -->
                         <RowDefinition Height="20*" />
                     </Grid.RowDefinitions>
 
-                    <WindowsFormsHost
+                    <!-- Main view -->
+                    <WindowsFormsHost Grid.Row="0"
                         x:Name="viewContainer"
-                        Grid.Row="0"
                         Background="#FF080808"
                         Focusable="True"/>
 
-                    <GridSplitter
-                        x:Name="viewBottom"
-                        Grid.Row="1"
+                    <!-- Bottom Splitter -->
+                    <GridSplitter x:Name="viewBottom" Grid.Row="1"
                         Height="{StaticResource MainSplitterSize}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -787,7 +790,8 @@
                         BorderThickness="0"
                         PreviewStyle="{StaticResource GridSplitterPreviewStyle}"
                         ResizeDirection="Rows"
-                        ShowsPreview="false" />
+                        ShowsPreview="false">
+                    </GridSplitter>
 
                     <!--  Grip for splitter  -->
                     <Image
@@ -796,15 +800,16 @@
                         IsHitTestVisible="False"
                         Source="{StaticResource grip_vDrawingImage}" />
 
+                    <!-- Prompt and Command -->
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100*" />
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
 
-                        <Border Background="{StaticResource MsgBGColor}">
+                        <!-- Prompt -->
+                        <Border Background="{StaticResource MsgBGColor}" Grid.Row="0">
                             <ScrollViewer
-                                Grid.Row="0"
                                 Focusable="True"
                                 Style="{StaticResource CustomScrollViewerStyle}"
                                 VerticalScrollBarVisibility="Visible">
@@ -823,6 +828,8 @@
 
                             </ScrollViewer>
                         </Border>
+
+                        <!-- Command -->
                         <Grid Grid.Row="1" Height="auto">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -864,16 +871,16 @@
                     </Grid>
                 </Grid>
 
-                <GridSplitter
-                    Grid.Column="3"
+                <!-- Right Grid Splitter -->
+                <GridSplitter Grid.Column="3"
                     Width="{StaticResource SplitterSize}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Stretch"
                     Background="{StaticResource BoarderColor}"
                     ShowsPreview="false" />
 
-                <Border
-                    Grid.Column="4"
+                <!-- Right Panel -->
+                <Border Grid.Column="4"
                     BorderBrush="{StaticResource BoarderColor}"
                     BorderThickness="2">
                     <Grid
@@ -1116,8 +1123,7 @@
             </Grid>
 
             <!--  Status bar area  -->
-            <Border
-                Grid.Row="4"
+            <Border Grid.Row="3"
                 Height="Auto"
                 Background="{StaticResource BGColor}"
                 BorderBrush="{StaticResource BoarderColor}"
