@@ -1,7 +1,6 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.AvalonEdit.Utils;
 using Microsoft.Win32;
 using OpenTK.Graphics.OpenGL;
@@ -17,6 +16,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
+
+//using ICSharpCode.AvalonEdit.Search;
+using TCad.ScriptEditor.Search;
 
 namespace TCad.ScriptEditor
 {

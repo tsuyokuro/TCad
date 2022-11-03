@@ -153,6 +153,7 @@ namespace TCad.ScriptEditor.Search
 		public SearchPanel()
 		{
             InitializeComponent();
+            searchTextBox = PART_searchTextBox;
         }
 
         private void SearchTextChanged(object sender, TextChangedEventArgs args)
@@ -230,14 +231,6 @@ namespace TCad.ScriptEditor.Search
 		void textArea_Document_TextChanged(object sender, EventArgs e)
 		{
 			DoSearch(false);
-		}
-
-		public override void OnApplyTemplate()
-		{
-			base.OnApplyTemplate();
-
-			searchTextBox = Template.FindName("PART_searchTextBox", this) as TextBox;
-			dropdownPopup = Template.FindName("PART_dropdownPopup", this) as Popup;
 		}
 
 		void ValidateSearchText()
