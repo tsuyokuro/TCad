@@ -27,7 +27,8 @@ public class PopupEx : Popup
     public PopupEx()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(typeof(PopupEx)));
-        PopupEx.IsOpenProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(IsOpenChanged));
+
+        IsOpenProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(IsOpenChanged));
 
         Loaded += OnPopupLoaded;
     }

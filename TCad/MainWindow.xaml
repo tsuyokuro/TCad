@@ -656,7 +656,8 @@
 
                 <!--  Left panel  -->
                 <Border Grid.Column="0"
-                    BorderThickness="0">
+                    BorderBrush="{StaticResource BoarderColor}"
+                    BorderThickness="0,0,0,1">
                     <StackPanel
                         x:Name="LeftPanel"
                         Background="{StaticResource BaseColor}">
@@ -808,7 +809,7 @@
                         </Grid.RowDefinitions>
 
                         <!-- Prompt -->
-                        <Border Background="{StaticResource MsgBGColor}" Grid.Row="0">
+                        <Border Background="{StaticResource MsgBGColor}" Grid.Row="0" BorderThickness="0,0,1,1">
                             <ScrollViewer
                                 Focusable="True"
                                 Style="{StaticResource CustomScrollViewerStyle}"
@@ -830,7 +831,7 @@
                         </Border>
 
                         <!-- Command -->
-                        <Grid Grid.Row="1" Height="auto">
+                        <Grid Grid.Row="1" Height="auto" Background="{StaticResource BaseColor}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="100*" />
@@ -838,35 +839,44 @@
 
                             <Border
                                 Grid.Column="0"
-                                Background="{StaticResource MsgBGColor}"
-                                BorderBrush="{StaticResource BoarderColor}"
+                                Background="{StaticResource BaseColor}"
+                                BorderBrush="{StaticResource BaseColor}"
                                 BorderThickness="0,1,0,1">
                                 <Button
                                     x:Name="RunTextCommandButton"
-                                    Margin="1,1,2,1"
-                                    Padding="2,2,2,2"
-                                    Content=" Enter &gt; "
+                                    Margin="1,1,1,1"
                                     Style="{StaticResource ToolButton}"
-                                    Tag="run_text_command" />
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Tag="run_text_command">
+                                    <Image Source="{StaticResource EnterDrawingImage}" />
+                                </Button>
                             </Border>
-
-                            <cc:AutoCompleteTextBox
-                                x:Name="textCommand"
+                            <Border
                                 Grid.Column="1"
-                                Padding="2,2,2,2"
+                                Padding="2"
+                                BorderThickness="2"
+                                BorderBrush="{StaticResource BaseColor}"
                                 Background="{StaticResource MsgBGColor}"
-                                BorderBrush="{StaticResource BoarderColor}"
-                                BorderThickness="1,1,1,1"
-                                CandidateListBorderStyle="{StaticResource CandidateListBorderStyle}"
-                                CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"
-                                CandidateListBoxStyle="{StaticResource CandidateListBoxStyle}"
-                                CandidateListItemContainerStyle="{StaticResource CandidateListItemContainerStyle}"
-                                CandidateListItemFontSize = "14"
-                                CandidateListMaxRowCount = "4"
-                                FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
-                                FontSize="16"
-                                FontWeight="Thin"
-                                Foreground="{StaticResource TextColor}" />
+                                >
+
+                                <cc:AutoCompleteTextBox
+                                    x:Name="textCommand"
+                                    Background="{StaticResource MsgBGColor}"
+                                    BorderBrush="{StaticResource MsgBGColor}"
+                                    BorderThickness="1,1,1,1"
+                                    CandidateListBorderStyle="{StaticResource CandidateListBorderStyle}"
+                                    CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"
+                                    CandidateListBoxStyle="{StaticResource CandidateListBoxStyle}"
+                                    CandidateListItemContainerStyle="{StaticResource CandidateListItemContainerStyle}"
+                                    CandidateListItemFontSize = "14"
+                                    CandidateListMaxRowCount = "4"
+                                    FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
+                                    FontSize="16"
+                                    FontWeight="Thin"
+                                    Foreground="{StaticResource TextColor}" />
+                            </Border>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -882,7 +892,7 @@
                 <!-- Right Panel -->
                 <Border Grid.Column="4"
                     BorderBrush="{StaticResource BoarderColor}"
-                    BorderThickness="2">
+                    BorderThickness="0">
                     <Grid
                         x:Name="RightPanel"
                         Grid.Column="0"
@@ -896,7 +906,7 @@
                         <Border
                             Grid.Row="0"
                             BorderBrush="{StaticResource BoarderColor}"
-                            BorderThickness="1">
+                            BorderThickness="0,0,1,1">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
@@ -959,7 +969,7 @@
                                     x:Name="LayerListView"
                                     Background="{StaticResource BaseColor}"
                                     BorderBrush="{StaticResource BoarderColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0,0,1,0"
                                     ItemContainerStyle="{StaticResource SimpleListBoxItem}"
                                     ItemsSource="{Binding LayerList}"
                                     SelectedItem="{Binding SelectedItem}"
@@ -1104,7 +1114,8 @@
                                     BorderBrush="AliceBlue"
                                     HorizontalScrollBarVisibility="Hidden"
                                     Style="{StaticResource CustomScrollViewerStyle}"
-                                    VerticalScrollBarVisibility="Visible">
+                                    VerticalScrollBarVisibility="Visible"
+                                    BorderThickness="0,0,1,0">
 
                                     <cc:CadObjectTreeView
                                         x:Name="ObjTree"
@@ -1125,14 +1136,14 @@
             <!--  Status bar area  -->
             <Border Grid.Row="3"
                 Height="Auto"
-                Background="{StaticResource BGColor}"
+                Background="{StaticResource BoarderColor}"
                 BorderBrush="{StaticResource BoarderColor}"
-                BorderThickness="1">
+                BorderThickness="0,0,0,0">
 
                 <Grid
                     Height="28"
                     HorizontalAlignment="Stretch"
-                    Background="{StaticResource BGColor}">
+                    Background="Transparent">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -1172,7 +1183,7 @@
                         Width="Auto"
                         Height="Auto"
                         VerticalAlignment="Center"
-                        Background="{StaticResource BGColor}"
+                        Background="Transparent"
                         Orientation="Horizontal">
 
                         <RadioButton
