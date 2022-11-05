@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Configuration;
 
 namespace TCad.Controls;
 
@@ -31,40 +32,64 @@ public class PopupEx : Popup
 
     public PopupEx()
     {
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(typeof(PopupEx)));
-
-        IsOpenProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(IsOpenChanged));
+        //DefaultStyleKeyProperty.OverrideMetadata(
+        //    typeof(PopupEx), new FrameworkPropertyMetadata(typeof(Popup)));
+        //IsOpenProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(IsOpenChanged));
 
         Loaded += OnPopupLoaded;
     }
 
-    private static void IsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = d as PopupEx;
-        if (ctrl == null)
-            return;
+    //private static void IsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    //{
+    //    var ctrl = d as PopupEx;
+    //    if (ctrl == null)
+    //        return;
 
-        var target = ctrl.PlacementTarget;
+    //    var target = ctrl.PlacementTarget;
+    //    if (target == null)
+    //        return;
+
+    //    var win = Window.GetWindow(target);
+
+    //    if (e.OldValue != null && (bool)e.OldValue == true)
+    //    {
+    //        if (win != null)
+    //        {
+    //            win.LocationChanged -= ctrl.OnFollowWindowChanged;
+    //            win.SizeChanged -= ctrl.OnFollowWindowChanged;
+    //        }
+    //    }
+
+    //    if (e.NewValue != null && (bool)e.NewValue == true)
+    //    {
+    //        if (win != null)
+    //        {
+    //            win.LocationChanged += ctrl.OnFollowWindowChanged;
+    //            win.SizeChanged += ctrl.OnFollowWindowChanged;
+    //        }
+    //    }
+    //}
+
+    private void IsOpenChanged()
+    {
+        var target = PlacementTarget;
         if (target == null)
             return;
 
         var win = Window.GetWindow(target);
 
-        if (e.OldValue != null && (bool)e.OldValue == true)
+        if (IsOpen)
         {
             if (win != null)
             {
-                win.LocationChanged -= ctrl.OnFollowWindowChanged;
-                win.SizeChanged -= ctrl.OnFollowWindowChanged;
+                win.LocationChanged += OnFollowWindowChanged;
+                win.SizeChanged += OnFollowWindowChanged;
             }
-        }
-
-        if (e.NewValue != null && (bool)e.NewValue == true)
-        {
+        } else {
             if (win != null)
             {
-                win.LocationChanged += ctrl.OnFollowWindowChanged;
-                win.SizeChanged += ctrl.OnFollowWindowChanged;
+                win.LocationChanged -= OnFollowWindowChanged;
+                win.SizeChanged -= OnFollowWindowChanged;
             }
         }
     }
@@ -132,7 +157,13 @@ public class PopupEx : Popup
 
     protected override void OnOpened(EventArgs e)
     {
+        IsOpenChanged();
         SetTopmostState(IsTopmost);
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        IsOpenChanged();
     }
 
     private void SetTopmostState(bool isTop)
