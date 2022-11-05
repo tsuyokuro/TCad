@@ -10,19 +10,24 @@ namespace TCad.Controls;
 
 public class PopupEx : Popup
 {
-    public static readonly DependencyProperty IsTopmostProperty =
-        DependencyProperty.Register(
-            "IsTopmost", typeof(bool), typeof(PopupEx), new FrameworkPropertyMetadata(false, OnIsTopmostChanged));
+    //public static readonly DependencyProperty IsTopmostProperty =
+    //    DependencyProperty.Register(
+    //        "IsTopmost", typeof(bool), typeof(PopupEx), new FrameworkPropertyMetadata(false, OnIsTopmostChanged));
+
+    //public bool IsTopmost
+    //{
+    //    get { return (bool)GetValue(IsTopmostProperty); }
+    //    set { SetValue(IsTopmostProperty, value); }
+    //}
+    private bool IsTopmost
+    {
+        get;
+        set;
+    }
 
     private bool? _appliedTopMost;
     private bool _alreadyLoaded;
     private Window _parentWindow;
-
-    public bool IsTopmost
-    {
-        get { return (bool)GetValue(IsTopmostProperty); }
-        set { SetValue(IsTopmostProperty, value); }
-    }
 
     public PopupEx()
     {
@@ -70,10 +75,9 @@ public class PopupEx : Popup
 
         // HorizontalOffsetなどのプロパティを一度変更しないと、ポップアップの位置が更新されないため、
         // 位置に関するプロパティを変えて戻す
-        this.HorizontalOffset = offset + 1;
+        this.HorizontalOffset = offset + 0.1;
         this.HorizontalOffset = offset;
     }
-
 
     void OnPopupLoaded(object sender, RoutedEventArgs e)
     {

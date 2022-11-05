@@ -152,7 +152,10 @@ public partial class MainWindow : Window, ICadMainWindow
                                        Size targetSize,
                                        Point offset)
     {
-        Point p = new Point(targetSize.Width - popupSize.Width - 8, 8);
+        double rightOffset = 2.0;
+        double topOffset = 2.0;
+
+        Point p = new Point(targetSize.Width - popupSize.Width - rightOffset, topOffset);
 
         CustomPopupPlacement placement1 =
             new CustomPopupPlacement(p, PopupPrimaryAxis.Horizontal);

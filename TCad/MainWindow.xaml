@@ -174,13 +174,13 @@
             StaysOpen="true">
 
             <Border
-                Padding="8"
+                Padding="2"
                 Background="GreenYellow"
-                CornerRadius="8">
+                CornerRadius="4">
                 <StackPanel Orientation="Horizontal">
                     <Image
                         x:Name="PopupMessageIcon"
-                        Width="24"
+                        Width="20"
                         Margin="4,0,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -189,6 +189,7 @@
                     <TextBlock
                         x:Name="PopupMessageText"
                         Padding="8,0,8,0"
+                        FontSize="16"
                         VerticalAlignment="Center" />
                 </StackPanel>
             </Border>
