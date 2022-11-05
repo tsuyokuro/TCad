@@ -30,11 +30,7 @@ public class ViewManager : INotifyPropertyChanged
     {
         set
         {
-#if (USE_GDI_VIEW)
-            bool changed = ChangeViewModeGdi(value);
-#else
             bool changed = ChangeViewMode(value);
-#endif
             if (changed)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ViewMode)));
@@ -53,14 +49,7 @@ public class ViewManager : INotifyPropertyChanged
     {
         DOut.plx("in");
 
-#if USE_GDI_VIEW
-        PlotterViewGDI1 = PlotterViewGDI.Create(mContext);
-#endif
         PlotterViewGL1 = PlotterViewGL.Create(mContext);
-
-#if USE_GDI_VIEW
-        ViewMode = ViewModes.FREE;  // 一旦GL側を設定してViewをLoadしておく
-#endif
 
         ViewMode = ViewModes.FRONT;
 
@@ -69,9 +58,6 @@ public class ViewManager : INotifyPropertyChanged
 
     public void SetWorldScale(double scale)
     {
-#if USE_GDI_VIEW
-        PlotterViewGDI1.SetWorldScale(scale);
-#endif
         PlotterViewGL1.SetWorldScale(scale);
     }
 
