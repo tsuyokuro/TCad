@@ -146,7 +146,7 @@ public class AutoCompleteTextBox : TextBox
     {
     }
 
-    public void Determine()
+    public void Enter()
     {
         string v = Text.Trim('\r', '\n', ' ', '\t');
 
@@ -221,14 +221,14 @@ public class AutoCompleteTextBox : TextBox
             }
             else if (e.Key == Key.Enter)
             {
-                Determine();
+                Enter();
             }
         }
         else
         {
             if (e.Key == Key.Enter)
             {
-                Determine();
+                Enter();
             }
 
             if (History != null)

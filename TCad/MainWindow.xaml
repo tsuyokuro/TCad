@@ -8,7 +8,7 @@
     xmlns:properties="clr-namespace:TCad.Properties"
     xmlns:local="clr-namespace:TCad"
     xmlns:ext="clr-namespace:TCad.MarkupExtensions"
-    xmlns:vm="clr-namespace:TCad.ViewModel"
+    xmlns:vm="clr-namespace:TCad.ViewModel" d:DataContext="{d:DesignInstance Type=vm:SettingsVeiwModel}"
     Title="TCad"
     Width="1177.667"
     Height="732"
@@ -832,9 +832,9 @@
                         </Border>
 
                         <!-- Command -->
-                        <Grid Grid.Row="1" Height="auto" Background="{StaticResource BaseColor}">
+                        <Grid x:Name="CommandBar" Grid.Row="1" Height="auto" Background="{StaticResource BaseColor}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="32" />
                                 <ColumnDefinition Width="100*" />
                             </Grid.ColumnDefinitions>
 
@@ -850,8 +850,9 @@
                                     Width="20"
                                     Height="20"
                                     VerticalAlignment="Center"
-                                    Tag="run_text_command">
-                                    <Image Source="{StaticResource EnterDrawingImage}" />
+                                    Command="{Binding SimpleCmd}" CommandParameter="enter_command"
+                                    >
+                                    <Image Source="{StaticResource EnterDrawingImage}"/>
                                 </Button>
                             </Border>
                             <Border
@@ -908,7 +909,7 @@
                             Grid.Row="0"
                             BorderBrush="{StaticResource BoarderColor}"
                             BorderThickness="0,0,1,1">
-                            <Grid>
+                            <Grid x:Name="LayerToolBar">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="auto" />
@@ -926,9 +927,8 @@
                                     Grid.Column="1"
                                     Width="24"
                                     Margin="1,1,1,1"
-                                    Click="Command_Clicked"
                                     Style="{StaticResource ToolButton}"
-                                    Tag="add_layer">
+                                    Command="{Binding SimpleCmd}" CommandParameter="add_layer">
                                     <Image
                                         Width="18"
                                         Height="18"
@@ -941,9 +941,8 @@
                                     Grid.Column="2"
                                     Width="24"
                                     Margin="1,1,1,1"
-                                    Click="Command_Clicked"
                                     Style="{StaticResource ToolButton}"
-                                    Tag="remove_layer">
+                                    Command="{Binding SimpleCmd}" CommandParameter="remove_layer">
                                     <Image
                                         Width="18"
                                         Height="18"
@@ -1037,6 +1036,7 @@
                                     BorderThickness="0,1,0,1">
                                     <StackPanel x:Name="TreeViewToolBar" Orientation="Horizontal">
                                         <ToggleButton
+                                            x:Name="TreeViewToolBar_FilterButton"
                                             Width="20"
                                             Height="20"
                                             Margin="2,0,0,0"
@@ -1057,9 +1057,8 @@
                                             Width="20"
                                             Height="20"
                                             Margin="8,1,1,1"
-                                            Click="Command_Clicked"
                                             Style="{StaticResource ToolButton}"
-                                            Tag="obj_order_down">
+                                            Command="{Binding SimpleCmd}" CommandParameter="obj_order_down">
                                             <Image
                                                 Width="18"
                                                 Height="18"
@@ -1070,9 +1069,8 @@
                                             Width="20"
                                             Height="20"
                                             Margin="1,1,1,1"
-                                            Click="Command_Clicked"
                                             Style="{StaticResource ToolButton}"
-                                            Tag="obj_order_up">
+                                            Command="{Binding SimpleCmd}" CommandParameter="obj_order_up">
                                             <Image
                                                 Width="18"
                                                 Height="18"
@@ -1083,9 +1081,8 @@
                                             Width="20"
                                             Height="20"
                                             Margin="1,1,1,1"
-                                            Click="Command_Clicked"
                                             Style="{StaticResource ToolButton}"
-                                            Tag="obj_order_bottom">
+                                            Command="{Binding SimpleCmd}" CommandParameter="obj_order_bottom">
                                             <Image
                                                 Width="18"
                                                 Height="18"
@@ -1096,9 +1093,8 @@
                                             Width="20"
                                             Height="20"
                                             Margin="1,1,1,1"
-                                            Click="Command_Clicked"
                                             Style="{StaticResource ToolButton}"
-                                            Tag="obj_order_top">
+                                            Command="{Binding SimpleCmd}" CommandParameter="obj_order_top">
                                             <Image
                                                 Width="18"
                                                 Height="18"
@@ -1257,13 +1253,12 @@
                         </RadioButton>
 
                         <Button
-                            Name="ResetCamera"
+                            Name="ResetCameraButton"
                             Width="{StaticResource ViewModeButtonWidth}"
                             Height="{StaticResource ViewModeButtonHeight}"
                             Margin="8,1,1,1"
-                            Click="Command_Clicked"
                             Style="{StaticResource ToolButton}"
-                            Tag="reset_camera">
+                            Command="{Binding SimpleCmd}" CommandParameter="reset_camera">
                             <TextBlock Text="Reset" TextAlignment="Center" />
                         </Button>
 

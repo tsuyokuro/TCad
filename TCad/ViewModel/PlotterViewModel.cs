@@ -123,6 +123,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
+    public AutoCompleteTextBox CommandTextBox
+    {
+        get;
+        private set;
+    }
+
     public CurrentFigCommand CurrentFigCmd { get; set; }
 
     public SimpleCommand SimpleCmd{ get; set; }
@@ -348,7 +354,8 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void SetupTextCommandView(AutoCompleteTextBox textBox)
     {
-        textBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
+        CommandTextBox = textBox;
+        CommandTextBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
     }
 
     public void Open()

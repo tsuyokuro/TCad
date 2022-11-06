@@ -101,6 +101,7 @@ public class CommandHandler
             { "print_setting", PrintSettings },
             { "set_line_color", SetLineColor },
             { "set_fill_color", SetFillColor },
+            { "enter_command", EnterCommand },
             { "test", Test },
         };
     }
@@ -599,6 +600,11 @@ public class CommandHandler
             CadOpe ope = new CadChangeFilgFillBrush(fig.ID, oldBrush, newBrush);
             Controller.HistoryMan.foward(ope);
         }
+    }
+
+    private void EnterCommand()
+    {
+        ViewModel.CommandTextBox.Enter();
     }
 
     public void Test()

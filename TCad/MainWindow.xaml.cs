@@ -49,8 +49,6 @@ public partial class MainWindow : Window, ICadMainWindow
         Loaded += MainWindow_Loaded;
         Closed += MainWindow_Closed;
 
-        RunTextCommandButton.Click += RunTextCommandButtonClicked;
-
         SetupDataContext();
 
         InitWindowChrome();
@@ -106,6 +104,8 @@ public partial class MainWindow : Window, ICadMainWindow
 
         FileToolBar.DataContext = ViewModel;
 
+        CommandBar.DataContext = ViewModel;
+
         ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
         SnapMenu.DataContext = ViewModel.Settings;
         DrawModeMenu.DataContext = ViewModel.Settings;
@@ -114,10 +114,14 @@ public partial class MainWindow : Window, ICadMainWindow
         FileName.DataContext = ViewModel;
 
         ViewModePanel.DataContext = ViewModel.mViewManager;
+        ResetCameraButton.DataContext = ViewModel;
 
         SnapToolBar.DataContext = ViewModel.Settings;
 
-        TreeViewToolBar.DataContext = ViewModel.Settings;
+        LayerToolBar.DataContext = ViewModel;
+
+        TreeViewToolBar.DataContext = ViewModel;
+        TreeViewToolBar_FilterButton.DataContext = ViewModel.Settings;
     }
 
     private void InitWindowChrome()
@@ -211,22 +215,6 @@ public partial class MainWindow : Window, ICadMainWindow
 
         DOut.plx("out");
     }
-
-    private void Command_Clicked(object sender, RoutedEventArgs e)
-    {
-        Control control = (Control)sender;
-
-        String command = control.Tag.ToString();
-
-        ViewModel.ExecCommand(command);
-    }
-
-    #region TextCommand
-    public void RunTextCommandButtonClicked(object sender, RoutedEventArgs e)
-    {
-        textCommand.Determine();
-    }
-    #endregion
 
     #region "Key handling"
     private void OnKeyDown(object sender, KeyEventArgs e)
