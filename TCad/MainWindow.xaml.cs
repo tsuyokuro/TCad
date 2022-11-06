@@ -102,11 +102,6 @@ public partial class MainWindow : Window, ICadMainWindow
 
         CommandBar.DataContext = ViewModel;
 
-        //ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
-        //SnapMenu.DataContext = ViewModel.Settings;
-        //DrawModeMenu.DataContext = ViewModel.Settings;
-        //DrawOptionMenu.DataContext = ViewModel.Settings;
-
         FileName.DataContext = ViewModel;
 
         ViewModePanel.DataContext = ViewModel.mViewManager;

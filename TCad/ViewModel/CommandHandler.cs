@@ -628,13 +628,18 @@ public class CommandHandler
             mEditorWindow.Owner = Application.Current.MainWindow;
             mEditorWindow.Show();
 
-            mEditorWindow.Closed += delegate
+            mEditorWindow.Closed += (_, _) =>
             {
                 mEditorWindow = null;
+                Application.Current.MainWindow.Activate();
             };
         }
         else
         {
+            if (mEditorWindow.WindowState == WindowState.Minimized)
+            {
+                mEditorWindow.WindowState = WindowState.Normal;
+            }
             mEditorWindow.Activate();
         }
     }
