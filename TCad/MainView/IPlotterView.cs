@@ -22,7 +22,7 @@ public interface IPlotterView
 
     void SetWorldScale(double scale);
 
-    void DrawModeUpdated(DrawTools.DrawMode mode);
+    void DrawModeUpdated(DrawModes mode);
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
 }

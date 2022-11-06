@@ -48,7 +48,7 @@ public class PlotterSettings
     public bool SnapToSelfPoint = true;
 
     #region Draw settings
-    public DrawTools.DrawMode DrawMode = DrawTools.DrawMode.DARK;
+    public DrawModes DrawMode = DrawModes.DARK;
 
     public bool DrawMeshEdge = true;
 
@@ -143,7 +143,7 @@ public class PlotterSettings
 
 
         jo = new JObj();
-        jo.Add("DrawMode", (int)DrawMode);
+        jo.Add("DrawModes", (int)DrawMode);
         jo.Add("DrawFaceOutline", DrawMeshEdge);
         jo.Add("FillFace", FillMesh);
         jo.Add("DrawNormal", DrawNormal);
@@ -231,7 +231,7 @@ public class PlotterSettings
 
         if (root.TryGetProperty("DrawSettings", out jo))
         {
-            DrawMode = jo.GetEnum<DrawTools.DrawMode>("DrawMode", DrawMode);
+            DrawMode = jo.GetEnum<DrawModes>("DrawModes", DrawMode);
             DrawMeshEdge = jo.GetBool("DrawFaceOutline", DrawMeshEdge);
             FillMesh = jo.GetBool("FillFace", FillMesh);
             DrawNormal = jo.GetBool("DrawNormal", DrawNormal);

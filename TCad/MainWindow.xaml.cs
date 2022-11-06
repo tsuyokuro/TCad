@@ -102,9 +102,9 @@ public partial class MainWindow : Window, ICadMainWindow
         CommandBar.DataContext = ViewModel;
 
         //ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
-        SnapMenu.DataContext = ViewModel.Settings;
-        DrawModeMenu.DataContext = ViewModel.Settings;
-        DrawOptionMenu.DataContext = ViewModel.Settings;
+        //SnapMenu.DataContext = ViewModel.Settings;
+        //DrawModeMenu.DataContext = ViewModel.Settings;
+        //DrawOptionMenu.DataContext = ViewModel.Settings;
 
         FileName.DataContext = ViewModel;
 
@@ -303,7 +303,7 @@ public partial class MainWindow : Window, ICadMainWindow
     #endregion
 
     #region PlotterViewModel Event
-    public void DrawModeChanged(DrawTools.DrawMode drawMode)
+    public void DrawModeChanged(DrawModes drawMode)
     {
         DOut.plx("_in");
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;

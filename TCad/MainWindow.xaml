@@ -8,7 +8,8 @@
     xmlns:properties="clr-namespace:TCad.Properties"
     xmlns:local="clr-namespace:TCad"
     xmlns:ext="clr-namespace:TCad.MarkupExtensions"
-    xmlns:vm="clr-namespace:TCad.ViewModel" d:DataContext="{d:DesignInstance Type=vm:SettingsVeiwModel}"
+    xmlns:vm="clr-namespace:TCad.ViewModel"
+    xmlns:plotter="clr-namespace:Plotter"
     Title="TCad"
     Width="1177.667"
     Height="732"
@@ -361,31 +362,31 @@
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_grid}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToGrid}" />
+                                    IsChecked="{Binding Path=Settings.SnapToGrid}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_point}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToPoint}" />
+                                    IsChecked="{Binding Path=Settings.SnapToPoint}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_seg}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToSegment}" />
+                                    IsChecked="{Binding Path=Settings.SnapToSegment}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_line}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToLine}" />
+                                    IsChecked="{Binding Path=Settings.SnapToLine}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_zero}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToZero}" />
+                                    IsChecked="{Binding Path=Settings.SnapToZero}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_last_down}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToLastDownPoint}" />
+                                    IsChecked="{Binding Path=Settings.SnapToLastDownPoint}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_snap_to_self}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding SnapToSelfPoint}" />
+                                    IsChecked="{Binding Path=Settings.SnapToSelfPoint}" />
                             </MenuItem>
 
                             <!-- Draw Option Menu -->
@@ -397,11 +398,15 @@
                                     <MenuItem
                                         Header="Light"
                                         IsCheckable="True"
-                                        IsChecked="{Binding DrawMode, ConverterParameter=LIGHT, Converter={StaticResource DrawModeConv}}" />
+                                        IsChecked="{Binding Path=Settings.DrawMode,
+                                                    ConverterParameter=LIGHT,
+                                                    Converter={StaticResource DrawModeConv}}" />
                                     <MenuItem
                                         Header="Drak"
                                         IsCheckable="True"
-                                        IsChecked="{Binding DrawMode, ConverterParameter=DARK, Converter={StaticResource DrawModeConv}}" />
+                                        IsChecked="{Binding Path=Settings.DrawMode,
+                                                    ConverterParameter=DARK,
+                                                    Converter={StaticResource DrawModeConv}}" />
                                 </MenuItem>
 
                                 <Separator />
@@ -409,27 +414,27 @@
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_draw_mesh_outline}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding DrawMeshEdge}" />
+                                    IsChecked="{Binding Path=Settings.DrawMeshEdge}" />
                                 <MenuItem
                                     Header="{x:Static properties:Resources.menu_fill_mesh}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding FillMesh}" />
+                                    IsChecked="{Binding Path=Settings.FillMesh}" />
                                 <MenuItem
                                     Header="Draw normal"
                                     IsCheckable="True"
-                                    IsChecked="{Binding DrawNormal}" />
+                                    IsChecked="{Binding Path=Settings.DrawNormal}" />
                                 <MenuItem
                                     Header="Draw axis"
                                     IsCheckable="True"
-                                    IsChecked="{Binding DrawAxis}" />
+                                    IsChecked="{Binding Path=Settings.DrawAxis}" />
                                 <MenuItem
                                     Header="Draw axis label"
                                     IsCheckable="True"
-                                    IsChecked="{Binding DrawAxisLabel}" />
+                                    IsChecked="{Binding Path=Settings.DrawAxisLabel}" />
                                 <MenuItem
                                     Header="Draw Compass"
                                     IsCheckable="True"
-                                    IsChecked="{Binding DrawCompass}" />
+                                    IsChecked="{Binding Path=Settings.DrawCompass}" />
                             </MenuItem>
 
                             <!-- Script Menu -->

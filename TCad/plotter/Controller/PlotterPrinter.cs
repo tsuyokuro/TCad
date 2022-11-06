@@ -38,7 +38,7 @@ public class PlotterPrinter
         else
         {
             DrawContextPrinter dc = new DrawContextPrinter(pc.DC, printerGraphics, pageSize, deviceSize);
-            dc.SetupTools(DrawTools.DrawMode.PRINTER, PenWidth);
+            dc.SetupTools(DrawModes.PRINTER, PenWidth);
 
             pc.DrawFiguresRaw(dc);
         }
@@ -56,7 +56,7 @@ public class PlotterPrinter
         deviceSize *= upRes;
 
         DrawContext dc = pc.DC.CreatePrinterContext(pageSize, deviceSize);
-        dc.SetupTools(DrawTools.DrawMode.PRINTER, 2);
+        dc.SetupTools(DrawModes.PRINTER, 2);
 
         // Bitmapを印刷すると大きさが変わるので、補正
         double f = SettingsHolder.Settings.MagnificationBitmapPrinting;

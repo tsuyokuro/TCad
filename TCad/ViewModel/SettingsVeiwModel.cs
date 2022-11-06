@@ -316,7 +316,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public DrawTools.DrawMode DrawMode
+    public DrawModes DrawMode
     {
         set
         {

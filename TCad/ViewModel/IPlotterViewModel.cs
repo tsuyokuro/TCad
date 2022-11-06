@@ -58,7 +58,7 @@ public interface IPlotterViewModel
 
     void Redraw();
 
-    void DrawModeUpdated(DrawTools.DrawMode mode);
+    void DrawModeUpdated(DrawModes mode);
 
 
     void StateChanged(StateChangedParam si);
@@ -116,7 +116,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     public void ClosePopupMessage() { }
     public void CursorLocked(bool locked) { }
     public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type) { }
-    public void DrawModeUpdated(DrawTools.DrawMode mode) { }
+    public void DrawModeUpdated(DrawModes mode) { }
 
     public void ExecCommand(string cmd) { }
     public int FindTreeViewItemIndex(uint id) { return -1; }

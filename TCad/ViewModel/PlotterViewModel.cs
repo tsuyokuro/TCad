@@ -135,7 +135,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     private CommandHandler mCommandHandler;
 
-    public delegate void DrawModeChangeEventHandler(DrawTools.DrawMode mode);
+    public delegate void DrawModeChangeEventHandler(DrawModes mode);
     public event DrawModeChangeEventHandler DrawModeChanged;
 
     public PlotterViewModel(ICadMainWindow mainWindow)
@@ -384,7 +384,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         GDIToolManager.Instance.Dispose();
     }
 
-    public void DrawModeUpdated(DrawTools.DrawMode mode)
+    public void DrawModeUpdated(DrawModes mode)
     {
         mViewManager.DrawModeUpdated(mode);
         DrawModeChanged?.Invoke(mode);

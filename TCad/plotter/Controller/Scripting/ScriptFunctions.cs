@@ -1048,7 +1048,7 @@ public class ScriptFunctions
 
         tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
 
-        tdc.SetupTools(DrawTools.DrawMode.DARK);
+        tdc.SetupTools(DrawModes.DARK);
 
         DrawPen drawPen = new DrawPen((int)argb, lineW);
 
@@ -1150,7 +1150,7 @@ public class ScriptFunctions
 
         DrawContextGLOrtho tdc = new DrawContextGLOrtho();
 
-        tdc.SetupTools(DrawTools.DrawMode.LIGHT);
+        tdc.SetupTools(DrawModes.LIGHT);
         tdc.CopyCamera(orgDC);
         tdc.SetViewSize(w, h);
         tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
@@ -2088,7 +2088,7 @@ public class ScriptFunctions
         CadSize2D pageSize = new CadSize2D(210, 297);
 
         DrawContext dc = Controller.DC.CreatePrinterContext(pageSize, deviceSize);
-        dc.SetupTools(DrawTools.DrawMode.PRINTER);
+        dc.SetupTools(DrawModes.PRINTER);
 
         FrameBufferW fb = new FrameBufferW();
         fb.Create((int)deviceSize.Width, (int)deviceSize.Height);

@@ -8,6 +8,13 @@ using System.Windows.Resources;
 
 namespace Plotter;
 
+public enum DrawModes
+{
+    LIGHT = 1,
+    DARK = 2,
+    PRINTER = 100,
+}
+
 public class DrawTools : IDisposable
 {
     public const int PEN_DEFAULT            = 1;
@@ -72,13 +79,6 @@ public class DrawTools : IDisposable
     public const int FONT_SIZE_DEFAULT = 11;
     public const int FONT_SIZE_SMALL = 11;
 
-    public enum DrawMode
-    {
-        LIGHT = 1,
-        DARK = 2,
-        PRINTER = 100,
-    }
-
     public Color[] PenColorTbl;
     public Color[] BrushColorTbl;
 
@@ -93,19 +93,19 @@ public class DrawTools : IDisposable
         GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
     }
 
-    public void Setup(DrawMode t, int penW = 0)
+    public void Setup(DrawModes t, int penW = 0)
     {
         Dispose();
 
-        if (t == DrawMode.DARK)
+        if (t == DrawModes.DARK)
         {
             SetupScreenSet(DarkColors.Instance, penW);
         }
-        else if (t == DrawMode.LIGHT)
+        else if (t == DrawModes.LIGHT)
         {
             SetupScreenSet(LightColors.Instance, penW);
         }
-        else if (t == DrawMode.PRINTER)
+        else if (t == DrawModes.PRINTER)
         {
             SetupPrinterSet(penW);
         }
