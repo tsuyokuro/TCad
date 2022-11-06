@@ -1,4 +1,5 @@
 using MyCollections;
+using Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
@@ -8,51 +9,44 @@ using System.Windows.Resources;
 
 namespace Plotter;
 
-public enum DrawModes
-{
-    LIGHT = 1,
-    DARK = 2,
-    PRINTER = 100,
-}
-
 public class DrawTools : IDisposable
 {
-    public const int PEN_DEFAULT            = 1;
-    public const int PEN_DEFAULT_FIGURE     = 2;
-    public const int PEN_SELECTED_POINT     = 3;
-    public const int PEN_CROSS_CURSOR       = 4;
-    public const int PEN_TEMP_FIGURE        = 5;
-    public const int PEN_POINT_HIGHLIGHT    = 6;
-    public const int PEN_MATCH_SEG          = 7;
-    public const int PEN_LAST_POINT_MARKER  = 8;
+    public const int PEN_DEFAULT = 1;
+    public const int PEN_DEFAULT_FIGURE = 2;
+    public const int PEN_SELECTED_POINT = 3;
+    public const int PEN_CROSS_CURSOR = 4;
+    public const int PEN_TEMP_FIGURE = 5;
+    public const int PEN_POINT_HIGHLIGHT = 6;
+    public const int PEN_MATCH_SEG = 7;
+    public const int PEN_LAST_POINT_MARKER = 8;
     public const int PEN_LAST_POINT_MARKER2 = 9;
-    public const int PEN_AXIS               = 10;
-    public const int PEN_PAGE_FRAME         = 11;
-    public const int PEN_TEST_FIGURE        = 12;
-    public const int PEN_GRID               = 13;
-    public const int PEN_POINT_HIGHLIGHT2   = 14;
-    public const int PEN_FIGURE_HIGHLIGHT   = 15;
-    public const int PEN_PALE_FIGURE        = 16;
-    public const int PEN_MEASURE_FIGURE     = 17;
-    public const int PEN_DIMENTION          = 18;
-    public const int PEN_MESH_LINE          = 19;
-    public const int PEN_TEST               = 20;
-    public const int PEN_NURBS_CTRL_LINE    = 21;
-    public const int PEN_DRAG_LINE          = 22;
-    public const int PEN_NORMAL             = 23;
-    public const int PEN_EXT_SNAP           = 24;
-    public const int PEN_HANDLE_LINE        = 25;
-    public const int PEN_AXIS_X             = 26;
-    public const int PEN_AXIS_Y             = 27;
-    public const int PEN_AXIS_Z             = 28;
-    public const int PEN_OLD_FIGURE         = 29;
-    public const int PEN_COMPASS_X          = 30;
-    public const int PEN_COMPASS_Y          = 31;
-    public const int PEN_COMPASS_Z          = 32;
-    public const int PEN_MESH_EDGE_LINE     = 33;
+    public const int PEN_AXIS = 10;
+    public const int PEN_PAGE_FRAME = 11;
+    public const int PEN_TEST_FIGURE = 12;
+    public const int PEN_GRID = 13;
+    public const int PEN_POINT_HIGHLIGHT2 = 14;
+    public const int PEN_FIGURE_HIGHLIGHT = 15;
+    public const int PEN_PALE_FIGURE = 16;
+    public const int PEN_MEASURE_FIGURE = 17;
+    public const int PEN_DIMENTION = 18;
+    public const int PEN_MESH_LINE = 19;
+    public const int PEN_TEST = 20;
+    public const int PEN_NURBS_CTRL_LINE = 21;
+    public const int PEN_DRAG_LINE = 22;
+    public const int PEN_NORMAL = 23;
+    public const int PEN_EXT_SNAP = 24;
+    public const int PEN_HANDLE_LINE = 25;
+    public const int PEN_AXIS_X = 26;
+    public const int PEN_AXIS_Y = 27;
+    public const int PEN_AXIS_Z = 28;
+    public const int PEN_OLD_FIGURE = 29;
+    public const int PEN_COMPASS_X = 30;
+    public const int PEN_COMPASS_Y = 31;
+    public const int PEN_COMPASS_Z = 32;
+    public const int PEN_MESH_EDGE_LINE = 33;
     public const int PEN_CURRENT_FIG_SELECTED_POINT = 34;
 
-    public const int PEN_TBL_SIZE           = 35;
+    public const int PEN_TBL_SIZE = 35;
 
 
     public const int BRUSH_DEFAULT = 1;
@@ -118,7 +112,7 @@ public class DrawTools : IDisposable
         PenColorTbl = colorSet.PenColorTbl;
         BrushColorTbl = colorSet.BrushColorTbl;
 
-        for (int i=0; i<PEN_TBL_SIZE; i++)
+        for (int i = 0; i < PEN_TBL_SIZE; i++)
         {
             PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
         }
@@ -216,7 +210,7 @@ public class DrawTools : IDisposable
 
         return LoadFontFamily(buffer);
     }
-    
+
 
     static PrivateFontCollection PrivateFonts = new PrivateFontCollection();
 

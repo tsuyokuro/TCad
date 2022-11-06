@@ -3,7 +3,7 @@ using System.ComponentModel;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-using Plotter;
+using Plotter.Controller;
 
 namespace TCad.ViewModel;
 

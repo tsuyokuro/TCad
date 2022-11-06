@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using System;
 using CadDataTypes;
 using System.Runtime.InteropServices;
+using Plotter.Controller;
 
 namespace Plotter;
 

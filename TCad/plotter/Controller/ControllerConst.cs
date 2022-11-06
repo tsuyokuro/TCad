@@ -1,6 +1,13 @@
 
 namespace Plotter.Controller;
 
+public enum DrawModes
+{
+    LIGHT = 1,
+    DARK = 2,
+    PRINTER = 100,
+}
+
 public enum SelectModes
 {
     POINT,

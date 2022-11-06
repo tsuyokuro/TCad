@@ -11,6 +11,7 @@ using System.Windows.Media;
 using TCad.Controls;
 using TCad.ViewModel;
 using TCad.Dialogs;
+using Plotter.Controller;
 
 namespace TCad;
 
