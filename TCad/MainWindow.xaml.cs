@@ -36,12 +36,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ViewModel.SetupTextCommandView(textCommand);
 
-
         SetupInteractionConsole();
-
-        viewContainer.Focusable = true;
-
-        textCommand.Determined += ViewModel.TextCommand;
 
         KeyDown += OnKeyDown;
         KeyUp += OnKeyUp;
@@ -106,7 +101,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         CommandBar.DataContext = ViewModel;
 
-        ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
+        //ContinueCreateFigureSettingItem.DataContext = ViewModel.Settings;
         SnapMenu.DataContext = ViewModel.Settings;
         DrawModeMenu.DataContext = ViewModel.Settings;
         DrawOptionMenu.DataContext = ViewModel.Settings;
@@ -127,9 +122,9 @@ public partial class MainWindow : Window, ICadMainWindow
     private void InitWindowChrome()
     {
         BtnCloseWindow.Click += (sender, e) => { Close(); };
-        BtnMinWindow.Click += (sender, e) => { this.WindowState = WindowState.Minimized; };
-        BtnMaxWindow.Click += (sender, e) => { this.WindowState = WindowState.Maximized; };
-        BtnRestWindow.Click += (sender, e) => { this.WindowState = WindowState.Normal; };
+        BtnMinWindow.Click += (sender, e) => { WindowState = WindowState.Minimized; };
+        BtnMaxWindow.Click += (sender, e) => { WindowState = WindowState.Maximized; };
+        BtnRestWindow.Click += (sender, e) => { WindowState = WindowState.Normal; };
 
         StateChanged += MainWindow_StateChanged;
     }
@@ -169,7 +164,7 @@ public partial class MainWindow : Window, ICadMainWindow
         return ttplaces;
     }
 
-    ImageSource SelectPopupMessageIcon(UITypes.MessageType type)
+    private ImageSource SelectPopupMessageIcon(UITypes.MessageType type)
     {
         return PopupMessageIcons[(int)type];
     }

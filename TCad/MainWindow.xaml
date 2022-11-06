@@ -353,7 +353,7 @@
                                     x:Name="ContinueCreateFigureSettingItem"
                                     Header="{x:Static properties:Resources.menu_continue_create_figure}"
                                     IsCheckable="True"
-                                    IsChecked="{Binding ContinueCreateFigure}"/>
+                                    IsChecked="{Binding Path=Settings.ContinueCreateFigure}"/>
                             </MenuItem>
 
                             <!-- Snap Option Menu -->

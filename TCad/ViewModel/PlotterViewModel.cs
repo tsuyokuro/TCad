@@ -356,6 +356,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         CommandTextBox = textBox;
         CommandTextBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
+        CommandTextBox.Determined += TextCommand;
     }
 
     public void Open()
@@ -377,6 +378,8 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
             mEditorWindow.Close();
             mEditorWindow = null;
         }
+
+        CommandTextBox.Determined -= TextCommand;
 
         GDIToolManager.Instance.Dispose();
     }
