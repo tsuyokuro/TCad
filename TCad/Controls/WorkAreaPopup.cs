@@ -9,18 +9,18 @@ using System.Configuration;
 
 namespace TCad.Controls;
 
-public class PopupEx : Popup
+public class WorkAreaPopup : Popup
 {
     private bool? _appliedTopMost;
     private bool _alreadyLoaded;
     private Window _parentWindow;
 
-    public PopupEx()
+    public WorkAreaPopup()
     {
         if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
         {
             DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(PopupEx), new FrameworkPropertyMetadata(typeof(Popup)));
+                typeof(WorkAreaPopup), new FrameworkPropertyMetadata(typeof(Popup)));
         }
 
         Loaded += OnPopupLoaded;
@@ -66,39 +66,7 @@ public class PopupEx : Popup
             return;
 
         _alreadyLoaded = true;
-
-        if (Child != null)
-        {
-            Child.AddHandler(PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(OnChildPreviewMouseLeftButtonDown), true);
-        }
-
         _parentWindow = Window.GetWindow(this);
-
-        if (_parentWindow == null)
-            return;
-
-        _parentWindow.Activated += OnParentWindowActivated;
-        _parentWindow.Deactivated += OnParentWindowDeactivated;
-    }
-
-    void OnParentWindowActivated(object sender, EventArgs e)
-    {
-        SetTopmostState(true);
-    }
-
-    void OnParentWindowDeactivated(object sender, EventArgs e)
-    {
-        SetTopmostState(false);
-    }
-
-    void OnChildPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        SetTopmostState(true);
-
-        if (!_parentWindow.IsActive)
-        {
-            _parentWindow.Activate();
-        }
     }
 
     protected override void OnOpened(EventArgs e)
@@ -119,21 +87,16 @@ public class PopupEx : Popup
             return;
         }
 
-        if (Child == null)
-            return;
+        if (Child == null) return;
 
         var hwndSource = (PresentationSource.FromVisual(Child)) as HwndSource;
 
-        if (hwndSource == null)
-            return;
+        if (hwndSource == null) return;
         var hwnd = hwndSource.Handle;
 
         WinAPI.RECT rect;
 
-        if (!WinAPI.GetWindowRect(hwnd, out rect))
-            return;
-
-        Debug.WriteLine("setting z-order " + isTop);
+        if (!WinAPI.GetWindowRect(hwnd, out rect)) return;
 
         if (isTop)
         {
@@ -152,5 +115,4 @@ public class PopupEx : Popup
 
         _appliedTopMost = isTop;
     }
-
 }

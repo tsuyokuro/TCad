@@ -166,7 +166,7 @@
 
         </Grid.RowDefinitions>
 
-        <cc:PopupEx
+        <cc:WorkAreaPopup
             x:Name="PopupMessage"
             Focusable="false"
             IsOpen="False"
@@ -194,7 +194,7 @@
                         VerticalAlignment="Center" />
                 </StackPanel>
             </Border>
-        </cc:PopupEx>
+        </cc:WorkAreaPopup>
 
         <!--  Caption area  -->
         <Border Grid.Row="0" Padding="2" Background="{StaticResource CaptionColor}">
@@ -852,8 +852,8 @@
                                     x:Name="RunTextCommandButton"
                                     Margin="1,1,1,1"
                                     Style="{StaticResource ToolButton}"
-                                    Width="20"
-                                    Height="20"
+                                    Width="22"
+                                    Height="22"
                                     VerticalAlignment="Center"
                                     Command="{Binding SimpleCmd}" CommandParameter="enter_command"
                                     >
