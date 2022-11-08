@@ -23,7 +23,7 @@ public class CadFigureMesh : CadFigure
 
     static CadFigureMesh()
     {
-        EDGE_THRESHOLD = Math.Cos(CadMath.Deg2Rad(30));
+        EDGE_THRESHOLD = Math.Cos(CadMath.Deg2Rad(0.5));
     }
 
     public override VertexList PointList => mPointList;
@@ -156,7 +156,14 @@ public class CadFigureMesh : CadFigure
             }
             else
             {
-                borderPen = new DrawPen(ColorUtil.Mix(LinePen.Color4, brush.Color4, 0.2f), LinePen.Width);
+                if (opt.DrawMeshBorder)
+                {
+                    borderPen = new DrawPen(ColorUtil.Mix(LinePen.Color4, brush.Color4, 0.2f), LinePen.Width);
+                }
+                else
+                {
+                    borderPen = DrawPen.InvalidPen;
+                }
             }
         }
         else
@@ -168,7 +175,14 @@ public class CadFigureMesh : CadFigure
             }
             else
             {
-                borderPen = new DrawPen(ColorUtil.Mix(edgePen.Color4, brush.Color4, 0.2f), edgePen.Width); ;
+                if (opt.DrawMeshBorder)
+                {
+                    borderPen = new DrawPen(ColorUtil.Mix(edgePen.Color4, brush.Color4, 0.2f), edgePen.Width); ;
+                }
+                else
+                {
+                    borderPen = DrawPen.InvalidPen;
+                }
             }
         }
 

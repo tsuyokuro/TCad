@@ -160,7 +160,16 @@ namespace TCad.Properties {
         }
         
         /// <summary>
-        ///   Draw mesh outline に類似しているローカライズされた文字列を検索します。
+        ///   Draw Mesh Border に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string menu_draw_mesh_border {
+            get {
+                return ResourceManager.GetString("menu_draw_mesh_border", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Draw Mesh Edge に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string menu_draw_mesh_outline {
             get {
@@ -205,7 +214,7 @@ namespace TCad.Properties {
         }
         
         /// <summary>
-        ///   Fill mesh に類似しているローカライズされた文字列を検索します。
+        ///   Fill Mesh に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string menu_fill_mesh {
             get {

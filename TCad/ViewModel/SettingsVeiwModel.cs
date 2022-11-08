@@ -112,7 +112,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     {
         set
         {
-            if (SettingsHolder.Settings.DrawMeshEdge != value && value == false)
+            if (SettingsHolder.Settings.DrawMeshEdge != value && value == false && SettingsHolder.Settings.DrawMeshBorder == false)
             {
                 if (FillMesh == false)
                 {
@@ -127,6 +127,28 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         }
 
         get => SettingsHolder.Settings.DrawMeshEdge;
+    }
+
+    [UserSettingData]
+    public bool DrawMeshBorder
+    {
+        set
+        {
+            if (SettingsHolder.Settings.DrawMeshBorder != value && value == false && SettingsHolder.Settings.DrawMeshEdge == false)
+            {
+                if (FillMesh == false)
+                {
+                    FillMesh = true;
+                }
+            }
+
+            SettingsHolder.Settings.DrawMeshBorder = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawMeshBorder)));
+
+            Redraw();
+        }
+
+        get => SettingsHolder.Settings.DrawMeshBorder;
     }
 
     [UserSettingData]

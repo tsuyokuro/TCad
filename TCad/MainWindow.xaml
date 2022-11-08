@@ -416,6 +416,10 @@
                                     IsCheckable="True"
                                     IsChecked="{Binding Path=Settings.DrawMeshEdge}" />
                                 <MenuItem
+                                    Header="{x:Static properties:Resources.menu_draw_mesh_border}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Path=Settings.DrawMeshBorder}" />
+                                <MenuItem
                                     Header="{x:Static properties:Resources.menu_fill_mesh}"
                                     IsCheckable="True"
                                     IsChecked="{Binding Path=Settings.FillMesh}" />

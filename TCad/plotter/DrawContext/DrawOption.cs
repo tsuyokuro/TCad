@@ -21,6 +21,8 @@ public class DrawOption
     public DrawPen SelectedPointPen = default;
     public DrawBrush SelectedPointBrush = default;
 
+    public bool DrawMeshBorder = true;
+
     public bool ForcePen
     {
         set => Flag = value ? (byte)(Flag | FORCE_PEN) : (byte)(Flag & ~FORCE_PEN);
@@ -96,6 +98,7 @@ public class DrawOptionSet
         Pale.MeshEdgePen = DC.GetPen(DrawTools.PEN_PALE_FIGURE);
         Pale.MeshBrush = DrawBrush.InvalidBrush;
         Pale.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
+        Pale.DrawMeshBorder = SettingsHolder.Settings.DrawMeshBorder;
         Pale.ForceAllOn();
 
         // Before
@@ -104,6 +107,7 @@ public class DrawOptionSet
         Before.MeshEdgePen = DC.GetPen(DrawTools.PEN_OLD_FIGURE);
         Before.MeshBrush = DrawBrush.InvalidBrush;
         Before.TextBrush = DC.GetBrush(DrawTools.BRUSH_PALE_TEXT);
+        Before.DrawMeshBorder = SettingsHolder.Settings.DrawMeshBorder;
         Before.ForceAllOn();
 
         // Temp
@@ -112,6 +116,7 @@ public class DrawOptionSet
         Temp.MeshEdgePen = DC.GetPen(DrawTools.PEN_TEST_FIGURE);
         Temp.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
         Temp.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
+        Temp.DrawMeshBorder = true;
         Temp.ForceAllOn();
 
         // Current
@@ -132,6 +137,7 @@ public class DrawOptionSet
         }
 
         Current.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
+        Current.DrawMeshBorder = true;
 
         // Measure
         Measure.LinePen = DC.GetPen(DrawTools.PEN_MEASURE_FIGURE);
@@ -139,6 +145,7 @@ public class DrawOptionSet
         Measure.MeshEdgePen = DC.GetPen(DrawTools.PEN_MEASURE_FIGURE);
         Measure.MeshBrush = DC.GetBrush(DrawTools.BRUSH_DEFAULT_MESH_FILL); ;
         Measure.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
+        Measure.DrawMeshBorder = true;
         Measure.ForceAllOn();
 
         // Noraml
@@ -168,6 +175,7 @@ public class DrawOptionSet
             Normal.ForceMeshBrush = true;
         }
 
+        Normal.DrawMeshBorder = SettingsHolder.Settings.DrawMeshBorder;
         Normal.TextBrush = DC.GetBrush(DrawTools.BRUSH_TEXT);
     }
 }

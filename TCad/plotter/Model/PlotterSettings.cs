@@ -53,6 +53,8 @@ public class PlotterSettings
 
     public bool DrawMeshEdge = true;
 
+    public bool DrawMeshBorder = true;
+
     public bool FillMesh = true;
 
     public bool DrawNormal = false;
@@ -145,8 +147,9 @@ public class PlotterSettings
 
         jo = new JObj();
         jo.Add("DrawModes", (int)DrawMode);
-        jo.Add("DrawFaceOutline", DrawMeshEdge);
-        jo.Add("FillFace", FillMesh);
+        jo.Add("DrawMeshEdge", DrawMeshEdge);
+        jo.Add("DrawMeshBorder", DrawMeshBorder);
+        jo.Add("FillMesh", FillMesh);
         jo.Add("DrawNormal", DrawNormal);
         jo.Add("DrawAxis", DrawAxis);
         jo.Add("DrawAxisLabel", DrawAxisLabel);
@@ -233,8 +236,9 @@ public class PlotterSettings
         if (root.TryGetProperty("DrawSettings", out jo))
         {
             DrawMode = jo.GetEnum<DrawModes>("DrawModes", DrawMode);
-            DrawMeshEdge = jo.GetBool("DrawFaceOutline", DrawMeshEdge);
-            FillMesh = jo.GetBool("FillFace", FillMesh);
+            DrawMeshEdge = jo.GetBool("DrawMeshEdge", DrawMeshEdge);
+            DrawMeshBorder = jo.GetBool("DrawMeshBorder", DrawMeshBorder);
+            FillMesh = jo.GetBool("FillMesh", FillMesh);
             DrawNormal = jo.GetBool("DrawNormal", DrawNormal);
             DrawAxis = jo.GetBool("DrawAxis", DrawAxis);
             DrawAxisLabel = jo.GetBool("DrawAxisLabel", DrawAxisLabel);
