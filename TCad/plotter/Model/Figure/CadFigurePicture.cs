@@ -36,7 +36,7 @@ public class CadFigurePicture : CadFigure
         }
     }
 
-    public void Setup(PaperPageSize pageSize, Vector3d pos, String path)
+    public void Setup(PaperPageSize pageSize, Vector3d pos, string path)
     {
         OrgFilePathName = path;
 

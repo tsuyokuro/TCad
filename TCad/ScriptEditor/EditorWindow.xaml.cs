@@ -190,7 +190,7 @@ namespace TCad.ScriptEditor
 
             foreach (var str in ScriptEnv.AutoCompleteList)
             {
-                string text = str as String;
+                string text = str;
 
                 if (text.Contains(wd.Word))
                 {

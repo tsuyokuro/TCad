@@ -63,7 +63,7 @@ public partial class AngleInputDialog : Window
 
     public double GetDouble()
     {
-        String s = input.Text;
+        string s = input.Text;
         double v;
         Double.TryParse(s, out v);
 
@@ -72,7 +72,7 @@ public partial class AngleInputDialog : Window
 
     public string GetInputString()
     {
-        String s = input.Text;
+        string s = input.Text;
         return s;
     }
 }

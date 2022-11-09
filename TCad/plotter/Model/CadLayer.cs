@@ -9,8 +9,8 @@ public class CadLayer
 {
     public uint ID;
 
-    private String mName = null;
-    public String Name
+    private string mName = null;
+    public string Name
     {
         get
         {

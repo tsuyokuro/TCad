@@ -178,7 +178,7 @@ public class TestCommands
 
     private void formatTest(string format, params object[] args)
     {
-        string s = String.Format(format, args);
+        string s = string.Format(format, args);
     }
 
     private void test011()

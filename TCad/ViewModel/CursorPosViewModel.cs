@@ -41,14 +41,14 @@ public class CursorPosViewModel : INotifyPropertyChanged
     {
         set
         {
-            if (!String.IsNullOrEmpty(mStrCursorPos) && mCursorPos.Equals(value))
+            if (!string.IsNullOrEmpty(mStrCursorPos) && mCursorPos.Equals(value))
             {
                 return;
             }
 
             mCursorPos = value;
 
-            String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+            string s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
                 mCursorPos.X, mCursorPos.Y, mCursorPos.Z);
 
             StrCursorPos = s;
@@ -63,14 +63,14 @@ public class CursorPosViewModel : INotifyPropertyChanged
     {
         set
         {
-            if (!String.IsNullOrEmpty(mStrCursorPos2) && mCursorPos2.Equals(value))
+            if (!string.IsNullOrEmpty(mStrCursorPos2) && mCursorPos2.Equals(value))
             {
                 return;
             }
 
             mCursorPos2 = value;
 
-            String s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+            string s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
                 mCursorPos2.X, mCursorPos2.Y, mCursorPos2.Z);
 
             StrCursorPos2 = s;

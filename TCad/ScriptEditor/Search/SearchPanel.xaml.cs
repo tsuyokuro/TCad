@@ -15,13 +15,12 @@ namespace TCad.ScriptEditor.Search
 {
 	public partial class SearchPanel : UserControl
 	{
-		TextArea textArea;
-		SearchInputHandler handler;
-		TextDocument currentDocument;
-		SearchResultBackgroundRenderer renderer;
-		TextBox searchTextBox;
-		Popup dropdownPopup;
-		SearchPanelAdorner adorner;
+		private TextArea textArea;
+        private SearchInputHandler handler;
+		private TextDocument currentDocument;
+        private SearchResultBackgroundRenderer renderer;
+        private TextBox searchTextBox;
+        private SearchPanelAdorner adorner;
 
 		#region DependencyProperties
 		public static readonly DependencyProperty UseRegexProperty =
@@ -169,14 +168,14 @@ namespace TCad.ScriptEditor.Search
         public static SearchPanel Install(TextEditor editor)
 		{
 			if (editor == null)
-				throw new ArgumentNullException("editor");
+				throw new ArgumentNullException(nameof(editor));
 			return Install(editor.TextArea);
 		}
 
 		public static SearchPanel Install(TextArea textArea)
 		{
 			if (textArea == null)
-				throw new ArgumentNullException("textArea");
+				throw new ArgumentNullException(nameof(textArea));
 			SearchPanel panel = new SearchPanel();
 			panel.AttachInternal(textArea);
 			panel.handler = new SearchInputHandler(textArea, panel);
@@ -192,9 +191,9 @@ namespace TCad.ScriptEditor.Search
 		public void Uninstall()
 		{
 			Close();
-			textArea.DocumentChanged -= textArea_DocumentChanged;
+			textArea.DocumentChanged -= TextArea_DocumentChanged;
 			if (currentDocument != null)
-				currentDocument.TextChanged -= textArea_Document_TextChanged;
+				currentDocument.TextChanged -= TextArea_Document_TextChanged;
 			textArea.DefaultInputHandler.NestedInputHandlers.Remove(handler);
 		}
 
@@ -207,8 +206,8 @@ namespace TCad.ScriptEditor.Search
 			renderer = new SearchResultBackgroundRenderer();
 			currentDocument = textArea.Document;
 			if (currentDocument != null)
-				currentDocument.TextChanged += textArea_Document_TextChanged;
-			textArea.DocumentChanged += textArea_DocumentChanged;
+				currentDocument.TextChanged += TextArea_Document_TextChanged;
+			textArea.DocumentChanged += TextArea_DocumentChanged;
 			KeyDown += SearchLayerKeyDown;
 
 			this.CommandBindings.Add(new CommandBinding(SearchCommands.FindNext, (sender, e) => FindNext()));
@@ -217,18 +216,18 @@ namespace TCad.ScriptEditor.Search
 			IsClosed = true;
 		}
 
-		void textArea_DocumentChanged(object sender, EventArgs e)
+		void TextArea_DocumentChanged(object sender, EventArgs e)
 		{
 			if (currentDocument != null)
-				currentDocument.TextChanged -= textArea_Document_TextChanged;
+				currentDocument.TextChanged -= TextArea_Document_TextChanged;
 			currentDocument = textArea.Document;
 			if (currentDocument != null) {
-				currentDocument.TextChanged += textArea_Document_TextChanged;
+				currentDocument.TextChanged += TextArea_Document_TextChanged;
 				DoSearch(false);
 			}
 		}
 
-		void textArea_Document_TextChanged(object sender, EventArgs e)
+		void TextArea_Document_TextChanged(object sender, EventArgs e)
 		{
 			DoSearch(false);
 		}
@@ -296,7 +295,7 @@ namespace TCad.ScriptEditor.Search
 					textArea.ClearSelection();
 				}
 				// We cast from ISearchResult to SearchResult; this is safe because we always use the built-in strategy
-				foreach (SearchResult result in strategy.FindAll(textArea.Document, 0, textArea.Document.TextLength)) {
+				foreach (SearchResult result in strategy.FindAll(textArea.Document, 0, textArea.Document.TextLength).Cast<SearchResult>()) {
 					if (changeSelection && result.StartOffset >= offset) {
 						SelectResult(result);
 						changeSelection = false;
@@ -356,8 +355,6 @@ namespace TCad.ScriptEditor.Search
 			var layer = AdornerLayer.GetAdornerLayer(textArea);
 			if (layer != null)
 				layer.Remove(adorner);
-			if (dropdownPopup != null)
-				dropdownPopup.IsOpen = false;
 			messageView.IsOpen = false;
 			textArea.TextView.BackgroundRenderers.Remove(renderer);
 			if (hasFocus)

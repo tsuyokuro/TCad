@@ -11,7 +11,7 @@ public static class DOut
     public static int mIndent = 0;
     public static int IndentUnit = 2;
 
-    public static String space = "";
+    public static string space = "";
 
     public static Action<string> Print = (s)=> { };
     public static Action<string> PrintLn = (s)=> { };
@@ -57,7 +57,7 @@ public static class DOut
     }
 
     // Print without new line
-    public static void p(String s)
+    public static void p(string s)
     {
         Begin();
         PutCount++;
@@ -66,7 +66,7 @@ public static class DOut
     }
 
     // Print with new line
-    public static void pl(String s)
+    public static void pl(string s)
     {
         Begin();
         PutCount++;
@@ -75,7 +75,7 @@ public static class DOut
     }
 
     // Print with new line
-    public static void tpl(String s)
+    public static void tpl(string s)
     {
         DateTime dt = DateTime.Now;
 
@@ -87,7 +87,7 @@ public static class DOut
         End();
     }
 
-    public static void plx(String s)
+    public static void plx(string s)
     {
         System.Diagnostics.StackFrame stackFrame = new System.Diagnostics.StackFrame(1);
 

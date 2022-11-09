@@ -158,7 +158,7 @@ public class ScriptFunctions
         if (idx < 0)
         {
             ItConsole.println(
-                String.Format("ID:{0} is not found", id));
+                string.Format("ID:{0} is not found", id));
             return -1;
         }
 

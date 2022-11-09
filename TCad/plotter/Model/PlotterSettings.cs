@@ -18,7 +18,7 @@ public static class SettingsHolder
 
 public class PlotterSettings
 {
-    public bool ContinueCreateFigure = true;
+    public bool ContinueCreateFigure = false;
 
     public bool SnapToPoint = true;
 
@@ -81,13 +81,13 @@ public class PlotterSettings
         GridSize = new Vector3d(10, 10, 10);
     }
 
-    private String FileName()
+    private string FileName()
     {
         Assembly asm = Assembly.GetEntryAssembly();
 
         string exePath = asm.Location;
 
-        String dir = Path.GetDirectoryName(exePath);
+        string dir = Path.GetDirectoryName(exePath);
 
         string fileName = dir + @"\settings.json";
 

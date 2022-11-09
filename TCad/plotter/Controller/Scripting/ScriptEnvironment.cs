@@ -35,17 +35,17 @@ public partial class ScriptEnvironment
 
     private ScriptSource Source;
 
-    private List<string> mAutoCompleteList = new List<string>();
+    private readonly List<string> mAutoCompleteList = new();
     public List<string> AutoCompleteList
     {
         get => mAutoCompleteList;
     }
 
-    private ScriptFunctions mScriptFunctions;
+    private readonly ScriptFunctions mScriptFunctions;
 
-    private DirectCommands mSimpleCommands;
+    private readonly DirectCommands mSimpleCommands;
 
-    private TestCommands mTestCommands;
+    private readonly TestCommands mTestCommands;
 
     public ScriptEnvironment(PlotterController controller)
     {
@@ -66,9 +66,9 @@ public partial class ScriptEnvironment
         DOut.plx("out");
     }
 
-    Regex AutoCompPtn = new Regex(@"#\[AC\][ \t]*(.+)\n");
+    private static readonly Regex AutoCompPtn = new(@"#\[AC\][ \t]*(.+)\n");
 
-    private string getBaseSacript()
+    private static string GetBaseSacript()
     {
         string script = "";
 
@@ -94,7 +94,7 @@ public partial class ScriptEnvironment
 
     private void InitScriptingEngine()
     {
-        string script = getBaseSacript();
+        string script = GetBaseSacript();
 
         //string script = "";
 
@@ -108,8 +108,10 @@ public partial class ScriptEnvironment
 
         MatchCollection matches = AutoCompPtn.Matches(script);
 
-        foreach (Match m in matches)
+        foreach (object o in matches)
         {
+            if (o is not Match m) continue;
+
             string s = m.Groups[1].Value.TrimEnd('\r', '\n');
             mAutoCompleteList.Add(s);
         }
@@ -227,7 +229,7 @@ public partial class ScriptEnvironment
 
         try
         {
-            Stopwatch sw = new Stopwatch();
+            Stopwatch sw = new();
             sw.Start();
             
             ret = Engine.Execute(s, mScope);
@@ -264,7 +266,7 @@ public partial class ScriptEnvironment
         {
             ItConsole.println(AnsiEsc.BRed + "Canceled");
         }
-        catch (ThreadInterruptedException e)
+        catch (ThreadInterruptedException)
         {
             // NOP
         }
@@ -316,7 +318,7 @@ public partial class ScriptEnvironment
 
     public class TraceBack
     {
-        private ScriptEnvironment Env;
+        private readonly ScriptEnvironment Env;
 
         public bool StopScript = false;
 

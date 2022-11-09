@@ -653,7 +653,7 @@ public partial class CadConsoleView : FrameworkElement
 
     public void PrintF(string format, params object[] args)
     {
-        string s = String.Format(format, args);
+        string s = string.Format(format, args);
         Print(s);
     }
 
