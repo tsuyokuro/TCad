@@ -1210,12 +1210,12 @@ public class DrawingGL : IDrawing
 
         Start2D();
 
-        GL.LineWidth(DrawingConst.HighlightPointLineWidth);
+        GL.LineWidth(DrawingConst.ExtSnapPointLineWidth);
         GL.Color4(pen.Color4);
 
         pointList.ForEach(v =>
         {
-            DrawCross2D(DC.WorldPointToDevPoint(v), DrawingConst.HighlightPointLineLength);
+            DrawCross2D(DC.WorldPointToDevPoint(v), DrawingConst.ExtSnapPointLineLength);
         });
 
         GL.LineWidth(1);

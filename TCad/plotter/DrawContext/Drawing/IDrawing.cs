@@ -24,6 +24,9 @@ public class DrawingConst
     public const float HighlightPointLineWidth = 2;
     public const float HighlightPointLineLength = 6;
 
+    public const float ExtSnapPointLineWidth = 1;
+    public const float ExtSnapPointLineLength = 6;
+
     public const double AxisLength = 100; // DrawingGDIでしか使っていない
 
     public const double NormalLen = 20;

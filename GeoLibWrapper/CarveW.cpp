@@ -7,10 +7,6 @@ using namespace MyCollections;
 
 namespace CarveWapper
 {
-	CarveW::CarveW()
-	{
-	}
-
 	CadMesh^ CarveW::AMinusB(CadMesh^ a, CadMesh^ b)
 	{
 		carve::poly::Polyhedron* pa = ToPolyhedron(a);

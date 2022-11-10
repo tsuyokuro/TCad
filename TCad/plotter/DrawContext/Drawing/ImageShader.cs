@@ -13,25 +13,26 @@ namespace Plotter;
 public class ImageShader
 {
     public static string VertexShaderSrc =
-@"
-void main(void)
-{
-	gl_FrontColor = gl_Color;
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_Position = ftransform();
-}
-";
+        """
+        void main(void)
+        {
+            gl_FrontColor = gl_Color;
+            gl_TexCoord[0] = gl_MultiTexCoord0;
+            gl_Position = ftransform();
+        }
+        """;
 
     public static string FragmentShaderSrc =
-@"
-uniform sampler2D tex;
+        """
+        uniform sampler2D tex;
 
-void main()
-{
-	vec4 a = texture2D(tex, gl_TexCoord[0].st);
-	gl_FragColor = a;
-}
-";
+        void main()
+        {
+            vec4 a = texture2D(tex, gl_TexCoord[0].st);
+            gl_FragColor = a;
+        }
+        """;
+
     private int ShaderProgram = -1;
 
     private static ImageShader sInstance;

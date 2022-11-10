@@ -14,7 +14,6 @@ namespace CarveWapper
 	public ref class CarveW
 	{
 	public:
-		CarveW();
 		static CadMesh^ AMinusB(CadMesh^ a, CadMesh^ b);
 		static CadMesh^ Union(CadMesh^ a, CadMesh^ b);
 		static CadMesh^ Intersection(CadMesh^ a, CadMesh^ b);
