@@ -19,6 +19,7 @@ using System.Windows;
 using System.IO;
 using System.Drawing;
 using GLFont;
+using OpenTK.Graphics.OpenGL;
 
 namespace Plotter.Controller;
 
@@ -528,6 +529,10 @@ public class TestCommands
     {
         FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24);
         fw.CreatePoly('あ');
+
+        IntPtr htess = Glu.NewTess();
+
+        Glu.DeleteTess(htess);
     }
 
     public bool ExecCommand(string s)

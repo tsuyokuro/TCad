@@ -72,10 +72,7 @@ public class FontFaceW
         uint glyphIndex = FontFace.GetCharIndex(c);
         FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
         Outline outLine = FontFace.Glyph.Outline;
-
-        DOut.pl("test3");
     }
-
 
     public FontTex CreateTexture(char c)
     {

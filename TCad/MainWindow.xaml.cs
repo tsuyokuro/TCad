@@ -12,6 +12,7 @@ using TCad.Controls;
 using TCad.ViewModel;
 using TCad.Dialogs;
 using Plotter.Controller;
+using OpenTK.Graphics.OpenGL;
 
 namespace TCad;
 
@@ -26,6 +27,8 @@ public partial class MainWindow : Window, ICadMainWindow
         DOut.plx("in");
 
         InitializeComponent();
+
+        Glu.Initialize();
 
         ViewModel = new PlotterViewModel(this);
 
@@ -190,6 +193,7 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         ViewModel.Close();
         ImageRenderer.Provider.Release();
+        Glu.Dispose();
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
