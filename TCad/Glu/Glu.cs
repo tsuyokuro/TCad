@@ -1,9 +1,11 @@
+using System;
+using System.Runtime.InteropServices;
+#pragma warning disable 3019
+#pragma warning disable 1591
+
+
 namespace OpenTK.Graphics.OpenGL
 {
-    using System;
-    using System.Runtime.InteropServices;
-    #pragma warning disable 3019
-    #pragma warning disable 1591
 
     static partial class Glu
     {

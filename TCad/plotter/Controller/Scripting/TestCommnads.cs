@@ -532,6 +532,8 @@ public class TestCommands
 
         IntPtr htess = Glu.NewTess();
 
+        ItConsole.println("test3 htess:" + htess.ToString("x16"));
+
         Glu.DeleteTess(htess);
     }
 
