@@ -13,6 +13,7 @@ using TCad.ViewModel;
 using TCad.Dialogs;
 using Plotter.Controller;
 using OpenTK.Graphics.OpenGL;
+using OpenGL.GLU;
 
 namespace TCad;
 

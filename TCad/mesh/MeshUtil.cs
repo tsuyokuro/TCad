@@ -34,7 +34,7 @@ public class MeshUtil
     }
 
     // 全てのFaceを3角形に分割する
-    public static void SplitAllFace(CadMesh mesh)
+    public static void SplitAllFaceToTriangle(CadMesh mesh)
     {
         FlexArray<CadFace> faceStore = new FlexArray<CadFace>();
 
@@ -307,7 +307,7 @@ public class MeshUtil
             return (null, null);
         }
 
-        MeshUtil.SplitAllFace(m1);
+        MeshUtil.SplitAllFaceToTriangle(m1);
 
         CadMesh m2;
         try
@@ -319,7 +319,7 @@ public class MeshUtil
             return (null, null);
         }
 
-        MeshUtil.SplitAllFace(m2);
+        MeshUtil.SplitAllFaceToTriangle(m2);
 
         return (m1, m2);
     }

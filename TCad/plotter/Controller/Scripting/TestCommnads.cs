@@ -20,6 +20,8 @@ using System.IO;
 using System.Drawing;
 using GLFont;
 using OpenTK.Graphics.OpenGL;
+using System.Runtime.InteropServices;
+using OpenGL.GLU;
 
 namespace Plotter.Controller;
 
@@ -527,12 +529,129 @@ public class TestCommands
 
     private void Test3()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24);
-        fw.CreatePoly('あ');
+        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48);
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
+
+        SharpFont.Outline outline = glyph.Outline;
+
+        int idx = 0;
+
+        CadVertex v = new CadVertex();
+
+        for (int i = 0; i < outline.ContoursCount; i++)
+        {
+            CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+
+            int n = outline.Contours[i];
+            for (; idx <= n;)
+            {
+                SharpFont.FTVector fv = outline.Points[idx];
+                v.X = fv.X * 100.0;
+                v.Y = fv.Y * 100.0;
+                v.Z = 0;
+
+                tmpFig.AddPoint(v);
+
+                idx++;
+            }
+
+            tmpFig.IsLoop = true;
+            Controller.CurrentLayer.AddFigure(tmpFig);
+        }
+
+        Controller.UpdateObjectTree(true);
+
+        //IntPtr htess = Glu.NewTess();
+        //ItConsole.println("test3 htess:" + htess.ToString("x16"));
+
+        //Glu.DeleteTess(htess);
+    }
+
+
+
+    public void BeginCB(int mode)
+    {
+        DOut.pl("BeginCB mode:" + mode);
+    }
+
+    public void EndCB()
+    {
+        DOut.pl("EndCB");
+    }
+
+    public void VertexCB(IntPtr data)
+    {
+        int vIndex = (int)GCHandle.FromIntPtr(data).Target;
+        DOut.pl("VertexCB vIndex:" + vIndex);
+    }
+
+    private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
+                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
+                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
+                                ref IntPtr dataOut)
+    {
+        DOut.pl("CombineCB");
+        dataOut = IntPtr.Zero;
+    }
+
+    void ErrorCB(int err)
+    {
+        DOut.pl("ErrorCB err:" + err);
+    }
+
+    private void Test4()
+    {
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48);
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
+
+        SharpFont.Outline outline = glyph.Outline;
+
 
         IntPtr htess = Glu.NewTess();
-
         ItConsole.println("test3 htess:" + htess.ToString("x16"));
+
+        Glu.TessCallback(htess, GluTessCallback.Begin, new Glu.TessBeginCallback(BeginCB));
+        Glu.TessCallback(htess, GluTessCallback.End, new Glu.TessEndCallback(EndCB));
+        Glu.TessCallback(htess, GluTessCallback.Vertex, new Glu.TessVertexCallback(VertexCB));
+        Glu.TessCallback(htess, GluTessCallback.TessCombine, new Glu.TessCombineCallback(CombineCB));
+        Glu.TessCallback(htess, GluTessCallback.TessError, new Glu.TessErrorCallback(ErrorCB));
+
+        double[] va = new double[3];
+
+        Glu.TessNormal(htess, new Vector3(0f,0f,1f));
+
+        Glu.TessBeginPolygon(htess, 128);
+
+        GCHandle gch;
+
+        double[] tv = new double[3];
+
+        int idx = 0;
+        for (int i = 0; i < outline.ContoursCount; i++)
+        {
+            Glu.TessBeginContour(htess);
+
+            int n = outline.Contours[i];
+            for (; idx <= n;)
+            {
+                SharpFont.FTVector fv = outline.Points[idx];
+                tv[0] = fv.X * 100.0;
+                tv[1] = fv.Y * 100.0;
+                tv[2] = 0;
+
+                gch = GCHandle.Alloc(idx, GCHandleType.Pinned);
+                IntPtr ptr = GCHandle.ToIntPtr(gch);
+                Glu.TessVertex(htess, tv, ptr);
+
+                idx++;
+            }
+
+            Glu.TessEndContour(htess);
+        }
+
+        Glu.TessEndPolygon(htess);
 
         Glu.DeleteTess(htess);
     }
@@ -597,6 +716,10 @@ public class TestCommands
         else if (cmd == "@test3")
         {
             Test3();
+        }
+        else if (cmd == "@test4")
+        {
+            Test4();
         }
 
         else if (cmd == "@tcons1")

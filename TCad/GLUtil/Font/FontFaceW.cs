@@ -74,6 +74,13 @@ public class FontFaceW
         Outline outLine = FontFace.Glyph.Outline;
     }
 
+    public GlyphSlot GetGlyph(char c)
+    {
+        uint glyphIndex = FontFace.GetCharIndex(c);
+        FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+        return FontFace.Glyph;
+    }
+
     public FontTex CreateTexture(char c)
     {
         FontTex ft;

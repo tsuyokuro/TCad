@@ -682,7 +682,7 @@ public class MeshMaker
             }
         }
 
-        MeshUtil.SplitAllFace(mesh);
+        MeshUtil.SplitAllFaceToTriangle(mesh);
 
         return mesh;
     }

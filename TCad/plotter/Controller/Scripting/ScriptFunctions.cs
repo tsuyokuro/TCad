@@ -1582,7 +1582,7 @@ public class ScriptFunctions
 
         CadMesh c = CarveW.AMinusB(a, b);
 
-        MeshUtil.SplitAllFace(c);
+        MeshUtil.SplitAllFaceToTriangle(c);
 
 
         HeModel hem = HeModelConverter.ToHeModel(c);
@@ -1620,7 +1620,7 @@ public class ScriptFunctions
 
         CadMesh c = CarveW.Union(a, b);
 
-        MeshUtil.SplitAllFace(c);
+        MeshUtil.SplitAllFaceToTriangle(c);
 
 
         HeModel hem = HeModelConverter.ToHeModel(c);
@@ -1658,7 +1658,7 @@ public class ScriptFunctions
 
         CadMesh c = CarveW.Intersection(a, b);
 
-        MeshUtil.SplitAllFace(c);
+        MeshUtil.SplitAllFaceToTriangle(c);
 
 
         HeModel hem = HeModelConverter.ToHeModel(c);
