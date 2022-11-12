@@ -287,9 +287,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         mViewManager.SetWorldScale(scale);
     }
 
-    public void TextCommand(string s)
+    public void EvalTextCommand(string s)
     {
-        mController.TextCommand(s);
+        mController.EvalTextCommand(s);
     }
 
     private bool ChangeFigureType(CadFigure.Types newType)
@@ -356,7 +356,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         CommandTextBox = textBox;
         CommandTextBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
-        CommandTextBox.Determined += TextCommand;
+        CommandTextBox.Determined += EvalTextCommand;
     }
 
     public void Open()
@@ -379,7 +379,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
             mEditorWindow = null;
         }
 
-        CommandTextBox.Determined -= TextCommand;
+        CommandTextBox.Determined -= EvalTextCommand;
 
         GDIToolManager.Instance.Dispose();
     }

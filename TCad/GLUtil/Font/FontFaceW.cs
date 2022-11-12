@@ -4,6 +4,7 @@ using SharpFont;
 using System.Windows.Resources;
 using System.Windows;
 using System.IO;
+using Plotter;
 
 namespace GLFont;
 
@@ -65,6 +66,16 @@ public class FontFaceW
 
         Cache.Clear();
     }
+
+    public void CreatePoly(char c)
+    {
+        uint glyphIndex = FontFace.GetCharIndex(c);
+        FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+        Outline outLine = FontFace.Glyph.Outline;
+
+        DOut.pl("test3");
+    }
+
 
     public FontTex CreateTexture(char c)
     {

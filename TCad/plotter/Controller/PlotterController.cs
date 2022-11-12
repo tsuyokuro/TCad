@@ -371,7 +371,7 @@ public partial class PlotterController
         UpdateObjectTree(true);
     }
 
-    public void TextCommand(string s)
+    public void EvalTextCommand(string s)
     {
         //ScriptEnv.ExecuteCommandSync(s);
         ScriptEnv.ExecuteCommandAsync(s);

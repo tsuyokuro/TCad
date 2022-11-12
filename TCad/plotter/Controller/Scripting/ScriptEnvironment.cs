@@ -134,6 +134,7 @@ public partial class ScriptEnvironment
         s = s.Trim();
         ItConsole.println(s);
 
+        // Command is internal command 
         if (s.StartsWith("@"))
         {
             await Task.Run(() =>
@@ -146,6 +147,8 @@ public partial class ScriptEnvironment
 
             return;
         }
+
+        // Command is python
 
         await Task.Run( () =>
         {

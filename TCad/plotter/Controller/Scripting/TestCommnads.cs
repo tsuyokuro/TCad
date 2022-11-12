@@ -18,6 +18,7 @@ using System.Windows.Resources;
 using System.Windows;
 using System.IO;
 using System.Drawing;
+using GLFont;
 
 namespace Plotter.Controller;
 
@@ -523,6 +524,12 @@ public class TestCommands
         DOut.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
     }
 
+    private void Test3()
+    {
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24);
+        fw.CreatePoly('あ');
+    }
+
     public bool ExecCommand(string s)
     {
         string[] ss = Regex.Split(s, @"[ \t]+");
@@ -579,6 +586,10 @@ public class TestCommands
         else if (cmd == "@test2")
         {
             Test2();
+        }
+        else if (cmd == "@test3")
+        {
+            Test3();
         }
 
         else if (cmd == "@tcons1")

@@ -201,13 +201,13 @@ public class ScriptFunctions
 
         fig.Select();
 
-        Controller.StartEdit();
+        StartEdit();
 
         fig.ForEachFig((f) => {
             CadUtil.ScaleFigure(f, org, scale);
         });
 
-        Controller.EndEdit();
+        EndEdit();
 
         Session.PostRedraw();
     }
@@ -855,14 +855,14 @@ public class ScriptFunctions
 
         var list = new List<CadFigure>() { fig };
 
-        Controller.StartEdit(list);
+        StartEdit(list);
 
         fig.ForEachFig((f) =>
         {
             f.MoveAllPoints(delta);
         });
 
-        Controller.EndEdit(list);
+        EndEdit(list);
 
         Session.PostRedraw();
     }
@@ -871,7 +871,7 @@ public class ScriptFunctions
     {
         var figList = Controller.GetSelectedFigureList();
 
-        Controller.StartEdit(figList);
+        StartEdit(figList);
 
         Vector3d d = new Vector3d(x, y, z);
 
@@ -889,7 +889,7 @@ public class ScriptFunctions
             }
         }
 
-        Controller.EndEdit(figList);
+        EndEdit(figList);
     }
 
     public void SetSelectedSegLen(double len)
@@ -923,34 +923,34 @@ public class ScriptFunctions
         if (da < db)
         {
             Vector3d np = CadMath.LinePoint(pb.vector, pa.vector, len);
-            Controller.StartEdit();
+            StartEdit();
 
             pa.vector = np;
 
             fig.SetPointAt(seg.PtIndexA, pa);
 
-            Controller.EndEdit();
+            EndEdit();
         }
         else
         {
             Vector3d np = CadMath.LinePoint(pa.vector, pb.vector, len);
-            Controller.StartEdit();
+            StartEdit();
 
             pb.vector = np;
 
             fig.SetPointAt(seg.PtIndexB, pb);
 
-            Controller.EndEdit();
+            EndEdit();
         }
     }
 
     public void InsPoint()
     {
-        Controller.StartEdit();
+        StartEdit();
 
         if (!Controller.InsPointToLastSelectedSeg())
         {
-            Controller.AbendEdit();
+            AbendEdit();
 
             ItConsole.println(
                 global::TCad.Properties.Resources.error_operation_failed
@@ -958,7 +958,7 @@ public class ScriptFunctions
             return;
         }
 
-        Controller.EndEdit();
+        EndEdit();
 
         ItConsole.println(
             global::TCad.Properties.Resources.notice_operation_success
@@ -1010,11 +1010,11 @@ public class ScriptFunctions
 
         var list = new List<CadFigure>() { fig };
 
-        Controller.StartEdit(list);
+        StartEdit(list);
 
         RotateWithAxis(fig, org, axisDir, CadMath.Deg2Rad(angle));
 
-        Controller.EndEdit(list);
+        EndEdit(list);
 
         Session.PostRedraw();
     }
@@ -2121,5 +2121,45 @@ public class ScriptFunctions
         }
 
         return Controller.DB.GetFigure(idlist[0]);
+    }
+
+    public void StartEdit()
+    {
+        if (!Session.StartWithSnapshotDB)
+        {
+            Controller.StartEdit();
+        }
+    }
+
+    public void StartEdit(List<CadFigure> figList)
+    {
+        if (!Session.StartWithSnapshotDB)
+        {
+            Controller.StartEdit(figList);
+        }
+    }
+
+    public void EndEdit()
+    {
+        if (!Session.StartWithSnapshotDB)
+        {
+            Controller.EndEdit();
+        }
+    }
+
+    public void EndEdit(List<CadFigure> figList)
+    {
+        if (!Session.StartWithSnapshotDB)
+        {
+            Controller.EndEdit(figList);
+        }
+    }
+
+    public void AbendEdit()
+    {
+        if (!Session.StartWithSnapshotDB)
+        {
+            Controller.AbendEdit();
+        }
     }
 }
