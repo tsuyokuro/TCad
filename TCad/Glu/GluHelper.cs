@@ -1,10 +1,3 @@
-#region --- License ---
-/* Copyright (c) 2006, 2007 Stefanos Apostolopoulos
- * Contributions by Andy Gill.
- * See license.txt for license info
- */
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,13 +7,11 @@ using System.Reflection.Emit;
 
 using OpenTK.Platform;
 using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
 using TCad;
 
 namespace OpenTK.Graphics.OpenGL
 {
-    /// <summary>
-    /// </summary>
-    //[Obsolete("Use OpenTK math functions instead.")]
     public static partial class Glu
     {
         private const string Library = "glu32.dll";
@@ -31,13 +22,6 @@ namespace OpenTK.Graphics.OpenGL
         private static Type importsClass = typeof(Imports);
 
         private static IntPtr HandleGluLibrary;
-
-        static Glu()
-        {
-            // Glu doesn't have any extensions, so this is safe to call once and be done with it.
-            //LoadAll();
-        }
-
 
         private static Delegate LoadDelegate(string name, Type signature)
         {
