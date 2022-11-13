@@ -22,6 +22,7 @@ using GLFont;
 using OpenTK.Graphics.OpenGL;
 using System.Runtime.InteropServices;
 using OpenGL.GLU;
+using GLUtil;
 
 namespace Plotter.Controller;
 
@@ -572,17 +573,18 @@ public class TestCommands
 
     public void BeginCB(int mode)
     {
-        DOut.pl("BeginCB mode:" + mode);
+        BeginMode beginMode = (BeginMode)mode;
+        DOut.pl("MeshBegin mode:" + beginMode.ToString());
     }
 
     public void EndCB()
     {
-        DOut.pl("EndCB");
+        DOut.pl("MeshEnd");
     }
 
     public void VertexCB(IntPtr data)
     {
-        int vIndex = (int)GCHandle.FromIntPtr(data).Target;
+        int vIndex = (int)data;
         DOut.pl("VertexCB vIndex:" + vIndex);
     }
 
@@ -591,13 +593,13 @@ public class TestCommands
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
                                 ref IntPtr dataOut)
     {
-        DOut.pl("CombineCB");
+        DOut.pl("MeshCombine");
         dataOut = IntPtr.Zero;
     }
 
     void ErrorCB(int err)
     {
-        DOut.pl("ErrorCB err:" + err);
+        DOut.pl("MeshError err:" + err);
     }
 
     private void Test4()
@@ -610,7 +612,7 @@ public class TestCommands
 
 
         IntPtr htess = Glu.NewTess();
-        ItConsole.println("test3 htess:" + htess.ToString("x16"));
+        ItConsole.println("test4 htess:" + htess.ToString("x16"));
 
         Glu.TessCallback(htess, GluTessCallback.Begin, new Glu.TessBeginCallback(BeginCB));
         Glu.TessCallback(htess, GluTessCallback.End, new Glu.TessEndCallback(EndCB));
@@ -623,8 +625,6 @@ public class TestCommands
         Glu.TessNormal(htess, new Vector3(0f,0f,1f));
 
         Glu.TessBeginPolygon(htess, 128);
-
-        GCHandle gch;
 
         double[] tv = new double[3];
 
@@ -641,9 +641,7 @@ public class TestCommands
                 tv[1] = fv.Y * 100.0;
                 tv[2] = 0;
 
-                gch = GCHandle.Alloc(idx, GCHandleType.Pinned);
-                IntPtr ptr = GCHandle.ToIntPtr(gch);
-                Glu.TessVertex(htess, tv, ptr);
+                Glu.TessVertex(htess, tv, idx);
 
                 idx++;
             }
@@ -654,6 +652,32 @@ public class TestCommands
         Glu.TessEndPolygon(htess);
 
         Glu.DeleteTess(htess);
+    }
+
+    public void Test5()
+    {
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('あ');
+
+        Tessellator tesse = new();
+
+        CadMesh cm = FontTessellator.Tessellate(glyph, 100.0, 4, tesse);
+
+        tesse.Dispose();
+
+        HeModel hem = HeModelConverter.ToHeModel(cm);
+
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+
+        fig.SetMesh(hem);
+
+        Controller.CurrentLayer.AddFigure(fig);
+
+        RunOnMainThread(() =>
+        {
+            Controller.UpdateObjectTree(true);
+            Controller.Redraw();
+        });
     }
 
     public bool ExecCommand(string s)
@@ -720,6 +744,10 @@ public class TestCommands
         else if (cmd == "@test4")
         {
             Test4();
+        }
+        else if (cmd == "@test5")
+        {
+            Test5();
         }
 
         else if (cmd == "@tcons1")

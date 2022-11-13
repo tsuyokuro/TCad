@@ -215,7 +215,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe bool CheckExtension(Byte* extName, Byte* extString)
     {
@@ -319,7 +318,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float* data)
     {
@@ -351,7 +349,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double* data)
     {
@@ -386,7 +383,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void LoadSamplingMatrices(IntPtr nurb, float* model, float* perspective, Int32* view)
     {
@@ -483,7 +479,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float* knots, Int32 stride, [Out] float* control, Int32 order, MapTarget type)
     {
@@ -524,7 +519,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void NurbsSurface(IntPtr nurb, Int32 sKnotCount, float* sKnots, Int32 tKnotCount, float* tKnots, Int32 sStride, Int32 tStride, float* control, Int32 sOrder, Int32 tOrder, MapTarget type)
     {
@@ -574,7 +568,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void PickMatrix(double x, double y, double delX, double delY, [Out] Int32* viewport)
     {
@@ -615,7 +608,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe Int32 Project(double objX, double objY, double objZ, double* model, double* proj, Int32* view, double* winX, double* winY, double* winZ)
     {
@@ -646,7 +638,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void PwlCurve(IntPtr nurb, Int32 count, float* data, Int32 stride, GluNurbsTrim type)
     {
@@ -843,14 +834,12 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void TessVertex(IntPtr tess, double* location, IntPtr data)
     {
         Delegates.gluTessVertex((IntPtr)tess, (double*)location, (IntPtr)data);
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe void TessVertex(IntPtr tess, double* location, [In, Out] object data)
     {
@@ -899,7 +888,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe Int32 UnProject(double winX, double winY, double winZ, double* model, double* proj, Int32* view, double* objX, double* objY, double* objZ)
     {
@@ -942,7 +930,6 @@ static partial class Glu
         }
     }
 
-    [System.CLSCompliant(false)]
     public static 
     unsafe Int32 UnProject4(double winX, double winY, double winZ, double clipW, double* model, double* proj, Int32* view, double near, double far, double* objX, double* objY, double* objZ, double* objW)
     {
@@ -1149,7 +1136,6 @@ static partial class Glu
             }
         }
 
-        [System.CLSCompliant(false)]
         public static 
         unsafe Int32 TexFilterFunc(TextureTarget target, SgisTextureFilter4 filtertype, float* parms, Int32 n, [Out] float* weights)
         {
