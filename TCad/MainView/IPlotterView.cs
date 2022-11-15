@@ -2,34 +2,33 @@ using Plotter.Controller;
 using System;
 using TCad.ViewModel;
 
-namespace Plotter
+namespace Plotter;
+
+public interface IPlotterView
 {
-    public interface IPlotterView
+    DrawContext DrawContext
     {
-        DrawContext DrawContext
-        {
-            get;
-        }
-
-        System.Windows.Forms.Control FormsControl
-        {
-            get;
-        }
-
-        void CursorLocked(bool locked);
-
-        void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
-
-        void SetWorldScale(double scale);
-
-        void DrawModeUpdated(DrawTools.DrawMode mode);
-
-        void ShowContextMenu(MenuInfo menuInfo, int x, int y);
+        get;
     }
 
-    public interface IPlotterViewForDC
+    System.Windows.Forms.Control FormsControl
     {
-        void GLMakeCurrent();
-        void PushToFront(DrawContext dc);
+        get;
     }
+
+    void CursorLocked(bool locked);
+
+    void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
+
+    void SetWorldScale(double scale);
+
+    void DrawModeUpdated(DrawModes mode);
+
+    void ShowContextMenu(MenuInfo menuInfo, int x, int y);
+}
+
+public interface IPlotterViewForDC
+{
+    void GLMakeCurrent();
+    void PushToFront(DrawContext dc);
 }

@@ -1,200 +1,199 @@
 using System.Collections.Generic;
 
-namespace Plotter
+namespace Plotter;
+
+using System;
+using System.Linq;
+
+public class CadLayer
 {
-    using System;
-    using System.Linq;
+    public uint ID;
 
-    public class CadLayer
+    private string mName = null;
+    public string Name
     {
-        public uint ID;
-
-        private String mName = null;
-        public String Name
+        get
         {
-            get
+            if (mName != null)
             {
-                if (mName != null)
-                {
-                    return mName;
-                }
-
-                return "layer" + ID;
+                return mName;
             }
 
-            set => mName = value;
+            return "layer" + ID;
         }
 
-        private bool mLocked = false;
-        public bool Locked
+        set => mName = value;
+    }
+
+    private bool mLocked = false;
+    public bool Locked
+    {
+        set
         {
-            set
+            mLocked = value;
+            mFigureList.ForEach(a => a.Locked = value);
+        }
+
+        get => mLocked;
+    }
+
+    public bool Visible = true;
+
+    private List<CadFigure> mFigureList = new List<CadFigure>();
+    public List<CadFigure> FigureList
+    {
+        get => mFigureList;
+        set => mFigureList = value;
+    }
+
+    public CadLayer()
+    {
+    }
+
+    public void AddFigure(CadFigure fig)
+    {
+        fig.LayerID = ID;
+        mFigureList.Add(fig);
+    }
+
+    public CadFigure GetFigureByID(uint id)
+    {
+        return mFigureList.Find(fig => fig.ID == id);
+    }
+
+    public void InsertFigure(int index, CadFigure fig)
+    {
+        fig.LayerID = ID;
+        mFigureList.Insert(index, fig);
+    }
+
+    public void RemoveFigureByID(CadObjectDB db, uint id)
+    {
+        CadFigure fig = db.GetFigure(id);
+        mFigureList.Remove(fig);
+        fig.LayerID = 0;
+    }
+
+    public void RemoveFigureByID(uint id)
+    {
+        int index = GetFigureIndex(id);
+
+        if (index < 0)
+        {
+            return;
+        }
+
+        mFigureList[index].LayerID = 0;
+
+        mFigureList.RemoveAt(index);
+    }
+
+
+    public void RemoveFigureByIndex(int index)
+    {
+        mFigureList[index].LayerID = 0;
+        mFigureList.RemoveAt(index);
+    }
+
+    public int GetFigureIndex(uint figID)
+    {
+        int index = 0;
+        foreach (CadFigure fig in mFigureList)
+        {
+            if (fig.ID == figID)
             {
-                mLocked = value;
-                mFigureList.ForEach(a => a.Locked = value);
+                return index;
             }
 
-            get => mLocked;
+            index++;
         }
 
-        public bool Visible = true;
+        return -1;
+    }
 
-        private List<CadFigure> mFigureList = new List<CadFigure>();
-        public List<CadFigure> FigureList
+    public void ClearSelectedFlags()
+    {
+        ForEachFig(fig =>
         {
-            get => mFigureList;
-            set => mFigureList = value;
-        }
+            fig.ClearSelectFlags();
+        });
+    }
 
-        public CadLayer()
+    public CadOpeList Clear()
+    {
+        CadOpeList opeList = new CadOpeList();
+
+        CadOpe ope;
+
+        IEnumerable<CadFigure> figList = mFigureList;
+        var revFig = figList.Reverse();
+
+        foreach (CadFigure fig in revFig)
         {
+            ope = new CadOpeRemoveFigure(this, fig.ID);
+            opeList.OpeList.Add(ope);
         }
 
-        public void AddFigure(CadFigure fig)
+        mFigureList.Clear();
+
+        return opeList;
+    }
+
+    /// <summary>
+    /// å…¨ã¦ã®Figureã‚’åˆ—æŒ™(ä¸­æ­¢ä¸å¯ç‰ˆ)
+    /// FigureãŒå­ã‚’æŒã¤å ´åˆã‚‚ãƒ•ãƒ©ãƒƒãƒˆã«åˆ—æŒ™ã•ã‚Œã‚‹
+    /// </summary>
+    /// <param name="d"></param>
+    public void ForEachFig(Action<CadFigure> d)
+    {
+        int i;
+        for (i = 0; i < mFigureList.Count; i++)
         {
-            fig.LayerID = ID;
-            mFigureList.Add(fig);
+            CadFigure fig = mFigureList[i];
+            fig.ForEachFig(d);
         }
+    }
 
-        public CadFigure GetFigureByID(uint id)
+    public void ForEachRootFig(Action<CadFigure> d)
+    {
+        int i;
+        for (i = 0; i < mFigureList.Count; i++)
         {
-            return mFigureList.Find(fig => fig.ID == id);
+            CadFigure fig = mFigureList[i];
+            d(fig);
         }
+    }
 
-        public void InsertFigure(int index, CadFigure fig)
+    public void ForEachFigRev(Action<CadFigure> d)
+    {
+        int i = mFigureList.Count - 1;
+        for (; i>=0; i--)
         {
-            fig.LayerID = ID;
-            mFigureList.Insert(index, fig);
+            CadFigure fig = mFigureList[i];
+            fig.ForEachFig(d);
         }
+    }
 
-        public void RemoveFigureByID(CadObjectDB db, uint id)
+    public void sdump()
+    {
+        DOut.pl(
+            this.GetType().Name + 
+            "(" + this.GetHashCode().ToString() + ")" +
+            "ID=" + ID.ToString());
+    }
+
+    public void dump()
+    {
+        DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
+        DOut.Indent++;
+        DOut.pl("ID=" + ID.ToString());
+
+        foreach (CadFigure fig in FigureList)
         {
-            CadFigure fig = db.GetFigure(id);
-            mFigureList.Remove(fig);
-            fig.LayerID = 0;
+            DOut.pl("FigID=" + fig.ID);
         }
 
-        public void RemoveFigureByID(uint id)
-        {
-            int index = GetFigureIndex(id);
-
-            if (index < 0)
-            {
-                return;
-            }
-
-            mFigureList[index].LayerID = 0;
-
-            mFigureList.RemoveAt(index);
-        }
-
-
-        public void RemoveFigureByIndex(int index)
-        {
-            mFigureList[index].LayerID = 0;
-            mFigureList.RemoveAt(index);
-        }
-
-        public int GetFigureIndex(uint figID)
-        {
-            int index = 0;
-            foreach (CadFigure fig in mFigureList)
-            {
-                if (fig.ID == figID)
-                {
-                    return index;
-                }
-
-                index++;
-            }
-
-            return -1;
-        }
-
-        public void ClearSelectedFlags()
-        {
-            ForEachFig(fig =>
-            {
-                fig.ClearSelectFlags();
-            });
-        }
-
-        public CadOpeList Clear()
-        {
-            CadOpeList opeList = new CadOpeList();
-
-            CadOpe ope;
-
-            IEnumerable<CadFigure> figList = mFigureList;
-            var revFig = figList.Reverse();
-
-            foreach (CadFigure fig in revFig)
-            {
-                ope = new CadOpeRemoveFigure(this, fig.ID);
-                opeList.OpeList.Add(ope);
-            }
-
-            mFigureList.Clear();
-
-            return opeList;
-        }
-
-        /// <summary>
-        /// ‘S‚Ä‚ÌFigure‚ğ—ñ‹“(’†~•s‰Â”Å)
-        /// Figure‚ªq‚ğ‚Âê‡‚àƒtƒ‰ƒbƒg‚É—ñ‹“‚³‚ê‚é
-        /// </summary>
-        /// <param name="d"></param>
-        public void ForEachFig(Action<CadFigure> d)
-        {
-            int i;
-            for (i = 0; i < mFigureList.Count; i++)
-            {
-                CadFigure fig = mFigureList[i];
-                fig.ForEachFig(d);
-            }
-        }
-
-        public void ForEachRootFig(Action<CadFigure> d)
-        {
-            int i;
-            for (i = 0; i < mFigureList.Count; i++)
-            {
-                CadFigure fig = mFigureList[i];
-                d(fig);
-            }
-        }
-
-        public void ForEachFigRev(Action<CadFigure> d)
-        {
-            int i = mFigureList.Count - 1;
-            for (; i>=0; i--)
-            {
-                CadFigure fig = mFigureList[i];
-                fig.ForEachFig(d);
-            }
-        }
-
-        public void sdump()
-        {
-            DOut.pl(
-                this.GetType().Name + 
-                "(" + this.GetHashCode().ToString() + ")" +
-                "ID=" + ID.ToString());
-        }
-
-        public void dump()
-        {
-            DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
-            DOut.Indent++;
-            DOut.pl("ID=" + ID.ToString());
-
-            foreach (CadFigure fig in FigureList)
-            {
-                DOut.pl("FigID=" + fig.ID);
-            }
-
-            DOut.Indent--;
-            DOut.pl("}");
-        }
+        DOut.Indent--;
+        DOut.pl("}");
     }
 }

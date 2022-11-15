@@ -1,28 +1,55 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
+using System.Reflection.Metadata;
 
 
 namespace CadDataTypes
 {
-    public class CadVertexAttr
+    public struct CadVertexAttr
     {
-        Color4 Color4
+        public static byte COLOR1_VALID = 0x01;
+        public static byte COLOR2_VALID = 0x02;
+        public static byte NORMAL_VALID = 0x04;
+
+        public byte Flags
         {
-            get; set;
+            get;
+            set;
         }
 
-        CadVertex Normal
+        public Color4 Color1
         {
-            get; set;
+            get;
+            set;
         }
 
-        bool HasColor
+        public Color4 Color2
         {
-            get; set;
+            get;
+            set;
         }
 
-        bool HasNormal
+        public Vector3d Normal
         {
-            get; set;
+            get;
+            set;
+        }
+
+        public bool IsColor1Valid
+        {
+            set => Flags = value ? (byte)(Flags | COLOR1_VALID) : (byte)(Flags & ~COLOR1_VALID);
+            get => (Flags & COLOR1_VALID) != 0;
+        }
+
+        public bool IsColor2Valid
+        {
+            set => Flags = value ? (byte)(Flags | COLOR2_VALID) : (byte)(Flags & ~COLOR2_VALID);
+            get => (Flags & COLOR1_VALID) != 0;
+        }
+
+        public bool IsNormalValid
+        {
+            set => Flags = value ? (byte)(Flags | NORMAL_VALID) : (byte)(Flags & ~NORMAL_VALID);
+            get => (Flags & NORMAL_VALID) != 0;
         }
     }
 }

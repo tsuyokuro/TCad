@@ -2,174 +2,173 @@ using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public partial class PlotterController
 {
-    public partial class PlotterController
+    private CadOpeFigureSnapShotList mSnapShotList;
+
+    public void ClearSelection()
     {
-        private CadOpeFigureSnapShotList mSnapShotList;
+        CurrentFigure = null;
 
-        public void ClearSelection()
+        LastSelPoint = null;
+        LastSelSegment = null;
+
+        foreach (CadLayer layer in mDB.LayerList)
         {
-            CurrentFigure = null;
+            layer.ClearSelectedFlags();
+        }
+    }
 
-            LastSelPoint = null;
-            LastSelSegment = null;
+    public List<CadFigure> StartEdit()
+    {
+        EditFigList = DB.GetSelectedFigList();
+        return StartEdit(EditFigList);
+    }
 
-            foreach (CadLayer layer in mDB.LayerList)
+    public List<CadFigure> StartEdit(List<CadFigure> targetList)
+    {
+        mSnapShotList = new CadOpeFigureSnapShotList();
+
+        mSnapShotList.StoreBefore(targetList);
+
+        foreach (CadFigure fig in targetList)
+        {
+            if (fig != null)
             {
-                layer.ClearSelectedFlags();
+                fig.StartEdit();
             }
         }
 
-        public List<CadFigure> StartEdit()
+        return targetList;
+    }
+
+    public void AbendEdit()
+    {
+        mSnapShotList = null;
+    }
+
+    public void EndEdit()
+    {
+        EndEdit(EditFigList);
+    }
+
+    public void EndEdit(List<CadFigure> targetList)
+    {
+        foreach (CadFigure fig in targetList)
         {
-            EditFigList = DB.GetSelectedFigList();
-            return StartEdit(EditFigList);
+            if (fig != null)
+            {
+                fig.EndEdit();
+            }
         }
 
-        public List<CadFigure> StartEdit(List<CadFigure> targetList)
+        CadOpeList root = new CadOpeList();
+
+        CadOpeList rmOpeList = RemoveInvalidFigure();
+
+        if (rmOpeList.OpeList.Count > 0)
         {
-            mSnapShotList = new CadOpeFigureSnapShotList();
+            root.Add(rmOpeList);
+        }
 
-            mSnapShotList.StoreBefore(targetList);
+        mSnapShotList.StoreAfter(DB);
+        if (mSnapShotList.Count > 0)
+        {
+            root.Add(mSnapShotList);
+        }
 
-            foreach (CadFigure fig in targetList)
+        if (root.Count > 0)
+        {
+            HistoryMan.foward(root);
+        }
+
+        mSnapShotList = null;
+    }
+
+    public void CancelEdit()
+    {
+        foreach (CadFigure fig in EditFigList)
+        {
+            if (fig != null)
             {
-                if (fig != null)
+                fig.CancelEdit();
+            }
+        }
+    }
+
+    private CadOpeList RemoveInvalidFigure()
+    {
+        CadOpeList opeList = new CadOpeList();
+
+        int removeCnt = 0;
+
+        foreach (CadLayer layer in mDB.LayerList)
+        {
+            IReadOnlyList<CadFigure> list = layer.FigureList;
+
+            int i = list.Count - 1;
+
+            for (; i >= 0; i--)
+            {
+                CadFigure fig = list[i];
+
+                if (fig.IsGarbage())
                 {
-                    fig.StartEdit();
-                }
-            }
+                    CadOpe ope = new CadOpeRemoveFigure(layer, fig.ID);
+                    opeList.OpeList.Add(ope);
 
-            return targetList;
-        }
+                    layer.RemoveFigureByIndex(i);
 
-        public void AbendEdit()
-        {
-            mSnapShotList = null;
-        }
-
-        public void EndEdit()
-        {
-            EndEdit(EditFigList);
-        }
-
-        public void EndEdit(List<CadFigure> targetList)
-        {
-            foreach (CadFigure fig in targetList)
-            {
-                if (fig != null)
-                {
-                    fig.EndEdit();
-                }
-            }
-
-            CadOpeList root = new CadOpeList();
-
-            CadOpeList rmOpeList = RemoveInvalidFigure();
-
-            if (rmOpeList.OpeList.Count > 0)
-            {
-                root.Add(rmOpeList);
-            }
-
-            mSnapShotList.StoreAfter(DB);
-            if (mSnapShotList.Count > 0)
-            {
-                root.Add(mSnapShotList);
-            }
-
-            if (root.Count > 0)
-            {
-                HistoryMan.foward(root);
-            }
-
-            mSnapShotList = null;
-        }
-
-        public void CancelEdit()
-        {
-            foreach (CadFigure fig in EditFigList)
-            {
-                if (fig != null)
-                {
-                    fig.CancelEdit();
-                }
-            }
-        }
-
-        private CadOpeList RemoveInvalidFigure()
-        {
-            CadOpeList opeList = new CadOpeList();
-
-            int removeCnt = 0;
-
-            foreach (CadLayer layer in mDB.LayerList)
-            {
-                IReadOnlyList<CadFigure> list = layer.FigureList;
-
-                int i = list.Count - 1;
-
-                for (; i >= 0; i--)
-                {
-                    CadFigure fig = list[i];
-
-                    if (fig.IsGarbage())
-                    {
-                        CadOpe ope = new CadOpeRemoveFigure(layer, fig.ID);
-                        opeList.OpeList.Add(ope);
-
-                        layer.RemoveFigureByIndex(i);
-
-                        removeCnt++;
-                    }
-                }
-            }
-
-            if (removeCnt > 0)
-            {
-                UpdateObjectTree(true);
-            }
-
-            return opeList;
-        }
-
-        public void MoveSelectedPoints(MoveInfo moveInfo)
-        {
-            StartEdit();
-            MoveSelectedPoints(null, moveInfo);
-            EndEdit();
-        }
-
-        private void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
-        {
-            List<uint> figIDList = DB.GetSelectedFigIDList();
-
-            //delta.z = 0;
-
-            foreach (uint id in figIDList)
-            {
-                CadFigure fig = mDB.GetFigure(id);
-                if (fig != null)
-                {
-                    fig.MoveSelectedPointsFromStored(dc, moveInfo);
+                    removeCnt++;
                 }
             }
         }
 
-        public void Cancel()
+        if (removeCnt > 0)
         {
-            if (CursorLocked)
-            {
-                CursorLocked = false;
-            }
-
-            if (mInteractCtrl.IsActive)
-            {
-                mInteractCtrl.Cancel();
-            }
-
-            CurrentState.Cancel();
+            UpdateObjectTree(true);
         }
+
+        return opeList;
+    }
+
+    public void MoveSelectedPoints(MoveInfo moveInfo)
+    {
+        StartEdit();
+        MoveSelectedPoints(null, moveInfo);
+        EndEdit();
+    }
+
+    public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
+    {
+        List<uint> figIDList = DB.GetSelectedFigIDList();
+
+        //delta.z = 0;
+
+        foreach (uint id in figIDList)
+        {
+            CadFigure fig = mDB.GetFigure(id);
+            if (fig != null)
+            {
+                fig.MoveSelectedPointsFromStored(dc, moveInfo);
+            }
+        }
+    }
+
+    public void Cancel()
+    {
+        if (CursorLocked)
+        {
+            CursorLocked = false;
+        }
+
+        if (InteractCtrl.IsActive)
+        {
+            InteractCtrl.Cancel();
+        }
+
+        CurrentState.Cancel();
     }
 }

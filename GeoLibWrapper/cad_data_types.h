@@ -1,4 +1,5 @@
 #pragma once
+
 //#ifdef WIN32
 //	#ifdef _DEBUG
 //		#using "..\\CadDataTypes\\bin\\x86\\Debug\\net6.0\\CadDataTypes.dll"
@@ -15,7 +16,7 @@
 
 // Use CadDataTypes.dll built for AnyCPU
 #ifdef _DEBUG
-	#using "..\\CadDataTypes\\bin\\Debug\\net6.0\\CadDataTypes.dll"
+	#using "..\\CadDataTypes\\bin\\Debug\\net7.0\\CadDataTypes.dll"
 #else
-	#using "..\\CadDataTypes\\bin\\Release\\net6.0\\CadDataTypes.dll"
+	#using "..\\CadDataTypes\\bin\\Release\\net7.0\\CadDataTypes.dll"
 #endif

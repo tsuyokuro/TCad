@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,89 +12,88 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace TCad
+namespace TCad;
+
+/// <summary>
+/// PrintSettingsDialog.xaml の相互作用ロジック
+/// </summary>
+public partial class PrintSettingsDialog : Window
 {
-    /// <summary>
-    /// PrintSettingsDialog.xaml の相互作用ロジック
-    /// </summary>
-    public partial class PrintSettingsDialog : Window
+    public bool PrintWithBitmap;
+    public double MagnificationBitmapPrinting;
+    public bool PrintLineSmooth;
+
+    public PrintSettingsDialog()
     {
-        public bool PrintWithBitmap;
-        public double MagnificationBitmapPrinting;
-        public bool PrintLineSmooth;
+        InitializeComponent();
+        Loaded += PrintSettingsDialog_Loaded;
+        PreviewKeyDown += PrintSettingsDialog_PreviewKeyDown;
+        magnification_for_bitmap_printing.PreviewTextInput += PreviewTextInputForNum;
+    }
 
-        public PrintSettingsDialog()
-        {
-            InitializeComponent();
-            Loaded += PrintSettingsDialog_Loaded;
-            PreviewKeyDown += PrintSettingsDialog_PreviewKeyDown;
-            magnification_for_bitmap_printing.PreviewTextInput += PreviewTextInputForNum;
-        }
-
-        private void PrintSettingsDialog_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                HandleOK();
-            }
-            else if (e.Key == Key.Escape)
-            {
-                HandleCancel();
-            }
-        }
-
-        private void PrintSettingsDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            print_with_bitmap.IsChecked = PrintWithBitmap;
-            magnification_for_bitmap_printing.Text = MagnificationBitmapPrinting.ToString();
-            print_line_smooth.IsChecked = PrintLineSmooth;
-
-            ok_button.Click += Ok_button_Click;
-            cancel_button.Click += Cancel_button_Click;
-        }
-
-        private void Cancel_button_Click(object sender, RoutedEventArgs e)
-        {
-            HandleCancel();
-        }
-
-        private void Ok_button_Click(object sender, RoutedEventArgs e)
+    private void PrintSettingsDialog_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
         {
             HandleOK();
         }
-
-        private void HandleCancel()
+        else if (e.Key == Key.Escape)
         {
-            DialogResult = false;
+            HandleCancel();
         }
+    }
 
-        private void HandleOK()
-        {
-            bool ret = true;
+    private void PrintSettingsDialog_Loaded(object sender, RoutedEventArgs e)
+    {
+        print_with_bitmap.IsChecked = PrintWithBitmap;
+        magnification_for_bitmap_printing.Text = MagnificationBitmapPrinting.ToString();
+        print_line_smooth.IsChecked = PrintLineSmooth;
 
-            double v;
+        ok_button.Click += Ok_button_Click;
+        cancel_button.Click += Cancel_button_Click;
+    }
 
-            PrintWithBitmap = print_with_bitmap.IsChecked.Value;
+    private void Cancel_button_Click(object sender, RoutedEventArgs e)
+    {
+        HandleCancel();
+    }
 
-            ret &= Double.TryParse(magnification_for_bitmap_printing.Text, out v);
-            MagnificationBitmapPrinting = v;
+    private void Ok_button_Click(object sender, RoutedEventArgs e)
+    {
+        HandleOK();
+    }
 
-            PrintLineSmooth = print_line_smooth.IsChecked.Value;
+    private void HandleCancel()
+    {
+        DialogResult = false;
+    }
 
-            DialogResult = ret;
-        }
+    private void HandleOK()
+    {
+        bool ret = true;
 
-        private void PreviewTextInputForNum(object sender, TextCompositionEventArgs e)
-        {
-            bool ok = false;
+        double v;
 
-            TextBox tb = (TextBox)sender;
+        PrintWithBitmap = print_with_bitmap.IsChecked.Value;
 
-            double v;
-            var tmp = tb.Text + e.Text;
-            ok = Double.TryParse(tmp, out v);
+        ret &= Double.TryParse(magnification_for_bitmap_printing.Text, out v);
+        MagnificationBitmapPrinting = v;
 
-            e.Handled = !ok;
-        }
+        PrintLineSmooth = print_line_smooth.IsChecked.Value;
+
+        DialogResult = ret;
+    }
+
+    private void PreviewTextInputForNum(object sender, TextCompositionEventArgs e)
+    {
+        bool ok = false;
+
+        TextBox tb = (TextBox)sender;
+
+        double v;
+        var tmp = tb.Text + e.Text;
+        ok = Double.TryParse(tmp, out v);
+
+        e.Handled = !ok;
     }
 }

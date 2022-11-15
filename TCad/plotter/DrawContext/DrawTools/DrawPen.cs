@@ -1,71 +1,95 @@
-﻿
+
 using OpenTK.Mathematics;
+using System;
 using System.Drawing;
 
-namespace Plotter
+namespace Plotter;
+
+public struct DrawPen : IEquatable<DrawPen>
 {
-    public class DrawPen
+    public static DrawPen InvalidPen;
+
+    static DrawPen()
     {
-        public int ID;
-
-        public int Argb;
-
-        public float Width;
-
-        public Pen mGdiPen;
-        public Pen GdiPen
+        InvalidPen = new()
         {
-            get => mGdiPen;
-        }
+            Color4 = Color4Ext.Invalid,
+            Width = float.MinValue,
+        };
+    }
 
-        public static DrawPen NullPen = new DrawPen(Color.FromArgb(0, 0, 0, 0), 0);
+    public Color4 mColor4;
+    public float Width;
 
-        public bool IsNullPen
-        {
-            get => ((uint)Argb & 0xff000000) == 0;
-        }
+    public Pen GdiPen
+    {
+        get => GDIToolManager.Instance.Pen(this);
+    }
 
-        public void Dispose()
-        {
-            if (mGdiPen != null)
-            {
-                mGdiPen.Dispose();
-                mGdiPen = null;
-            }
-        }
+    public int Argb
+    {
+        get => ColorUtil.ToArgb(mColor4);
+    }
 
-        public Color4 Color4()
-        {
-            return Color4Util.FromArgb(Argb);
-        }
+    public ColorPack ColorPack
+    {
+        get => new ColorPack(Argb);
+    }
 
-        public Color GdiColor()
-        {
-            return Color.FromArgb(Argb);
-        }
+    public bool IsInvalid
+    {
+        get => mColor4.A < 0f;
+    }
 
-        public DrawPen(Pen pen)
-        {
-            ID = 0;
-            mGdiPen = pen;
-            Argb = pen.Color.ToArgb();
-            Width = pen.Width;
-        }
+    public bool IsNull
+    {
+        get => mColor4.A == 0f;
+    }
 
-        public DrawPen(Color color, float width)
-        {
-            ID = 0;
-            mGdiPen = null;
-            Argb = color.ToArgb();
-            Width = width;
-        }
+    public Color4 Color4
+    {
+        get => mColor4;
+        set => mColor4 = value;
+    }
 
-        public DrawPen(Color4 color, float width)
-        {
-            ID = 0;
-            mGdiPen = null;
-            Argb = color.ToArgb();
-            Width = width;
-        }
+    public DrawPen(int argb, float width)
+    {
+        mColor4 = ColorUtil.FromArgb(argb);
+        Width = width;
+    }
+
+    public DrawPen(Color4 color, float width)
+    {
+        mColor4 = color;
+        Width = width;
+    }
+
+
+    public static bool operator == (DrawPen pen1, DrawPen pen2)
+    {
+        return (pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width);
+    }
+
+    public static bool operator != (DrawPen pen1, DrawPen pen2)
+    {
+        return !((pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width));
+    }
+
+    public bool Equals(DrawPen other)
+    {
+        return Color4 == other.Color4 && Width == other.Width;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is DrawPen other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            Color4.A, Color4.R, Color4.G, Color4.B,
+            Width
+            );
     }
 }

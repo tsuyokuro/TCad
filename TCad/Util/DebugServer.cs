@@ -46,7 +46,17 @@ internal class DebugServer
         mlistener.Stop();
     }
 
-    public void Write(string s)
+    public void Print(string s)
+    {
+        Write(s);
+    }
+
+    public void PrintLn(string s)
+    {
+        WriteLn(s);
+    }
+
+    private void Write(string s)
     {
         mPool.Add(s);
 
@@ -64,7 +74,7 @@ internal class DebugServer
         }
     }
 
-    public void WriteLn(string s)
+    private void WriteLn(string s)
     {
         mPool.Add(s + "\n");
 
@@ -121,7 +131,7 @@ internal class DebugServer
                 }
             }
         }
-        catch (SocketException e)
+        catch (SocketException)
         {
         }
         catch

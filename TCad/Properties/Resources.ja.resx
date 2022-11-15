@@ -144,6 +144,9 @@
   <data name="menu_draw" xml:space="preserve">
     <value>描画</value>
   </data>
+  <data name="menu_draw_mesh_border" xml:space="preserve">
+    <value>Meshの境界を描画</value>
+  </data>
   <data name="menu_draw_mesh_outline" xml:space="preserve">
     <value>Meshのアウトラインを描画</value>
   </data>

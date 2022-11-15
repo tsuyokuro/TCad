@@ -1,89 +1,88 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace TCad
+namespace TCad;
+
+public partial class MoveKeySettingsDialog : Window
 {
-    public partial class MoveKeySettingsDialog : Window
+    public double MoveX;
+    public double MoveY;
+
+    public MoveKeySettingsDialog()
     {
-        public double MoveX;
-        public double MoveY;
+        InitializeComponent();
 
-        public MoveKeySettingsDialog()
-        {
-            InitializeComponent();
+        move_x.PreviewTextInput += PreviewTextInputForNum;
+        move_y.PreviewTextInput += PreviewTextInputForNum;
 
-            move_x.PreviewTextInput += PreviewTextInputForNum;
-            move_y.PreviewTextInput += PreviewTextInputForNum;
+        ok_button.Click += Ok_button_Click;
+        cancel_button.Click += Cancel_button_Click;
 
-            ok_button.Click += Ok_button_Click;
-            cancel_button.Click += Cancel_button_Click;
+        PreviewKeyDown += MoveKeySettingsDialog_PreviewKeyDown;
 
-            PreviewKeyDown += MoveKeySettingsDialog_PreviewKeyDown;
+        this.Loaded += MoveKeySettingsDialog_Loaded;
+    }
 
-            this.Loaded += MoveKeySettingsDialog_Loaded;
-        }
-
-        private void MoveKeySettingsDialog_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                HandleOK();
-            }
-            else if (e.Key == Key.Escape)
-            {
-                HandleCancel();
-            }
-        }
-
-        private void MoveKeySettingsDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            move_x.Text = MoveX.ToString();
-            move_y.Text = MoveY.ToString();
-        }
-
-        private void Cancel_button_Click(object sender, RoutedEventArgs e)
-        {
-            HandleCancel();
-        }
-
-        private void Ok_button_Click(object sender, RoutedEventArgs e)
+    private void MoveKeySettingsDialog_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
         {
             HandleOK();
         }
-
-        private void HandleCancel()
+        else if (e.Key == Key.Escape)
         {
-            DialogResult = false;
+            HandleCancel();
         }
+    }
 
-        private void HandleOK()
-        {
-            bool ret = true;
+    private void MoveKeySettingsDialog_Loaded(object sender, RoutedEventArgs e)
+    {
+        move_x.Text = MoveX.ToString();
+        move_y.Text = MoveY.ToString();
+    }
 
-            double v;
+    private void Cancel_button_Click(object sender, RoutedEventArgs e)
+    {
+        HandleCancel();
+    }
 
-            ret &= Double.TryParse(move_x.Text, out v);
-            MoveX = v;
+    private void Ok_button_Click(object sender, RoutedEventArgs e)
+    {
+        HandleOK();
+    }
 
-            ret &= Double.TryParse(move_y.Text, out v);
-            MoveY = v;
+    private void HandleCancel()
+    {
+        DialogResult = false;
+    }
 
-            DialogResult = ret;
-        }
+    private void HandleOK()
+    {
+        bool ret = true;
 
-        private void PreviewTextInputForNum(object sender, TextCompositionEventArgs e)
-        {
-            bool ok = false;
+        double v;
 
-            TextBox tb = (TextBox)sender;
+        ret &= Double.TryParse(move_x.Text, out v);
+        MoveX = v;
 
-            double v;
-            var tmp = tb.Text + e.Text;
-            ok = Double.TryParse(tmp, out v);
+        ret &= Double.TryParse(move_y.Text, out v);
+        MoveY = v;
 
-            e.Handled = !ok;
-        }
+        DialogResult = ret;
+    }
+
+    private void PreviewTextInputForNum(object sender, TextCompositionEventArgs e)
+    {
+        bool ok = false;
+
+        TextBox tb = (TextBox)sender;
+
+        double v;
+        var tmp = tb.Text + e.Text;
+        ok = Double.TryParse(tmp, out v);
+
+        e.Handled = !ok;
     }
 }

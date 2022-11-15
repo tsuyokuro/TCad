@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TCad": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

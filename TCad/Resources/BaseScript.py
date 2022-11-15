@@ -5,6 +5,7 @@ from datetime import datetime as dt
 import time
 import math
 import sys
+
 from System.Collections import *
 from System.Collections.Generic import List
 from System import UInt32 as uint
@@ -413,11 +414,22 @@ def get_fig(id):
 def get_vertex(fig, index):
 	return SE.FigVertexAt(fig, index)
 
+###############################################################################
+#[AC] set_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
+def set_color(id, r, g, b):
+    SE.SetColor(id, r, g, b)
+
+#[AC] set_fill_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
+def set_fill_color(id, r, g, b):
+    SE.SetFillColor(id, r, g, b)
+
+###############################################################################
 
 #[AC] test()
 def test():
 	SE.Test()
 
+###############################################################################
 
 class MyConsoleOut:
 	def write(self, s):
@@ -487,3 +499,17 @@ esc_bg_b_magenta = "\x1b[105m";
 esc_bg_b_cyan = "\x1b[106m";
 esc_bg_b_white = "\x1b[107m";
 
+global _cancel_
+_cancel_ = False
+
+def raise_cancel():
+    global _cancel_
+    _cancel_ = True
+
+def reset_cancel():
+    global _cancel_
+    _cancel_ = False
+
+def check_cancel():
+    if (_cancel_):
+        sys.exit()

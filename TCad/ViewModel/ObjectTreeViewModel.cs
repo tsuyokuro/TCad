@@ -3,120 +3,119 @@ using TCad.Dialogs;
 using Plotter;
 using Plotter.Settings;
 
-namespace TCad.ViewModel
+namespace TCad.ViewModel;
+
+public class ObjectTreeViewModel
 {
-    public class ObjectTreeViewModel
+    IPlotterViewModel mVMContext;
+
+    ICadObjectTree mObjectTree;
+
+    public ICadObjectTree ObjectTree
     {
-        IPlotterViewModel mVMContext;
-
-        ICadObjectTree mObjectTree;
-
-        public ICadObjectTree ObjectTree
+        set
         {
-            set
+            if (mObjectTree != null)
             {
-                if (mObjectTree != null)
-                {
-                    mObjectTree.CheckChanged -= CheckChanged;
-                    mObjectTree.ItemCommand -= ItemCommand;
-                }
-
-                mObjectTree = value;
-
-                if (mObjectTree != null)
-                {
-                    mObjectTree.CheckChanged += CheckChanged;
-                    mObjectTree.ItemCommand += ItemCommand;
-                }
+                mObjectTree.CheckChanged -= CheckChanged;
+                mObjectTree.ItemCommand -= ItemCommand;
             }
 
-            get => mObjectTree;
-        }
+            mObjectTree = value;
 
-        public ObjectTreeViewModel(IPlotterViewModel context)
-        {
-            mVMContext = context;
-        }
-
-        private void CheckChanged(CadObjTreeItem item)
-        {
-            mVMContext.Controller.CurrentFigure =
-                TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.CurrentFigure);
-
-            mVMContext.Redraw();
-        }
-
-        public void UpdateTreeView(bool remakeTree)
-        {
-            ThreadUtil.RunOnMainThread(() =>
+            if (mObjectTree != null)
             {
-                UpdateTreeViewProc(remakeTree);
-            }, true);
+                mObjectTree.CheckChanged += CheckChanged;
+                mObjectTree.ItemCommand += ItemCommand;
+            }
         }
 
-        private void UpdateTreeViewProc(bool remakeTree)
+        get => mObjectTree;
+    }
+
+    public ObjectTreeViewModel(IPlotterViewModel context)
+    {
+        mVMContext = context;
+    }
+
+    private void CheckChanged(CadObjTreeItem item)
+    {
+        mVMContext.Controller.CurrentFigure =
+            TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.CurrentFigure);
+
+        mVMContext.Redraw();
+    }
+
+    public void UpdateTreeView(bool remakeTree)
+    {
+        ThreadUtil.RunOnMainThread(() =>
         {
-            if (mObjectTree == null)
+            UpdateTreeViewProc(remakeTree);
+        }, true);
+    }
+
+    private void UpdateTreeViewProc(bool remakeTree)
+    {
+        if (mObjectTree == null)
+        {
+            return;
+        }
+
+        mObjectTree.Update(remakeTree, SettingsHolder.Settings.FilterObjectTree, mVMContext.Controller.CurrentLayer);
+    }
+
+    public void SetTreeViewPos(int index)
+    {
+        if (mObjectTree == null)
+        {
+            return;
+        }
+
+        ThreadUtil.RunOnMainThread(() => {
+            mObjectTree.SetPos(index);
+        }, true);
+    }
+
+    public int FindTreeViewItemIndex(uint id)
+    {
+        if (mObjectTree == null)
+        {
+            return -1;
+        }
+
+        int idx = mObjectTree.FindIndex(id);
+
+        return idx;
+    }
+
+    public void ItemCommand(CadObjTreeItem treeItem, string cmd)
+    {
+        if (!(treeItem is CadFigTreeItem))
+        {
+            return;
+        }
+
+        CadFigTreeItem figItem = (CadFigTreeItem)treeItem;
+
+        if (cmd == CadFigTreeItem.ITEM_CMD_CHANGE_NAME)
+        {
+            CadFigure fig = figItem.Fig;
+
+            InputStringDialog dlg = new InputStringDialog();
+
+            dlg.Message = TCad.Properties.Resources.string_input_fig_name;
+
+            if (fig.Name != null)
             {
-                return;
+                dlg.InputString = fig.Name;
             }
 
-            mObjectTree.Update(remakeTree, SettingsHolder.Settings.FilterObjectTree, mVMContext.Controller.CurrentLayer);
-        }
+            bool? dlgRet = dlg.ShowDialog();
 
-        public void SetTreeViewPos(int index)
-        {
-            if (mObjectTree == null)
+            if (dlgRet.Value)
             {
-                return;
-            }
-
-            ThreadUtil.RunOnMainThread(() => {
-                mObjectTree.SetPos(index);
-            }, true);
-        }
-
-        public int FindTreeViewItemIndex(uint id)
-        {
-            if (mObjectTree == null)
-            {
-                return -1;
-            }
-
-            int idx = mObjectTree.FindIndex(id);
-
-            return idx;
-        }
-
-        public void ItemCommand(CadObjTreeItem treeItem, string cmd)
-        {
-            if (!(treeItem is CadFigTreeItem))
-            {
-                return;
-            }
-
-            CadFigTreeItem figItem = (CadFigTreeItem)treeItem;
-
-            if (cmd == CadFigTreeItem.ITEM_CMD_CHANGE_NAME)
-            {
-                CadFigure fig = figItem.Fig;
-
-                InputStringDialog dlg = new InputStringDialog();
-
-                dlg.Message = TCad.Properties.Resources.string_input_fig_name;
-
-                if (fig.Name != null)
-                {
-                    dlg.InputString = fig.Name;
-                }
-
-                bool? dlgRet = dlg.ShowDialog();
-
-                if (dlgRet.Value)
-                {
-                    fig.Name = dlg.InputString;
-                    UpdateTreeView(false);
-                }
+                fig.Name = dlg.InputString;
+                UpdateTreeView(false);
             }
         }
     }

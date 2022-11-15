@@ -1,0 +1,208 @@
+<UserControl x:Class="TCad.Controls.ColorMaker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TCad.Controls"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:t="clr-namespace:System.Windows;assembly=PresentationFramework"             
+             mc:Ignorable="d" Height="Auto" Width="320">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ColorPickerSlider.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <t:GridLength x:Key="LabelW">30</t:GridLength>
+            <t:GridLength x:Key="ValueW">60</t:GridLength>
+            <t:GridLength x:Key="ValueIW">40</t:GridLength>
+            <t:GridLength x:Key="RowH">32</t:GridLength>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="{StaticResource RowH}"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="4" Margin="0,0,0,60" Grid.RowSpan="2" />
+
+        <!-- Hue -->
+        <Border Grid.Row="1" >
+            <Grid Grid.Row="1" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="H"/>
+                <Slider
+                    Name="hue_slider"
+                    Grid.Column="1"
+                    Style="{StaticResource HueTriSlider}"
+                    VerticalAlignment="Center"/>
+                <Label Grid.Column="2" Name="hue_value" VerticalContentAlignment="Center" Content="359.0"/>
+            </Grid>
+        </Border>
+
+        <!-- S -->
+        <Border Grid.Row="2">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="S"/>
+                <Slider
+                    Name="s_slider"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"/>
+                <Label Grid.Column="2" Name="s_value" VerticalContentAlignment="Center" Content="1.0000"/>
+            </Grid>
+        </Border>
+
+        <!-- L -->
+        <Border Grid.Row="3">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="L"/>
+                <Slider
+                    Name="y_slider"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"/>
+                <Label Grid.Column="2" Name="y_value" VerticalContentAlignment="Center" Content="1.0000"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4" Height="1" BorderThickness="0" Background="DarkGray" Margin="4,0,4,0"/>
+
+        <!-- R -->
+        <Border Grid.Row="5">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                    <ColumnDefinition Width = "{StaticResource ValueIW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="R"/>
+                <Slider Name="r_slider" Grid.Column="1" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="2"
+                         Name="r_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+
+                <TextBox Grid.Column="3"
+                         Name="r_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
+            </Grid>
+        </Border>
+
+        <!-- G -->
+        <Border Grid.Row="6">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                    <ColumnDefinition Width = "{StaticResource ValueIW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="G"/>
+                <Slider Grid.Column="1" Name="g_slider" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="2"
+                         Name="g_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="g_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
+            </Grid>
+        </Border>
+
+        <!-- B -->
+        <Border Grid.Row="7">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                    <ColumnDefinition Width = "{StaticResource ValueIW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="B"/>
+                <Slider Grid.Column="1" Name="b_slider" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="2"
+                         Name="b_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="b_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="8" Height="1" BorderThickness="0" Background="DarkGray" Margin="4,0,4,0"/>
+
+        <!-- A -->
+        <Border Grid.Row="9">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "{StaticResource LabelW}"/>
+                    <ColumnDefinition Width = "100*"/>
+                    <ColumnDefinition Width = "{StaticResource ValueW}"/>
+                    <ColumnDefinition Width = "{StaticResource ValueIW}"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="A"/>
+                <Slider Grid.Column="1" Name="a_slider" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="2"
+                         Name="a_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputF"
+                         TextChanged="TextChangedF"
+                         />
+                <TextBox Grid.Column="3"
+                         Name="a_byte_value"
+                         Margin="2,2,2,2"
+                         VerticalContentAlignment="Center"
+                         PreviewTextInput="PreviewTextInputI"
+                         TextChanged="TextChangedI"
+                         />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

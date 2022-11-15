@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,26 +12,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace TCad
+namespace TCad;
+
+public partial class EceptionDialog : Window
 {
-    public partial class EceptionDialog : Window
+    public EceptionDialog()
     {
-        public EceptionDialog()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            btnContinue.Click += BtnContinue_Click;
-            btnStop.Click += BtnStop_Click;
-        }
+        btnContinue.Click += BtnContinue_Click;
+        btnStop.Click += BtnStop_Click;
+    }
 
-        private void BtnContinue_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-        }
+    private void BtnContinue_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = true;
+    }
 
-        private void BtnStop_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-        }
+    private void BtnStop_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
     }
 }

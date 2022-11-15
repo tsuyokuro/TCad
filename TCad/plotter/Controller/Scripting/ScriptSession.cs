@@ -1,125 +1,124 @@
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public class ScriptSession
 {
-    public class ScriptSession
+    ScriptEnvironment Env;
+
+    private CadOpeList mCadOpeList = null;
+
+    private bool NeedUpdateObjectTree = false;
+    private bool NeedRemakeObjectTree = false;
+    private bool NeedRedraw = false;
+
+    public bool StartWithSnapshotDB
     {
-        ScriptEnvironment Env;
+        get;
+        private set;
+    }
 
-        private CadOpeList mCadOpeList = null;
+    private CadOpeDBSnapShot SnapShot;
 
-        private bool NeedUpdateObjectTree = false;
-        private bool NeedRemakeObjectTree = false;
-        private bool NeedRedraw = false;
+    public ScriptSession(ScriptEnvironment env)
+    {
+        Env = env;
+        mCadOpeList = new CadOpeList();
+    }
 
-        public bool StartWithSnapshotDB
+    public void AddOpe(CadOpe ope)
+    {
+        if (ope == null)
         {
-            get;
-            private set;
+            return;
         }
 
-        private CadOpeDBSnapShot SnapShot;
-
-        public ScriptSession(ScriptEnvironment env)
+        if (StartWithSnapshotDB)
         {
-            Env = env;
+            return;
+        }
+
+        DOut.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
+        mCadOpeList.Add(ope);
+    }
+
+    public void Start(bool snapshotDB = false)
+    {
+        ResetFlags();
+
+        StartWithSnapshotDB = snapshotDB;
+
+        if (snapshotDB)
+        {
+            SnapShot = new CadOpeDBSnapShot();
+            SnapShot.StoreBefore(Env.Controller.DB);
+        }
+        else
+        {
             mCadOpeList = new CadOpeList();
         }
+    }
 
-        public void AddOpe(CadOpe ope)
+    public void End()
+    {
+        if (NeedUpdateObjectTree)
         {
-            if (ope == null)
-            {
-                return;
-            }
-
-            if (StartWithSnapshotDB)
-            {
-                return;
-            }
-
-            DOut.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
-            mCadOpeList.Add(ope);
+            UpdateTV(NeedRemakeObjectTree);
         }
 
-        public void Start(bool snapshotDB = false)
+        if (NeedRedraw)
         {
-            ResetFlags();
+            Redraw();
+        }
 
-            StartWithSnapshotDB = snapshotDB;
-
-            if (snapshotDB)
+        if (StartWithSnapshotDB)
+        {
+            SnapShot.StoreAfter(Env.Controller.DB);
+            Env.Controller.HistoryMan.foward(SnapShot);
+        } else {
+            if (mCadOpeList?.Count > 0)
             {
-                SnapShot = new CadOpeDBSnapShot();
-                SnapShot.StoreBefore(Env.Controller.DB);
-            }
-            else
-            {
-                mCadOpeList = new CadOpeList();
+                Env.Controller.HistoryMan.foward(mCadOpeList);
             }
         }
+    }
 
-        public void End()
+    public void ResetFlags()
+    {
+        NeedUpdateObjectTree = false;
+        NeedRemakeObjectTree = false;
+        NeedRedraw = false;
+    }
+
+    public void PostUpdateObjectTree()
+    {
+        NeedUpdateObjectTree = true;
+    }
+
+    public void PostRemakeObjectTree()
+    {
+        NeedUpdateObjectTree = true;
+        NeedRemakeObjectTree = true;
+    }
+
+    public void PostRedraw()
+    {
+        NeedRedraw = true;
+    }
+
+    public void UpdateTV(bool remakeTree)
+    {
+        ThreadUtil.RunOnMainThread(() =>
         {
-            if (NeedUpdateObjectTree)
-            {
-                UpdateTV(NeedRemakeObjectTree);
-            }
+            Env.Controller.UpdateObjectTree(remakeTree);
+        }, true);
+    }
 
-            if (NeedRedraw)
-            {
-                Redraw();
-            }
-
-            if (StartWithSnapshotDB)
-            {
-                SnapShot.StoreAfter(Env.Controller.DB);
-                Env.Controller.HistoryMan.foward(SnapShot);
-            } else {
-                if (mCadOpeList?.Count > 0)
-                {
-                    Env.Controller.HistoryMan.foward(mCadOpeList);
-                }
-            }
-        }
-
-        public void ResetFlags()
+    public void Redraw()
+    {
+        ThreadUtil.RunOnMainThread(() =>
         {
-            NeedUpdateObjectTree = false;
-            NeedRemakeObjectTree = false;
-            NeedRedraw = false;
-        }
-
-        public void PostUpdateObjectTree()
-        {
-            NeedUpdateObjectTree = true;
-        }
-
-        public void PostRemakeObjectTree()
-        {
-            NeedUpdateObjectTree = true;
-            NeedRemakeObjectTree = true;
-        }
-
-        public void PostRedraw()
-        {
-            NeedRedraw = true;
-        }
-
-        public void UpdateTV(bool remakeTree)
-        {
-            Env.RunOnMainThread(() =>
-            {
-                Env.Controller.UpdateObjectTree(remakeTree);
-            });
-        }
-
-        public void Redraw()
-        {
-            Env.RunOnMainThread(() =>
-            {
-                Env.Controller.Clear();
-                Env.Controller.DrawAll();
-                Env.Controller.PushToView();
-            });
-        }
+            Env.Controller.Clear();
+            Env.Controller.DrawAll();
+            Env.Controller.PushToView();
+        }, true);
     }
 }

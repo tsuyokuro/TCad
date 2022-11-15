@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -38,6 +38,13 @@ namespace MyCollections
             Init(src.Count);
             Array.Copy(src.Data, Data, src.Count);
             Count_ = src.Count;
+        }
+
+        public FlexArray(T[] src)
+        {
+            Init(src.Length);
+            Array.Copy(src, Data, src.Length);
+            Count_ = src.Length;
         }
 
         protected void Init(int capa)
@@ -86,6 +93,16 @@ namespace MyCollections
         public ref T End()
         {
             return ref Data[Count_ - 1];
+        }
+
+        public T Get(int idx)
+        {
+            return Data[idx];
+        }
+
+        public void Set(int idx, T val)
+        {
+            Data[idx] = val;
         }
 
         public void RemoveAt(int idx)

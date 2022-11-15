@@ -1,186 +1,106 @@
-﻿using System;
+using OpenTK.Mathematics;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
-namespace Plotter
+namespace Plotter;
+
+[StructLayout(LayoutKind.Explicit)]
+public struct ColorPack
 {
-    public struct HSV
-    {
-        public float H; // 色相 ( 0<= H < 360 )
-        public float S; // 彩度 ( 0<= H = 1.0 )
-        public float V; // 明度 ( 0<= H = 1.0 )
+    [FieldOffset(0)]
+    public int Argb = 0;
 
-        public HSV(float h, float s, float v)
-        {
-            H = h;
-            S = s;
-            V = v;
-        }
+    [FieldOffset(3)]
+    public byte A = 0;
+
+    [FieldOffset(2)]
+    public byte R = 0;
+
+    [FieldOffset(1)]
+    public byte G = 0;
+
+    [FieldOffset(0)]
+    public byte B = 0;
+
+    public ColorPack(byte a, byte r, byte g, byte b)
+    {
+        A = a;
+        R = r;
+        G = g;
+        B = b;
     }
 
-    public struct RGB
+    public ColorPack(int argb)
     {
-        public float R;
-        public float G;
-        public float B;
+        Argb = argb;
+    }
+}
 
-        public RGB(float r, float g, float b)
-        {
-            R = r;
-            G = g;
-            B = b;
-        }
+public static class ColorUtil
+{
+    public static Color4 FromArgb(int argb)
+    {
+        ColorPack c = default;
+        c.Argb = argb;
+
+        return new Color4(
+                c.R,
+                c.G,
+                c.B,
+                c.A
+            );
     }
 
-    class ColorUtil
+    public static int Argb(byte a, byte r, byte g, byte b)
     {
-        public static RGB Brightness(RGB rgb, float a)
-        {
-            rgb.R *= a;
-            rgb.G *= a;
-            rgb.B *= a;
-
-            if (rgb.R > 1.0f)
-            {
-                rgb.R = 1.0f;
-            }
-
-            if (rgb.G > 1.0f)
-            {
-                rgb.G = 1.0f;
-            }
-
-            if (rgb.B > 1.0f)
-            {
-                rgb.B = 1.0f;
-            }
-
-            return rgb;
-        }
-
-
-        public static HSV RgbToHsv(RGB rgb)
-        {
-            float r = rgb.R;
-            float g = rgb.G;
-            float b = rgb.B;
-
-
-            float max = Math.Max(r, Math.Max(g, b));
-            float min = Math.Min(r, Math.Min(g, b));
-
-            float brightness = max;
-
-            float hue, saturation;
-            if (max == min)
-            {
-                hue = 0f;
-                saturation = 0f;
-            }
-            else
-            {
-                float c = max - min;
-
-                if (max == r)
-                {
-                    hue = (g - b) / c;
-                }
-                else if (max == g)
-                {
-                    hue = (b - r) / c + 2f;
-                }
-                else
-                {
-                    hue = (r - g) / c + 4f;
-                }
-                hue *= 60f;
-                if (hue < 0f)
-                {
-                    hue += 360f;
-                }
-
-                saturation = c / max;
-            }
-
-            HSV hsv = new HSV();
-
-            hsv.H = hue;
-            hsv.S = saturation;
-            hsv.V = brightness;
-
-            return hsv;
-        }
-
-        public static RGB HsvToRgb(HSV hsv)
-        {
-            float v = hsv.V;
-            float s = hsv.S;
-
-            float r, g, b;
-            if (s == 0)
-            {
-                r = v;
-                g = v;
-                b = v;
-            }
-            else
-            {
-                float h = hsv.H / 60f;
-                int i = (int)Math.Floor(h);
-                float f = h - i;
-                float p = v * (1f - s);
-                float q;
-                if (i % 2 == 0)
-                {
-                    q = v * (1f - (1f - f) * s);
-                }
-                else
-                {
-                    q = v * (1f - f * s);
-                }
-
-                switch (i)
-                {
-                    case 0:
-                        r = v;
-                        g = q;
-                        b = p;
-                        break;
-                    case 1:
-                        r = q;
-                        g = v;
-                        b = p;
-                        break;
-                    case 2:
-                        r = p;
-                        g = v;
-                        b = q;
-                        break;
-                    case 3:
-                        r = p;
-                        g = q;
-                        b = v;
-                        break;
-                    case 4:
-                        r = q;
-                        g = p;
-                        b = v;
-                        break;
-                    case 5:
-                        r = v;
-                        g = p;
-                        b = q;
-                        break;
-                    default:
-                        throw new ArgumentException("bad hue", "hsv");
-                }
-            }
-
-            RGB rgb = new RGB();
-
-            rgb.R = r;
-            rgb.G = g;
-            rgb.B = b;
-
-            return rgb;
-        }
+        return new ColorPack(a, r, g, b).Argb;
     }
+
+    public static int ToArgb(Color4 c)
+    {
+        return Argb(
+                (byte)(c.A * 255f),
+                (byte)(c.R * 255f),
+                (byte)(c.G * 255f),
+                (byte)(c.B * 255f));
+    }
+
+    public static Color ToGDIColor(Color4 c)
+    {
+        return Color.FromArgb(
+            (int)(c.A * 255f),
+            (int)(c.R * 255f),
+            (int)(c.G * 255f),
+            (int)(c.B * 255f));
+    }
+
+    public static Color4 Mix(Color4 c1, Color4 c2, float strengthC1)
+    {
+        float strengthC2 = 1.0f - strengthC1;
+
+        Color4 rc = default;
+
+        rc.R = ((c1.R * strengthC1) + (c2.R * strengthC2));
+        rc.G = ((c1.G * strengthC1) + (c2.G * strengthC2));
+        rc.B = ((c1.B * strengthC1) + (c2.B * strengthC2));
+
+        rc.R = Math.Min(1.0f, rc.R);
+        rc.G = Math.Min(1.0f, rc.G);
+        rc.B = Math.Min(1.0f, rc.B);
+
+        rc.A = 1.0f;
+
+        return rc;
+    }
+}
+
+public static class Color4Ext
+{
+    public static bool IsInvalid(this Color4 v)
+    {
+        return v.A < 0.0;
+    }
+
+    public static readonly Color4 Invalid = new Color4(0, 0, 0, -1.0f);
 }

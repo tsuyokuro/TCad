@@ -1,22 +1,10 @@
 
-/**
- * TODO Consoleの利用について
- * 
- * プロジェクト->TCadのプロパティー->アプリケーソンタブ
- * 出力の種類をコンソールアプリケーションにするとデバッグ実行時も
- * コンソールに出力されるようになる
- * コンソールの使用を止めるときは、出力の種類を Windowsアプリケーションもどすこと
- *
- * 
- * Visual studio 2017 15.8.4では、Windowsアプリケーションのまま、普通にコンソールに出力される
- * Visual studio 2017 15.9.4では、またこの手順が必要になった
- **/
 //#define USE_CONSOLE
 #define USE_DEBUG_SERVER
 
 
 // 強制的にリソース文字列をUSにする
-// Force resource string to US
+// ForceLinePen resource string to US
 //#define FORCE_US
 
 using TCad.Util;
@@ -32,213 +20,212 @@ using System.Windows;
 using System.Windows.Resources;
 using System.Windows.Threading;
 
-namespace TCad
+namespace TCad;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    enum DebugOutTarget
     {
-        enum DebugOutTarget
-        {
-            None,
-            Console,
-            DebugServer,
-        }
+        None,
+        Console,
+        DebugServer,
+    }
 
-        //DebugOutTarget DOutTarget = DebugOutTarget.Console;
-        DebugOutTarget DOutTarget = DebugOutTarget.DebugServer;
-        //DebugOutTarget DOutTarget = DebugOutTarget.None;
+    //DebugOutTarget DOutTarget = DebugOutTarget.Console;
+    DebugOutTarget DOutTarget = DebugOutTarget.DebugServer;
+    //DebugOutTarget DOutTarget = DebugOutTarget.None;
 
-        private MySplashWindow SplashWindow = null;
+    private MySplashWindow SplashWindow = null;
 
-        private TaskScheduler mMainThreadScheduler;
+    private TaskScheduler mMainThreadScheduler;
 
 #if USE_DEBUG_SERVER
-        private DebugServer DServer;
+    private DebugServer DServer;
 #endif
 
-        public static App GetCurrent()
+    public static App GetCurrent()
+    {
+        return (App)Current;
+    }
+
+    public static TaskScheduler MainThreadScheduler
+    {
+        get
         {
-            return (App)Current;
+            return GetCurrent().mMainThreadScheduler;
         }
+    }
 
-        public static TaskScheduler MainThreadScheduler
-        {
-            get
-            {
-                return GetCurrent().mMainThreadScheduler;
-            }
-        }
+    private static bool NowExceptionHandling = false;
 
-        private static bool NowExceptionHandling = false;
-
-        public App()
-        {
+    public App()
+    {
 #if FORCE_US
-            CultureInfo ci = new CultureInfo("en-US");
-            Thread.CurrentThread.CurrentCulture = ci;
-            Thread.CurrentThread.CurrentUICulture = ci;
+        CultureInfo ci = new CultureInfo("en-US");
+        Thread.CurrentThread.CurrentCulture = ci;
+        Thread.CurrentThread.CurrentUICulture = ci;
 #endif
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        DispatcherUnhandledException += App_DispatcherUnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        AppDomain currentDomain = AppDomain.CurrentDomain;
+        currentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            System.Windows.Forms.Application.ThreadException += Application_ThreadException;
-        }
+        System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+    }
 
-        private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+    private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+    {
+        HandleException(e.Exception);
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        HandleException(e.ExceptionObject);
+    }
+
+    // UI ThreadのException
+    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        e.Handled = true;
+        HandleException(e.Exception);
+    }
+
+    // 別ThreadのException
+    private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+    {
+        new Task(() =>
         {
             HandleException(e.Exception);
         }
+        ).Start(mMainThreadScheduler);
+    }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    public static void ThrowException(object e)
+    {
+        new Task(() =>
         {
-            HandleException(e.ExceptionObject);
+            GetCurrent().HandleException(e);
+        }
+        ).Start(GetCurrent().mMainThreadScheduler);
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void HandleException(object e)
+    {
+        if (NowExceptionHandling)
+        {
+            return;
         }
 
-        // UI ThreadのException
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        NowExceptionHandling = true;
+
+        if (!ShowExceptionDialg(e.ToString()))
         {
-            e.Handled = true;
-            HandleException(e.Exception);
+            Shutdown();
         }
 
-        // 別ThreadのException
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            new Task(() =>
-            {
-                HandleException(e.Exception);
-            }
-            ).Start(mMainThreadScheduler);
-        }
+        NowExceptionHandling = false;
+    }
 
-        public static void ThrowException(object e)
-        {
-            new Task(() =>
-            {
-                GetCurrent().HandleException(e);
-            }
-            ).Start(GetCurrent().mMainThreadScheduler);
-        }
+    public static bool ShowExceptionDialg(string text)
+    {
+        EceptionDialog dlg = new EceptionDialog();
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void HandleException(object e)
-        {
-            if (NowExceptionHandling)
-            {
-                return;
-            }
+        dlg.text.Text = text;
+        bool? result = dlg.ShowDialog();
 
-            NowExceptionHandling = true;
+        if (result == null) return false;
 
-            if (!ShowExceptionDialg(e.ToString()))
-            {
-                Shutdown();
-            }
+        return result.Value;
+    }
 
-            NowExceptionHandling = false;
-        }
+    [STAThread]
+    override protected void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
 
-        public static bool ShowExceptionDialg(string text)
-        {
-            EceptionDialog dlg = new EceptionDialog();
+        SplashWindow = new MySplashWindow();
+        SplashWindow.Show();
 
-            dlg.text.Text = text;
-            bool? result = dlg.ShowDialog();
-
-            if (result == null) return false;
-
-            return result.Value;
-        }
-
-        [STAThread]
-        override protected void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            SplashWindow = new MySplashWindow();
-            SplashWindow.Show();
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
 
 #if USE_CONSOLE
-            WinAPI.AllocConsole();
+        WinAPI.AllocConsole();
 #endif
 #if USE_DEBUG_SERVER
-            DServer = new DebugServer();
-            DServer.Start();
+        DServer = new DebugServer();
+        DServer.Start();
 #endif
-            mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-            //OpenTK.Toolkit.Init();
+        //OpenTK.Toolkit.Init();
 
-            // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
-            // 紛れさせる
-            MpInitializer.Init();
+        // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
+        // 紛れさせる
+        MpInitializer.Init();
 
-            SetupDebugConsole();
+        SetupDebugConsole();
 
-            MainWindow = new MainWindow();
+        MainWindow = new MainWindow();
 
-            MainWindow.Show();
+        MainWindow.Show();
 
-            sw.Stop();
+        sw.Stop();
 
-            DOut.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
+        DOut.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
 
-            SplashWindow.Close();
-            SplashWindow = null;
-        }
+        SplashWindow.Close();
+        SplashWindow = null;
+    }
 
-        private void SetupDebugConsole()
+    private void SetupDebugConsole()
+    {
+        if (DOutTarget == DebugOutTarget.Console)
         {
-            if (DOutTarget == DebugOutTarget.Console)
-            {
-                DOut.PrintF = Console.Write;
-                DOut.PrintLn = Console.WriteLine;
+            DOut.Print = Console.Write;
+            DOut.PrintLn = Console.WriteLine;
 
-                DOut.pl("DOut's output setting is Console");
-            }
-            else if (DOutTarget == DebugOutTarget.DebugServer)
-            {
-                DOut.PrintF = DServer.Write;
-                DOut.PrintLn = DServer.WriteLn;
-
-                DOut.pl("DOut's output setting is DebugServer");
-            }
+            DOut.pl("DOut's output setting is Console");
         }
-
-        // e.g. ReadResourceText("/Shader/font_fragment.shader")
-        public static string ReadResourceText(string path)
+        else if (DOutTarget == DebugOutTarget.DebugServer)
         {
-            Uri fileUri = new Uri(path, UriKind.Relative);
-            StreamResourceInfo info = Application.GetResourceStream(fileUri);
-            StreamReader sr = new StreamReader(info.Stream);
+            DOut.Print = DServer.Print;
+            DOut.PrintLn = DServer.PrintLn;
 
-            string s = sr.ReadToEnd();
-            sr.Close();
-
-            return s;
+            DOut.pl("DOut's output setting is DebugServer");
         }
+    }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
+    // e.g. ReadResourceText("/Shader/font_fragment.shader")
+    public static string ReadResourceText(string path)
+    {
+        Uri fileUri = new Uri(path, UriKind.Relative);
+        StreamResourceInfo info = Application.GetResourceStream(fileUri);
+        StreamReader sr = new StreamReader(info.Stream);
+
+        string s = sr.ReadToEnd();
+        sr.Close();
+
+        return s;
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
 #if USE_CONSOLE
-            WinAPI.FreeConsole();
+        WinAPI.FreeConsole();
 #endif
 
 #if USE_DEBUG_SERVER
-            if (DServer != null)
-            {
-                DServer.Stop();
-            }
+        if (DServer != null)
+        {
+            DServer.Stop();
+        }
 #endif
 
-            base.OnExit(e);
-        }
+        base.OnExit(e);
     }
 }

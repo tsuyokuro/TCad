@@ -4,112 +4,111 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace TCad.ViewModel
+namespace TCad.ViewModel;
+
+public class LayerListViewModel : INotifyPropertyChanged
 {
-    public class LayerListViewModel : INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void NotifyPropertyChanged(String info)
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+    }
 
-        private void NotifyPropertyChanged(String info)
+    public ObservableCollection<LayerHolder> LayerList_ = new ObservableCollection<LayerHolder>();
+    public ObservableCollection<LayerHolder> LayerList
+    {
+        get
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+            return LayerList_;
+        }
+        set
+        {
+            LayerList_ = value;
+            NotifyPropertyChanged("LayerList");
+        }
+    }
+
+    public LayerHolder SelectedItem
+    {
+        get
+        {
+            int idx = GetLayerListIndex(mContext.Controller.CurrentLayer.ID);
+            if (idx < 0)
+            {
+                return null;
+            }
+            return LayerList[idx];
         }
 
-        public ObservableCollection<LayerHolder> LayerList_ = new ObservableCollection<LayerHolder>();
-        public ObservableCollection<LayerHolder> LayerList
+        set
         {
-            get
+            LayerHolder lh = value;
+            if (lh == null)
             {
-                return LayerList_;
+                return;
             }
-            set
+
+            if (mContext.Controller.CurrentLayer.ID != lh.ID)
             {
-                LayerList_ = value;
-                NotifyPropertyChanged("LayerList");
+                mContext.Controller.SetCurrentLayer(lh.ID);
+
+                mContext.Redraw();
             }
+
+            NotifyPropertyChanged("SelectedItem");
+        }
+    }
+
+    private IPlotterViewModel mContext;
+
+    public LayerListViewModel(IPlotterViewModel context)
+    {
+        mContext = context;
+    }
+
+    public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        LayerHolder lh = (LayerHolder)sender;
+        mContext.Redraw();
+    }
+
+    public void LayerListChanged(LayerListInfo layerListInfo)
+    {
+        foreach (LayerHolder lh in LayerList)
+        {
+            lh.PropertyChanged -= LayerListItemPropertyChanged;
         }
 
-        public LayerHolder SelectedItem
+        LayerList.Clear();
+
+        foreach (CadLayer layer in layerListInfo.LayerList)
         {
-            get
-            {
-                int idx = GetLayerListIndex(mContext.Controller.CurrentLayer.ID);
-                if (idx < 0)
-                {
-                    return null;
-                }
-                return LayerList[idx];
-            }
+            LayerHolder layerHolder = new LayerHolder(layer);
+            layerHolder.PropertyChanged += LayerListItemPropertyChanged;
 
-            set
-            {
-                LayerHolder lh = value;
-                if (lh == null)
-                {
-                    return;
-                }
-
-                if (mContext.Controller.CurrentLayer.ID != lh.ID)
-                {
-                    mContext.Controller.SetCurrentLayer(lh.ID);
-
-                    mContext.Redraw();
-                }
-
-                NotifyPropertyChanged("SelectedItem");
-            }
+            LayerList.Add(layerHolder);
         }
 
-        private IPlotterViewModel mContext;
-
-        public LayerListViewModel(IPlotterViewModel context)
+        int idx = GetLayerListIndex(layerListInfo.CurrentID);
+        if (idx >= 0)
         {
-            mContext = context;
+            SelectedItem = LayerList[idx];
+        }
+    }
+
+    private int GetLayerListIndex(uint id)
+    {
+        int idx = 0;
+        foreach (LayerHolder layer in LayerList)
+        {
+            if (layer.ID == id)
+            {
+                return idx;
+            }
+            idx++;
         }
 
-        public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            LayerHolder lh = (LayerHolder)sender;
-            mContext.Redraw();
-        }
-
-        public void LayerListChanged(LayerListInfo layerListInfo)
-        {
-            foreach (LayerHolder lh in LayerList)
-            {
-                lh.PropertyChanged -= LayerListItemPropertyChanged;
-            }
-
-            LayerList.Clear();
-
-            foreach (CadLayer layer in layerListInfo.LayerList)
-            {
-                LayerHolder layerHolder = new LayerHolder(layer);
-                layerHolder.PropertyChanged += LayerListItemPropertyChanged;
-
-                LayerList.Add(layerHolder);
-            }
-
-            int idx = GetLayerListIndex(layerListInfo.CurrentID);
-            if (idx >= 0)
-            {
-                SelectedItem = LayerList[idx];
-            }
-        }
-
-        private int GetLayerListIndex(uint id)
-        {
-            int idx = 0;
-            foreach (LayerHolder layer in LayerList)
-            {
-                if (layer.ID == id)
-                {
-                    return idx;
-                }
-                idx++;
-            }
-
-            return -1;
-        }
+        return -1;
     }
 }

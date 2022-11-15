@@ -1,9 +1,8 @@
-﻿namespace TCad.ScriptEditor
+namespace TCad.ScriptEditor;
+
+public struct WordData
 {
-    public struct WordData
-    {
-        public int StartPos;
-        public string Word;
-    }
+    public int StartPos;
+    public string Word;
 }
 

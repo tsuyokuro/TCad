@@ -1,66 +1,92 @@
-﻿
+
 using OpenTK.Mathematics;
+using System;
 using System.Drawing;
 
-namespace Plotter
+namespace Plotter;
+
+public struct DrawBrush : IEquatable<DrawBrush>
 {
-    public class DrawBrush
+    public static DrawBrush InvalidBrush;
+
+    static DrawBrush()
     {
-        public int ID;
-
-        public int Argb;
-
-        public SolidBrush mGdiBrush;
-        public SolidBrush GdiBrush
+        InvalidBrush = new()
         {
-            get => mGdiBrush;
-        }
-
-        public static DrawBrush NullBrush = new DrawBrush(Color.FromArgb(0, 0, 0, 0));
-
-        public bool IsNullBrush
-        {
-            get => ((uint)Argb & 0xff000000) == 0;
-        }
-
-        public void Dispose()
-        {
-            if (mGdiBrush != null)
-            {
-                mGdiBrush.Dispose();
-                mGdiBrush = null;
-            }
-        }
-
-        public Color4 Color4()
-        {
-            return Color4Util.FromArgb(Argb);
-        }
-
-        public Color GdiColor()
-        {
-            return Color.FromArgb(Argb);
-        }
-
-        public DrawBrush(SolidBrush brush)
-        {
-            ID = 0;
-            mGdiBrush = brush;
-            Argb = brush.Color.ToArgb();
-        }
-
-        public DrawBrush(Color color)
-        {
-            ID = 0;
-            mGdiBrush = null;
-            Argb = color.ToArgb();
-        }
-
-        public DrawBrush(Color4 color)
-        {
-            ID = 0;
-            mGdiBrush = null;
-            Argb = color.ToArgb();
-        }
+            Color4 = Color4Ext.Invalid,
+        };
     }
+
+    public Color4 mColor4;
+
+    public readonly SolidBrush GdiBrush
+    {
+        get => GDIToolManager.Instance.Brush(this);
+    }
+
+    public int Argb
+    {
+        get => ColorUtil.ToArgb(mColor4);
+    }
+
+    public ColorPack ColorPack
+    {
+        get => new ColorPack(Argb);
+    }
+
+    public bool IsInvalid
+    {
+        get => mColor4.A < 0f;
+    }
+
+    public bool IsNull
+    {
+        get => mColor4.A == 0f;
+    }
+
+    public Color4 Color4
+    {
+        get => mColor4;
+        set => mColor4 = value;
+    }
+
+    public DrawBrush(int argb)
+    {
+        mColor4 = ColorUtil.FromArgb(argb);
+    }
+
+    public DrawBrush(Color4 color)
+    {
+        mColor4 = color;
+    }
+
+    public static bool operator == (DrawBrush brush1, DrawBrush brush2)
+    {
+        return (brush1.Color4 == brush2.Color4);
+    }
+
+    public static bool operator != (DrawBrush brush1, DrawBrush brush2)
+    {
+        return !(brush1.Color4 == brush2.Color4);
+    }
+
+    public bool Equals(DrawBrush other)
+    {
+        return Color4 == other.Color4;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is DrawBrush other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            Color4.A, Color4.R, Color4.G, Color4.B
+            );
+    }
+
+
 }
+

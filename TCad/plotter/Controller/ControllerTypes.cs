@@ -1,62 +1,49 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public struct LayerListInfo
 {
-    public struct LayerListInfo
+    public List<CadLayer> LayerList;
+    public uint CurrentID;
+}
+
+public enum StateChangedType
+{
+    CURRENT_FIG_CHANGED,
+    CREATING_FIG_TYPE_CHANGED,
+    MESURE_MODE_CHANGED,
+    SELECTION_CHANGED,
+}
+
+public struct StateChangedParam
+{
+    public StateChangedType Type
     {
-        public List<CadLayer> LayerList;
-        public uint CurrentID;
+        get; set;
     }
 
-    public struct PlotterStateInfo
+    public StateChangedParam(StateChangedType type)
     {
-        public PlotterController.States State;
-
-        public SelectModes SelectMode;
-
-        public CadFigure.Types CreatingFigureType;
-
-        public int CreatingFigurePointCnt;
-
-        public MeasureModes MeasureMode;
-
-        public bool HasSelect;
-
-
-        public void set(PlotterController pc)
-        {
-            State = pc.State;
-            SelectMode = pc.SelectMode;
-            CreatingFigureType = pc.CreatingFigType;
-            CreatingFigurePointCnt = 0;
-
-            if (pc.FigureCreator != null)
-            {
-                CreatingFigurePointCnt = pc.FigureCreator.Figure.PointCount;
-            }
-
-            MeasureMode = pc.MeasureMode;
-
-            HasSelect = pc.HasSelect();
-        }
+        Type = type;
     }
+}
 
-    public struct SelectContext
-    {
-        public DrawContext DC;
+public struct SelectContext
+{
+    public DrawContext DC;
 
-        public Vector3d CursorScrPt;
-        public Vector3d CursorWorldPt;
+    public Vector3d CursorScrPt;
+    public Vector3d CursorWorldPt;
 
-        public CadCursor Cursor;
+    public CadCursor Cursor;
 
-        public bool PointSelected;
-        public MarkPoint MarkPt;
+    public bool PointSelected;
+    public MarkPoint MarkPt;
 
-        public bool SegmentSelected;
-        public MarkSegment MarkSeg;
-    }
+    public bool SegmentSelected;
+    public MarkSegment MarkSeg;
 }

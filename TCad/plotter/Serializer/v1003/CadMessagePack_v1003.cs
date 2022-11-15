@@ -8,904 +8,1043 @@ using System.Drawing.Printing;
 using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
+using static IronPython.Modules._ast;
 
-namespace Plotter.Serializer.v1003
+namespace Plotter.Serializer.v1003;
+
+public class VersionCode_v1003
 {
-    public class VersionCode_v1003
-    {
-        private static VersionCode Version_ = new VersionCode(1, 0, 0, 3);
+    private static VersionCode Version_ = new VersionCode(1, 0, 0, 3);
 
-        public static VersionCode Version => Version_;
+    public static VersionCode Version => Version_;
+}
+
+[MessagePackObject]
+public class MpCadData_v1003
+{
+    [Key("Version")]
+    public VersionCode Version = VersionCode_v1003.Version;
+
+    [Key("DB")]
+    public MpCadObjectDB_v1003 MpDB;
+
+    [Key("ViewInfo")]
+    public MpViewInfo_v1003 ViewInfo;
+
+    [IgnoreMember]
+    CadObjectDB DB = null;
+
+    public static MpCadData_v1003 Create(CadObjectDB db)
+    {
+        MpCadData_v1003 ret = new MpCadData_v1003();
+
+        ret.MpDB = MpCadObjectDB_v1003.Create(db);
+
+        ret.ViewInfo = new MpViewInfo_v1003();
+
+        return ret;
     }
 
-    [MessagePackObject]
-    public class MpCadData_v1003
+    public CadObjectDB GetDB()
     {
-        [Key("Version")]
-        public VersionCode Version = VersionCode_v1003.Version;
-
-        [Key("DB")]
-        public MpCadObjectDB_v1003 MpDB;
-
-        [Key("ViewInfo")]
-        public MpViewInfo_v1003 ViewInfo;
-
-        [IgnoreMember]
-        CadObjectDB DB = null;
-
-        public static MpCadData_v1003 Create(CadObjectDB db)
+        if (DB == null)
         {
-            MpCadData_v1003 ret = new MpCadData_v1003();
-
-            ret.MpDB = MpCadObjectDB_v1003.Create(db);
-
-            ret.ViewInfo = new MpViewInfo_v1003();
-
-            return ret;
+            DB = MpDB.Restore();
         }
 
-        public CadObjectDB GetDB()
+        return DB;
+    }
+}
+
+[MessagePackObject]
+public class MpViewInfo_v1003
+{
+    [Key("WorldScale")]
+    public double WorldScale = 1.0;
+
+    [Key("Paper")]
+    public MpPaperSettings_v1003 PaperSettings = new MpPaperSettings_v1003();
+}
+
+[MessagePackObject]
+public class MpPaperSettings_v1003
+{
+    [Key("W")]
+    public double Width = 210.0;
+
+    [Key("H")]
+    public double Height = 297.0;
+
+    [Key("Landscape")]
+    public bool Landscape = false;
+
+    [Key("Kind")]
+    public PaperKind Kind = PaperKind.A4;
+
+    public void Set(PaperPageSize pp)
+    {
+        Width = pp.Width;
+        Height = pp.Height;
+
+        Landscape = pp.mLandscape;
+
+        Kind = pp.mPaperKind;
+    }
+
+    public PaperPageSize GetPaperPageSize()
+    {
+        PaperPageSize pp = new PaperPageSize();
+
+        pp.Width = Width;
+        pp.Height = Height;
+
+        pp.mLandscape = Landscape;
+
+        pp.mPaperKind = Kind;
+
+        return pp;
+    }
+}
+
+[MessagePackObject]
+public class MpCadObjectDB_v1003
+{
+    [Key("LayerIdCnt")]
+    public uint LayerIdCount;
+
+    [Key("FigIdCnt")]
+    public uint FigureIdCount;
+
+    [Key("FigList")]
+    public List<MpFigure_v1003> FigureList;
+
+    [Key("LayerList")]
+    public List<MpLayer_v1003> LayerList;
+
+    [Key("CurrentLayerID")]
+    public uint CurrentLayerID;
+
+    public static MpCadObjectDB_v1003 Create(CadObjectDB db)
+    {
+        MpCadObjectDB_v1003 ret = new MpCadObjectDB_v1003();
+
+        ret.LayerIdCount = db.LayerIdProvider.Counter;
+        ret.FigureIdCount = db.FigIdProvider.Counter;
+
+        ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
+
+        ret.LayerList = MpUtil_v1003.LayerListToMp(db.LayerList);
+
+        ret.CurrentLayerID = db.CurrentLayerID;
+
+        return ret;
+    }
+
+    public void GarbageCollect()
+    {
+        var idMap = new Dictionary<uint, MpFigure_v1003>();
+
+        foreach (MpFigure_v1003 fig in FigureList)
         {
-            if (DB == null)
+            idMap.Add(fig.ID, fig);
+        }
+
+        var activeSet = new HashSet<uint>();
+
+        foreach (MpLayer_v1003 layer in LayerList)
+        {
+            foreach (uint id in layer.FigureIdList)
             {
-                DB = MpDB.Restore();
-            }
+                MpFigure_v1003 fig = idMap[id];
 
-            return DB;
-        }
-    }
-
-    [MessagePackObject]
-    public class MpViewInfo_v1003
-    {
-        [Key("WorldScale")]
-        public double WorldScale = 1.0;
-
-        [Key("Paper")]
-        public MpPaperSettings_v1003 PaperSettings = new MpPaperSettings_v1003();
-    }
-
-    [MessagePackObject]
-    public class MpPaperSettings_v1003
-    {
-        [Key("W")]
-        public double Width = 210.0;
-
-        [Key("H")]
-        public double Height = 297.0;
-
-        [Key("Landscape")]
-        public bool Landscape = false;
-
-        [Key("Kind")]
-        public PaperKind Kind = PaperKind.A4;
-
-        public void Set(PaperPageSize pp)
-        {
-            Width = pp.Width;
-            Height = pp.Height;
-
-            Landscape = pp.mLandscape;
-
-            Kind = pp.mPaperKind;
-        }
-
-        public PaperPageSize GetPaperPageSize()
-        {
-            PaperPageSize pp = new PaperPageSize();
-
-            pp.Width = Width;
-            pp.Height = Height;
-
-            pp.mLandscape = Landscape;
-
-            pp.mPaperKind = Kind;
-
-            return pp;
-        }
-    }
-
-    [MessagePackObject]
-    public class MpCadObjectDB_v1003
-    {
-        [Key("LayerIdCnt")]
-        public uint LayerIdCount;
-
-        [Key("FigIdCnt")]
-        public uint FigureIdCount;
-
-        [Key("FigList")]
-        public List<MpFigure_v1003> FigureList;
-
-        [Key("LayerList")]
-        public List<MpLayer_v1003> LayerList;
-
-        [Key("CurrentLayerID")]
-        public uint CurrentLayerID;
-
-        public static MpCadObjectDB_v1003 Create(CadObjectDB db)
-        {
-            MpCadObjectDB_v1003 ret = new MpCadObjectDB_v1003();
-
-            ret.LayerIdCount = db.LayerIdProvider.Counter;
-            ret.FigureIdCount = db.FigIdProvider.Counter;
-
-            ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
-
-            ret.LayerList = MpUtil_v1003.LayerListToMp(db.LayerList);
-
-            ret.CurrentLayerID = db.CurrentLayerID;
-
-            return ret;
-        }
-
-        public void GarbageCollect()
-        {
-            var idMap = new Dictionary<uint, MpFigure_v1003>();
-
-            foreach (MpFigure_v1003 fig in FigureList)
-            {
-                idMap.Add(fig.ID, fig);
-            }
-
-            var activeSet = new HashSet<uint>();
-
-            foreach (MpLayer_v1003 layer in LayerList)
-            {
-                foreach (uint id in layer.FigureIdList)
+                fig.ForEachFigID(idMap, (a) =>
                 {
-                    MpFigure_v1003 fig = idMap[id];
-
-                    fig.ForEachFigID(idMap, (a) =>
-                    {
-                        activeSet.Add(a);
-                    });
-                }
-            }
-
-            int i = FigureList.Count - 1;
-
-            for (; i >= 0; i--)
-            {
-                MpFigure_v1003 fig = FigureList[i];
-
-                if (!activeSet.Contains(fig.ID))
-                {
-                    FigureList.RemoveAt(i);
-                }
+                    activeSet.Add(a);
+                });
             }
         }
 
-        public CadObjectDB Restore()
+        int i = FigureList.Count - 1;
+
+        for (; i >= 0; i--)
         {
-            CadObjectDB ret = new CadObjectDB();
+            MpFigure_v1003 fig = FigureList[i];
 
-            ret.LayerIdProvider.Counter = LayerIdCount;
-            ret.FigIdProvider.Counter = FigureIdCount;
-
-            // Figure map
-            List<CadFigure> figList = MpUtil_v1003.FigureListFromMp_v1003(FigureList);
-
-            var dic = new Dictionary<uint, CadFigure>();
-
-            for (int i = 0; i < figList.Count; i++)
+            if (!activeSet.Contains(fig.ID))
             {
-                CadFigure fig = figList[i];
-
-                dic.Add(fig.ID, fig);
-                FigureList[i].TempFigure = fig;
-            }
-
-            ret.FigureMap = dic;
-
-
-            // Child list
-            for (int i = 0; i < figList.Count; i++)
-            {
-                MpFigure_v1003 mpfig = FigureList[i];
-                SetFigChild(mpfig, dic);
-            }
-
-
-            // Layer map
-            ret.LayerList = MpUtil_v1003.LayerListFromMp(LayerList, dic);
-
-            ret.LayerMap = new Dictionary<uint, CadLayer>();
-
-            for (int i = 0; i < ret.LayerList.Count; i++)
-            {
-                CadLayer layer = ret.LayerList[i];
-
-                ret.LayerMap.Add(layer.ID, layer);
-            }
-
-            ret.CurrentLayerID = CurrentLayerID;
-
-            return ret;
-        }
-
-        private void SetFigChild(MpFigure_v1003 mpfig, Dictionary<uint, CadFigure> dic)
-        {
-            for (int i = 0; i < mpfig.ChildIdList.Count; i++)
-            {
-                uint id = mpfig.ChildIdList[i];
-
-                mpfig.TempFigure.ChildList.Add(dic[id]);
-                dic[id].Parent = mpfig.TempFigure;
+                FigureList.RemoveAt(i);
             }
         }
     }
 
-
-
-    [MessagePackObject]
-    public class MpLayer_v1003
+    public CadObjectDB Restore()
     {
-        [Key("ID")]
-        public uint ID;
+        CadObjectDB ret = new CadObjectDB();
 
-        [Key("Visible")]
-        public bool Visible;
+        ret.LayerIdProvider.Counter = LayerIdCount;
+        ret.FigIdProvider.Counter = FigureIdCount;
 
-        [Key("Locked")]
-        public bool Locked;
+        // Figure map
+        List<CadFigure> figList = MpUtil_v1003.FigureListFromMp_v1003(FigureList);
 
-        [Key("FigIdList")]
-        public List<uint> FigureIdList;
+        var dic = new Dictionary<uint, CadFigure>();
 
-        public static MpLayer_v1003 Create(CadLayer layer)
+        for (int i = 0; i < figList.Count; i++)
         {
-            MpLayer_v1003 ret = new MpLayer_v1003();
+            CadFigure fig = figList[i];
 
-            ret.ID = layer.ID;
-            ret.Visible = layer.Visible;
-            ret.Locked = layer.Locked;
-
-            ret.FigureIdList = MpUtil_v1003.FigureListToIdList(layer.FigureList);
-
-            return ret;
+            dic.Add(fig.ID, fig);
+            FigureList[i].TempFigure = fig;
         }
 
-        public CadLayer Restore(Dictionary<uint, CadFigure> dic)
-        {
-            CadLayer ret = new CadLayer();
-            ret.ID = ID;
-            ret.Visible = Visible;
-            ret.Locked = Locked;
-            ret.FigureList = new List<CadFigure>();
+        ret.FigureMap = dic;
 
-            for (int i = 0; i < FigureIdList.Count; i++)
+
+        // Child list
+        for (int i = 0; i < figList.Count; i++)
+        {
+            MpFigure_v1003 mpfig = FigureList[i];
+            SetFigChild(mpfig, dic);
+        }
+
+
+        // Layer map
+        ret.LayerList = MpUtil_v1003.LayerListFromMp(LayerList, dic);
+
+        ret.LayerMap = new Dictionary<uint, CadLayer>();
+
+        for (int i = 0; i < ret.LayerList.Count; i++)
+        {
+            CadLayer layer = ret.LayerList[i];
+
+            ret.LayerMap.Add(layer.ID, layer);
+        }
+
+        ret.CurrentLayerID = CurrentLayerID;
+
+        return ret;
+    }
+
+    private void SetFigChild(MpFigure_v1003 mpfig, Dictionary<uint, CadFigure> dic)
+    {
+        for (int i = 0; i < mpfig.ChildIdList.Count; i++)
+        {
+            uint id = mpfig.ChildIdList[i];
+
+            mpfig.TempFigure.ChildList.Add(dic[id]);
+            dic[id].Parent = mpfig.TempFigure;
+        }
+    }
+}
+
+
+
+[MessagePackObject]
+public class MpLayer_v1003
+{
+    [Key("ID")]
+    public uint ID;
+
+    [Key("Visible")]
+    public bool Visible;
+
+    [Key("Locked")]
+    public bool Locked;
+
+    [Key("FigIdList")]
+    public List<uint> FigureIdList;
+
+    public static MpLayer_v1003 Create(CadLayer layer)
+    {
+        MpLayer_v1003 ret = new MpLayer_v1003();
+
+        ret.ID = layer.ID;
+        ret.Visible = layer.Visible;
+        ret.Locked = layer.Locked;
+
+        ret.FigureIdList = MpUtil_v1003.FigureListToIdList(layer.FigureList);
+
+        return ret;
+    }
+
+    public CadLayer Restore(Dictionary<uint, CadFigure> dic)
+    {
+        CadLayer ret = new CadLayer();
+        ret.ID = ID;
+        ret.Visible = Visible;
+        ret.Locked = Locked;
+        ret.FigureList = new List<CadFigure>();
+
+        for (int i = 0; i < FigureIdList.Count; i++)
+        {
+            ret.AddFigure(dic[FigureIdList[i]]);
+        }
+
+        return ret;
+    }
+}
+
+[MessagePackObject]
+public class MpFigure_v1003
+{
+    [Key("ID")]
+    public uint ID;
+
+    [Key("Type")]
+    public byte Type;
+
+    [Key("Locked")]
+    public bool Locked;
+
+    [Key("IsLoop")]
+    public bool IsLoop;
+
+    [Key("Normal")]
+    public MpVector3d_v1003 Normal;
+
+    [Key("ChildList")]
+    public List<MpFigure_v1003> ChildList;
+
+    [Key("ChildIdList")]
+    public List<uint> ChildIdList;
+
+    [Key("GeoData")]
+    public MpGeometricData_v1003 GeoData;
+
+    [Key("Name")]
+    public string Name;
+
+    [Key("LinePen")]
+    public MpDrawPen_v1003 LinePen;
+
+    [Key("FillBrush")]
+    public MpDrawBrush_v1003 FillBrush;
+
+    [IgnoreMember]
+    public CadFigure TempFigure = null;
+
+    public static MpFigure_v1003 Create(CadFigure fig, bool withChild = false)
+    {
+        MpFigure_v1003 ret = new MpFigure_v1003();
+
+        ret.StoreCommon(fig);
+
+        if (withChild)
+        {
+            ret.StoreChildList(fig);
+        }
+        else
+        {
+            ret.StoreChildIdList(fig);
+        }
+        return ret;
+    }
+
+    public virtual void ForEachFig(Action<MpFigure_v1003> d)
+    {
+        d(this);
+
+        if (ChildList == null)
+        {
+            return;
+        }
+
+        int i;
+        for (i = 0; i < ChildList.Count; i++)
+        {
+            MpFigure_v1003 c = ChildList[i];
+            c.ForEachFig(d);
+        }
+    }
+
+    public virtual void ForEachFigID(Dictionary<uint, MpFigure_v1003> allMap, Action<uint> d)
+    {
+        d(ID);
+
+        if (ChildIdList == null)
+        {
+            return;
+        }
+
+        int i;
+        for (i = 0; i < ChildIdList.Count; i++)
+        {
+            uint id = ChildIdList[i];
+            MpFigure_v1003 childFig = allMap[id];
+            childFig.ForEachFigID(allMap, d);
+        }
+    }
+
+    public void StoreCommon(CadFigure fig)
+    {
+        ID = fig.ID;
+        Type = (byte)fig.Type;
+        Locked = fig.Locked;
+        IsLoop = fig.IsLoop;
+        Normal = MpVector3d_v1003.Create(fig.Normal);
+
+        GeoData = fig.GeometricDataToMp_v1003();
+
+        Name = fig.Name;
+
+        LinePen = MpDrawPen_v1003.Create(fig.LinePen);
+        FillBrush = MpDrawBrush_v1003.Create(fig.FillBrush);
+    }
+
+    public void StoreChildIdList(CadFigure fig)
+    {
+        ChildIdList = MpUtil_v1003.FigureListToIdList(fig.ChildList);
+    }
+
+    public void StoreChildList(CadFigure fig)
+    {
+        ChildList = MpUtil_v1003.FigureListToMp_v1003(fig.ChildList);
+    }
+
+    public void RestoreTo(CadFigure fig)
+    {
+        fig.ID = ID;
+        fig.Locked = Locked;
+        fig.IsLoop = IsLoop;
+        fig.Normal = Normal.Restore();
+
+        if (ChildList != null)
+        {
+            fig.ChildList = MpUtil_v1003.FigureListFromMp_v1003(ChildList);
+
+            for (int i = 0; i < fig.ChildList.Count; i++)
             {
-                ret.AddFigure(dic[FigureIdList[i]]);
-            }
-
-            return ret;
-        }
-    }
-
-    [MessagePackObject]
-    public class MpFigure_v1003
-    {
-        [Key("ID")]
-        public uint ID;
-
-        [Key("Type")]
-        public byte Type;
-
-        [Key("Locked")]
-        public bool Locked;
-
-        [Key("IsLoop")]
-        public bool IsLoop;
-
-        [Key("Normal")]
-        public MpVector3d_v1003 Normal;
-
-        [Key("ChildList")]
-        public List<MpFigure_v1003> ChildList;
-
-        [Key("ChildIdList")]
-        public List<uint> ChildIdList;
-
-        [Key("GeoData")]
-        public MpGeometricData_v1003 GeoData;
-
-        [Key("Name")]
-        public string Name;
-
-
-        [IgnoreMember]
-        public CadFigure TempFigure = null;
-
-        public static MpFigure_v1003 Create(CadFigure fig, bool withChild = false)
-        {
-            MpFigure_v1003 ret = new MpFigure_v1003();
-
-            ret.StoreCommon(fig);
-
-            if (withChild)
-            {
-                ret.StoreChildList(fig);
-            }
-            else
-            {
-                ret.StoreChildIdList(fig);
-            }
-            return ret;
-        }
-
-        public virtual void ForEachFig(Action<MpFigure_v1003> d)
-        {
-            d(this);
-
-            if (ChildList == null)
-            {
-                return;
-            }
-
-            int i;
-            for (i = 0; i < ChildList.Count; i++)
-            {
-                MpFigure_v1003 c = ChildList[i];
-                c.ForEachFig(d);
+                CadFigure c = fig.ChildList[i];
+                c.Parent = fig;
             }
         }
-
-        public virtual void ForEachFigID(Dictionary<uint, MpFigure_v1003> allMap, Action<uint> d)
+        else
         {
-            d(ID);
-
-            if (ChildIdList == null)
-            {
-                return;
-            }
-
-            int i;
-            for (i = 0; i < ChildIdList.Count; i++)
-            {
-                uint id = ChildIdList[i];
-                MpFigure_v1003 childFig = allMap[id];
-                childFig.ForEachFigID(allMap, d);
-            }
+            fig.ChildList.Clear();
         }
 
-        public void StoreCommon(CadFigure fig)
-        {
-            ID = fig.ID;
-            Type = (byte)fig.Type;
-            Locked = fig.Locked;
-            IsLoop = fig.IsLoop;
-            Normal = MpVector3d_v1003.Create(fig.Normal);
+        fig.GeometricDataFromMp_v1003(GeoData);
 
-            GeoData = fig.GeometricDataToMp_v1003();
+        fig.Name = Name;
 
-            Name = fig.Name;
-        }
-
-        public void StoreChildIdList(CadFigure fig)
-        {
-            ChildIdList = MpUtil_v1003.FigureListToIdList(fig.ChildList);
-        }
-
-        public void StoreChildList(CadFigure fig)
-        {
-            ChildList = MpUtil_v1003.FigureListToMp_v1003(fig.ChildList);
-        }
-
-        public void RestoreTo(CadFigure fig)
-        {
-            fig.ID = ID;
-            fig.Locked = Locked;
-            fig.IsLoop = IsLoop;
-            fig.Normal = Normal.Restore();
-
-            if (ChildList != null)
-            {
-                fig.ChildList = MpUtil_v1003.FigureListFromMp_v1003(ChildList);
-
-                for (int i = 0; i < fig.ChildList.Count; i++)
-                {
-                    CadFigure c = fig.ChildList[i];
-                    c.Parent = fig;
-                }
-            }
-            else
-            {
-                fig.ChildList.Clear();
-            }
-
-            fig.GeometricDataFromMp_v1003(GeoData);
-
-            fig.Name = Name;
-        }
-
-        public CadFigure Restore()
-        {
-            CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
-
-            RestoreTo(fig);
-
-            return fig;
-        }
+        fig.LinePen = LinePen.Restore();
+        fig.FillBrush = FillBrush.Restore();
     }
 
-    [MessagePackObject]
-    public struct MpVector3d_v1003
+    public CadFigure Restore()
     {
-        [Key(0)]
-        public double X;
+        CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
 
-        [Key(1)]
-        public double Y;
+        RestoreTo(fig);
 
-        [Key(2)]
-        public double Z;
+        return fig;
+    }
+}
 
-        public static MpVector3d_v1003 Create(Vector3d v)
-        {
-            MpVector3d_v1003 ret = new MpVector3d_v1003();
+[MessagePackObject]
+public struct MpVector3d_v1003
+{
+    [Key(0)]
+    public double X;
 
-            ret.X = v.X;
-            ret.Y = v.Y;
-            ret.Z = v.Z;
+    [Key(1)]
+    public double Y;
 
-            return ret;
-        }
+    [Key(2)]
+    public double Z;
 
-        public Vector3d Restore()
-        {
-            return new Vector3d(X, Y, Z);
-        }
+    public static MpVector3d_v1003 Create(Vector3d v)
+    {
+        MpVector3d_v1003 ret = new MpVector3d_v1003();
+
+        ret.X = v.X;
+        ret.Y = v.Y;
+        ret.Z = v.Z;
+
+        return ret;
     }
 
-    [MessagePackObject]
-    public struct MpVertex_v1003
+    public Vector3d Restore()
     {
-        [Key("flag")]
-        public byte Flag;
+        return new Vector3d(X, Y, Z);
+    }
+}
 
-        [Key("P")]
-        public MpVector3d_v1003 P;
+[MessagePackObject]
+public struct MpColor4_v1003
+{
+    [Key(0)]
+    public float R;
 
-        public static MpVertex_v1003 Create(CadVertex v)
-        {
-            MpVertex_v1003 ret = new MpVertex_v1003();
+    [Key(1)]
+    public float G;
 
-            ret.Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
+    [Key(2)]
+    public float B;
 
-            ret.P.X = v.X;
-            ret.P.Y = v.Y;
-            ret.P.Z = v.Z;
-            return ret;
-        }
+    [Key(3)]
+    public float A;
 
-        public CadVertex Restore()
-        {
-            CadVertex v = CadVertex.Create(P.X, P.Y, P.Z);
-            v.Flag = Flag;
+    public static MpColor4_v1003 Create(Color4 c)
+    {
+        MpColor4_v1003 ret = new MpColor4_v1003();
+        ret.R = c.R;
+        ret.G = c.G;
+        ret.B = c.B;
+        ret.A = c.A;
 
-            return v;
-        }
+        return ret;
     }
 
-    [MessagePack.Union(0, typeof(MpSimpleGeometricData_v1003))]
-    [MessagePack.Union(1, typeof(MpMeshGeometricData_v1003))]
-    [MessagePack.Union(2, typeof(MpNurbsLineGeometricData_v1003))]
-    [MessagePack.Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
-    [MessagePack.Union(4, typeof(MpPictureGeometricData_v1003))]
-    public interface MpGeometricData_v1003
+    public Color4 Restore()
     {
+        return new Color4(R, G, B, A);
+    }
+}
+
+[MessagePackObject]
+public struct MpDrawPen_v1003
+{
+    [Key("color")]
+    public MpColor4_v1003 Color4;
+
+    [Key("W")]
+    public float Width;
+
+    public static MpDrawPen_v1003 Create(DrawPen v)
+    {
+        return new MpDrawPen_v1003
+        {
+            Color4 = MpColor4_v1003.Create(v.Color4),
+            Width = v.Width,
+        };
     }
 
-    #region "GeometricData"
-
-    [MessagePackObject]
-    public class MpSimpleGeometricData_v1003 : MpGeometricData_v1003
+    public DrawPen Restore()
     {
-        [Key("PointList")]
-        public List<MpVertex_v1003> PointList;
+        return new DrawPen
+        {
+            Color4 = Color4.Restore(),
+            Width = Width,
+        };
+    }
+}
+
+[MessagePackObject]
+public struct MpDrawBrush_v1003
+{
+    [Key("color")]
+    public MpColor4_v1003 Color4;
+
+    public static MpDrawBrush_v1003 Create(DrawBrush v)
+    {
+        return new MpDrawBrush_v1003
+        {
+            Color4 = MpColor4_v1003.Create(v.Color4),
+        };
     }
 
-    [MessagePackObject]
-    public class MpPictureGeometricData_v1003 : MpGeometricData_v1003
+    public DrawBrush Restore()
     {
-        [Key("FilePathName")]
-        public string FilePathName;
+        return new DrawBrush
+        {
+            Color4 = Color4.Restore(),
+        };
+    }
+}
 
-        [Key("PointList")]
-        public List<MpVertex_v1003> PointList;
+[MessagePackObject]
+public struct MpVertexAttr_v1003
+{
+    [Key("flags")]
+    public byte Flags;
+
+    [Key("C1")]
+    public MpColor4_v1003 Color1;
+
+    [Key("C2")]
+    public MpColor4_v1003 Color2;
+
+    [Key("N")]
+    public MpVector3d_v1003 Normal;
+
+    public static MpVertexAttr_v1003 Create(CadVertexAttr attr)
+    {
+        MpVertexAttr_v1003 ret = new MpVertexAttr_v1003();
+
+        ret.Color1 = MpColor4_v1003.Create(attr.Color1);
+        ret.Color2 = MpColor4_v1003.Create(attr.Color2);
+        ret.Normal =MpVector3d_v1003.Create(attr.Normal);
+        ret.Flags = attr.Flags;
+        return ret;
     }
 
-    // CadFigureMesh    
-    [MessagePackObject]
-    public class MpMeshGeometricData_v1003 : MpGeometricData_v1003
+    public CadVertexAttr Restore()
     {
-        [Key("HeModel")]
-        public MpHeModel_v1003 HeModel;
+        CadVertexAttr attr = new CadVertexAttr();
+
+        attr.Color1 = Color1.Restore();
+        attr.Color2 = Color2.Restore();
+        attr.Normal = Normal.Restore();
+        attr.Flags = Flags;
+        return attr;
+    }
+}
+
+[MessagePackObject]
+public struct MpVertex_v1003
+{
+    [Key("flag")]
+    public byte Flag;
+
+    [Key("P")]
+    public MpVector3d_v1003 P;
+
+    [Key("Attr")]
+    public MpVertexAttr_v1003 Attr;
+
+    public static MpVertex_v1003 Create(CadVertex v)
+    {
+        MpVertex_v1003 ret = new MpVertex_v1003();
+
+        ret.Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
+
+        ret.P.X = v.X;
+        ret.P.Y = v.Y;
+        ret.P.Z = v.Z;
+
+        ret.Attr = MpVertexAttr_v1003.Create(v.Attr);
+
+        return ret;
     }
 
-    // CadFigureNurbsLine
-    [MessagePackObject]
-    public class MpNurbsLineGeometricData_v1003 : MpGeometricData_v1003
+    public CadVertex Restore()
     {
-        [Key("Nurbs")]
-        public MpNurbsLine_v1003 Nurbs;
+        CadVertex v = CadVertex.Create(P.X, P.Y, P.Z);
+        v.Flag = Flag;
+        v.Attr = Attr.Restore();
+
+        return v;
+    }
+}
+
+[MessagePack.Union(0, typeof(MpSimpleGeometricData_v1003))]
+[MessagePack.Union(1, typeof(MpMeshGeometricData_v1003))]
+[MessagePack.Union(2, typeof(MpNurbsLineGeometricData_v1003))]
+[MessagePack.Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
+[MessagePack.Union(4, typeof(MpPictureGeometricData_v1003))]
+public interface MpGeometricData_v1003
+{
+}
+
+#region "GeometricData"
+
+[MessagePackObject]
+public class MpSimpleGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("PointList")]
+    public List<MpVertex_v1003> PointList;
+}
+
+[MessagePackObject]
+public class MpPictureGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("FilePathName")]
+    public string FilePathName;
+
+    [Key("PointList")]
+    public List<MpVertex_v1003> PointList;
+}
+
+// CadFigureMesh    
+[MessagePackObject]
+public class MpMeshGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("HeModel")]
+    public MpHeModel_v1003 HeModel;
+}
+
+// CadFigureNurbsLine
+[MessagePackObject]
+public class MpNurbsLineGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("Nurbs")]
+    public MpNurbsLine_v1003 Nurbs;
+}
+
+// CadFigureNurbsSurface
+[MessagePackObject]
+public class MpNurbsSurfaceGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("Nurbs")]
+    public MpNurbsSurface_v1003 Nurbs;
+}
+#endregion
+
+
+[MessagePackObject]
+public class MpHeModel_v1003
+{
+    [Key("VertexStore")]
+    public List<MpVertex_v1003> VertexStore;
+
+    [Key("NormalStore")]
+    public List<MpVector3d_v1003> NormalStore;
+
+    [Key("FaceStore")]
+    public List<MpHeFace_v1003> FaceStore;
+
+    [Key("HalfEdgeList")]
+    public List<MpHalfEdge_v1003> HalfEdgeList;
+
+    [Key("HeIdCnt")]
+    public uint HeIdCount;
+
+    [Key("FaceIdCnt")]
+    public uint FaceIdCount;
+
+
+    public static MpHeModel_v1003 Create(HeModel model)
+    {
+        MpHeModel_v1003 ret = new MpHeModel_v1003();
+
+        ret.VertexStore = MpUtil_v1003.VertexListToMp(model.VertexStore);
+
+        ret.NormalStore = MpUtil_v1003.Vector3dListToMp(model.NormalStore);
+
+        ret.FaceStore = MpUtil_v1003.HeFaceListToMp(model.FaceStore);
+
+        ret.HeIdCount = model.HeIdProvider.Counter;
+
+        ret.FaceIdCount = model.FaceIdProvider.Counter;
+
+        List<HalfEdge> heList = model.GetHalfEdgeList();
+
+        ret.HalfEdgeList = MpUtil_v1003.HalfEdgeListToMp(heList);
+
+        return ret;
     }
 
-    // CadFigureNurbsSurface
-    [MessagePackObject]
-    public class MpNurbsSurfaceGeometricData_v1003 : MpGeometricData_v1003
+    public HeModel Restore()
     {
-        [Key("Nurbs")]
-        public MpNurbsSurface_v1003 Nurbs;
+        HeModel ret = new HeModel();
+
+        ret.VertexStore = MpUtil_v1003.VertexListFromMp(VertexStore);
+
+        ret.NormalStore = MpUtil_v1003.Vector3dListFromMp(NormalStore);
+
+        // Create dictionary
+        Dictionary<uint, HalfEdge> dic = new Dictionary<uint, HalfEdge>();
+
+        dic[0] = null;
+
+        for (int i = 0; i < HalfEdgeList.Count; i++)
+        {
+            HalfEdge he = HalfEdgeList[i].Restore();
+            dic.Add(he.ID, he);
+
+            HalfEdgeList[i].TempHalfEdge = he;
+        }
+
+        // Create links
+        for (int i = 0; i < HalfEdgeList.Count; i++)
+        {
+            HalfEdge he = HalfEdgeList[i].TempHalfEdge;
+            he.Pair = dic[HalfEdgeList[i].PairID];
+            he.Next = dic[HalfEdgeList[i].NextID];
+            he.Prev = dic[HalfEdgeList[i].PrevID];
+        }
+
+        ret.FaceStore = MpUtil_v1003.HeFaceListFromMp(FaceStore, dic);
+
+        ret.HeIdProvider.Counter = HeIdCount;
+
+        ret.FaceIdProvider.Counter = FaceIdCount;
+
+        return ret;
     }
-    #endregion
+}
 
+[MessagePackObject]
+public class MpHeFace_v1003
+{
+    [Key("ID")]
+    public uint ID;
 
-    [MessagePackObject]
-    public class MpHeModel_v1003
+    [Key("HeadID")]
+    public uint HeadID;
+
+    [Key("Normal")]
+    public int Normal = HeModel.INVALID_INDEX;
+
+    public static MpHeFace_v1003 Create(HeFace face)
     {
-        [Key("VertexStore")]
-        public List<MpVertex_v1003> VertexStore;
+        MpHeFace_v1003 ret = new MpHeFace_v1003();
+        ret.ID = face.ID;
+        ret.HeadID = face.Head.ID;
+        ret.Normal = face.Normal;
 
-        [Key("NormalStore")]
-        public List<MpVector3d_v1003> NormalStore;
-
-        [Key("FaceStore")]
-        public List<MpHeFace_v1003> FaceStore;
-
-        [Key("HalfEdgeList")]
-        public List<MpHalfEdge_v1003> HalfEdgeList;
-
-        [Key("HeIdCnt")]
-        public uint HeIdCount;
-
-        [Key("FaceIdCnt")]
-        public uint FaceIdCount;
-
-
-        public static MpHeModel_v1003 Create(HeModel model)
-        {
-            MpHeModel_v1003 ret = new MpHeModel_v1003();
-
-            ret.VertexStore = MpUtil_v1003.VertexListToMp(model.VertexStore);
-
-            ret.NormalStore = MpUtil_v1003.Vector3dListToMp(model.NormalStore);
-
-            ret.FaceStore = MpUtil_v1003.HeFaceListToMp(model.FaceStore);
-
-            ret.HeIdCount = model.HeIdProvider.Counter;
-
-            ret.FaceIdCount = model.FaceIdProvider.Counter;
-
-            List<HalfEdge> heList = model.GetHalfEdgeList();
-
-            ret.HalfEdgeList = MpUtil_v1003.HalfEdgeListToMp(heList);
-
-            return ret;
-        }
-
-        public HeModel Restore()
-        {
-            HeModel ret = new HeModel();
-
-            ret.VertexStore = MpUtil_v1003.VertexListFromMp(VertexStore);
-
-            ret.NormalStore = MpUtil_v1003.Vector3dListFromMp(NormalStore);
-
-            // Create dictionary
-            Dictionary<uint, HalfEdge> dic = new Dictionary<uint, HalfEdge>();
-
-            dic[0] = null;
-
-            for (int i = 0; i < HalfEdgeList.Count; i++)
-            {
-                HalfEdge he = HalfEdgeList[i].Restore();
-                dic.Add(he.ID, he);
-
-                HalfEdgeList[i].TempHalfEdge = he;
-            }
-
-            // Create links
-            for (int i = 0; i < HalfEdgeList.Count; i++)
-            {
-                HalfEdge he = HalfEdgeList[i].TempHalfEdge;
-                he.Pair = dic[HalfEdgeList[i].PairID];
-                he.Next = dic[HalfEdgeList[i].NextID];
-                he.Prev = dic[HalfEdgeList[i].PrevID];
-            }
-
-            ret.FaceStore = MpUtil_v1003.HeFaceListFromMp(FaceStore, dic);
-
-            ret.HeIdProvider.Counter = HeIdCount;
-
-            ret.FaceIdProvider.Counter = FaceIdCount;
-
-            return ret;
-        }
+        return ret;
     }
 
-    [MessagePackObject]
-    public class MpHeFace_v1003
+    public HeFace Restore(Dictionary<uint, HalfEdge> dic)
     {
-        [Key("ID")]
-        public uint ID;
+        HalfEdge he = dic[HeadID];
 
-        [Key("HeadID")]
-        public uint HeadID;
+        HeFace ret = new HeFace(he);
 
-        [Key("Normal")]
-        public int Normal = HeModel.INVALID_INDEX;
+        ret.ID = ID;
 
-        public static MpHeFace_v1003 Create(HeFace face)
-        {
-            MpHeFace_v1003 ret = new MpHeFace_v1003();
-            ret.ID = face.ID;
-            ret.HeadID = face.Head.ID;
-            ret.Normal = face.Normal;
+        ret.Normal = Normal;
 
-            return ret;
-        }
+        return ret;
+    }
+}
 
-        public HeFace Restore(Dictionary<uint, HalfEdge> dic)
-        {
-            HalfEdge he = dic[HeadID];
+[MessagePackObject]
+public class MpHalfEdge_v1003
+{
+    [Key("ID")]
+    public uint ID;
 
-            HeFace ret = new HeFace(he);
+    [Key("Vertex")]
+    public int Vertex;
 
-            ret.ID = ID;
+    [Key("Face")]
+    public int Face;
 
-            ret.Normal = Normal;
+    [Key("Normal")]
+    public int Normal;
 
-            return ret;
-        }
+    // Links
+    [Key("Pair")]
+    public uint PairID;
+
+    [Key("Next")]
+    public uint NextID;
+
+    [Key("Prev")]
+    public uint PrevID;
+
+    [IgnoreMember]
+    public HalfEdge TempHalfEdge = null;
+
+
+    public static MpHalfEdge_v1003 Create(HalfEdge he)
+    {
+        MpHalfEdge_v1003 ret = new MpHalfEdge_v1003();
+
+        ret.ID = he.ID;
+        ret.PairID = he.Pair != null ? he.Pair.ID : 0;
+        ret.NextID = he.Next != null ? he.Next.ID : 0;
+        ret.PrevID = he.Prev != null ? he.Prev.ID : 0;
+
+        ret.Vertex = he.Vertex;
+        ret.Face = he.Face;
+        ret.Normal = he.Normal;
+
+        return ret;
     }
 
-    [MessagePackObject]
-    public class MpHalfEdge_v1003
+    // リンク情報はRestoreされない
+    public HalfEdge Restore()
     {
-        [Key("ID")]
-        public uint ID;
+        HalfEdge he = new HalfEdge();
 
-        [Key("Vertex")]
-        public int Vertex;
+        he.ID = ID;
+        he.Vertex = Vertex;
+        he.Normal = Normal;
+        he.Face = Face;
 
-        [Key("Face")]
-        public int Face;
+        return he;
+    }
+}
 
-        [Key("Normal")]
-        public int Normal;
+[MessagePackObject]
+public class MpNurbsLine_v1003
+{
+    [Key("CtrlCnt")]
+    public int CtrlCnt;
 
-        // Links
-        [Key("Pair")]
-        public uint PairID;
+    [Key("CtrlDataCnt")]
+    public int CtrlDataCnt;
 
-        [Key("Next")]
-        public uint NextID;
+    [Key("Weights")]
+    public double[] Weights;
 
-        [Key("Prev")]
-        public uint PrevID;
+    [Key("CtrlPoints")]
+    public List<MpVertex_v1003> CtrlPoints;
 
-        [IgnoreMember]
-        public HalfEdge TempHalfEdge = null;
+    [Key("CtrlOrder")]
+    public int[] CtrlOrder;
 
+    [Key("BSplineParam")]
+    public MpBSplineParam_v1003 BSplineP;
 
-        public static MpHalfEdge_v1003 Create(HalfEdge he)
-        {
-            MpHalfEdge_v1003 ret = new MpHalfEdge_v1003();
+    public static MpNurbsLine_v1003 Create(NurbsLine src)
+    {
+        MpNurbsLine_v1003 ret = new MpNurbsLine_v1003();
 
-            ret.ID = he.ID;
-            ret.PairID = he.Pair != null ? he.Pair.ID : 0;
-            ret.NextID = he.Next != null ? he.Next.ID : 0;
-            ret.PrevID = he.Prev != null ? he.Prev.ID : 0;
+        ret.CtrlCnt = src.CtrlCnt;
+        ret.CtrlDataCnt = src.CtrlDataCnt;
+        ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
+        ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
+        ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
 
-            ret.Vertex = he.Vertex;
-            ret.Face = he.Face;
-            ret.Normal = he.Normal;
+        ret.BSplineP = MpBSplineParam_v1003.Create(src.BSplineP);
 
-            return ret;
-        }
-
-        // リンク情報はRestoreされない
-        public HalfEdge Restore()
-        {
-            HalfEdge he = new HalfEdge();
-
-            he.ID = ID;
-            he.Vertex = Vertex;
-            he.Normal = Normal;
-            he.Face = Face;
-
-            return he;
-        }
+        return ret;
     }
 
-    [MessagePackObject]
-    public class MpNurbsLine_v1003
+    public NurbsLine Restore()
     {
-        [Key("CtrlCnt")]
-        public int CtrlCnt;
+        NurbsLine nurbs = new NurbsLine();
 
-        [Key("CtrlDataCnt")]
-        public int CtrlDataCnt;
+        nurbs.CtrlCnt = CtrlCnt;
+        nurbs.CtrlDataCnt = CtrlDataCnt;
+        nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
+        nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
+        nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
 
-        [Key("Weights")]
-        public double[] Weights;
+        nurbs.BSplineP = BSplineP.Restore();
 
-        [Key("CtrlPoints")]
-        public List<MpVertex_v1003> CtrlPoints;
+        return nurbs;
+    }
+}
 
-        [Key("CtrlOrder")]
-        public int[] CtrlOrder;
+[MessagePackObject]
+public class MpNurbsSurface_v1003
+{
+    [Key("UCtrlCnt")]
+    public int UCtrlCnt;
 
-        [Key("BSplineParam")]
-        public MpBSplineParam_v1003 BSplineP;
+    [Key("VCtrlCnt")]
+    public int VCtrlCnt;
 
-        public static MpNurbsLine_v1003 Create(NurbsLine src)
-        {
-            MpNurbsLine_v1003 ret = new MpNurbsLine_v1003();
+    [Key("UCtrlDataCnt")]
+    public int UCtrlDataCnt;
 
-            ret.CtrlCnt = src.CtrlCnt;
-            ret.CtrlDataCnt = src.CtrlDataCnt;
-            ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
-            ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
-            ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
+    [Key("VCtrlDataCnt")]
+    public int VCtrlDataCnt;
 
-            ret.BSplineP = MpBSplineParam_v1003.Create(src.BSplineP);
+    [Key("Weights")]
+    public double[] Weights;
 
-            return ret;
-        }
+    [Key("CtrlPoints")]
+    public List<MpVertex_v1003> CtrlPoints;
 
-        public NurbsLine Restore()
-        {
-            NurbsLine nurbs = new NurbsLine();
+    [Key("CtrlOrder")]
+    public int[] CtrlOrder;
 
-            nurbs.CtrlCnt = CtrlCnt;
-            nurbs.CtrlDataCnt = CtrlDataCnt;
-            nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
-            nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
-            nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
+    [Key("UBSpline")]
+    public MpBSplineParam_v1003 UBSpline;
 
-            nurbs.BSplineP = BSplineP.Restore();
+    [Key("VBSpline")]
+    public MpBSplineParam_v1003 VBSpline;
 
-            return nurbs;
-        }
+    public static MpNurbsSurface_v1003 Create(NurbsSurface src)
+    {
+        MpNurbsSurface_v1003 ret = new MpNurbsSurface_v1003();
+
+        ret.UCtrlCnt = src.UCtrlCnt;
+        ret.VCtrlCnt = src.VCtrlCnt;
+
+        ret.UCtrlDataCnt = src.UCtrlDataCnt;
+        ret.VCtrlDataCnt = src.VCtrlDataCnt;
+
+        ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
+
+        ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
+        ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
+
+        ret.UBSpline = MpBSplineParam_v1003.Create(src.UBSpline);
+        ret.VBSpline = MpBSplineParam_v1003.Create(src.VBSpline);
+
+        return ret;
     }
 
-    [MessagePackObject]
-    public class MpNurbsSurface_v1003
+    public NurbsSurface Restore()
     {
-        [Key("UCtrlCnt")]
-        public int UCtrlCnt;
+        NurbsSurface nurbs = new NurbsSurface();
 
-        [Key("VCtrlCnt")]
-        public int VCtrlCnt;
+        nurbs.UCtrlCnt = UCtrlCnt;
+        nurbs.VCtrlCnt = VCtrlCnt;
 
-        [Key("UCtrlDataCnt")]
-        public int UCtrlDataCnt;
+        nurbs.UCtrlDataCnt = UCtrlDataCnt;
+        nurbs.VCtrlDataCnt = VCtrlDataCnt;
 
-        [Key("VCtrlDataCnt")]
-        public int VCtrlDataCnt;
+        nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
 
-        [Key("Weights")]
-        public double[] Weights;
+        nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
+        nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
 
-        [Key("CtrlPoints")]
-        public List<MpVertex_v1003> CtrlPoints;
+        nurbs.UBSpline = UBSpline.Restore();
+        nurbs.VBSpline = VBSpline.Restore();
 
-        [Key("CtrlOrder")]
-        public int[] CtrlOrder;
+        return nurbs;
+    }
+}
 
-        [Key("UBSpline")]
-        public MpBSplineParam_v1003 UBSpline;
 
-        [Key("VBSpline")]
-        public MpBSplineParam_v1003 VBSpline;
+[MessagePackObject]
+public class MpBSplineParam_v1003
+{
+    [Key("Degree")]
+    public int Degree = 3;
 
-        public static MpNurbsSurface_v1003 Create(NurbsSurface src)
-        {
-            MpNurbsSurface_v1003 ret = new MpNurbsSurface_v1003();
+    [Key("DivCnt")]
+    public int DivCnt = 0;
 
-            ret.UCtrlCnt = src.UCtrlCnt;
-            ret.VCtrlCnt = src.VCtrlCnt;
+    [Key("OutputCnt")]
+    public int OutputCnt = 0;
 
-            ret.UCtrlDataCnt = src.UCtrlDataCnt;
-            ret.VCtrlDataCnt = src.VCtrlDataCnt;
+    [Key("KnotCnt")]
+    public int KnotCnt;
 
-            ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
+    [Key("Knots")]
+    public double[] Knots;
 
-            ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
-            ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
+    [Key("CtrlCnt")]
+    public int CtrlCnt;
 
-            ret.UBSpline = MpBSplineParam_v1003.Create(src.UBSpline);
-            ret.VBSpline = MpBSplineParam_v1003.Create(src.VBSpline);
+    [Key("LowKnot")]
+    public double LowKnot = 0;
 
-            return ret;
-        }
+    [Key("HightKnot")]
+    public double HighKnot = 0;
 
-        public NurbsSurface Restore()
-        {
-            NurbsSurface nurbs = new NurbsSurface();
+    [Key("Step")]
+    public double Step = 0;
 
-            nurbs.UCtrlCnt = UCtrlCnt;
-            nurbs.VCtrlCnt = VCtrlCnt;
+    public static MpBSplineParam_v1003 Create(BSplineParam src)
+    {
+        MpBSplineParam_v1003 ret = new MpBSplineParam_v1003();
 
-            nurbs.UCtrlDataCnt = UCtrlDataCnt;
-            nurbs.VCtrlDataCnt = VCtrlDataCnt;
+        ret.Degree = src.Degree;
+        ret.DivCnt = src.DivCnt;
+        ret.OutputCnt = src.OutputCnt;
+        ret.KnotCnt = src.KnotCnt;
+        ret.Knots = MpUtil_v1003.ArrayClone<double>(src.Knots);
+        ret.LowKnot = src.LowKnot;
+        ret.HighKnot = src.HighKnot;
+        ret.Step = src.Step;
 
-            nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
-
-            nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
-            nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
-
-            nurbs.UBSpline = UBSpline.Restore();
-            nurbs.VBSpline = VBSpline.Restore();
-
-            return nurbs;
-        }
+        return ret;
     }
 
-
-    [MessagePackObject]
-    public class MpBSplineParam_v1003
+    public BSplineParam Restore()
     {
-        [Key("Degree")]
-        public int Degree = 3;
+        BSplineParam bs = new BSplineParam();
 
-        [Key("DivCnt")]
-        public int DivCnt = 0;
+        bs.Degree = Degree;
+        bs.DivCnt = DivCnt;
+        bs.OutputCnt = OutputCnt;
+        bs.KnotCnt = KnotCnt;
+        bs.Knots = MpUtil_v1003.ArrayClone<double>(Knots);
+        bs.LowKnot = LowKnot;
+        bs.HighKnot = HighKnot;
+        bs.Step = Step;
 
-        [Key("OutputCnt")]
-        public int OutputCnt = 0;
-
-        [Key("KnotCnt")]
-        public int KnotCnt;
-
-        [Key("Knots")]
-        public double[] Knots;
-
-        [Key("CtrlCnt")]
-        public int CtrlCnt;
-
-        [Key("LowKnot")]
-        public double LowKnot = 0;
-
-        [Key("HightKnot")]
-        public double HighKnot = 0;
-
-        [Key("Step")]
-        public double Step = 0;
-
-        public static MpBSplineParam_v1003 Create(BSplineParam src)
-        {
-            MpBSplineParam_v1003 ret = new MpBSplineParam_v1003();
-
-            ret.Degree = src.Degree;
-            ret.DivCnt = src.DivCnt;
-            ret.OutputCnt = src.OutputCnt;
-            ret.KnotCnt = src.KnotCnt;
-            ret.Knots = MpUtil_v1003.ArrayClone<double>(src.Knots);
-            ret.LowKnot = src.LowKnot;
-            ret.HighKnot = src.HighKnot;
-            ret.Step = src.Step;
-
-            return ret;
-        }
-
-        public BSplineParam Restore()
-        {
-            BSplineParam bs = new BSplineParam();
-
-            bs.Degree = Degree;
-            bs.DivCnt = DivCnt;
-            bs.OutputCnt = OutputCnt;
-            bs.KnotCnt = KnotCnt;
-            bs.Knots = MpUtil_v1003.ArrayClone<double>(Knots);
-            bs.LowKnot = LowKnot;
-            bs.HighKnot = HighKnot;
-            bs.Step = Step;
-
-            return bs;
-        }
+        return bs;
     }
 }

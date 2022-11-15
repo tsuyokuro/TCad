@@ -17,272 +17,340 @@ using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
 using TCad.ViewModel;
+using static Community.CsharpSqlite.Sqlite3;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public partial class ScriptEnvironment
 {
-    public partial class ScriptEnvironment
+    public PlotterController Controller;
+
+    private ScriptEngine Engine;
+
+    private ScriptScope mScope;
+    public ScriptScope Scope
     {
-        public PlotterController Controller;
+        get => mScope;
+    }
 
-        private ScriptEngine Engine;
+    private ScriptSource Source;
 
-        private ScriptScope mScope;
-        public ScriptScope Scope
+    private readonly List<string> mAutoCompleteList = new();
+    public List<string> AutoCompleteList
+    {
+        get => mAutoCompleteList;
+    }
+
+    private readonly ScriptFunctions mScriptFunctions;
+
+    private readonly DirectCommands mSimpleCommands;
+
+    private readonly TestCommands mTestCommands;
+
+    public ScriptEnvironment(PlotterController controller)
+    {
+        DOut.plx("in");
+
+        Controller = controller;
+
+        mScriptFunctions = new ScriptFunctions();
+
+        mSimpleCommands = new DirectCommands(controller);
+
+        mTestCommands = new TestCommands(controller);
+
+        InitScriptingEngine();
+
+        mScriptFunctions.Init(this, mScope);
+
+        DOut.plx("out");
+    }
+
+    private static readonly Regex AutoCompPtn = new(@"#\[AC\][ \t]*(.+)\n");
+
+    private static string GetBaseSacript()
+    {
+        string script = "";
+
+        string path = AppDomain.CurrentDomain.BaseDirectory;
+        string filePath = path + @"Resources\BaseScript.py";
+        if (File.Exists(filePath))
         {
-            get => mScope;
+            script = File.ReadAllText(filePath);
+        }
+        else
+        {
+            MessageBox.Show(
+                "BaseScript.py is not found",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
 
-        private ScriptSource Source;
+        //script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
 
-        private List<string> mAutoCompleteList = new List<string>();
-        public List<string> AutoCompleteList
+        return script;
+    }
+
+    private void InitScriptingEngine()
+    {
+        string script = GetBaseSacript();
+
+        //string script = "";
+
+        Engine = Python.CreateEngine();
+        
+        mScope = Engine.CreateScope();
+        Source = Engine.CreateScriptSourceFromString(script);
+
+        mScope.SetVariable("SE", mScriptFunctions);
+        Source.Execute(mScope);
+
+        MatchCollection matches = AutoCompPtn.Matches(script);
+
+        foreach (object o in matches)
         {
-            get => mAutoCompleteList;
+            if (o is not Match m) continue;
+
+            string s = m.Groups[1].Value.TrimEnd('\r', '\n');
+            mAutoCompleteList.Add(s);
         }
 
-        private ScriptFunctions mScriptFunctions;
+        mAutoCompleteList.AddRange(mSimpleCommands.GetAutoCompleteForSimpleCmd());
+    }
 
-        private SipmleCommands mSimpleCommands;
+    public void OpenPopupMessage(string text, UITypes.MessageType type)
+    {
+        Controller.ViewIF.OpenPopupMessage(text, type);
+    }
 
-        private TestCommands mTestCommands;
+    public void ClosePopupMessage()
+    {
+        Controller.ViewIF.ClosePopupMessage();
+    }
 
-        public ScriptEnvironment(PlotterController controller)
+    public async void ExecuteCommandAsync(string s)
+    {
+        s = s.Trim();
+        ItConsole.println(s);
+
+        // Command is internal command 
+        if (s.StartsWith("@"))
         {
-            Controller = controller;
-
-            mScriptFunctions = new ScriptFunctions();
-
-            mSimpleCommands = new SipmleCommands(controller);
-
-            mTestCommands = new TestCommands(controller);
-
-            InitScriptingEngine();
-
-            mScriptFunctions.Init(this, mScope);
-        }
-
-        Regex AutoCompPtn = new Regex(@"#\[AC\][ \t]*(.+)\n");
-
-        private string getBaseSacript()
-        {
-            string script = "";
-
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = path + @"Resources\BaseScript.py";
-            if (File.Exists(filePath))
+            await Task.Run(() =>
             {
-                script = File.ReadAllText(filePath);
-            }
-            else
-            {
-                MessageBox.Show(
-                    "BaseScript.py is not found",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+                if (!mSimpleCommands.ExecCommand(s))
+                {
+                    mTestCommands.ExecCommand(s);
+                }
+            });
 
-            //script = Encoding.GetEncoding("Shift_JIS").GetString(Resources.BaseScript);
-
-            return script;
+            return;
         }
 
-        private void InitScriptingEngine()
+        // Command is python
+
+        await Task.Run( () =>
         {
-            string script = getBaseSacript();
+            RunScript(s, false);
+        });
 
-            //string script = "";
+        Controller.Clear();
+        Controller.DrawAll();
+        Controller.PushToView();
+    }
 
-            Engine = Python.CreateEngine();
+    private Thread mScriptThread = null;
+    private TraceBack mTraceBack = null;
+
+    public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
+    {
+        if (mScriptThread != null)
+        {
+            callback.OnStart();
+            callback.OnEnd();
+            return;
+        }
+
+        mScriptFunctions.StartSession(snapshotDB);
+
+        if (callback != null)
+        {
+            callback.OnStart();
+        }
+
+        PrepareRunScript();
+
+        //mTraceBack = new TraceBack(this, callback);
+
+        await Task.Run(() =>
+        {
+            mScriptThread = new Thread(() =>
+            {
+                if (mTraceBack != null)
+                {
+                    Engine.SetTrace(mTraceBack.OnTraceback);
+                }
+
+                InternalRunScript(s);
+            });
+
+            mScriptThread.Start();
+            mScriptThread.Join();
+
+            mScriptThread = null;
+            mTraceBack = null;
+        });
+
+        Controller.Clear();
+        Controller.DrawAll();
+        Controller.PushToView();
+        Controller.UpdateObjectTree(true);
+
+        if (callback != null)
+        {
+            callback.OnEnd();
+        }
+
+        mScriptFunctions.EndSession();
+    }
+
+    public dynamic RunScript(string s, bool snapshotDB)
+    {
+        mScriptFunctions.StartSession(snapshotDB);
+
+        dynamic ret = InternalRunScript(s);
+
+        mScriptFunctions.EndSession();
+
+        return ret;
+    }
+
+    private dynamic InternalRunScript(string s)
+    {
+        dynamic ret = null;
+
+        try
+        {
+            Stopwatch sw = new();
+            sw.Start();
             
-            mScope = Engine.CreateScope();
-            Source = Engine.CreateScriptSourceFromString(script);
+            ret = Engine.Execute(s, mScope);
 
-            mScope.SetVariable("SE", mScriptFunctions);
-            Source.Execute(mScope);
+            sw.Stop();
+            ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
 
-            MatchCollection matches = AutoCompPtn.Matches(script);
-
-            foreach (Match m in matches)
+            if (ret != null)
             {
-                string s = m.Groups[1].Value.TrimEnd('\r', '\n');
-                mAutoCompleteList.Add(s);
+                if (ret is double or Int32 or float)
+                {
+                    ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                }
+                else if (ret is string)
+                {
+                    ItConsole.println(AnsiEsc.BGreen + ret);
+                }
+                else if (ret is bool)
+                {
+                    ItConsole.println(AnsiEsc.BGreen + ret.ToString());
+                }
+                else if (ret is Vector3d)
+                {
+                    Vector3d v = ret;
+                    ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
+                }
+                else
+                {
+                    ItConsole.println("Object: " + AnsiEsc.BGreen + ret.ToString());
+                }
             }
-
-            mAutoCompleteList.AddRange(mSimpleCommands.GetAutoCompleteForSimpleCmd());
+        }
+        catch (KeyboardInterruptException)
+        {
+            ItConsole.println(AnsiEsc.BRed + "Canceled");
+        }
+        catch (ThreadInterruptedException)
+        {
+            // NOP
+        }
+        catch (Exception e)
+        {
+            ItConsole.println(AnsiEsc.BRed + "Error: " + e?.Message);
         }
 
-        bool StopScript = false;
+        return ret;
+    }
 
-        /*
-        private TracebackDelegate OnTraceback
-            (TraceBackFrame frame, string result, object payload)
+    public void PrepareRunScript()
+    {
+        Engine.Execute("reset_cancel()", mScope);
+    }
+
+    public void CancelScript()
+    {
+        if (mTraceBack != null)
+        {
+            mTraceBack.StopScript = true;
+        }
+        else
+        {
+            if (mScriptThread != null)
+            {
+                try
+                {
+                    mScriptThread.Interrupt();
+                    mScriptThread = null;
+                }
+                catch
+                {
+                }
+            }
+
+            Engine.Execute("raise_cancel()", mScope);
+        }
+    }
+
+    public class RunCallback
+    {
+        public Action OnStart = () => { };
+        public Action OnEnding = () => { };
+        public Action OnEnd = () => { };
+        public Func<TraceBackFrame, string, object, bool> onTrace = 
+            (frame, result, payload) => { return true; };
+    }
+
+    public class TraceBack
+    {
+        private readonly ScriptEnvironment Env;
+
+        public bool StopScript = false;
+
+        public RunCallback CallBack;
+
+        public TracebackDelegate OnTraceback(TraceBackFrame frame, string result, object payload)
         {
             if (StopScript)
             {
-                throw new KeyboardInterruptException("");
+                //throw new KeyboardInterruptException("");
+                Env.Engine.Execute("sys.exit()", Env.mScope);
+            }
+
+            if (CallBack != null && CallBack.onTrace != null)
+            {
+                if (!CallBack.onTrace(frame, result, payload))
+                {
+                    //throw new KeyboardInterruptException("");
+                    Env.Engine.Execute("sys.exit()", Env.mScope);
+                }
             }
 
             return OnTraceback;
         }
-        */
 
-        public async void ExecuteCommandAsync(string s)
+        public TraceBack(ScriptEnvironment env, RunCallback callback)
         {
-            s = s.Trim();
-            ItConsole.println(s);
-
-            if (s.StartsWith("@"))
-            {
-                await Task.Run(() =>
-                {
-                    if (!mSimpleCommands.ExecCommand(s))
-                    {
-                        mTestCommands.ExecCommand(s);
-                    }
-                });
-
-                return;
-            }
-
-            await Task.Run( () =>
-            {
-                RunScript(s);
-            });
-
-            Controller.Clear();
-            Controller.DrawAll();
-            Controller.PushToView();
-        }
-
-        public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
-        {
-            if (callback != null)
-            {
-                callback.OnStart();
-            }
-
-            StopScript = false;
-
-            await Task.Run(() =>
-            {
-                Engine.SetTrace(OnTraceback);
-                RunScript(s, snapshotDB);
-            });
-
-            Controller.Clear();
-            Controller.DrawAll();
-            Controller.PushToView();
-            Controller.UpdateObjectTree(true);
-
-            if (callback != null)
-            {
-                callback.OnEnd();
-            }
-
-            TracebackDelegate OnTraceback
-                (TraceBackFrame frame, string result, object payload)
-            {
-                if (StopScript)
-                {
-                    throw new KeyboardInterruptException("");
-                }
-
-                if (callback != null && callback.onTrace != null)
-                {
-                    if (!callback.onTrace(frame, result, payload))
-                    {
-                        throw new KeyboardInterruptException("");
-                    }
-                }
-
-                return OnTraceback;
-            }
-        }
-
-        public dynamic RunScript(string s, bool snapshotDB = false)
-        {
-            mScriptFunctions.StartSession(snapshotDB);
-
-            dynamic ret = null;
-
-            try
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                
-                ret = Engine.Execute(s, mScope);
-
-                sw.Stop();
-                ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
-
-                if (ret != null)
-                {
-                    if (ret is double or Int32 or float)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                    else if (ret is string)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret);
-                    }
-                    else if (ret is bool)
-                    {
-                        ItConsole.println(AnsiEsc.BGreen + ret.ToString());
-                    }
-                    else if (ret is Vector3d)
-                    {
-                        Vector3d v = ret;
-                        ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
-                    }
-                    else
-                    {
-                        ItConsole.println("Object: " + AnsiEsc.BGreen + ret.ToString());
-                    }
-                }
-            }
-            catch (KeyboardInterruptException e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Canceled");
-            }
-            catch (Exception e)
-            {
-                mScriptFunctions.EndSession();
-                ItConsole.println(AnsiEsc.BRed + "Error: " + e.Message);
-            }
-
-            mScriptFunctions.EndSession();
-
-            return ret;
-        }
-
-        public void CancelScript()
-        {
-            StopScript = true;
-        }
-
-        public class RunCallback
-        {
-            public Action OnStart = () => { };
-            public Action OnEnd = () => { };
-            public Func<TraceBackFrame, string, object, bool> onTrace = 
-                (frame, result, payload) => { return true; };
-        }
-
-        public void RunOnMainThread(Action action)
-        {
-            ThreadUtil.RunOnMainThread(action, true);
-        }
-
-        public void OpenPopupMessage(string text, UITypes.MessageType type)
-        {
-            Controller.ViewIF.OpenPopupMessage(text, type);
-        }
-
-        public void ClosePopupMessage()
-        {
-            Controller.ViewIF.ClosePopupMessage();
+            Env = env;
+            CallBack = callback;
         }
     }
 }

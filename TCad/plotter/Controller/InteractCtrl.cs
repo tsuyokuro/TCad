@@ -1,90 +1,89 @@
-﻿using CadDataTypes;
+using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 using System.Threading;
 
-namespace Plotter.Controller
+namespace Plotter.Controller;
+
+public class InteractCtrl
 {
-    public class InteractCtrl
+    public enum States
     {
-        public enum States
+        NONE,
+        CANCEL,
+        CONTINUE,
+        END,
+    }
+
+    private SemaphoreSlim Sem = new SemaphoreSlim(0, 1);
+
+    public Vector3dList PointList = new Vector3dList();
+
+    public States mState = States.NONE;
+    public States State
+    {
+        get => mState;
+        set => mState = value;
+    }
+
+    public bool IsActive => (mState == States.CONTINUE);
+
+    public void Cancel()
+    {
+        mState = States.CANCEL;
+        Sem.Release();
+    }
+
+    public void SetPoint(Vector3d v)
+    {
+        lock (PointList)
         {
-            NONE,
-            CANCEL,
-            CONTINUE,
-            END,
+            PointList.Add(v);
         }
 
-        private SemaphoreSlim Sem = new SemaphoreSlim(0, 1);
+        Sem.Release();
+    }
 
-        public Vector3dList PointList = new Vector3dList();
+    public void Start()
+    {
+        mState = States.CONTINUE;
 
-        public States mState = States.NONE;
-        public States State
+        lock (PointList)
         {
-            get => mState;
-            set => mState = value;
+            PointList.Clear();
+        }
+    }
+
+    public void End()
+    {
+        mState = States.END;
+    }
+
+    public States WaitPoint()
+    {
+        Sem.Wait();
+        return mState;
+    }
+
+    public void Draw(DrawContext dc, Vector3d tp)
+    {
+        if (PointList.Count == 0)
+        {
+            return;
         }
 
-        public bool IsActive => (mState == States.CONTINUE);
+        Vector3d p0 = PointList[0];
+        Vector3d p1;
 
-        public void Cancel()
+        for (int i = 1; i < PointList.Count; i++)
         {
-            mState = States.CANCEL;
-            Sem.Release();
+            p1 = PointList[i];
+
+            dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE), p0, p1);
+
+            p0 = p1;
         }
 
-        public void SetPoint(Vector3d v)
-        {
-            lock (PointList)
-            {
-                PointList.Add(v);
-            }
-
-            Sem.Release();
-        }
-
-        public void Start()
-        {
-            mState = States.CONTINUE;
-
-            lock (PointList)
-            {
-                PointList.Clear();
-            }
-        }
-
-        public void End()
-        {
-            mState = States.END;
-        }
-
-        public States WaitPoint()
-        {
-            Sem.Wait();
-            return mState;
-        }
-
-        public void Draw(DrawContext dc, Vector3d tp)
-        {
-            if (PointList.Count == 0)
-            {
-                return;
-            }
-
-            Vector3d p0 = PointList[0];
-            Vector3d p1;
-
-            for (int i = 1; i < PointList.Count; i++)
-            {
-                p1 = PointList[i];
-
-                dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_DEFAULT_FIGURE), p0, p1);
-
-                p0 = p1;
-            }
-
-            dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_TEMP_FIGURE), p0, tp);
-        }
+        dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_TEMP_FIGURE), p0, tp);
     }
 }

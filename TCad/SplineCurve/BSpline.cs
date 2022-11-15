@@ -2,165 +2,164 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace SplineCurve
+namespace SplineCurve;
+
+public class SplineUtil
 {
-    public class SplineUtil
+    /*
+            +  +  +  +
+            |
+         v  +  +  +  +
+     vcnt:3 |
+            +--+--+--+
+                u
+             ucnt:4
+    */
+    public static VertexList CreateFlatControlPoints(int ucnt, int vcnt, Vector3d uunit, Vector3d vunit)
     {
-        /*
-                +  +  +  +
-                |
-             v  +  +  +  +
-         vcnt:3 |
-                +--+--+--+
-                    u
-                 ucnt:4
-        */
-        public static VertexList CreateFlatControlPoints(int ucnt, int vcnt, Vector3d uunit, Vector3d vunit)
+        VertexList vl = new VertexList(ucnt * vcnt);
+
+        Vector3d ud = ((double)(ucnt-1) / 2.0) * uunit;
+        Vector3d vd = ((double)(vcnt-1) / 2.0) * vunit;
+
+        Vector3d p = Vector3d.Zero;
+
+        p -= ud;
+        p -= vd;
+
+        Vector3d lp = p;
+
+        for (int v = 0; v < vcnt; v++)
         {
-            VertexList vl = new VertexList(ucnt * vcnt);
+            p = lp;
 
-            Vector3d ud = ((double)(ucnt-1) / 2.0) * uunit;
-            Vector3d vd = ((double)(vcnt-1) / 2.0) * vunit;
-
-            Vector3d p = Vector3d.Zero;
-
-            p -= ud;
-            p -= vd;
-
-            Vector3d lp = p;
-
-            for (int v = 0; v < vcnt; v++)
+            for (int u = 0; u < ucnt; u++)
             {
-                p = lp;
-
-                for (int u = 0; u < ucnt; u++)
-                {
-                    vl.Add(new CadVertex(p));
-                    p += uunit;
-                }
-
-                lp += vunit;
+                vl.Add(new CadVertex(p));
+                p += uunit;
             }
 
-            return vl;
+            lp += vunit;
         }
 
-        public static VertexList CreateBoxControlPoints(
-            int ucnt, int vcnt,
-            Vector3d uunit, Vector3d vunit, Vector3d tunit
-            )
-        {
-            VertexList vl = new VertexList(ucnt * vcnt);
-
-            Vector3d ud = ((double)(ucnt - 1) / 2.0) * uunit;
-            Vector3d vd = ((double)(vcnt - 1) / 2.0) * vunit;
-
-            Vector3d p = Vector3d.Zero;
-
-            p -= ud;
-            p -= vd;
-
-            Vector3d lp = p;
-
-            for (int v = 0; v < vcnt; v++)
-            {
-                p = lp;
-
-                for (int u = 0; u < ucnt; u++)
-                {
-                    vl.Add(new CadVertex(p));
-                    p += uunit;
-                }
-
-                p -= uunit;
-
-                p += tunit;
-
-                for (int u = 0; u < ucnt; u++)
-                {
-                    vl.Add(new CadVertex(p));
-                    p -= uunit;
-                }
-
-                lp += vunit;
-            }
-
-            return vl;
-        }
+        return vl;
     }
 
-    public class BSpline
+    public static VertexList CreateBoxControlPoints(
+        int ucnt, int vcnt,
+        Vector3d uunit, Vector3d vunit, Vector3d tunit
+        )
     {
-        public static double Epsilon = 0.000001f;   // ‚Æ‚Ä‚à¬‚³‚¢’l
+        VertexList vl = new VertexList(ucnt * vcnt);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="i">Knot”Ô†</param>
-        /// <param name="degree">Ÿ”</param>
-        /// <param name="t">”}‰î•Ï”</param>
-        /// <param name="knots">Knot”z—ñ</param>
-        /// <returns></returns>
-        public static double BasisFunc(int i, int degree, double t, double[] knots)
+        Vector3d ud = ((double)(ucnt - 1) / 2.0) * uunit;
+        Vector3d vd = ((double)(vcnt - 1) / 2.0) * vunit;
+
+        Vector3d p = Vector3d.Zero;
+
+        p -= ud;
+        p -= vd;
+
+        Vector3d lp = p;
+
+        for (int v = 0; v < vcnt; v++)
         {
-            if (degree == 0)
+            p = lp;
+
+            for (int u = 0; u < ucnt; u++)
             {
-                if (t >= knots[i] && t < knots[i + 1])
-                {
-                    return 1f;
-                }
-                else
-                {
-                    return 0f;
-                }
+                vl.Add(new CadVertex(p));
+                p += uunit;
             }
 
-            double w1 = 0d;
-            double w2 = 0d;
-            double d1 = knots[i + degree] - knots[i];
-            double d2 = knots[i + degree + 1] - knots[i + 1];
+            p -= uunit;
 
-            if (d1 != 0d)
+            p += tunit;
+
+            for (int u = 0; u < ucnt; u++)
             {
-                w1 = (t - knots[i]) / d1;
+                vl.Add(new CadVertex(p));
+                p -= uunit;
             }
 
-            if (d2 != 0d)
-            {
-                w2 = (knots[i + degree + 1] - t) / d2;
-            }
-
-            double term1 = 0d;
-            double term2 = 0d;
-
-            if (w1 != 0d)
-            {
-                term1 = w1 * BasisFunc(i, degree - 1, t, knots);
-            }
-
-            if (w2 != 0d)
-            {
-                term2 = w2 * BasisFunc(i + 1, degree - 1, t, knots);
-            }
-
-            return term1 + term2;
+            lp += vunit;
         }
 
-        // 2Ÿ‚Å‚Ìˆê—l‚ÈBƒXƒvƒ‰ƒCƒ“Šî’êŠÖ”B
-        public static CadVertex CalcurateUniformBSplinePointWithDegree2(VertexList vl, int i, double t)
+        return vl;
+    }
+}
+
+public class BSpline
+{
+    public static double Epsilon = 0.000001f;   // ã¨ã¦ã‚‚å°ã•ã„å€¤
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="i">Knotç•ªå·</param>
+    /// <param name="degree">æ¬¡æ•°</param>
+    /// <param name="t">åª’ä»‹å¤‰æ•°</param>
+    /// <param name="knots">Knoté…åˆ—</param>
+    /// <returns></returns>
+    public static double BasisFunc(int i, int degree, double t, double[] knots)
+    {
+        if (degree == 0)
         {
-            return 0.5f * (t * t - 2f * t + 1f) * vl[i] +
-                0.5f * (-2f * t * t + 2f * t + 1f) * vl[i + 1] +
-                0.5f * t * t * vl[i + 2];
+            if (t >= knots[i] && t < knots[i + 1])
+            {
+                return 1f;
+            }
+            else
+            {
+                return 0f;
+            }
         }
 
-        // 3Ÿ‚Å‚Ìˆê—l‚ÈBƒXƒvƒ‰ƒCƒ“Šî’êŠÖ”B
-        public static CadVertex CalcurateUniformBSplinePointWithDegree3(VertexList vl, int i, double t)
+        double w1 = 0d;
+        double w2 = 0d;
+        double d1 = knots[i + degree] - knots[i];
+        double d2 = knots[i + degree + 1] - knots[i + 1];
+
+        if (d1 != 0d)
         {
-            return 1f / 6f * (-vl[i] + 3f * vl[i + 1] - 3f * vl[i + 2] + vl[i + 3]) * t * t * t +
-                0.5f * (vl[i] - 2f * vl[i + 1] + vl[i + 2]) * t * t +
-                0.5f * (-vl[i] + vl[i + 2]) * t +
-                1f / 6f * (vl[i] + 4f * vl[i + 1] + vl[i + 2]);
+            w1 = (t - knots[i]) / d1;
         }
+
+        if (d2 != 0d)
+        {
+            w2 = (knots[i + degree + 1] - t) / d2;
+        }
+
+        double term1 = 0d;
+        double term2 = 0d;
+
+        if (w1 != 0d)
+        {
+            term1 = w1 * BasisFunc(i, degree - 1, t, knots);
+        }
+
+        if (w2 != 0d)
+        {
+            term2 = w2 * BasisFunc(i + 1, degree - 1, t, knots);
+        }
+
+        return term1 + term2;
+    }
+
+    // 2æ¬¡ã§ã®ä¸€æ§˜ãªBã‚¹ãƒ—ãƒ©ã‚¤ãƒ³åŸºåº•é–¢æ•°ã€‚
+    public static CadVertex CalcurateUniformBSplinePointWithDegree2(VertexList vl, int i, double t)
+    {
+        return 0.5f * (t * t - 2f * t + 1f) * vl[i] +
+            0.5f * (-2f * t * t + 2f * t + 1f) * vl[i + 1] +
+            0.5f * t * t * vl[i + 2];
+    }
+
+    // 3æ¬¡ã§ã®ä¸€æ§˜ãªBã‚¹ãƒ—ãƒ©ã‚¤ãƒ³åŸºåº•é–¢æ•°ã€‚
+    public static CadVertex CalcurateUniformBSplinePointWithDegree3(VertexList vl, int i, double t)
+    {
+        return 1f / 6f * (-vl[i] + 3f * vl[i + 1] - 3f * vl[i + 2] + vl[i + 3]) * t * t * t +
+            0.5f * (vl[i] - 2f * vl[i + 1] + vl[i + 2]) * t * t +
+            0.5f * (-vl[i] + vl[i + 2]) * t +
+            1f / 6f * (vl[i] + 4f * vl[i + 1] + vl[i + 2]);
     }
 }

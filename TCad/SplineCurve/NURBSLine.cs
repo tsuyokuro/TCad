@@ -2,136 +2,135 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace SplineCurve
+namespace SplineCurve;
+
+public class NurbsLine
 {
-    public class NurbsLine
+    // åˆ¶å¾¡ç‚¹ãƒªã‚¹ãƒˆ
+    public VertexList CtrlPoints = null;
+
+    // Control point ã®æ•°
+    public int CtrlCnt = 0;
+
+    // Control pointã®ãƒªã‚¹ãƒˆä¸Šã§ã®æ•°
+    public int CtrlDataCnt;
+
+    public int[] CtrlOrder;
+
+
+    // å‡ºåŠ›ã•ã‚Œã‚‹Pointã®å€‹æ•°
+    public int OutCnt
     {
-        // §Œä“_ƒŠƒXƒg
-        public VertexList CtrlPoints = null;
-
-        // Control point ‚Ì”
-        public int CtrlCnt = 0;
-
-        // Control point‚ÌƒŠƒXƒgã‚Å‚Ì”
-        public int CtrlDataCnt;
-
-        public int[] CtrlOrder;
-
-
-        // o—Í‚³‚ê‚éPoint‚ÌŒÂ”
-        public int OutCnt
+        get
         {
-            get
-            {
-                return BSplineP.OutputCnt;
-            }
+            return BSplineP.OutputCnt;
+        }
+    }
+
+    public BSplineParam BSplineP = new BSplineParam();
+
+    public double[] Weights;
+
+    public NurbsLine()
+    {
+    }
+
+    public NurbsLine(
+        int deg,
+        int ctrlCnt,
+        int divCnt,
+        bool edge,
+        bool close)
+    {
+        Setup(deg, ctrlCnt, divCnt, edge, close);
+    }
+
+    public void Setup(
+        int deg,
+        int ctrlCnt,
+        int divCnt,
+        bool edge,
+        bool close)
+    {
+        CtrlDataCnt = ctrlCnt;
+
+        CtrlCnt = ctrlCnt;
+        if (close)
+        {
+            CtrlCnt += deg;
         }
 
-        public BSplineParam BSplineP = new BSplineParam();
+        BSplineP.Setup(deg, CtrlCnt, divCnt, edge);
 
-        public double[] Weights;
+        SetDefaultWeights();
+    }
 
-        public NurbsLine()
+    public void SetupDefaultCtrlOrder()
+    {
+        CtrlOrder = new int[CtrlCnt];
+
+        for (int i = 0; i < CtrlCnt; i++)
         {
+            CtrlOrder[i] = i % CtrlDataCnt;
         }
+    }
 
-        public NurbsLine(
-            int deg,
-            int ctrlCnt,
-            int divCnt,
-            bool edge,
-            bool close)
-        {
-            Setup(deg, ctrlCnt, divCnt, edge, close);
-        }
-
-        public void Setup(
-            int deg,
-            int ctrlCnt,
-            int divCnt,
-            bool edge,
-            bool close)
-        {
-            CtrlDataCnt = ctrlCnt;
-
-            CtrlCnt = ctrlCnt;
-            if (close)
-            {
-                CtrlCnt += deg;
-            }
-
-            BSplineP.Setup(deg, CtrlCnt, divCnt, edge);
-
-            SetDefaultWeights();
-        }
-
-        public void SetupDefaultCtrlOrder()
-        {
-            CtrlOrder = new int[CtrlCnt];
-
-            for (int i = 0; i < CtrlCnt; i++)
-            {
-                CtrlOrder[i] = i % CtrlDataCnt;
-            }
-        }
-
-        private Vector3d CalcPoint(double t)
-        {
-            Vector3d linePoint = Vector3d.Zero;
+    private Vector3d CalcPoint(double t)
+    {
+        Vector3d linePoint = Vector3d.Zero;
 			double weight = 0f;
 
-            double bs;
+        double bs;
 
-            int i;
+        int i;
 
-            int di;
+        int di;
 
-            for (i = 0; i < CtrlCnt; ++i)
-            {
+        for (i = 0; i < CtrlCnt; ++i)
+        {
 				bs = BSplineP.BasisFunc(i, t);
 
-                di = CtrlOrder[i];
+            di = CtrlOrder[i];
 
-                linePoint += bs * Weights[di] * CtrlPoints[di].vector;
+            linePoint += bs * Weights[di] * CtrlPoints[di].vector;
 
-                weight += bs * Weights[di];
+            weight += bs * Weights[di];
 			}
 
-            return linePoint / weight;
+        return linePoint / weight;
 		}
 
-        public void Eval(VertexList vl)
+    public void Eval(VertexList vl)
+    {
+        for (int p = 0; p <= BSplineP.DivCnt; ++p)
         {
-            for (int p = 0; p <= BSplineP.DivCnt; ++p)
+            double t = p * BSplineP.Step + BSplineP.LowKnot;
+            if (t >= BSplineP.HighKnot)
             {
-                double t = p * BSplineP.Step + BSplineP.LowKnot;
-                if (t >= BSplineP.HighKnot)
-                {
-                    t = BSplineP.HighKnot - BSpline.Epsilon;
-                }
-
-                vl.Add( new CadVertex(CalcPoint(t)) );
+                t = BSplineP.HighKnot - BSpline.Epsilon;
             }
-        }
 
-        public void SetDefaultWeights()
+            vl.Add( new CadVertex(CalcPoint(t)) );
+        }
+    }
+
+    public void SetDefaultWeights()
+    {
+        Weights = new double[CtrlDataCnt];
+
+        for (int i = 0; i < Weights.Length; ++i)
         {
-            Weights = new double[CtrlDataCnt];
-
-            for (int i = 0; i < Weights.Length; ++i)
-            {
-                Weights[i] = 1f;
-            }
+            Weights[i] = 1f;
         }
+    }
 
-        public double GetWeight(int u, int v)
-        {
-            return Weights[v * CtrlDataCnt + u];
-        }
+    public double GetWeight(int u, int v)
+    {
+        return Weights[v * CtrlDataCnt + u];
+    }
 
-        public void SetWeight(int u, int v, double val)
-        {
-            Weights[v * CtrlDataCnt + u] = val;
-        }
+    public void SetWeight(int u, int v, double val)
+    {
+        Weights[v * CtrlDataCnt + u] = val;
     }
 }
