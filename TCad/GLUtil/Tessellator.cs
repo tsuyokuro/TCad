@@ -31,9 +31,13 @@ public class Tessellator
 
     private BeginMode CurrentMode;
 
-    public class Contour
+    public class ContourIL : List<int> { }
+    public class ContourVL : List<Vector3d> { }
+
+
+    public class VertexContour
     {
-        public List<int> IndexList = new();
+        public List<Vector3d> VList = new();
     }
 
     public Tessellator()
@@ -67,7 +71,7 @@ public class Tessellator
     private int StripIdx1;
     private int StripIdx2;
 
-    public CadMesh Tessellate(List<Contour> contourList, List<Vector3d> vertexList)
+    public CadMesh Tessellate(List<ContourIL> contourList, List<Vector3d> vertexList)
     {
         Glu.TessCallback(pTess, GluTessCallback.Begin, MeshBeginCallback);
         Glu.TessCallback(pTess, GluTessCallback.End, MeshEndCallback);
@@ -88,11 +92,11 @@ public class Tessellator
         {
             Glu.TessBeginContour(pTess);
 
-            Contour contour = contourList[i];
+            ContourIL contour = contourList[i];
 
-            for (int j = 0; j < contour.IndexList.Count; j++)
+            for (int j = 0; j < contour.Count; j++)
             {
-                int idx = contour.IndexList[j];
+                int idx = contour[j];
 
                 Vector3d v = vertexList[idx];
                 tv[0] = v.X;
@@ -115,6 +119,34 @@ public class Tessellator
 
         return CurMesh;
     }
+
+    public CadMesh Tessellate(List<ContourVL> contourList)
+    {
+        List<Vector3d> vertexList = new();
+        List<ContourIL> indexContourList = new();
+
+        int idx = 0;
+
+        for (int i = 0; i < contourList.Count; i++)
+        {
+            ContourVL vcont = contourList[i];
+            ContourIL icont = new();
+
+            for (int j = 0; j < vcont.Count; j++)
+            {
+                Vector3d v = vcont[j];
+                vertexList.Add(v);
+                icont.Add(idx);
+
+                idx++;
+            }
+
+            indexContourList.Add(icont);
+        }
+
+        return Tessellate(indexContourList, vertexList);
+    }
+
 
     private void FreeTempGCH()
     {

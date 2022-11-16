@@ -24,7 +24,7 @@ internal class FontTessellator
         // 1:非制御点 
         byte[] tags = outline.Tags;
 
-        List<Tessellator.Contour> contourList = new List<Tessellator.Contour>();
+        List<Tessellator.ContourIL> contourList = new();
         List<Vector3d> vertexList = new List<Vector3d>();
 
         Vector3d cv = new();
@@ -32,7 +32,7 @@ internal class FontTessellator
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
         {
-            Tessellator.Contour contour = new();
+            Tessellator.ContourIL contour = new();
 
             int n = outline.Contours[i];
             for (; idx <= n;)
@@ -43,7 +43,7 @@ internal class FontTessellator
                 cv.Z = 0;
 
                 vertexList.Add(cv);
-                contour.IndexList.Add(idx);
+                contour.Add(idx);
 
                 idx++;
             }
