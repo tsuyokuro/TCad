@@ -531,8 +531,8 @@ public class TestCommands
 
     private void Test3()
     {
-        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
-        FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48);
+        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
 
         SharpFont.Outline outline = glyph.Outline;
@@ -605,8 +605,8 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
-        //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48);
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
 
         SharpFont.Outline outline = glyph.Outline;
@@ -657,7 +657,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         SharpFont.GlyphSlot glyph = fw.GetGlyph('B');
 
         Tessellator tesse = new();
@@ -699,13 +699,13 @@ public class TestCommands
 
     private void Test7()
     {
-        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
-        string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48);
+        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
+        //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('黒');
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('0');
 
         List<Tessellator.IndexList> conts;
         List<Vector3d> vl;

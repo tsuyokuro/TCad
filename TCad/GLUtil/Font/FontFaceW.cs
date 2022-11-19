@@ -174,9 +174,9 @@ public class FontFaceW
     {
         private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
 
-        public static FontFaceW GetFromFile(string fname, float size)
+        public static FontFaceW GetFromFile(string fname, float size, int faceIndex)
         {
-            string key = GetKey(fname, size);
+            string key = GetKey(fname, size, faceIndex);
 
             FontFaceW face;
 
@@ -185,7 +185,7 @@ public class FontFaceW
             }
 
             face = new FontFaceW();
-            face.SetFont(fname);
+            face.SetFont(fname, faceIndex);
             face.SetSize(size);
 
             FaceMap.Add(key, face);
@@ -193,9 +193,9 @@ public class FontFaceW
             return face;
         }
 
-        public static FontFaceW GetFromResource(string uri, float size)
+        public static FontFaceW GetFromResource(string uri, float size, int faceIndex)
         {
-            string key = GetKey(uri, size);
+            string key = GetKey(uri, size, faceIndex);
 
             FontFaceW face;
 
@@ -205,7 +205,7 @@ public class FontFaceW
             }
 
             face = new FontFaceW();
-            face.SetResourceFont(uri);
+            face.SetResourceFont(uri, faceIndex);
             face.SetSize(size);
 
             FaceMap.Add(key, face);
@@ -214,9 +214,9 @@ public class FontFaceW
         }
 
 
-        private static string GetKey(string name, float size)
+        private static string GetKey(string name, float size, int faceIndex)
         {
-            return name + "_" + size.ToString();
+            return name + "_" + size.ToString() + "_" + faceIndex.ToString();
         }
     }
 }
