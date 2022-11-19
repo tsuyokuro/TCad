@@ -699,9 +699,13 @@ public class TestCommands
 
     private void Test7()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
-        //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msmincho.ttc", 48);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('B');
+        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+
+        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
+        string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
+        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48);
+
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('黒');
 
         List<Tessellator.IndexList> conts;
         List<Vector3d> vl;
@@ -731,15 +735,15 @@ public class TestCommands
 
         CadMesh cm = FontTessellator.Tessellate(glyph, 400.0, 4, tesse, out conts, out vl);
 
-        tesse.Dispose();
+        tesse?.Dispose();
 
         cvl.Clear();
-        for (int i=0; i < conts.Count; i++)
+        for (int i = 0; i < conts.Count; i++)
         {
             Tessellator.IndexList cont = conts[i];
 
             cvl.Clear();
-            for (int j=0; j < cont.Count; j++)
+            for (int j = 0; j < cont.Count; j++)
             {
                 cvl.Add(vl[cont[j]]);
             }
@@ -747,14 +751,13 @@ public class TestCommands
             CreatePolyLines(cvl, true);
         }
 
-
-        HeModel hem = HeModelConverter.ToHeModel(cm);
-
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
-
-        fig.SetMesh(hem);
-
-        Controller.CurrentLayer.AddFigure(fig);
+        if (cm != null)
+        {
+            HeModel hem = HeModelConverter.ToHeModel(cm);
+            CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+            fig.SetMesh(hem);
+            Controller.CurrentLayer.AddFigure(fig);
+        }
 
         RunOnMainThread(() =>
         {

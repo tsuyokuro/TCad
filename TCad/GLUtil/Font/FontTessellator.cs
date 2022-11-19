@@ -88,12 +88,12 @@ internal class FontTessellator
                 cur = next;
                 next = FTV2Vector3d(points[((i + 1) % num) + start], scale);
 
-                if (tags[idx] == 1) // FT_Curve_Tag_On
+                if ((tags[idx] & 0x01) != 0) // On Curve
                 {
                     vertexList.Add(cur);
                     contour.Add(vertexList.Count - 1);
                 }
-                else if (tags[idx] == 0) // FT_Curve_Tag_Conic
+                else if ((tags[idx] & 0x03) == 0) // Off Curve
                 {
                     Vector3d prev2 = prev;
                     Vector3d next2 = next;
@@ -101,7 +101,7 @@ internal class FontTessellator
                     // Previous point is either the real previous point (an "on"
                     // point), or the midpoint between the current one and the
                     // previous "conic off" point.
-                    if (tags[((i - 1 + num) % num) + start] == 0)
+                    if ((tags[((i - 1 + num) % num) + start] & 0x01) == 0)
                     {
                         prev2 = (cur + prev) * 0.5;
                         vertexList.Add(prev2);
@@ -109,29 +109,20 @@ internal class FontTessellator
                     }
 
                     // Next point is either the real next point or the midpoint.
-                    if (tags[((i + 1) % num) + start] == 0)
+                    if ((tags[((i + 1) % num) + start] & 0x01) == 0)
                     {
                         next2 = (cur + next) * 0.5;
                     }
 
-                    List<Vector3d> evl = evaluateQuadraticCurve(prev2, cur, next2, steps);
-
-                    for (int k = 0; k < evl.Count; k++)
-                    {
-                        vertexList.Add(evl[k]);
-                        contour.Add(vertexList.Count - 1);
-                    }
+                    evaluateQuadraticCurve(prev2, cur, next2, steps,
+                                            vertexList, contour);
                 }
-                else if (tags[idx] == 2) // Bézier Curve
+                else if ((tags[idx] & 0x02) != 0) // Bézier Curve
                 {
-                    List<Vector3d> evl = evaluateCubicCurve(prev, cur, next,
-                                        FTV2Vector3d(points[((i + 2) % num) + start], scale), steps);
+                    Vector3d next2 = FTV2Vector3d(points[((i + 2) % num) + start], scale);
 
-                    for (int k = 0; k < evl.Count; k++)
-                    {
-                        vertexList.Add(evl[k]);
-                        contour.Add(vertexList.Count - 1);
-                    }
+                    evaluateCubicCurve(prev, cur, next, next2, steps,
+                                        vertexList, contour);
                 }
             }
 
@@ -142,7 +133,7 @@ internal class FontTessellator
         cl = contList;
         vl = vertexList;
 
-        return tesse.Tessellate(contList, vertexList);
+        return tesse?.Tessellate(contList, vertexList);
     }
 
     private static Vector3d FTV2Vector3d(FTVector ftv, double scale)
@@ -155,10 +146,9 @@ internal class FontTessellator
         return cv;
     }
 
-    private static List<Vector3d> evaluateQuadraticCurve(Vector3d A, Vector3d B, Vector3d C, int steps)
+    private static void evaluateQuadraticCurve(Vector3d A, Vector3d B, Vector3d C, int steps,
+        List<Vector3d> vertexList, IndexList contour)
     {
-        List<Vector3d> curvePoints = new();
-
         for (int i = 1; i < steps; i++)
         {
             double t = (double)i / (double)steps;
@@ -168,16 +158,14 @@ internal class FontTessellator
 
             Vector3d v = (1.0 - t) * U + t * V;
 
-            curvePoints.Add(v);
+            vertexList.Add(v);
+            contour.Add(vertexList.Count - 1);
         }
-
-        return curvePoints;
     }
 
-    private static List<Vector3d> evaluateCubicCurve(Vector3d A, Vector3d B, Vector3d C, Vector3d D, int steps)
+    private static void evaluateCubicCurve(Vector3d A, Vector3d B, Vector3d C, Vector3d D, int steps,
+        List<Vector3d> vertexList, IndexList contour)
     {
-        List<Vector3d> curvePoints = new();
-
         for (int i = 0; i < steps; i++)
         {
             double t = (double)i / (double)steps;
@@ -191,10 +179,9 @@ internal class FontTessellator
 
             Vector3d v = (1.0f - t) * M + t * N;
 
-            curvePoints.Add(v);
+            vertexList.Add(v);
+            contour.Add(vertexList.Count - 1);
         }
-
-        return curvePoints;
     }
 
 
