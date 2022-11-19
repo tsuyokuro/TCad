@@ -31,8 +31,8 @@ public class Tessellator
 
     private BeginMode CurrentMode;
 
-    public class ContourIL : List<int> { }
-    public class ContourVL : List<Vector3d> { }
+    public class IndexList : List<int> { }
+    public class VertexList : List<Vector3d> { }
 
 
     public class VertexContour
@@ -71,7 +71,7 @@ public class Tessellator
     private int StripIdx1;
     private int StripIdx2;
 
-    public CadMesh Tessellate(List<ContourIL> contourList, List<Vector3d> vertexList)
+    public CadMesh Tessellate(List<IndexList> contourList, List<Vector3d> vertexList)
     {
         Glu.TessCallback(pTess, GluTessCallback.Begin, MeshBeginCallback);
         Glu.TessCallback(pTess, GluTessCallback.End, MeshEndCallback);
@@ -92,7 +92,7 @@ public class Tessellator
         {
             Glu.TessBeginContour(pTess);
 
-            ContourIL contour = contourList[i];
+            IndexList contour = contourList[i];
 
             for (int j = 0; j < contour.Count; j++)
             {
@@ -120,17 +120,17 @@ public class Tessellator
         return CurMesh;
     }
 
-    public CadMesh Tessellate(List<ContourVL> contourList)
+    public CadMesh Tessellate(List<VertexList> contourList)
     {
         List<Vector3d> vertexList = new();
-        List<ContourIL> indexContourList = new();
+        List<IndexList> indexContourList = new();
 
         int idx = 0;
 
         for (int i = 0; i < contourList.Count; i++)
         {
-            ContourVL vcont = contourList[i];
-            ContourIL icont = new();
+            VertexList vcont = contourList[i];
+            IndexList icont = new();
 
             for (int j = 0; j < vcont.Count; j++)
             {

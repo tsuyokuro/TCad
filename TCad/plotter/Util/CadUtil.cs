@@ -562,4 +562,24 @@ public class CadUtil
 
     //    return new PointPair(CadVertex.Create(lx, ty, 0), CadVertex.Create(rx, by, 0));
     //}
+
+    public static List<Vector3d> GetVector3dListFrom(CadFigure fig)
+    {
+        List<Vector3d> list = new();
+        for (int i=0; i < fig.PointList.Count; i++)
+        {
+            list.Add((Vector3d)fig.PointList[i]);
+        }
+
+        return list;
+    }
+
+    public static void SetVertexListTo(CadFigure fig, List<Vector3d> vl)
+    {
+        List<Vector3d> list = new();
+        for (int i = 0; i < vl.Count; i++)
+        {
+            fig.AddPoint(new CadVertex(vl[i]));
+        }
+    }
 }

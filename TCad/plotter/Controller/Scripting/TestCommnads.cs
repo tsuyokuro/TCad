@@ -23,6 +23,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Runtime.InteropServices;
 using OpenGL.GLU;
 using GLUtil;
+using SharpFont;
 
 namespace Plotter.Controller;
 
@@ -657,11 +658,11 @@ public class TestCommands
     public void Test5()
     {
         FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('あ');
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('B');
 
         Tessellator tesse = new();
 
-        CadMesh cm = FontTessellator.Tessellate(glyph, 100.0, 4, tesse);
+        CadMesh cm = FontTessellator.TessellateRaw(glyph, 400.0, 4, tesse);
 
         tesse.Dispose();
 
@@ -678,6 +679,137 @@ public class TestCommands
             Controller.UpdateObjectTree(true);
             Controller.Redraw();
         });
+    }
+
+    private void Test6()
+    {
+        CadFigure cfig = Controller.CurrentFigure;
+        List<Vector3d> vl = CadUtil.GetVector3dListFrom(cfig);
+
+        Vector3d startv = vl[0];
+
+        List<Vector3d> splineList = FontTessellator.BSpline2D(vl, 4);
+
+        CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+
+        CadUtil.SetVertexListTo(tmpFig, splineList);
+
+        Controller.CurrentLayer.AddFigure(tmpFig);
+    }
+
+    private void Test7()
+    {
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48);
+        //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msmincho.ttc", 48);
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('B');
+
+        List<Tessellator.IndexList> conts;
+        List<Vector3d> vl;
+        List<Vector3d> cvl = new();
+
+        //--------------
+
+        //Test7_sub(glyph.Outline, 400.0, out conts, out vl);
+
+        //cvl.Clear();
+        //for (int i = 0; i < conts.Count; i++)
+        //{
+        //    Tessellator.IndexList cont = conts[i];
+
+        //    cvl.Clear();
+        //    for (int j = 0; j < cont.Count; j++)
+        //    {
+        //        cvl.Add(vl[cont[j]]);
+        //    }
+
+        //    CreatePolyLines(cvl, true);
+        //}
+
+        //--------------
+
+        Tessellator tesse = new();
+
+        CadMesh cm = FontTessellator.Tessellate(glyph, 400.0, 4, tesse, out conts, out vl);
+
+        tesse.Dispose();
+
+        cvl.Clear();
+        for (int i=0; i < conts.Count; i++)
+        {
+            Tessellator.IndexList cont = conts[i];
+
+            cvl.Clear();
+            for (int j=0; j < cont.Count; j++)
+            {
+                cvl.Add(vl[cont[j]]);
+            }
+
+            CreatePolyLines(cvl, true);
+        }
+
+
+        HeModel hem = HeModelConverter.ToHeModel(cm);
+
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+
+        fig.SetMesh(hem);
+
+        Controller.CurrentLayer.AddFigure(fig);
+
+        RunOnMainThread(() =>
+        {
+            Controller.UpdateObjectTree(true);
+            Controller.Redraw();
+        });
+    }
+
+    private void Test7_sub(SharpFont.Outline outline, double scale,
+        out List<Tessellator.IndexList> cl, out List<Vector3d> vl)
+    {
+        FTVector[] points = outline.Points;
+
+        List<Tessellator.IndexList> contourList = new();
+        List<Vector3d> vertexList = new List<Vector3d>();
+
+        Vector3d cv = new();
+
+        int idx = 0;
+        for (int i = 0; i < outline.ContoursCount; i++)
+        {
+            Tessellator.IndexList contour = new();
+
+            int n = outline.Contours[i];
+            for (; idx <= n;)
+            {
+                FTVector fv = points[idx];
+                cv.X = fv.X * scale;
+                cv.Y = fv.Y * scale;
+                cv.Z = 0;
+
+                vertexList.Add(cv);
+                contour.Add(idx);
+
+                idx++;
+            }
+
+            contourList.Add(contour);
+        }
+
+        vl = vertexList;
+        cl = contourList;
+    }
+
+
+
+    private void CreatePolyLines(List<Vector3d> vl, bool isLoop)
+    {
+        CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+
+        tmpFig.IsLoop = isLoop;
+
+        CadUtil.SetVertexListTo(tmpFig, vl);
+
+        Controller.CurrentLayer.AddFigure(tmpFig);
     }
 
     public bool ExecCommand(string s)
@@ -748,6 +880,14 @@ public class TestCommands
         else if (cmd == "@test5")
         {
             Test5();
+        }
+        else if (cmd == "@test6")
+        {
+            Test6();
+        }
+        else if (cmd == "@test7")
+        {
+            Test7();
         }
 
         else if (cmd == "@tcons1")
