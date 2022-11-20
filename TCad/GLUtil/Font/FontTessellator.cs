@@ -16,10 +16,8 @@ namespace GLFont;
 
 internal class FontTessellator
 {
-    public static CadMesh TessellateRaw(GlyphSlot glyph, double scale, int div, Tessellator tesse)
+    public static FontPoly TessellateRaw(GlyphSlot glyph, int div, Tessellator tesse)
     {
-        if (scale == 0) scale = 100.0;
-
         Outline outline = glyph.Outline;
         FTVector[] points = outline.Points;
 
@@ -39,8 +37,8 @@ internal class FontTessellator
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X * scale;
-                cv.Y = fv.Y * scale;
+                cv.X = fv.X;
+                cv.Y = fv.Y;
                 cv.Z = 0;
 
                 vertexList.Add(cv);
@@ -52,14 +50,17 @@ internal class FontTessellator
             contourList.Add(contour);
         }
 
-        return tesse.Tessellate(contourList, vertexList);
+        FontPoly fontPoly = default;
+
+        fontPoly.Mesh = tesse?.Tessellate(contourList, vertexList);
+        fontPoly.ContourList = contourList;
+        fontPoly.VertexList = vertexList;
+
+        return fontPoly;
     }
 
-    public static CadMesh Tessellate(GlyphSlot glyph, double scale, int steps, Tessellator tesse,
-    out List<List<int>> cl, out List<Vector3d> vl)
+    public static FontPoly Tessellate(GlyphSlot glyph, int steps, Tessellator tesse)
     {
-        if (scale == 0) scale = 100.0;
-
         Outline outline = glyph.Outline;
         FTVector[] points = outline.Points;
 
@@ -77,8 +78,8 @@ internal class FontTessellator
             int num = end - start + 1;
 
             Vector3d prev;
-            Vector3d next = FTV2Vector3d(points[start], scale);
-            Vector3d cur = FTV2Vector3d(points[((num - 1) % num) + start], scale);
+            Vector3d next = FTV2Vector3d(points[start]);
+            Vector3d cur = FTV2Vector3d(points[((num - 1) % num) + start]);
 
             for (int i=0; i<num; i++)
             {
@@ -86,7 +87,7 @@ internal class FontTessellator
 
                 prev = cur;
                 cur = next;
-                next = FTV2Vector3d(points[((i + 1) % num) + start], scale);
+                next = FTV2Vector3d(points[((i + 1) % num) + start]);
 
                 if ((tags[idx] & 0x01) != 0) // On Curve
                 {
@@ -119,7 +120,7 @@ internal class FontTessellator
                 }
                 else if ((tags[idx] & 0x02) != 0) // Bézier Curve
                 {
-                    Vector3d next2 = FTV2Vector3d(points[((i + 2) % num) + start], scale);
+                    Vector3d next2 = FTV2Vector3d(points[((i + 2) % num) + start]);
 
                     evaluateCubicCurve(prev, cur, next, next2, steps,
                                         vertexList, contour);
@@ -130,17 +131,20 @@ internal class FontTessellator
             start = end + 1;
         }
 
-        cl = contList;
-        vl = vertexList;
+        FontPoly fontPoly = default;
 
-        return tesse?.Tessellate(contList, vertexList);
+        fontPoly.ContourList = contList;
+        fontPoly.VertexList = vertexList;
+        fontPoly.Mesh = tesse?.Tessellate(contList, vertexList);
+
+        return fontPoly;
     }
 
-    private static Vector3d FTV2Vector3d(FTVector ftv, double scale)
+    private static Vector3d FTV2Vector3d(FTVector ftv)
     {
         Vector3d cv = new();
-        cv.X = ftv.X * scale;
-        cv.Y = ftv.Y * scale;
+        cv.X = ftv.X;
+        cv.Y = ftv.Y;
         cv.Z = 0;
 
         return cv;
@@ -186,11 +190,8 @@ internal class FontTessellator
 
 
 
-    public static CadMesh TessellateTest(GlyphSlot glyph, double scale, int div, Tessellator tesse,
-        out List<List<int>> cl, out List<Vector3d> vl)
+    public static FontPoly TessellateTest(GlyphSlot glyph, int div, Tessellator tesse)
     {
-        if (scale == 0) scale = 100.0;
-
         Outline outline = glyph.Outline;
         FTVector[] points = outline.Points;
 
@@ -216,8 +217,8 @@ internal class FontTessellator
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X * scale;
-                cv.Y = fv.Y * scale;
+                cv.X = fv.X;
+                cv.Y = fv.Y;
                 cv.Z = 0;
 
                 if (tags[idx] == 1) // On curve. It is not Control Point 
@@ -268,10 +269,13 @@ internal class FontTessellator
         }
 
         //return tesse.Tessellate(contourList, vertexList);
+        FontPoly fontPoly = new();
 
-        cl = contList;
-        vl = vertexList;
-        return null;
+        fontPoly.ContourList = contList;
+        fontPoly.VertexList = vertexList;
+        fontPoly.Mesh = tesse?.Tessellate(contList, vertexList);
+
+        return fontPoly;
     }
 
     private static double BSplineBasis(double p1, double p2, double p3, double t)

@@ -658,15 +658,20 @@ public class TestCommands
     public void Test5()
     {
         FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('B');
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
 
-        CadMesh cm = FontTessellator.TessellateRaw(glyph, 400.0, 4, tesse);
+        FontPoly fontPoly = FontTessellator.TessellateRaw(glyph, 4, tesse);
 
         tesse.Dispose();
 
-        HeModel hem = HeModelConverter.ToHeModel(cm);
+        for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
+        {
+            fontPoly.Mesh.VertexStore[i] *= 400.0;
+        }
+
+        HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
 
         CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
 
@@ -699,26 +704,27 @@ public class TestCommands
 
     private void Test7()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
-        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
+        string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
+        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('0');
+        SharpFont.GlyphSlot glyph = fw.GetGlyph('黒');
 
-        List<List<int>> conts;
-        List<Vector3d> vl;
         List<Vector3d> cvl = new();
 
         //--------------
 
-        //Test7_sub(glyph.Outline, 400.0, out conts, out vl);
+        //List<List<int>> conts;
+        //List<Vector3d> vl;
+
+        //Test7_sub(glyph.Outline, out conts, out vl);
 
         //cvl.Clear();
         //for (int i = 0; i < conts.Count; i++)
         //{
-        //    Tessellator.IndexList cont = conts[i];
+        //    List<int> cont = conts[i];
 
         //    cvl.Clear();
         //    for (int j = 0; j < cont.Count; j++)
@@ -726,38 +732,74 @@ public class TestCommands
         //        cvl.Add(vl[cont[j]]);
         //    }
 
-        //    CreatePolyLines(cvl, true);
+        //    CreatePolyLines(cvl, 400.0, true);
         //}
 
         //--------------
 
         Tessellator tesse = new();
 
-        CadMesh cm = FontTessellator.Tessellate(glyph, 400.0, 4, tesse, out conts, out vl);
+        FontPoly fontPoly = FontTessellator.Tessellate(glyph, 4, tesse);
 
         tesse?.Dispose();
 
+        FontPoly cpyFontpoly = new(fontPoly);
+
         cvl.Clear();
-        for (int i = 0; i < conts.Count; i++)
+        for (int i = 0; i < fontPoly.ContourList.Count; i++)
         {
-            List<int> cont = conts[i];
+            List<int> cont = fontPoly.ContourList[i];
 
             cvl.Clear();
             for (int j = 0; j < cont.Count; j++)
             {
-                cvl.Add(vl[cont[j]]);
+                cvl.Add(fontPoly.VertexList[cont[j]]);
             }
 
-            CreatePolyLines(cvl, true);
+            CreatePolyLines(cvl, 400.0, true);
         }
 
-        if (cm != null)
+        if (fontPoly.Mesh != null)
         {
-            HeModel hem = HeModelConverter.ToHeModel(cm);
+            for (int i=0; i < fontPoly.Mesh.VertexStore.Count; i++)
+            {
+                fontPoly.Mesh.VertexStore[i] *= 400.0;
+            }
+
+            HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
             CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
             fig.SetMesh(hem);
             Controller.CurrentLayer.AddFigure(fig);
         }
+
+        //fontPoly = cpyFontpoly;
+
+        //cvl.Clear();
+        //for (int i = 0; i < fontPoly.ContourList.Count; i++)
+        //{
+        //    List<int> cont = fontPoly.ContourList[i];
+
+        //    cvl.Clear();
+        //    for (int j = 0; j < cont.Count; j++)
+        //    {
+        //        cvl.Add(fontPoly.VertexList[cont[j]]);
+        //    }
+
+        //    CreatePolyLines(cvl, 200.0, true);
+        //}
+
+        //if (fontPoly.Mesh != null)
+        //{
+        //    for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
+        //    {
+        //        fontPoly.Mesh.VertexStore[i] *= 200.0;
+        //    }
+
+        //    HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
+        //    CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        //    fig.SetMesh(hem);
+        //    Controller.CurrentLayer.AddFigure(fig);
+        //}
 
         RunOnMainThread(() =>
         {
@@ -766,7 +808,7 @@ public class TestCommands
         });
     }
 
-    private void Test7_sub(SharpFont.Outline outline, double scale,
+    private void Test7_sub(SharpFont.Outline outline,
         out List<List<int>> cl, out List<Vector3d> vl)
     {
         FTVector[] points = outline.Points;
@@ -785,8 +827,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X * scale;
-                cv.Y = fv.Y * scale;
+                cv.X = fv.X;
+                cv.Y = fv.Y;
                 cv.Z = 0;
 
                 vertexList.Add(cv);
@@ -804,13 +846,18 @@ public class TestCommands
 
 
 
-    private void CreatePolyLines(List<Vector3d> vl, bool isLoop)
+    private void CreatePolyLines(List<Vector3d> vl, double scale, bool isLoop)
     {
         CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
 
         tmpFig.IsLoop = isLoop;
 
         CadUtil.SetVertexListTo(tmpFig, vl);
+
+        for (int i = 0; i < tmpFig.PointList.Count; i++)
+        {
+            tmpFig.PointList[i] *= scale;
+        }
 
         Controller.CurrentLayer.AddFigure(tmpFig);
     }
