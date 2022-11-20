@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using OpenGL.GLU;
 using GLUtil;
 using SharpFont;
+using OpenTK.Compute.OpenCL;
 
 namespace Plotter.Controller;
 
@@ -844,6 +845,35 @@ public class TestCommands
         cl = contourList;
     }
 
+    private void Test8()
+    {
+        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+
+        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
+        string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
+        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
+
+        FontPoly fontPoly = fw.CreatePoly('の');
+
+        if (fontPoly.Mesh != null)
+        {
+            for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
+            {
+                fontPoly.Mesh.VertexStore[i] *= 400.0;
+            }
+
+            HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
+            CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+            fig.SetMesh(hem);
+            Controller.CurrentLayer.AddFigure(fig);
+        }
+
+        RunOnMainThread(() =>
+        {
+            Controller.UpdateObjectTree(true);
+            Controller.Redraw();
+        });
+    }
 
 
     private void CreatePolyLines(List<Vector3d> vl, double scale, bool isLoop)
@@ -938,6 +968,10 @@ public class TestCommands
         else if (cmd == "@test7")
         {
             Test7();
+        }
+        else if (cmd == "@test8")
+        {
+            Test8();
         }
 
         else if (cmd == "@tcons1")

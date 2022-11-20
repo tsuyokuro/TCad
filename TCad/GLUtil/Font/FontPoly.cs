@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GLFont;
 
-internal struct FontPoly
+public struct FontPoly
 {
     public CadMesh Mesh { get; set; } = null;
     public List<List<int>> ContourList { get; set; } = null;

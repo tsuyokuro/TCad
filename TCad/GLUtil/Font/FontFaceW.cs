@@ -5,6 +5,7 @@ using System.Windows.Resources;
 using System.Windows;
 using System.IO;
 using Plotter;
+using GLUtil;
 
 namespace GLFont;
 
@@ -16,7 +17,9 @@ public class FontFaceW
 
     private float Size;
 
-    private Dictionary<char, FontTex> TextureCache = new Dictionary<char, FontTex>();
+    private Dictionary<char, FontTex> TextureCache = new();
+
+    private Dictionary<char, FontPoly> PolyCache = new();
 
     private FontFaceW()
     {
@@ -67,11 +70,27 @@ public class FontFaceW
         TextureCache.Clear();
     }
 
-    public void CreatePoly(char c)
+    public FontPoly CreatePoly(char c)
     {
+        FontPoly fp;
+
+        if (PolyCache.TryGetValue(c, out fp))
+        {
+            return new(fp);
+        }
+
         uint glyphIndex = FontFace.GetCharIndex(c);
         FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
-        Outline outLine = FontFace.Glyph.Outline;
+
+        Tessellator tesse = new();
+
+        fp = FontTessellator.Tessellate(FontFace.Glyph, 4, tesse);
+
+        tesse?.Dispose();
+
+        PolyCache.Add(c, fp);
+
+        return new(fp);
     }
 
     public GlyphSlot GetGlyph(char c)
