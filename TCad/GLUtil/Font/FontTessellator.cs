@@ -25,7 +25,7 @@ internal class FontTessellator
 
         byte[] tags = outline.Tags;
 
-        List<Tessellator.IndexList> contourList = new();
+        List<List<int>> contourList = new();
         List<Vector3d> vertexList = new List<Vector3d>();
 
         Vector3d cv = new();
@@ -33,7 +33,7 @@ internal class FontTessellator
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
         {
-            Tessellator.IndexList contour = new();
+            List<int> contour = new();
 
             int n = outline.Contours[i];
             for (; idx <= n;)
@@ -56,7 +56,7 @@ internal class FontTessellator
     }
 
     public static CadMesh Tessellate(GlyphSlot glyph, double scale, int steps, Tessellator tesse,
-    out List<Tessellator.IndexList> cl, out List<Vector3d> vl)
+    out List<List<int>> cl, out List<Vector3d> vl)
     {
         if (scale == 0) scale = 100.0;
 
@@ -65,13 +65,13 @@ internal class FontTessellator
 
         byte[] tags = outline.Tags;
 
-        List<Tessellator.IndexList> contList = new();
+        List<List<int>> contList = new();
         List<Vector3d> vertexList = new List<Vector3d>();
 
         int start = 0;
         for (int contIdx = 0; contIdx < outline.ContoursCount; contIdx++)
         {
-            Tessellator.IndexList contour = new();
+            List<int> contour = new();
 
             int end = outline.Contours[contIdx];
             int num = end - start + 1;
@@ -147,7 +147,7 @@ internal class FontTessellator
     }
 
     private static void evaluateQuadraticCurve(Vector3d A, Vector3d B, Vector3d C, int steps,
-        List<Vector3d> vertexList, IndexList contour)
+        List<Vector3d> vertexList, List<int> contour)
     {
         for (int i = 1; i < steps; i++)
         {
@@ -164,7 +164,7 @@ internal class FontTessellator
     }
 
     private static void evaluateCubicCurve(Vector3d A, Vector3d B, Vector3d C, Vector3d D, int steps,
-        List<Vector3d> vertexList, IndexList contour)
+        List<Vector3d> vertexList, List<int> contour)
     {
         for (int i = 0; i < steps; i++)
         {
@@ -187,7 +187,7 @@ internal class FontTessellator
 
 
     public static CadMesh TessellateTest(GlyphSlot glyph, double scale, int div, Tessellator tesse,
-        out List<Tessellator.IndexList> cl, out List<Vector3d> vl)
+        out List<List<int>> cl, out List<Vector3d> vl)
     {
         if (scale == 0) scale = 100.0;
 
@@ -197,7 +197,7 @@ internal class FontTessellator
         // 1:非制御点 
         byte[] tags = outline.Tags;
 
-        List<Tessellator.IndexList> contList = new();
+        List<List<int>> contList = new();
         List<Vector3d> vertexList = new List<Vector3d>();
 
         Vector3d cv = new();
@@ -209,7 +209,7 @@ internal class FontTessellator
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
         {
-            Tessellator.IndexList contour = new();
+            List<int> contour = new();
 
             curvePoints.Clear();
             int n = outline.Contours[i];

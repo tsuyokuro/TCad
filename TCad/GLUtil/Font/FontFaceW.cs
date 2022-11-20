@@ -16,7 +16,7 @@ public class FontFaceW
 
     private float Size;
 
-    private Dictionary<char, FontTex> Cache = new Dictionary<char, FontTex>();
+    private Dictionary<char, FontTex> TextureCache = new Dictionary<char, FontTex>();
 
     private FontFaceW()
     {
@@ -29,7 +29,7 @@ public class FontFaceW
         FontFace = new Face(mLib, filename, face_index);
         SetSize(this.Size);
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
     private void SetFont(byte[] data, int face_index = 0)
@@ -37,7 +37,7 @@ public class FontFaceW
         FontFace = new Face(mLib, data, face_index);
         SetSize(this.Size);
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
     // url e.g. "/Fonts/mplus-1m-thin.ttf"
@@ -64,7 +64,7 @@ public class FontFaceW
             FontFace.SetCharSize(0, size, 0, 96);
         }
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
     public void CreatePoly(char c)
@@ -85,7 +85,7 @@ public class FontFaceW
     {
         FontTex ft;
 
-        if (Cache.TryGetValue(c, out ft))
+        if (TextureCache.TryGetValue(c, out ft))
         {
             return ft;
         }
@@ -125,7 +125,7 @@ public class FontFaceW
             ft.FontH = fontH;
         }
 
-        Cache.Add(c, ft);
+        TextureCache.Add(c, ft);
 
         //ft.dump_b();
         //Console.WriteLine();

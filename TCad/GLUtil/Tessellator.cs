@@ -5,15 +5,7 @@ using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup.Localizer;
-using static IronPython.Modules.PythonIterTools;
-using static OpenTK.Graphics.OpenGL.GL;
 
 namespace GLUtil;
 
@@ -30,10 +22,6 @@ public class Tessellator
     private List<GCHandle> TempGCHs = new();
 
     private BeginMode CurrentMode;
-
-    public class IndexList : List<int> { }
-    public class VertexList : List<Vector3d> { }
-
 
     public class VertexContour
     {
@@ -71,7 +59,7 @@ public class Tessellator
     private int StripIdx1;
     private int StripIdx2;
 
-    public CadMesh Tessellate(List<IndexList> contourList, List<Vector3d> vertexList)
+    public CadMesh Tessellate(List<List<int>> contourList, List<Vector3d> vertexList)
     {
         Glu.TessCallback(pTess, GluTessCallback.Begin, MeshBeginCallback);
         Glu.TessCallback(pTess, GluTessCallback.End, MeshEndCallback);
@@ -92,7 +80,7 @@ public class Tessellator
         {
             Glu.TessBeginContour(pTess);
 
-            IndexList contour = contourList[i];
+            List<int> contour = contourList[i];
 
             for (int j = 0; j < contour.Count; j++)
             {
@@ -120,17 +108,17 @@ public class Tessellator
         return CurMesh;
     }
 
-    public CadMesh Tessellate(List<VertexList> contourList)
+    public CadMesh Tessellate(List<Vector3dList> contourList)
     {
         List<Vector3d> vertexList = new();
-        List<IndexList> indexContourList = new();
+        List<List<int>> indexContourList = new();
 
         int idx = 0;
 
         for (int i = 0; i < contourList.Count; i++)
         {
-            VertexList vcont = contourList[i];
-            IndexList icont = new();
+            Vector3dList vcont = contourList[i];
+            List<int> icont = new();
 
             for (int j = 0; j < vcont.Count; j++)
             {

@@ -707,7 +707,7 @@ public class TestCommands
 
         SharpFont.GlyphSlot glyph = fw.GetGlyph('0');
 
-        List<Tessellator.IndexList> conts;
+        List<List<int>> conts;
         List<Vector3d> vl;
         List<Vector3d> cvl = new();
 
@@ -740,7 +740,7 @@ public class TestCommands
         cvl.Clear();
         for (int i = 0; i < conts.Count; i++)
         {
-            Tessellator.IndexList cont = conts[i];
+            List<int> cont = conts[i];
 
             cvl.Clear();
             for (int j = 0; j < cont.Count; j++)
@@ -767,11 +767,11 @@ public class TestCommands
     }
 
     private void Test7_sub(SharpFont.Outline outline, double scale,
-        out List<Tessellator.IndexList> cl, out List<Vector3d> vl)
+        out List<List<int>> cl, out List<Vector3d> vl)
     {
         FTVector[] points = outline.Points;
 
-        List<Tessellator.IndexList> contourList = new();
+        List<List<int>> contourList = new();
         List<Vector3d> vertexList = new List<Vector3d>();
 
         Vector3d cv = new();
@@ -779,7 +779,7 @@ public class TestCommands
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
         {
-            Tessellator.IndexList contour = new();
+            List<int> contour = new();
 
             int n = outline.Contours[i];
             for (; idx <= n;)
