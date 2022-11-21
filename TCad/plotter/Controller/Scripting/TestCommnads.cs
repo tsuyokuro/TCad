@@ -847,11 +847,11 @@ public class TestCommands
 
     private void Test8()
     {
-        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
-        string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
+        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
+        //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
         FontPoly fontPoly = fw.CreatePoly('の');
 

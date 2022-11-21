@@ -55,6 +55,8 @@ class CadDxfLoader
 
         VertexList pointList = new VertexList();
 
+        VertexList tpList = new VertexList(3);
+
         while (!reader.EndOfStream)
         {
             L1 = reader.ReadLine();
@@ -74,8 +76,31 @@ class CadDxfLoader
 
                 if (pointList.Count > 0)
                 {
-                    AddFace(mesh, pointList);
-                    TotalFaceCount++;
+                    if (pointList.Count == 3)
+                    {
+                        AddFace(mesh, pointList);
+                        TotalFaceCount++;
+                    }
+                    else if (pointList.Count == 4)
+                    {
+                        tpList.Clear();
+                        tpList.Add(pointList[0]);
+                        tpList.Add(pointList[1]);
+                        tpList.Add(pointList[2]);
+                        AddFace(mesh, tpList);
+                        TotalFaceCount++;
+
+                        tpList.Clear();
+                        tpList.Add(pointList[2]);
+                        tpList.Add(pointList[3]);
+                        tpList.Add(pointList[0]);
+                        AddFace(mesh, tpList);
+                        TotalFaceCount++;
+                    }
+                    else
+                    {
+                        DOut.pl("pointList.Count:" + pointList.Count);
+                    }
 
                     pointList.Clear();
                 }

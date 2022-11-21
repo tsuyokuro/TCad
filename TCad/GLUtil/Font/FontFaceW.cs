@@ -84,7 +84,7 @@ public class FontFaceW
 
         Tessellator tesse = new();
 
-        fp = FontTessellator.Tessellate(FontFace.Glyph, 4, tesse);
+        fp = FontTessellator.Tessellate(FontFace.Glyph, 3, tesse);
 
         tesse?.Dispose();
 

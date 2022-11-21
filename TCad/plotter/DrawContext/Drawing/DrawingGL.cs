@@ -87,6 +87,7 @@ public class DrawingGL : IDrawing
         GL.Enable(EnableCap.ColorMaterial);
         GL.Color4(brush.Color4);
 
+        GL.Begin(PrimitiveType.Triangles);
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
             HeFace f = model.FaceStore[i];
@@ -95,7 +96,7 @@ public class DrawingGL : IDrawing
 
             HalfEdge c = head;
 
-            GL.Begin(PrimitiveType.Polygon);
+            //GL.Begin(PrimitiveType.Polygon);
 
             if (f.Normal != HeModel.INVALID_INDEX)
             {
@@ -115,10 +116,11 @@ public class DrawingGL : IDrawing
                 }
             }
 
-            GL.End();
+            //GL.End();
         }
+        GL.End();
 
-        DisableLight();
+        //DisableLight();
     }
 
     private void DrawHeFacesNormal(HeModel model)
@@ -192,6 +194,8 @@ public class DrawingGL : IDrawing
         Vector3d p0;
         Vector3d p1;
 
+        GL.Begin(PrimitiveType.Lines);
+
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
             HeFace f = model.FaceStore[i];
@@ -235,20 +239,20 @@ public class DrawingGL : IDrawing
                 if (drawAsEdge)
                 {
                     GL.Color4(edgeColor);
-                    GL.Begin(PrimitiveType.Lines);
+                    //GL.Begin(PrimitiveType.Lines);
                     GL.Vertex3(p0);
                     GL.Vertex3(p1);
-                    GL.End();
+                    //GL.End();
                 }
                 else
                 {
                     if (drawBorder)
                     {
                         GL.Color4(color);
-                        GL.Begin(PrimitiveType.Lines);
+                        //GL.Begin(PrimitiveType.Lines);
                         GL.Vertex3(p0);
                         GL.Vertex3(p1);
-                        GL.End();
+                        //GL.End();
                     }
                 }
 
@@ -262,6 +266,8 @@ public class DrawingGL : IDrawing
                 }
             }
         }
+
+        GL.End();
     }
 
     private const double AXIS_MARGIN = 24;
@@ -1146,7 +1152,7 @@ public class DrawingGL : IDrawing
         p1 += DC.ViewOrg;
 
         GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple(1, 0b1100110011001100);
+        //GL.LineStipple(1, 0b1100110011001100);
 
         DrawRectScrn(DC.GetPen(DrawTools.PEN_PAGE_FRAME), p0, p1);
 
