@@ -285,12 +285,12 @@ public class MeshUtil
         Vector3d wv = (p1 - p0).UnitVector();
         Vector3d hv = normal;
 
-        CadMesh cubeA = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.QUADRANGLE);
+        CadMesh cubeA = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.TRIANGLE);
         MoveMesh(cubeA, -hv / 2);
         ScaleMesh(cubeA, 10000);
         MoveMesh(cubeA, (p1 - p0) / 2 + p0);
 
-        CadMesh cubeB = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.QUADRANGLE);
+        CadMesh cubeB = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.TRIANGLE);
         MoveMesh(cubeB, hv / 2);
         ScaleMesh(cubeB, 10000);
         MoveMesh(cubeB, (p1 - p0) / 2 + p0);

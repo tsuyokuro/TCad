@@ -30,7 +30,7 @@ public class PlotterTaskRunner
         await Task.Run(() =>
         {
             Controller.StartEdit();
-            var res = InputLine();
+            var res = InputLine("Input flip axis");
 
             if (res.state != InteractCtrl.States.END)
             {
@@ -78,7 +78,7 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            var res = InputLine();
+            var res = InputLine("Input flip axis");
 
             if (res.state != InteractCtrl.States.END)
             {
@@ -133,7 +133,7 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            var res = InputLine();
+            var res = InputLine("Input Cut line");
 
             if (res.state != InteractCtrl.States.END)
             {
@@ -307,13 +307,13 @@ public class PlotterTaskRunner
     }
 
 
-    public (Vector3d p0, Vector3d p1, InteractCtrl.States state) InputLine()
+    public (Vector3d p0, Vector3d p1, InteractCtrl.States state) InputLine(string message)
     {
         InteractCtrl ctrl = Controller.InteractCtrl;
 
         ctrl.Start();
 
-        OpenPopupMessage("Input flip axis", UITypes.MessageType.INPUT);
+        OpenPopupMessage(message, UITypes.MessageType.INPUT);
         ItConsole.println(AnsiEsc.BYellow + "<< Input point 1 >>");
 
         InteractCtrl.States ret;
