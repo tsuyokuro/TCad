@@ -140,6 +140,8 @@ public class DrawingGL : IDrawing
             HalfEdge c = head;
 
 
+            GL.Begin(PrimitiveType.Lines);
+
             for (; ; )
             {
                 HalfEdge next = c.Next;
@@ -152,7 +154,7 @@ public class DrawingGL : IDrawing
                     Vector3d np0 = p;
                     Vector3d np1 = p + (nv * len);
 
-                    DrawArrow(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
+                    DrawArrowGL(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW, true);
                 }
 
                 c = next;
@@ -162,6 +164,8 @@ public class DrawingGL : IDrawing
                     break;
                 }
             }
+
+            GL.End();
         }
 
         EnableLight();
@@ -287,13 +291,15 @@ public class DrawingGL : IDrawing
         double arrowLen = DC.DevSizeToWoldSize(16);
         double arrowW2 = DC.DevSizeToWoldSize(8);
 
+        GL.Begin(PrimitiveType.Lines);
+
         // X軸
         p0 = new Vector3d(-len, 0, 0);
         p1 = new Vector3d(len, 0, 0);
 
         if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
         {
-            DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Y軸
@@ -302,7 +308,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
         {
-            DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Z軸
@@ -311,8 +317,10 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (Vector3d)DC.ViewDir))
         {
-            DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
+
+        GL.End();
     }
 
     public void DrawAxisLabel()
@@ -398,18 +406,21 @@ public class DrawingGL : IDrawing
 
         GL.LineWidth(1);
 
+        GL.Begin(PrimitiveType.Lines);
+
         p0 = Vector3d.UnitX * -size;
         p1 = Vector3d.UnitX * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = Vector3d.UnitY * -size;
         p1 = Vector3d.UnitY * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = Vector3d.UnitZ * -size;
         p1 = Vector3d.UnitZ * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
+        GL.End();
         GL.LineWidth(1);
 
         double fontScale = 0.6;
@@ -514,20 +525,22 @@ public class DrawingGL : IDrawing
         Vector3d p1;
 
         GL.LineWidth(2);
+        GL.Begin(PrimitiveType.Lines);
 
         p0 = Vector3d.UnitX * -size;
         p1 = Vector3d.UnitX * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = Vector3d.UnitY * -size;
         p1 = Vector3d.UnitY * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = Vector3d.UnitZ * -size;
         p1 = Vector3d.UnitZ * size;
-        DrawArrow(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2);
+        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         GL.LineWidth(1);
+        GL.End();
 
         FontTex tex;
 
@@ -679,9 +692,19 @@ public class DrawingGL : IDrawing
         Vector3d pz1 = p;
         pz1.Z += hs;
 
-        DrawLine(pen, px0, px1);
-        DrawLine(pen, py0, py1);
-        DrawLine(pen, pz0, pz1);
+        //DrawLine(pen, px0, px1);
+        //DrawLine(pen, py0, py1);
+        //DrawLine(pen, pz0, pz1);
+
+        GL.Color4(pen.Color4);
+        GL.Begin(PrimitiveType.Lines);
+        GL.Vertex3(px0);
+        GL.Vertex3(px1);
+        GL.Vertex3(py0);
+        GL.Vertex3(py1);
+        GL.Vertex3(pz0);
+        GL.Vertex3(pz1);
+        GL.End();
     }
 
     private Vector3d GetShiftForOutLine()
@@ -753,7 +776,12 @@ public class DrawingGL : IDrawing
 
         GL.Disable(EnableCap.DepthTest);
 
-        DrawLine(pen, p0, p1);
+        GL.Begin(PrimitiveType.Lines);
+
+        //DrawLine(pen, p0, p1);
+        GL.Color4(pen.Color4);
+        GL.Vertex3(p0);
+        GL.Vertex3(p1);
 
         p0 = pp.Pos - (pp.DirY * size);
         p1 = pp.Pos + (pp.DirY * size);
@@ -761,7 +789,11 @@ public class DrawingGL : IDrawing
         p0 = DC.DevPointToWorldPoint(p0);
         p1 = DC.DevPointToWorldPoint(p1);
 
-        DrawLine(pen, p0, p1);
+        //DrawLine(pen, p0, p1);
+        GL.Vertex3(p0);
+        GL.Vertex3(p1);
+
+        GL.End();
 
         GL.Enable(EnableCap.DepthTest);
     }
@@ -1206,7 +1238,7 @@ public class DrawingGL : IDrawing
 
     public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
     {
-        DrawUtil.DrawArrow(this, pen, pt0, pt1, type, pos, len, width);
+        DrawArrowGL(pen, pt0, pt1, type, pos, len, width, false);
     }
 
     public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
@@ -1227,5 +1259,100 @@ public class DrawingGL : IDrawing
         GL.LineWidth(1);
 
         End2D();
+    }
+
+    public void DrawArrowGL(
+        in DrawPen pen,
+        Vector3d pt0,
+        Vector3d pt1,
+        ArrowTypes type,
+        ArrowPos pos,
+        double len,
+        double width,
+        bool continious)
+    {
+        GL.Color4(pen.Color4);
+        if (!continious)
+        {
+            GL.Begin(PrimitiveType.Lines);
+        }
+
+        //drawing.DrawLine(pen, pt0, pt1);
+        GL.Vertex3(pt0);
+        GL.Vertex3(pt1);
+
+        Vector3d d = pt1 - pt0;
+
+        double dl = d.Length;
+
+        if (dl < 0.00001)
+        {
+            return;
+        }
+
+
+        Vector3d tmp = new Vector3d(dl, 0, 0);
+
+        double angle = Vector3d.CalculateAngle(tmp, d);
+
+        Vector3d normal = CadMath.CrossProduct(tmp, d);  // 回転軸
+
+        if (normal.Length < 0.0001)
+        {
+            normal = new Vector3d(0, 0, 1);
+        }
+        else
+        {
+            normal = normal.UnitVector();
+            normal = CadMath.Normal(tmp, d);
+        }
+
+        CadQuaternion q = CadQuaternion.RotateQuaternion(normal, -angle);
+        CadQuaternion r = q.Conjugate();
+
+        ArrowHead a;
+
+        if (pos == ArrowPos.END || pos == ArrowPos.START_END)
+        {
+            a = ArrowHead.Create(type, ArrowPos.END, len, width);
+
+            a.Rotate(q, r);
+
+            a += pt1;
+
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p1.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p2.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p3.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p4.vector);
+
+            //drawing.DrawLine(pen, a.p0.vector, a.p1.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p2.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p3.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p4.vector);
+        }
+
+        if (pos == ArrowPos.START || pos == ArrowPos.START_END)
+        {
+            a = ArrowHead.Create(type, ArrowPos.START, len, width);
+
+            a.Rotate(q, r);
+
+            a += pt0;
+
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p1.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p2.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p3.vector);
+            GL.Vertex3(a.p0.vector); GL.Vertex3(a.p4.vector);
+
+            //drawing.DrawLine(pen, a.p0.vector, a.p1.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p2.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p3.vector);
+            //drawing.DrawLine(pen, a.p0.vector, a.p4.vector);
+        }
+
+        if (!continious)
+        {
+            GL.End();
+        }
     }
 }
