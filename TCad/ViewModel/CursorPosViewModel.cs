@@ -1,7 +1,5 @@
-using System;
-using System.ComponentModel;
-using OpenTK;
 using OpenTK.Mathematics;
+using System.ComponentModel;
 
 namespace TCad.ViewModel;
 

@@ -1,11 +1,10 @@
+using OpenTK.Mathematics;
+using Plotter.Controller;
 using Plotter.Serializer;
-using System;
 using System.IO;
 using System.Reflection;
-using OpenTK.Mathematics;
 using System.Text.Json;
 using JObj = System.Text.Json.Nodes.JsonObject;
-using Plotter.Controller;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 
 

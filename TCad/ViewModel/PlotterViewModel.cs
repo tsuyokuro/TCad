@@ -1,12 +1,11 @@
 using OpenTK.Mathematics;
+using Plotter;
+using Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
-using Plotter.Controller;
-using Plotter;
-using System.Windows.Forms.Design;
 
 namespace TCad.ViewModel;
 

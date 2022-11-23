@@ -1,9 +1,7 @@
 using CadDataTypes;
 using CarveWapper;
-using HalfEdgeNS;
 using MeshMakerNS;
 using MyCollections;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter;
 using System;

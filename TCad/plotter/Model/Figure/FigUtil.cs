@@ -1,16 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CadDataTypes;
-using MessagePack;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer;
-using Plotter.Serializer.v1001;
-using Plotter.Serializer.v1002;
-using Plotter.Serializer.v1003;
+using System.Collections.Generic;
 
 namespace Plotter;
 

@@ -1,9 +1,8 @@
-using System.Reflection;
-using System.ComponentModel;
-using OpenTK;
 using OpenTK.Mathematics;
-using Plotter.Settings;
 using Plotter.Controller;
+using Plotter.Settings;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace TCad.ViewModel;
 

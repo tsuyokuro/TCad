@@ -2,12 +2,10 @@
 //#define PRINT_WITH_GDI_ONLY
 
 using GLUtil;
-using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Graphics;
 
 namespace Plotter.Controller;
 

@@ -1,6 +1,5 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
-using System.Windows.Documents;
 
 namespace Plotter;
 

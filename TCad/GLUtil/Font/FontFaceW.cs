@@ -1,11 +1,10 @@
+using GLUtil;
+using SharpFont;
 using System;
 using System.Collections.Generic;
-using SharpFont;
-using System.Windows.Resources;
-using System.Windows;
 using System.IO;
-using Plotter;
-using GLUtil;
+using System.Windows;
+using System.Windows.Resources;
 
 namespace GLFont;
 

@@ -1,9 +1,8 @@
+using CadDataTypes;
 using HalfEdgeNS;
-using System.Collections.Generic;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
-using CadDataTypes;
+using System.Collections.Generic;
 
 namespace Plotter;
 

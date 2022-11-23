@@ -1,17 +1,12 @@
 using CadDataTypes;
-using CarveWapper;
 using HalfEdgeNS;
-using TCad.Controls;
-using TCad.Dialogs;
-using MeshMakerNS;
 using MeshUtilNS;
-using OpenTK;
 using OpenTK.Mathematics;
-using OpenTK.Platform;
-using Plotter.Serializer.v1001;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TCad.Controls;
+using TCad.Dialogs;
 using TCad.ViewModel;
 
 namespace Plotter.Controller.TaskRunner;

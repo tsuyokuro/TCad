@@ -17,7 +17,6 @@ using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
 using TCad.ViewModel;
-using static Community.CsharpSqlite.Sqlite3;
 using Plotter.Controller;
 
 namespace Plotter.Scripting;

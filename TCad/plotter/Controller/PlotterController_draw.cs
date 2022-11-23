@@ -1,10 +1,6 @@
-
-using CadDataTypes;
 using MyCollections;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-using System.Collections.Generic;
 
 namespace Plotter.Controller;
 

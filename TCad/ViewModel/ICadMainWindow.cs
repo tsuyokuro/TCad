@@ -1,7 +1,4 @@
-using System.Windows;
-using Plotter.Controller;
 using Plotter;
-using System;
 
 namespace TCad.ViewModel;
 

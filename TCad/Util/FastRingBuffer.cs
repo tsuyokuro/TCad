@@ -1,5 +1,3 @@
-using System;
-
 namespace TCad.Util;
 
 /// <summary>

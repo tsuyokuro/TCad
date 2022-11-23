@@ -1,8 +1,6 @@
+using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
 
 namespace Plotter;
 

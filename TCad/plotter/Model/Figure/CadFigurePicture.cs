@@ -1,14 +1,10 @@
 using CadDataTypes;
-using HalfEdgeNS;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace Plotter;

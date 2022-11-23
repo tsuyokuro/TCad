@@ -1,12 +1,5 @@
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GLFont;
 

@@ -1,13 +1,12 @@
+using Plotter;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows;
-using System.Text.RegularExpressions;
-using Plotter;
 
 namespace TCad.Controls;
 

@@ -1,5 +1,3 @@
-using System.Windows.Forms;
-
 namespace Plotter;
 
 public struct CadSize2D

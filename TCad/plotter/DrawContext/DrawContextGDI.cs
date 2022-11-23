@@ -1,4 +1,3 @@
-using OpenTK;
 using OpenTK.Mathematics;
 using System.Drawing;
 using System.Windows.Forms;

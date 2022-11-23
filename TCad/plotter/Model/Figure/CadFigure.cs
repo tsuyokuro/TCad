@@ -1,13 +1,11 @@
 //#define LOG_DEBUG
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Intrinsics.Arm;
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
+using System;
+using System.Collections.Generic;
 
 namespace Plotter;
 

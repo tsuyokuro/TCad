@@ -1,9 +1,8 @@
+using CadDataTypes;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Windows.Forms;
-using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
 
 namespace Plotter;
 

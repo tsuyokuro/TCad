@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-
-namespace Plotter;
-
 using System;
 using System.Linq;
+
+namespace Plotter;
 
 public class CadLayer
 {

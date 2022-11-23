@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
-using System;
-using HalfEdgeNS;
-using GLFont;
-using OpenTK.Graphics;
 using CadDataTypes;
+using GLFont;
+using HalfEdgeNS;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using Plotter.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace Plotter;
 

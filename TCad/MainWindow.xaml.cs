@@ -1,19 +1,17 @@
+using OpenGL.GLU;
 using Plotter;
+using Plotter.Controller;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using TCad.Controls;
-using TCad.ViewModel;
 using TCad.Dialogs;
-using Plotter.Controller;
-using OpenTK.Graphics.OpenGL;
-using OpenGL.GLU;
+using TCad.ViewModel;
 
 namespace TCad;
 

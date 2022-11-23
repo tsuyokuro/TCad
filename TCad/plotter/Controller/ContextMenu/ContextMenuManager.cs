@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TCad.Properties;
 
 namespace Plotter.Controller;

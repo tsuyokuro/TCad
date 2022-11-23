@@ -1,9 +1,7 @@
-using OpenTK;
-using OpenTK.Mathematics;
-using System;
 using CadDataTypes;
-using System.Runtime.InteropServices;
+using OpenTK.Mathematics;
 using Plotter.Controller;
+using System;
 
 namespace Plotter;
 

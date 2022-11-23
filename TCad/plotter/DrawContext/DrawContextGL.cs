@@ -1,9 +1,6 @@
-using System;
-
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using System;
 using System.Windows.Forms;
 
 namespace Plotter;

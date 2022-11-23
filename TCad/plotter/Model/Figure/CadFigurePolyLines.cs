@@ -1,12 +1,7 @@
-using OpenTK;
-using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using static Plotter.CadFigure;
 using CadDataTypes;
+using OpenTK.Mathematics;
 using Plotter.Settings;
-using System.Windows.Media;
+using System.Collections.Generic;
 
 namespace Plotter;
 

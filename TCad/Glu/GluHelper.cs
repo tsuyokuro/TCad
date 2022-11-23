@@ -1,15 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Reflection.Emit;
-
-using OpenTK.Platform;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
 using TCad;
-using System.Security.Policy;
 
 namespace OpenGL.GLU;
 

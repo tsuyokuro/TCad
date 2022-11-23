@@ -1,6 +1,4 @@
 using Plotter.Settings;
-using SharpFont.Fnt;
-using static System.Windows.Forms.DataFormats;
 
 namespace Plotter;
 

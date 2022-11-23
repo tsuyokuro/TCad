@@ -1,9 +1,6 @@
 using CadDataTypes;
-using TCad.Controls;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-using System;
 using System.Collections.Generic;
 using TCad.ViewModel;
 
