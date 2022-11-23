@@ -1,31 +1,27 @@
+using CadDataTypes;
+using CarveWapper;
+using GLUtil;
+using HalfEdgeNS;
+using LibiglWrapper;
+using MeshMakerNS;
+using MeshUtilNS;
+using Microsoft.Scripting.Hosting;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
-using CadDataTypes;
-using HalfEdgeNS;
-using CarveWapper;
-using MeshUtilNS;
-using MeshMakerNS;
-using TCad.Controls;
-using static Plotter.CadFigure;
-using LibiglWrapper;
-using GLUtil;
-using OpenTK;
-using OpenTK.Mathematics;
-using System.Security.Cryptography;
-using Microsoft.Scripting.Hosting;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.WinForms;
-using OpenTK.Platform;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.Common;
-using TCad.ViewModel;
-using static IronPython.Modules.CTypes;
 using System.Threading;
+using TCad.Controls;
+using TCad.ViewModel;
+using static Plotter.CadFigure;
 
-namespace Plotter.Controller;
+namespace Plotter.Scripting;
 
 public class ScriptFunctions
 {
@@ -203,7 +199,8 @@ public class ScriptFunctions
 
         StartEdit();
 
-        fig.ForEachFig((f) => {
+        fig.ForEachFig((f) =>
+        {
             CadUtil.ScaleFigure(f, org, scale);
         });
 
@@ -264,15 +261,15 @@ public class ScriptFunctions
         if (list.Count < 2)
         {
             ItConsole.println(
-                global::TCad.Properties.Resources.error_select_2_or_more
+                TCad.Properties.Resources.error_select_2_or_more
                 );
 
             return;
         }
 
-        CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
+        CadFigure parent = Controller.DB.NewFigure(Types.GROUP);
 
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
         CadOpe ope;
 
         foreach (CadFigure fig in list)
@@ -309,7 +306,7 @@ public class ScriptFunctions
         }
 
         ItConsole.println(
-                global::TCad.Properties.Resources.notice_was_grouped
+                TCad.Properties.Resources.notice_was_grouped
             );
 
         Session.PostRemakeObjectTree();
@@ -341,20 +338,21 @@ public class ScriptFunctions
     {
         List<CadFigure> list = FilterRootFigure(targetList);
 
-        CadOpeList opeList = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeList = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         CadOpe ope;
 
         foreach (CadFigure root in list)
         {
-            root.ForEachFig((fig) => {
+            root.ForEachFig((fig) =>
+            {
                 if (fig.Parent == null)
                 {
                     return;
                 }
 
                 fig.Parent = null;
-                
+
                 if (fig.PointCount > 0)
                 {
                     ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
@@ -439,7 +437,7 @@ public class ScriptFunctions
 
     public CadFigure AddLine(Vector3d v0, Vector3d v1)
     {
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigure fig = Controller.DB.NewFigure(Types.POLY_LINES);
         fig.AddPoint((CadVertex)v0);
         fig.AddPoint((CadVertex)v1);
 
@@ -464,7 +462,7 @@ public class ScriptFunctions
 
     public CadFigure AddPoint(Vector3d p)
     {
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.POINT);
+        CadFigure fig = Controller.DB.NewFigure(Types.POINT);
         fig.AddPoint((CadVertex)p);
 
         fig.EndCreate(Controller.DC);
@@ -496,7 +494,7 @@ public class ScriptFunctions
         CadVertex p0 = (CadVertex)p;
         CadVertex p1 = (CadVertex)p;
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.RECT);
+        CadFigure fig = Controller.DB.NewFigure(Types.RECT);
 
         fig.AddPoint(p0);
 
@@ -549,7 +547,7 @@ public class ScriptFunctions
         Vector3d hc = hdir * c;
 
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.RECT);
+        CadFigure fig = Controller.DB.NewFigure(Types.RECT);
 
         fig.AddPoint(tp + wc);
 
@@ -602,7 +600,7 @@ public class ScriptFunctions
         Vector3d viewDir = Controller.DC.ViewDir;
         Vector3d upDir = Controller.DC.UpVector;
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.CIRCLE);
+        CadFigure fig = Controller.DB.NewFigure(Types.CIRCLE);
 
         Vector3d p0 = p;
         Vector3d p1 = p0 + CadMath.Normal(viewDir, upDir) * r;
@@ -662,7 +660,7 @@ public class ScriptFunctions
     {
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -779,7 +777,7 @@ public class ScriptFunctions
 
     public CadFigure AddPicture(Vector3d pos, string fname)
     {
-        CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(CadFigure.Types.PICTURE);
+        CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(Types.PICTURE);
 
         fig.Setup(Controller.PageSize, pos, fname);
 
@@ -805,7 +803,7 @@ public class ScriptFunctions
             return;
         }
 
-        if (baseFig.Type != CadFigure.Types.POLY_LINES)
+        if (baseFig.Type != Types.POLY_LINES)
         {
             return;
         }
@@ -878,7 +876,7 @@ public class ScriptFunctions
         foreach (CadFigure fig in figList)
         {
             int i;
-            for (i=0; i<fig.PointCount; i++)
+            for (i = 0; i < fig.PointCount; i++)
             {
                 CadVertex v = fig.PointList[i];
                 if (v.Selected)
@@ -953,7 +951,7 @@ public class ScriptFunctions
             AbendEdit();
 
             ItConsole.println(
-                global::TCad.Properties.Resources.error_operation_failed
+                TCad.Properties.Resources.error_operation_failed
                 );
             return;
         }
@@ -961,7 +959,7 @@ public class ScriptFunctions
         EndEdit();
 
         ItConsole.println(
-            global::TCad.Properties.Resources.notice_operation_success
+            TCad.Properties.Resources.notice_operation_success
             );
     }
 
@@ -1033,7 +1031,7 @@ public class ScriptFunctions
 
         CadRect r = CadUtil.GetContainsRectScrn(dc, figList);
 
-        CadRect wr = default(CadRect);
+        CadRect wr = default;
         wr.p0 = dc.DevPointToWorldPoint(r.p0);
         wr.p1 = dc.DevPointToWorldPoint(r.p1);
 
@@ -1062,7 +1060,7 @@ public class ScriptFunctions
 
         CadRect tr = CadUtil.GetContainsRectScrn(tdc, figList);
 
-        Vector3d trcp = (Vector3d)((tr.p1 - tr.p0) / 2 + tr.p0);
+        Vector3d trcp = (tr.p1 - tr.p0) / 2 + tr.p0;
 
         Vector3d d = trcp - tdc.ViewOrg;
 
@@ -1160,7 +1158,7 @@ public class ScriptFunctions
         double ow = Math.Abs(r2.p1.X - r2.p0.X);
         double oh = Math.Abs(r2.p1.Y - r2.p0.Y);
 
-        double scale = Math.Min((w - paddingX) / ow, (h -paddingY) / oh);
+        double scale = Math.Min((w - paddingX) / ow, (h - paddingY) / oh);
 
         tdc.WorldScale = scale;
 
@@ -1238,7 +1236,7 @@ public class ScriptFunctions
 
     private void FaceToDirection(CadFigure fig, Vector3d org, Vector3d dir)
     {
-        if (fig.Type != CadFigure.Types.POLY_LINES)
+        if (fig.Type != Types.POLY_LINES)
         {
             return;
         }
@@ -1320,11 +1318,11 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(m);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
-        for (int i = 0; i<fig.PointCount; i++)
+        for (int i = 0; i < fig.PointCount; i++)
         {
             CadVertex v = fig.PointList[i];
             v.Z = org.Z;
@@ -1336,7 +1334,7 @@ public class ScriptFunctions
             CadUtil.RotateFigure(fig, org, rotateV, -t);
         }
 
-        CadOpeList root = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList root = Session.StartWithSnapshotDB ? null : new CadOpeList();
         CadOpe ope;
 
         if (!Session.StartWithSnapshotDB)
@@ -1364,7 +1362,7 @@ public class ScriptFunctions
     {
         CadFigure tfig = Controller.DB.GetFigure(id);
 
-        if (tfig == null || tfig.Type != CadFigure.Types.POLY_LINES)
+        if (tfig == null || tfig.Type != Types.POLY_LINES)
         {
             return;
         }
@@ -1377,7 +1375,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.RecalcNormal();
 
@@ -1417,7 +1415,7 @@ public class ScriptFunctions
         HeModel hm = figMesh.mHeModel;
 
 
-        CadFigure figPoly = Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigure figPoly = Controller.DB.NewFigure(Types.POLY_LINES);
 
         hm.ForReachEdgePoint(v =>
         {
@@ -1458,22 +1456,22 @@ public class ScriptFunctions
 
     public void ToMesh(uint id)
     {
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null: new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         CadFigure orgFig = Controller.DB.GetFigure(id);
 
 
         if (orgFig == null)
         {
-            return;    
+            return;
         }
 
-        if (orgFig.Type != CadFigure.Types.POLY_LINES)
+        if (orgFig.Type != Types.POLY_LINES)
         {
             return;
         }
 
-        CadFigureMesh mesh = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh mesh = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         mesh.CreateModel(orgFig);
 
@@ -1525,7 +1523,7 @@ public class ScriptFunctions
     {
         List<CadFigure> figList = Controller.DB.GetSelectedFigList();
 
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         for (int i = 0; i < figList.Count; i++)
         {
@@ -1558,7 +1556,7 @@ public class ScriptFunctions
     private CadFigureMesh GetCadFigureMesh(uint id)
     {
         CadFigure fig = Controller.DB.GetFigure(id);
-        if (fig == null || fig.Type != CadFigure.Types.MESH) return null;
+        if (fig == null || fig.Type != Types.MESH) return null;
 
         return (CadFigureMesh)fig;
     }
@@ -1587,7 +1585,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1625,7 +1623,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1663,7 +1661,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1694,12 +1692,12 @@ public class ScriptFunctions
             return;
         }
 
-        
+
         HeModel he = tfig.mHeModel;
         CadMesh src = HeModelConverter.ToCadMesh(he);
 
         Vector3d normal = CadMath.Normal(
-            p1 - p0, (Controller.DC.ViewDir));
+            p1 - p0, Controller.DC.ViewDir);
 
         (CadMesh m1, CadMesh m2) = MeshUtil.CutMeshWithVector(src, p0, p1, normal);
 
@@ -1709,10 +1707,10 @@ public class ScriptFunctions
             return;
         }
 
-        CadFigureMesh fig1 = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig1 = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
         fig1.SetMesh(HeModelConverter.ToHeModel(m1));
 
-        CadFigureMesh fig2 = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig2 = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
         fig2.SetMesh(HeModelConverter.ToHeModel(m2));
 
         CadOpe ope;
@@ -1852,9 +1850,10 @@ public class ScriptFunctions
     {
         string s = null;
 
-        ThreadUtil.RunOnMainThread(() => {
-                s = ItConsole.getString(msg, defStr);
-            }, true);
+        ThreadUtil.RunOnMainThread(() =>
+        {
+            s = ItConsole.getString(msg, defStr);
+        }, true);
 
         return s;
     }
@@ -1972,7 +1971,7 @@ public class ScriptFunctions
 
     public CadFigure CreatePolyLines()
     {
-        CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(Types.POLY_LINES);
         return fig;
     }
 
@@ -2058,7 +2057,7 @@ public class ScriptFunctions
             return;
         }
 
-        if (baseFig.Type != CadFigure.Types.POLY_LINES)
+        if (baseFig.Type != Types.POLY_LINES)
         {
             return;
         }

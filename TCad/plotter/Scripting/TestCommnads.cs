@@ -14,8 +14,6 @@ using TCad.Controls;
 using OpenTK.Mathematics;
 using Plotter.svg;
 using System.Xml.Linq;
-using System.Windows.Resources;
-using System.Windows;
 using System.IO;
 using System.Drawing;
 using GLFont;
@@ -24,9 +22,9 @@ using System.Runtime.InteropServices;
 using OpenGL.GLU;
 using GLUtil;
 using SharpFont;
-using OpenTK.Compute.OpenCL;
+using Plotter.Controller;
 
-namespace Plotter.Controller;
+namespace Plotter.Scripting;
 
 public class TestCommands
 {
@@ -43,7 +41,7 @@ public class TestCommands
 
     private void test002()
     {
-        CadMesh cm = MeshMaker.CreateSphere(new Vector3d(0,0,0), 20, 16, 16);
+        CadMesh cm = MeshMaker.CreateSphere(new Vector3d(0, 0, 0), 20, 16, 16);
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -271,7 +269,7 @@ public class TestCommands
     {
         ItConsole.println("test013Sub start");
 
-        await Task.Run(()=>
+        await Task.Run(() =>
         {
             ItConsole.println("Run");
             Thread.Sleep(2000);
@@ -289,7 +287,7 @@ public class TestCommands
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
-        for (int i=0; i< hem.VertexStore.Count; i++)
+        for (int i = 0; i < hem.VertexStore.Count; i++)
         {
             hem.VertexStore[i] *= 500.0;
         }
@@ -391,7 +389,7 @@ public class TestCommands
         int ucnt = 8;
         int vcnt = 5;
 
-        VertexList vl =SplineUtil.CreateFlatControlPoints(ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0);
+        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0);
 
         nfig.Setup(2, ucnt, vcnt, vl, null, 16, 16);
 
@@ -412,9 +410,9 @@ public class TestCommands
         int vcnt = 4;
 
         VertexList vl = SplineUtil.CreateBoxControlPoints(
-            ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0, Vector3d.UnitY * -20.0 );
+            ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0, Vector3d.UnitY * -20.0);
 
-        nfig.Setup(2, ucnt*2, vcnt, vl, null, 16, 16, false, false, true, true);
+        nfig.Setup(2, ucnt * 2, vcnt, vl, null, 16, 16, false, false, true, true);
 
         Controller.CurrentLayer.AddFigure(nfig);
 
@@ -534,9 +532,9 @@ public class TestCommands
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
+        GlyphSlot glyph = fw.GetGlyph('A');
 
-        SharpFont.Outline outline = glyph.Outline;
+        Outline outline = glyph.Outline;
 
         int idx = 0;
 
@@ -549,7 +547,7 @@ public class TestCommands
             int n = outline.Contours[i];
             for (; idx <= n;)
             {
-                SharpFont.FTVector fv = outline.Points[idx];
+                FTVector fv = outline.Points[idx];
                 v.X = fv.X * 100.0;
                 v.Y = fv.Y * 100.0;
                 v.Z = 0;
@@ -608,9 +606,9 @@ public class TestCommands
     {
         FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('A');
+        GlyphSlot glyph = fw.GetGlyph('A');
 
-        SharpFont.Outline outline = glyph.Outline;
+        Outline outline = glyph.Outline;
 
 
         IntPtr htess = Glu.NewTess();
@@ -624,7 +622,7 @@ public class TestCommands
 
         double[] va = new double[3];
 
-        Glu.TessNormal(htess, new Vector3(0f,0f,1f));
+        Glu.TessNormal(htess, new Vector3(0f, 0f, 1f));
 
         Glu.TessBeginPolygon(htess, 128);
 
@@ -638,7 +636,7 @@ public class TestCommands
             int n = outline.Contours[i];
             for (; idx <= n;)
             {
-                SharpFont.FTVector fv = outline.Points[idx];
+                FTVector fv = outline.Points[idx];
                 tv[0] = fv.X * 100.0;
                 tv[1] = fv.Y * 100.0;
                 tv[2] = 0;
@@ -659,7 +657,7 @@ public class TestCommands
     public void Test5()
     {
         FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('あ');
+        GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
 
@@ -711,7 +709,7 @@ public class TestCommands
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        SharpFont.GlyphSlot glyph = fw.GetGlyph('黒');
+        GlyphSlot glyph = fw.GetGlyph('黒');
 
         List<Vector3d> cvl = new();
 
@@ -762,7 +760,7 @@ public class TestCommands
 
         if (fontPoly.Mesh != null)
         {
-            for (int i=0; i < fontPoly.Mesh.VertexStore.Count; i++)
+            for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
                 fontPoly.Mesh.VertexStore[i] *= 400.0;
             }
@@ -809,7 +807,7 @@ public class TestCommands
         });
     }
 
-    private void Test7_sub(SharpFont.Outline outline,
+    private void Test7_sub(Outline outline,
         out List<List<int>> cl, out List<Vector3d> vl)
     {
         FTVector[] points = outline.Points;
@@ -1014,7 +1012,8 @@ public class TestCommands
 
     public void Redraw()
     {
-        RunOnMainThread(() => {
+        RunOnMainThread(() =>
+        {
             Controller.Clear();
             Controller.DrawAll();
             Controller.PushToView();

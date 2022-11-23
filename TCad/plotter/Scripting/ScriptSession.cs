@@ -1,4 +1,4 @@
-namespace Plotter.Controller;
+namespace Plotter.Scripting;
 
 public class ScriptSession
 {
@@ -73,7 +73,9 @@ public class ScriptSession
         {
             SnapShot.StoreAfter(Env.Controller.DB);
             Env.Controller.HistoryMan.foward(SnapShot);
-        } else {
+        }
+        else
+        {
             if (mCadOpeList?.Count > 0)
             {
                 Env.Controller.HistoryMan.foward(mCadOpeList);

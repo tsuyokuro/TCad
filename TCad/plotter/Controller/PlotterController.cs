@@ -1,5 +1,6 @@
 using CadDataTypes;
 using Plotter.Controller.TaskRunner;
+using Plotter.Scripting;
 using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;

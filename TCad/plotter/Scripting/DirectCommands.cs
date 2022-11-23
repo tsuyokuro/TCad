@@ -1,10 +1,11 @@
+using Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Plotter.Controller;
+namespace Plotter.Scripting;
 
 public class DirectCommands
 {
@@ -60,7 +61,7 @@ public class DirectCommands
 
         ItConsole.println("BenchDraw end");
         ItConsole.println($"BenchDraw cnt:{i} time:{sw.ElapsedMilliseconds}ms");
-        ItConsole.println($"BenchDraw FPS:" + ((double)cnt / sw.ElapsedMilliseconds) * 1000);
+        ItConsole.println($"BenchDraw FPS:" + (double)cnt / sw.ElapsedMilliseconds * 1000);
     }
 
     public bool ExecCommand(string s)
