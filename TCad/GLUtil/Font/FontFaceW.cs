@@ -154,6 +154,11 @@ public class FontFaceW
 
     public FontTex CreateTexture(string s)
     {
+        if (s.Length == 1)
+        {
+            return CreateTexture(s[0]);
+        }
+
         List<FontTex> ta = new List<FontTex>();
 
         int fw = 0;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -36,6 +37,14 @@ public class DirectCommands
     {
         ItConsole.println("BenchDraw start");
 
+        Action draw = () =>
+        {
+            Controller.DC.StartDraw();
+            Controller.Clear();
+            Controller.DrawAll();
+            Controller.DC.EndDraw();
+        };
+
         Thread.Sleep(100);
 
         Stopwatch sw = new();
@@ -44,16 +53,7 @@ public class DirectCommands
         int cnt = 1000;
         while (i < cnt)
         {
-            ThreadUtil.RunOnMainThread(() =>
-            {
-                //Controller.Redraw();
-
-                Controller.DC.StartDraw();
-                Controller.Clear();
-                Controller.DrawAll();
-                Controller.DC.EndDraw();
-
-            }, true);
+            ThreadUtil.RunOnMainThread(draw, true);
             i++;
         }
         sw.Stop();

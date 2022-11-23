@@ -355,7 +355,8 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public void SetupTextCommandView(AutoCompleteTextBox textBox)
     {
         CommandTextBox = textBox;
-        CommandTextBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
+        CommandTextBox.CandidateList.Clear();
+        CommandTextBox.CandidateList.AddRange(Controller.ScriptEnv.AutoCompleteList);
         CommandTextBox.Determined += EvalTextCommand;
     }
 
