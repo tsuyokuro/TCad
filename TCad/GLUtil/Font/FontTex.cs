@@ -20,6 +20,8 @@ public class FontTex
 
     public int Top = 0;
 
+    public int TextureID = -1;
+
     public bool IsSpace
     {
         get => Data == null;

@@ -95,6 +95,7 @@ public class ImageShader
         if (ShaderProgram != -1)
         {
             GL.DeleteProgram(ShaderProgram);
+            ShaderProgram = -1;
         }
     }
 

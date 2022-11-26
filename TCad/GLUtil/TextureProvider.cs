@@ -26,9 +26,9 @@ public class TextureProvider
 
     public int GetNew()
     {
-        int name = GL.GenTexture();
-        mTextures.Add(name);
-        return name;
+        int textureID = GL.GenTexture();
+        mTextures.Add(textureID);
+        return textureID;
     }
 
     public void RemoveAll()

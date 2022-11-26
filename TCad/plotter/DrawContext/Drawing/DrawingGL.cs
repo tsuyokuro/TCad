@@ -35,7 +35,7 @@ public class DrawingGL : IDrawing
 
         mFontRenderer = FontRenderer.Instance;
 
-        FontTex tex = mFontFaceW.CreateTexture("X");
+        FontTex tex = mFontFaceW.CreateTexture('X', true);
         FontTexW = tex.ImgW;
         FontTexH = tex.ImgH;
     }
@@ -739,7 +739,16 @@ public class DrawingGL : IDrawing
     {
         Start2D();
 
-        FontTex tex = mFontFaceW.CreateTexture(s);
+        FontTex tex = null;
+
+        if (s.Length == 1)
+        {
+            tex = mFontFaceW.CreateTexture(s[0], true);
+        }
+        else
+        {
+            tex = mFontFaceW.CreateTexture(s);
+        }
 
         Vector3d xv = xdir.UnitVector() * tex.ImgW * imgScale;
         Vector3d yv = ydir.UnitVector() * tex.ImgH * imgScale;

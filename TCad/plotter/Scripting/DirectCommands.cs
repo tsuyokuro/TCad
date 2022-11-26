@@ -1,3 +1,4 @@
+using GLFont;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,8 @@ public class DirectCommands
 
         Thread.Sleep(100);
 
+        FontRenderer.Counter = 0;
+
         Stopwatch sw = new();
         sw.Start();
         int i = 0;
@@ -62,6 +65,7 @@ public class DirectCommands
         ItConsole.println("BenchDraw end");
         ItConsole.println($"BenchDraw cnt:{i} time:{sw.ElapsedMilliseconds}ms");
         ItConsole.println($"BenchDraw FPS:" + (double)cnt / sw.ElapsedMilliseconds * 1000);
+        //ItConsole.println($"FontRenderer.Counter:" + FontRenderer.Counter);
     }
 
     public bool ExecCommand(string s)

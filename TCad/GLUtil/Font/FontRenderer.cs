@@ -2,13 +2,14 @@ using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
+using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 
 namespace GLFont;
 
 public class FontRenderer
 {
-    public int Texture = -1;
+    public int TextureID = -1;
     private bool mInitialized = false;
 
     FontShader mShader;
@@ -43,7 +44,7 @@ public class FontRenderer
     {
         Dispose();
 
-        Texture = TextureProvider.Instance.GetNew();
+        TextureID = TextureProvider.Instance.GetNew();
 
         mShader = FontShader.GetInstance();
 
@@ -54,7 +55,7 @@ public class FontRenderer
     {
         if (mInitialized)
         {
-            TextureProvider.Instance.Remove(Texture);
+            TextureProvider.Instance.Remove(TextureID);
         }
 
         mInitialized = false;
@@ -69,6 +70,8 @@ public class FontRenderer
         Render(tex, p, xv, yv);
     }
 
+    public static int Counter = 0; 
+
     public void Render(FontTex tex, Vector3d p, Vector3d xv, Vector3d yv)
     {
         if (!mInitialized)
@@ -76,22 +79,29 @@ public class FontRenderer
             throw new ObjectDisposedException(nameof(FontRenderer));
         }
 
-        int texUnitNumber = 0;
+        Counter++;
 
+        int texUnitNumber = 0;
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 
-        GL.BindTexture(TextureTarget.Texture2D, Texture);
+        if (tex.TextureID == -1)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, TextureID);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-        GL.TexImage2D(
-            TextureTarget.Texture2D, 0,
-            PixelInternalFormat.Alpha8,
-            tex.W, tex.H, 0,
-            PixelFormat.Alpha,
-            PixelType.UnsignedByte, tex.Data);
-
+            GL.TexImage2D(
+                TextureTarget.Texture2D, 0,
+                PixelInternalFormat.Alpha8,
+                tex.W, tex.H, 0,
+                PixelFormat.Alpha,
+                PixelType.UnsignedByte, tex.Data);
+        }
+        else
+        {
+            GL.BindTexture(TextureTarget.Texture2D, tex.TextureID);
+        }
 
         mShader.Start(texUnitNumber);
 
@@ -118,6 +128,14 @@ public class FontRenderer
 
         GL.End();
 
-        GL.UseProgram(0);
+
+        GL.Disable(EnableCap.Blend);
+
+        // Unbind Texture
+        GL.BindTexture(TextureTarget.Texture2D, 0);
+
+        // 
+        //GL.UseProgram(0);
+        mShader.End();
     }
 }

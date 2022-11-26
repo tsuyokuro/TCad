@@ -1,4 +1,5 @@
 using GLUtil;
+using OpenTK.Graphics.OpenGL;
 using SharpFont;
 using System;
 using System.Collections.Generic;
@@ -99,7 +100,7 @@ public class FontFaceW
         return FontFace.Glyph;
     }
 
-    public FontTex CreateTexture(char c)
+    public FontTex CreateTexture(char c, bool attachTexture = false)
     {
         FontTex ft;
 
@@ -135,6 +136,11 @@ public class FontFaceW
 
             ft.FontW = Math.Max(fontW, ft.ImgW);
             ft.FontH = (int)(top + bottom);
+
+            if (attachTexture)
+            {
+                AttachTexture(ft);
+            }
         }
         else
         {
@@ -192,6 +198,28 @@ public class FontFaceW
 
         return mft;
     }
+
+    private void AttachTexture(in FontTex fontTex)
+    {
+        int texUnitNumber = 0;
+
+        fontTex.TextureID = TextureProvider.Instance.GetNew();
+
+        GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
+
+        GL.BindTexture(TextureTarget.Texture2D, fontTex.TextureID);
+
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+        GL.TexImage2D(
+            TextureTarget.Texture2D, 0,
+            PixelInternalFormat.Alpha8,
+            fontTex.W, fontTex.H, 0,
+            PixelFormat.Alpha,
+            PixelType.UnsignedByte, fontTex.Data);
+    }
+
 
     public class Provider
     {

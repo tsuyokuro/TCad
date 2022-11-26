@@ -1,3 +1,4 @@
+using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Drawing;
@@ -7,7 +8,7 @@ namespace Plotter;
 
 public class ImageRenderer
 {
-    private int Texture = -1;
+    private int TextureID = -1;
 
     private bool mInitialized = false;
 
@@ -22,7 +23,7 @@ public class ImageRenderer
     {
         Dispose();
 
-        Texture = GL.GenTexture();
+        TextureID = TextureProvider.Instance.GetNew();
 
         // Use my shader
         mShader = ImageShader.GetInstance();
@@ -34,7 +35,7 @@ public class ImageRenderer
     {
         if (mInitialized)
         {
-            GL.DeleteTexture(Texture);
+            TextureProvider.Instance.Remove(TextureID);
         }
 
         mInitialized = false;
@@ -53,7 +54,7 @@ public class ImageRenderer
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 
                     
-        GL.BindTexture(TextureTarget.Texture2D, Texture);
+        GL.BindTexture(TextureTarget.Texture2D, TextureID);
 
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);

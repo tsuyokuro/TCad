@@ -36,7 +36,7 @@ class FrameBufferW
         mWidth = width;
         mHeight = height;
 
-        // Color Texture
+        // Color TextureID
         ColorTexDesc = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, ColorTexDesc);
 
@@ -55,7 +55,7 @@ class FrameBufferW
         GL.BindTexture(TextureTarget.Texture2D, 0);
 
 #if TEX_DEPTH_BUFFER
-        // Depth Texture
+        // Depth TextureID
         DepthTexDesc = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, DepthTexDesc);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
