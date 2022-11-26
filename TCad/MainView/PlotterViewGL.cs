@@ -86,18 +86,12 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private void OnDisposed(object sender, EventArgs e)
     {
-        FontShader.GetInstance().Dispose();
-        ImageShader.GetInstance().Dispose();
-
         mDrawContext.Dispose();
     }
 
     private void OnLoad(object sender, EventArgs e)
     {
         DOut.plx("in");
-
-        FontShader.GetInstance();
-        ImageShader.GetInstance();
 
         GL.ClearColor(Color4.Black);
         GL.Enable(EnableCap.DepthTest);

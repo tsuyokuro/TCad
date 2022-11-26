@@ -432,7 +432,7 @@ public class ScriptFunctions
             return;
         }
 
-        fig.PointList.Ref(index).vector = v;
+        fig.PointList[index].vector = v;
     }
 
     public CadFigure AddLine(Vector3d v0, Vector3d v1)

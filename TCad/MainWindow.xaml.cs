@@ -1,3 +1,5 @@
+using GLFont;
+using GLUtil;
 using OpenGL.GLU;
 using Plotter;
 using Plotter.Controller;
@@ -192,6 +194,11 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         ViewModel.Close();
         ImageRenderer.Provider.Release();
+        FontRenderer.Instance.Dispose();
+        TextureProvider.Instance.RemoveAll();
+        FontShader.GetInstance().Dispose();
+        ImageShader.GetInstance().Dispose();
+
         Glu.Dispose();
     }
 

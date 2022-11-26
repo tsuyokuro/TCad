@@ -294,8 +294,8 @@ public class DrawingGDI : IDrawing
                 DrawPen dpen = edge ? edgePen : pen;
 
                 DrawLine(dpen,
-                    model.VertexStore.Ref(c.Vertex).vector,
-                    model.VertexStore.Ref(next.Vertex).vector
+                    model.VertexStore[c.Vertex].vector,
+                    model.VertexStore[next.Vertex].vector
                     );
 
                 c = next;

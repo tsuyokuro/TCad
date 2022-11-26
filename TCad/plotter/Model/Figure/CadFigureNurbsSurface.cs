@@ -122,7 +122,7 @@ public class CadFigureNurbsSurface : CadFigure
     {
         for (int i=0; i<mPointList.Count; i++)
         {
-            ref CadVertex p0 = ref mPointList.Ref(i);
+            ref CadVertex p0 = ref mPointList[i];
 
             if (p0.Selected)
             {

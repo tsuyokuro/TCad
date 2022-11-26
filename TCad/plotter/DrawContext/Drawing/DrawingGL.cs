@@ -1,5 +1,6 @@
 using CadDataTypes;
 using GLFont;
+using GLUtil;
 using HalfEdgeNS;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -32,7 +33,7 @@ public class DrawingGL : IDrawing
 
         mFontFaceW = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
 
-        mFontRenderer = FontRenderer.Provider.get();
+        mFontRenderer = FontRenderer.Instance;
 
         FontTex tex = mFontFaceW.CreateTexture("X");
         FontTexW = tex.ImgW;
@@ -41,7 +42,6 @@ public class DrawingGL : IDrawing
 
     public void Dispose()
     {
-        FontRenderer.Provider.Release();
     }
 
     public void Clear(DrawBrush brush)
@@ -88,7 +88,7 @@ public class DrawingGL : IDrawing
         GL.Begin(PrimitiveType.Triangles);
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
-            HeFace f = model.FaceStore[i];
+            HeFace f = model.FaceStore.Data[i];
 
             HalfEdge head = f.Head;
 
@@ -98,13 +98,13 @@ public class DrawingGL : IDrawing
 
             if (f.Normal != HeModel.INVALID_INDEX)
             {
-                Vector3d nv = model.NormalStore[f.Normal];
+                Vector3d nv = model.NormalStore.Data[f.Normal];
                 GL.Normal3(nv);
             }
 
             for (; ; )
             {
-                GL.Vertex3((model.VertexStore.Ref(c.Vertex).vector));
+                GL.Vertex3((model.VertexStore.Data[c.Vertex].vector));
 
                 c = c.Next;
 
@@ -144,7 +144,7 @@ public class DrawingGL : IDrawing
             {
                 HalfEdge next = c.Next;
 
-                Vector3d p = model.VertexStore.Ref(c.Vertex).vector;
+                Vector3d p = model.VertexStore[c.Vertex].vector;
 
                 if (c.Normal != HeModel.INVALID_INDEX)
                 {
@@ -208,7 +208,7 @@ public class DrawingGL : IDrawing
 
             HalfEdge pair;
 
-            p0 = model.VertexStore.Ref(c.Vertex).vector + shift;
+            p0 = model.VertexStore[c.Vertex].vector + shift;
 
             for (; ; )
             {
@@ -236,7 +236,7 @@ public class DrawingGL : IDrawing
                     }
                 }
 
-                p1 = model.VertexStore.Ref(c.Next.Vertex).vector + shift;
+                p1 = model.VertexStore[c.Next.Vertex].vector + shift;
 
                 if (drawAsEdge)
                 {

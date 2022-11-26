@@ -15,7 +15,7 @@ public class MeshUtil
     {
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) += mv;
+            cm.VertexStore[i] += mv;
         }
 
         return cm;
@@ -25,7 +25,7 @@ public class MeshUtil
     {
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) *= scale;
+            cm.VertexStore[i] *= scale;
         }
 
         return cm;

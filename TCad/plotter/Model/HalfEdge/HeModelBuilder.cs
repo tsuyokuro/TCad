@@ -112,7 +112,7 @@ public class HeModelBuilder
         int cnt = mHeModel.VertexStore.Count;
         for (int i = 0; i < cnt; i++)
         {
-            ref CadVertex rv = ref mHeModel.VertexStore.Ref(i);
+            ref CadVertex rv = ref mHeModel.VertexStore[i];
             if (v.Equals(rv))
             {
                 return i;

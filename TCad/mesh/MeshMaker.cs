@@ -21,8 +21,8 @@ public class MeshMaker
 
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) *= sizeV;
-            cm.VertexStore.Ref(i) += pos;
+            cm.VertexStore[i] *= sizeV;
+            cm.VertexStore[i] += pos;
         }
 
         return cm;
@@ -145,8 +145,8 @@ public class MeshMaker
 
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) *= sizeV;
-            cm.VertexStore.Ref(i) += pos;
+            cm.VertexStore[i] *= sizeV;
+            cm.VertexStore[i] += pos;
         }
 
         return cm;
@@ -181,8 +181,8 @@ public class MeshMaker
 
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) *= sizeV;
-            cm.VertexStore.Ref(i) += pos;
+            cm.VertexStore[i] *= sizeV;
+            cm.VertexStore[i] += pos;
         }
 
         return cm;
@@ -226,7 +226,7 @@ public class MeshMaker
 
         for (int i = 0; i < mesh.VertexStore.Count; i++)
         {
-            mesh.VertexStore.Ref(i) += pos;
+            mesh.VertexStore[i] += pos;
         }
 
         return mesh;
@@ -277,7 +277,7 @@ public class MeshMaker
 
         for (int i = 0; i < mesh.VertexStore.Count; i++)
         {
-            mesh.VertexStore.Ref(i).vector += pos;
+            mesh.VertexStore[i].vector += pos;
         }
 
         return mesh;

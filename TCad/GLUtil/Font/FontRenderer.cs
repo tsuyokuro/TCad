@@ -1,5 +1,8 @@
+using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace GLFont;
 
@@ -15,6 +18,22 @@ public class FontRenderer
         get => mInitialized;
     }
 
+    private static FontRenderer sInstance = null;
+    public static FontRenderer Instance
+    {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get
+        {
+            if (sInstance == null)
+            {
+                sInstance = new FontRenderer();
+                sInstance.Init();
+            }
+
+            return sInstance;
+        }
+    }
+
     private FontRenderer()
     {
 
@@ -24,18 +43,18 @@ public class FontRenderer
     {
         Dispose();
 
-        Texture = GL.GenTexture();
+        Texture = TextureProvider.Instance.GetNew();
 
         mShader = FontShader.GetInstance();
 
         mInitialized = true;
     }
 
-    private void Dispose()
+    public void Dispose()
     {
         if (mInitialized)
         {
-            GL.DeleteTexture(Texture);
+            TextureProvider.Instance.Remove(Texture);
         }
 
         mInitialized = false;
@@ -52,6 +71,11 @@ public class FontRenderer
 
     public void Render(FontTex tex, Vector3d p, Vector3d xv, Vector3d yv)
     {
+        if (!mInitialized)
+        {
+            throw new ObjectDisposedException(nameof(FontRenderer));
+        }
+
         int texUnitNumber = 0;
 
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
@@ -95,41 +119,5 @@ public class FontRenderer
         GL.End();
 
         GL.UseProgram(0);
-    }
-
-    public class Provider
-    {
-        private static FontRenderer sFontRenderer;
-
-        private static int RefCnt = 0;
-
-        public static FontRenderer get()
-        {
-            RefCnt++;
-
-            if (sFontRenderer == null)
-            {
-                sFontRenderer = new FontRenderer();
-            }
-
-            if (!sFontRenderer.Initialized)
-            {
-                sFontRenderer.Init();
-            }
-
-            return sFontRenderer;
-        }
-
-        public static void Release()
-        {
-            if (RefCnt > 1)
-            {
-                RefCnt--;
-                return;
-            }
-
-            sFontRenderer.Dispose();
-            RefCnt = 0;
-        }
     }
 }

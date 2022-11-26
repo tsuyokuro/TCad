@@ -236,6 +236,10 @@ public class FontFaceW
             return face;
         }
 
+        public static void Dispose()
+        {
+            FaceMap.Clear();
+        }
 
         private static string GetKey(string name, float size, int faceIndex)
         {

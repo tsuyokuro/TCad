@@ -890,6 +890,16 @@ public class TestCommands
         Controller.CurrentLayer.AddFigure(tmpFig);
     }
 
+    private void Test9()
+    {
+        RunOnMainThread(() =>
+        {
+            int name1 = TextureProvider.Instance.GetNew();
+            int name2 = TextureProvider.Instance.GetNew();
+            DOut.pl("end");
+        });
+    }
+
     public bool ExecCommand(string s)
     {
         string[] ss = Regex.Split(s, @"[ \t]+");
@@ -970,6 +980,10 @@ public class TestCommands
         else if (cmd == "@test8")
         {
             Test8();
+        }
+        else if (cmd == "@test9")
+        {
+            Test9();
         }
 
         else if (cmd == "@tcons1")
