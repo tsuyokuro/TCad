@@ -836,11 +836,18 @@ public class DrawingGL : IDrawing
         pp2 = DC.DevPointToWorldPoint(pp2);
         pp3 = DC.DevPointToWorldPoint(pp3);
 
-        DrawLine(pen, pp0, pp1);
-        DrawLine(pen, pp1, pp2);
-        DrawLine(pen, pp2, pp3);
-        DrawLine(pen, pp3, pp0);
+        //DrawLine(pen, pp0, pp1);
+        //DrawLine(pen, pp1, pp2);
+        //DrawLine(pen, pp2, pp3);
+        //DrawLine(pen, pp3, pp0);
 
+        GL.Color4(pen.Color4);
+        GL.Begin(PrimitiveType.Lines);
+        GL.Vertex3(pp0); GL.Vertex3(pp1);
+        GL.Vertex3(pp1); GL.Vertex3(pp2);
+        GL.Vertex3(pp2); GL.Vertex3(pp3);
+        GL.Vertex3(pp3); GL.Vertex3(pp0);
+        GL.End();
         GL.Enable(EnableCap.DepthTest);
     }
 
@@ -1245,7 +1252,9 @@ public class DrawingGL : IDrawing
 
     public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
     {
+        GL.Begin(PrimitiveType.Lines);
         DrawArrowGL(pen, pt0, pt1, type, pos, len, width, false);
+        GL.End();
     }
 
     public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
