@@ -8,18 +8,14 @@ public class TextureProvider
 {
     private static TextureProvider sInstance;
 
-    private List<int> mTextures = new List<int>();
+    private readonly List<int> mTextures = new();
 
     public static TextureProvider Instance
     {
         [MethodImpl(MethodImplOptions.Synchronized)]
         get
         {
-            if (sInstance == null)
-            {
-                sInstance = new TextureProvider();
-            }
-
+            sInstance ??= new TextureProvider();
             return sInstance;
         }
     }

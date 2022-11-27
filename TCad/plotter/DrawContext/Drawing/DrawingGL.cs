@@ -615,22 +615,42 @@ public class DrawingGL : IDrawing
 
     public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
     {
-        Start2D();
+        //Start2D();
         GL.Color4(pen.Color4);
         GL.PointSize(3);
-
+        GL.Disable(EnableCap.DepthTest);
         GL.Begin(PrimitiveType.Points);
 
-        foreach (CadVertex p in pointList)
+        unsafe
         {
-            if (p.Selected)
+            int num = pointList.Data.Length;
+            fixed (CadVertex* ptr = &pointList.Data[0])
             {
-                GL.Vertex3(DC.WorldPointToDevPoint(p.vector));
+                CadVertex* p = ptr;
+                for (int i = 0; i < num; i++)
+                {
+                    if (p->Selected)
+                    {
+                        //GL.Vertex3(DC.WorldPointToDevPoint(p->vector));
+                        GL.Vertex3(p->vector);
+                    }
+
+                    p++;
+                }
             }
         }
 
+        //for (int i = 0; i < pointList.Data.Length; i++)
+        //{
+        //    if (pointList[i].Selected)
+        //    {
+        //        GL.Vertex3(DC.WorldPointToDevPoint(pointList[i].vector));
+        //    }
+        //}
+
         GL.End();
-        End2D();
+        //End2D();
+        GL.Enable(EnableCap.DepthTest);
     }
 
     private void DrawRect2D(Vector3d p0, Vector3d p1, DrawPen pen)
