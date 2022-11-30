@@ -2,11 +2,14 @@ using CadDataTypes;
 using GLFont;
 using GLUtil;
 using HalfEdgeNS;
+using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using static Plotter.DrawingGL;
 
 namespace Plotter;
 
@@ -65,7 +68,8 @@ public class DrawingGL : IDrawing
     public void DrawHarfEdgeModel(
         DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model)
     {
-        DrawHeFaces(brush, model);
+        //DrawHeFaces(brush, model);
+        DrawHeFacesVBO(brush, model);
         DrawHeEdges(pen, edgePen, edgeThreshold, model);
 
         if (SettingsHolder.Settings.DrawNormal)
@@ -120,6 +124,112 @@ public class DrawingGL : IDrawing
 
         //DisableLight();
     }
+
+    public struct VboVertex
+    {
+        public Vector3 Pos;
+        public Vector3 Normal;
+    }
+
+    FlexArray<int> indexes = new(1000);
+    FlexArray<VboVertex> vboVertices = new();
+
+    private void DrawHeFacesVBO(DrawBrush brush, HeModel model)
+    {
+        if (brush.IsInvalid)
+        {
+            return;
+        }
+
+        EnableLight();
+        GL.Enable(EnableCap.ColorMaterial);
+        GL.Color4(brush.Color4);
+
+        vboVertices.Clear();
+
+        vboVertices.Clear();
+        indexes.Clear();
+        int vIndex = 0;
+        VboVertex v = new();
+
+        for (int i = 0; i < model.FaceStore.Count; i++)
+        {
+            HeFace f = model.FaceStore.Data[i];
+
+            HalfEdge head = f.Head;
+
+            HalfEdge c = head;
+
+            for (; ; )
+            {
+                v.Pos = (Vector3)model.VertexStore.Data[c.Vertex].vector;
+                v.Normal = (Vector3)model.NormalStore[c.Normal];
+                vboVertices.Add(v);
+                indexes.Add(vIndex);
+                vIndex++;
+
+                c = c.Next;
+
+                if (c == head)
+                {
+                    break;
+                }
+            }
+
+            //GL.End();
+        }
+
+        int stride = Marshal.SizeOf(typeof(VboVertex));
+
+        int vCnt = vboVertices.Count;
+        int vertexBufferId = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            fixed (VboVertex* ptr = &vboVertices.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+        }
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+        int idxCnt = indexes.Count;
+        int idxBufferId = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId);
+        unsafe
+        {
+            fixed (int* ptr = &indexes.Data[0])
+            {
+                GL.BufferData(BufferTarget.ElementArrayBuffer, idxCnt * sizeof(int), (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+        }
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+        GL.EnableClientState(ArrayCap.VertexArray);
+        GL.EnableClientState(ArrayCap.NormalArray);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(Vector3));
+        }
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId);
+        GL.DrawElements(BeginMode.Triangles, indexes.Count, DrawElementsType.UnsignedInt, 0);
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+        GL.DisableClientState(ArrayCap.VertexArray);
+        GL.DisableClientState(ArrayCap.NormalArray);
+
+        GL.DeleteBuffer(idxBufferId);
+        GL.DeleteBuffer(vertexBufferId);
+
+        //DisableLight();
+    }
+
 
     private void DrawHeFacesNormal(HeModel model)
     {
