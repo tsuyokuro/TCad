@@ -19,110 +19,67 @@ using CadDataTypes;
 using Microsoft.Scripting.Utils;
 using GLUtil;
 
-namespace TestApp;
 
+using vdata_t = System.Single;
+
+
+namespace TestApp;
 
 internal class Program
 {
-    static void test002()
-    {
-        CadVertexAttr attr1 = new CadVertexAttr();
-
-        attr1.IsColor1Valid = true;
-
-        CadVertexAttr attr2 = attr1;
-
-        attr1.IsColor1Valid = false;
-
-        Console.WriteLine("attr2.IsColor1Valid:" + attr2.IsColor1Valid);
-
-        VertexList vl1 = new VertexList();
-        vl1.Add(new CadVertex(10, 20, 30));
-
-        VertexList vl2 = new VertexList(vl1);
-
-        vl1[0] *= 10;
-
-        Console.WriteLine("vl2[0]:" + vl2[0]);
-    }
-    static void test003()
-    {
-        VertexList vl = new VertexList(1000);
-        List<CadVertex> list = new List<CadVertex>(1000);
-
-        for (int i=0; i<1000; i++)
-        {
-            CadVertex v = new CadVertex(i, 0, 0);
-
-            vl.Add(v);
-            list.Add(v);
-        }
-
-        Thread.Sleep(200);
-
-        Stopwatch sw = new Stopwatch();
-
-        sw.Reset();
-        sw.Start();
-
-        for (int j = 0; j < 100000; j++)
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                Vector3d v = list[i].vector;
-            }
-        }
-
-        sw.Stop();
-        Console.WriteLine("List:" + sw.ElapsedMilliseconds);
-
-        sw.Reset();
-        sw.Start();
-
-        for (int j = 0; j < 100000; j++)
-        {
-            foreach (CadVertex v in list)
-            {
-            }
-        }
-
-        sw.Stop();
-        Console.WriteLine("List foreach:" + sw.ElapsedMilliseconds);
-
-        sw.Reset();
-        sw.Start();
-
-        int num = vl.Count;
-
-        for (int j = 0; j < 100000; j++)
-        {
-            for (int i = 0; i < num; i++)
-            {
-                Vector3d v = vl.Data[i].vector;
-            }
-        }
-
-        sw.Stop();
-        Console.WriteLine("VertrxList Data:" + sw.ElapsedMilliseconds);
-
-
-        sw.Reset();
-        sw.Start();
-
-        for (int j = 0; j < 100000; j++)
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                Vector3d v = vl[i].vector;
-            }
-        }
-
-        sw.Stop();
-        Console.WriteLine("VertrxList:" + sw.ElapsedMilliseconds);
-    }
 
     private static void test004()
     {
+        int lcnt = 1000000000;
+
+        {
+            vdata_t v = 0;
+            vdata_t[] vt = new vdata_t[1024];
+
+            Thread.Sleep(500);
+
+            Stopwatch sw = new Stopwatch();
+
+            sw.Reset();
+            sw.Start();
+            for (int i = 0; i < vt.Length; i++)
+            {
+                vt[i] = (vdata_t)0.01 * i;
+            }
+
+            for (int i = 0; i < lcnt; i++)
+            {
+                v += vt[i & (1024 - 1)];
+                v = (vdata_t)Math.Sqrt((vdata_t)(v + (vdata_t)0.25));
+            }
+            sw.Stop();
+            Console.WriteLine("vdata_t:" + sw.ElapsedMilliseconds);
+            Console.WriteLine("v:" + v);
+        }
+
+        {
+            Thread.Sleep(500);
+
+            double dv = 0;
+            double[] dvt = new double[1024];
+
+            Stopwatch sw = new Stopwatch();
+            sw.Reset();
+            sw.Start();
+            for (int i = 0; i < dvt.Length; i++)
+            {
+                dvt[i] = (double)0.01 * i;
+            }
+
+            for (int i = 0; i < lcnt; i++)
+            {
+                dv += dvt[i & (1024 - 1)];
+                dv = (vdata_t)Math.Sqrt(dv + 0.25);
+            }
+            sw.Stop();
+            Console.WriteLine("double:" + sw.ElapsedMilliseconds);
+            Console.WriteLine("dv:" + dv);
+        }
     }
 
 

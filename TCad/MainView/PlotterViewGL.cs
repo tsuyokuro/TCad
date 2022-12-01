@@ -387,7 +387,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         }
         else
         {
-            VectorExt.Set(out PrevMousePos, e.X, e.Y, 0);
+            VectorDExt.Set(out PrevMousePos, e.X, e.Y, 0);
             DownButton = e.Button;
 
             //if (DownButton != MouseButtons.Middle)

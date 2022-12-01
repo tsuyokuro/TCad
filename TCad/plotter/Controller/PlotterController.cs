@@ -147,7 +147,7 @@ public partial class PlotterController
 
         mPlotterTaskRunner = new PlotterTaskRunner(this);
 
-        ObjDownPoint = VectorExt.InvalidVector3d;
+        ObjDownPoint = VectorDExt.InvalidVector3d;
 
         InitHid();
 

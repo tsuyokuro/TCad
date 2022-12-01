@@ -366,7 +366,7 @@ public class SelectingState : ControllerState
 /// </summary>
 public class RubberBandSelectState : ControllerState
 {
-    private Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+    private Vector3d RubberBandScrnPoint0 = VectorDExt.InvalidVector3d;
     private Vector3d RubberBandScrnPoint1 = default;
 
     public override ControllerStates State
@@ -423,7 +423,7 @@ public class RubberBandSelectState : ControllerState
 
         RubberBandSelect(dc, RubberBandScrnPoint0, pixp);
 
-        RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+        RubberBandScrnPoint0 = VectorDExt.InvalidVector3d;
 
         Ctrl.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
@@ -447,8 +447,8 @@ public class RubberBandSelectState : ControllerState
         Ctrl.LastSelPoint = null;
         Ctrl.LastSelSegment = null;
 
-        Vector3d minp = VectorExt.Min(p0, p1);
-        Vector3d maxp = VectorExt.Max(p0, p1);
+        Vector3d minp = VectorDExt.Min(p0, p1);
+        Vector3d maxp = VectorDExt.Max(p0, p1);
         Ctrl.DB.ForEachEditableFigure(
             (layer, fig) =>
             {

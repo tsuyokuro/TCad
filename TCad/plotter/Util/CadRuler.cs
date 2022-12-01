@@ -68,7 +68,7 @@ public struct CadRuler
             return ret;
         }
 
-        Vector3d p = VectorExt.InvalidVector3d;
+        Vector3d p = VectorDExt.InvalidVector3d;
         double mind = Double.MaxValue;
 
         StackArray<Vector3d> vtbl = default;
