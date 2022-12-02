@@ -275,12 +275,12 @@ public struct CadQuaternion
         return q;
     }
 
-    public static Vector3d ToVector3d(CadQuaternion q)
+    public static Vector3d ToVector3(CadQuaternion q)
     {
         return new Vector3d(q.x, q.y, q.z);
     }
 
-    public Vector3d ToVector3d()
+    public Vector3d ToVector3()
     {
         return new Vector3d(x, y, z);
     }

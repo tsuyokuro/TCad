@@ -161,7 +161,7 @@ public partial class PlotterController
     {
         SelectContext sc = default;
 
-        ObjDownPoint = VectorDExt.InvalidVector3d;
+        ObjDownPoint = VectorExt.InvalidVector3;
 
         RulerSet.Clear();
 

@@ -117,12 +117,12 @@ class DrawContextGLPers : DrawContextGL
         qp = CadQuaternion.FromVector(mEye);
         qp = r * qp;
         qp = qp * q;
-        mEye = qp.ToVector3d();
+        mEye = qp.ToVector3();
 
         qp = CadQuaternion.FromVector(mUpVector);
         qp = r * qp;
         qp = qp * q;
-        mUpVector = qp.ToVector3d();
+        mUpVector = qp.ToVector3();
 
         Vector3d ev = mLookAt - mEye;
 
@@ -142,12 +142,12 @@ class DrawContextGLPers : DrawContextGL
             qp = r * qp;
             qp = qp * q;
 
-            mEye = qp.ToVector3d();
+            mEye = qp.ToVector3();
 
             qp = CadQuaternion.FromVector(mUpVector);
             qp = r * qp;
             qp = qp * q;
-            mUpVector = qp.ToVector3d();
+            mUpVector = qp.ToVector3();
         }
 
         CalcViewMatrix();
@@ -245,7 +245,7 @@ class DrawContextGLPers : DrawContextGL
 
     public override Vector3d WorldVectorToDevVector(Vector3d pt)
     {
-        Vector4d wv = pt.ToVector4d(1.0);
+        Vector4d wv = pt.ToVector4(1.0);
 
         Vector4d sv = wv * mViewMatrix;
         Vector4d pv = sv * mProjectionMatrix;
@@ -261,7 +261,7 @@ class DrawContextGLPers : DrawContextGL
         dv.Y = dv.Y * DeviceScaleY;
         dv.Z = 0;
 
-        return dv.ToVector3d();
+        return dv.ToVector3();
     }
 
     public override Vector3d DevVectorToWorldVector(Vector3d pt)
@@ -280,7 +280,7 @@ class DrawContextGLPers : DrawContextGL
         wv = wv * mProjectionMatrixInv;
         wv = wv * mViewMatrixInv;
 
-        return wv.ToVector3d();
+        return wv.ToVector3();
     }
 
     public override double DevSizeToWoldSize(double s)

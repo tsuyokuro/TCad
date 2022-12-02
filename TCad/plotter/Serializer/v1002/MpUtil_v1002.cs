@@ -94,7 +94,7 @@ public partial class MpUtil_v1002
         return ret;
     }
 
-    public static List<MpVector3d_v1002> Vector3dListToMp(Vector3dList v)
+    public static List<MpVector3d_v1002> Vector3dListToMp(Vector3List v)
     {
         List<MpVector3d_v1002> ret = new List<MpVector3d_v1002>();
         for (int i = 0; i < v.Count; i++)
@@ -105,9 +105,9 @@ public partial class MpUtil_v1002
         return ret;
     }
 
-    public static Vector3dList Vector3dListFromMp(List<MpVector3d_v1002> list)
+    public static Vector3List Vector3dListFromMp(List<MpVector3d_v1002> list)
     {
-        Vector3dList ret = new Vector3dList(list.Count);
+        Vector3List ret = new Vector3List(list.Count);
         for (int i = 0; i < list.Count; i++)
         {
             ret.Add(list[i].Restore());

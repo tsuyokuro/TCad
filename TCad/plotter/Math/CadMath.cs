@@ -591,7 +591,7 @@ public partial class CadMath
             //DebugOut.Std.PrintLn("CrossPlane is parallel");
 
             // 平面と直線は平行
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         double d = InnerProduct(normal, p);
@@ -647,17 +647,17 @@ public partial class CadMath
 
         if (!cp.IsValid())
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         if (InnerProduct((b - a), (cp - a)) < 0)
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         if (NewMethod(a, b, cp) < 0)
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         return cp;
@@ -740,14 +740,14 @@ public partial class CadMath
 
         if (a.IsZero() || b.IsZero())
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         double cpBA = CrossProduct2D(b, a);
 
         if (cpBA == 0)
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         return a1 + a * CrossProduct2D(b, b1 - a1) / cpBA;

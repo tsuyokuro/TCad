@@ -570,7 +570,7 @@ public class DrawingGL : IDrawing
 
     private Vector3d WorldPointToDevPoint(Vector3d pt, double vw, double vh, Matrix4d modelV, Matrix4d projV)
     {
-        Vector4d wv = pt.ToVector4d(1.0);
+        Vector4d wv = pt.ToVector4(1.0);
 
         Vector4d sv = Vector4d.TransformRow(wv, modelV);
         Vector4d pv = Vector4d.TransformRow(sv, projV);
@@ -593,7 +593,7 @@ public class DrawingGL : IDrawing
         dv.X += vw2;
         dv.Y += vh2;
 
-        return dv.ToVector3d();
+        return dv.ToVector3();
     }
 
     private void DrawCompassOrtho()
@@ -1387,7 +1387,7 @@ public class DrawingGL : IDrawing
         GL.End();
     }
 
-    public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
+    public void DrawExtSnapPoints(Vector3List pointList, DrawPen pen)
     {
         GL.Disable(EnableCap.Lighting);
         GL.Disable(EnableCap.Light0);

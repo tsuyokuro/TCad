@@ -387,7 +387,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         }
         else
         {
-            VectorDExt.Set(out PrevMousePos, e.X, e.Y, 0);
+            VectorExt.Set(out PrevMousePos, e.X, e.Y, 0);
             DownButton = e.Button;
 
             //if (DownButton != MouseButtons.Middle)
@@ -510,7 +510,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         qp = CadQuaternion.FromVector(lookv);
         qp = r * qp;
         qp = qp * q;
-        lookv = qp.ToVector3d();
+        lookv = qp.ToVector3();
 
         Vector3d ev = dc.LookAt - dc.Eye;
 
@@ -528,12 +528,12 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             qp = r * qp;
             qp = qp * q;
 
-            lookv = qp.ToVector3d();
+            lookv = qp.ToVector3();
 
             qp = CadQuaternion.FromVector(upv);
             qp = r * qp;
             qp = qp * q;
-            upv = qp.ToVector3d();
+            upv = qp.ToVector3();
         }
 
         dc.SetCamera(dc.Eye, lookv + dc.Eye, upv);

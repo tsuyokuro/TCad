@@ -161,7 +161,7 @@ public class CadUtil
     }
 
     // 法線の代表値を求める
-    //public static CadVertex RepresentativeNormal(Vector3dList points)
+    //public static CadVertex RepresentativeNormal(Vector3List points)
     //{
     //    if (points.Count < 3)
     //    {

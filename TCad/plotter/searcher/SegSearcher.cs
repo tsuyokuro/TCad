@@ -141,7 +141,7 @@ public class SegSearcher
             return;
         }
 
-        Vector3d p = VectorDExt.InvalidVector3d;
+        Vector3d p = VectorExt.InvalidVector3;
         double mind = double.MaxValue;
 
         Vector3d dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));

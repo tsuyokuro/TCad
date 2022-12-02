@@ -118,8 +118,8 @@ public struct MarkSegment
 
     public void Clean()
     {
-        CrossPoint = VectorDExt.InvalidVector3d;
-        CrossPointScrn = VectorDExt.InvalidVector3d;
+        CrossPoint = VectorExt.InvalidVector3;
+        CrossPointScrn = VectorExt.InvalidVector3;
     }
 
     public bool IsSelected()

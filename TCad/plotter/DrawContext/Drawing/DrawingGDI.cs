@@ -581,7 +581,7 @@ public class DrawingGDI : IDrawing
         DrawUtil.DrawArrow(this, pen, pt0, pt1, type, pos, len, width);
     }
 
-    public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
+    public void DrawExtSnapPoints(Vector3List pointList, DrawPen pen)
     {
         foreach (var v in pointList)
         {

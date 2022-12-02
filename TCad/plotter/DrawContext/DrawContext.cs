@@ -244,7 +244,7 @@ public abstract class DrawContext : IDisposable
 
     public virtual Vector3d WorldVectorToDevVector(Vector3d pt)
     {
-        Vector4d wv = pt.ToVector4d(1.0);
+        Vector4d wv = pt.ToVector4(1.0);
 
         Vector4d sv = wv * mViewMatrix;
         Vector4d pv = sv * mProjectionMatrix;
@@ -260,7 +260,7 @@ public abstract class DrawContext : IDisposable
         dv.Y = dv.Y * DeviceScaleY;
         //dv.Z = 0;
 
-        return dv.ToVector3d();
+        return dv.ToVector3();
     }
 
     public virtual Vector3d DevVectorToWorldVector(Vector3d pt)
@@ -279,7 +279,7 @@ public abstract class DrawContext : IDisposable
         wv = wv * mProjectionMatrixInv;
         wv = wv * mViewMatrixInv;
 
-        return wv.ToVector3d();
+        return wv.ToVector3();
     }
 
     public virtual double DevSizeToWoldSize(double s)

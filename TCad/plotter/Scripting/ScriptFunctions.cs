@@ -408,7 +408,7 @@ public class ScriptFunctions
         CadFigure fig = Controller.DB.GetFigure(figID);
         if (fig == null)
         {
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         return fig.GetPointAt(index).vector;
@@ -1834,7 +1834,7 @@ public class ScriptFunctions
         {
             Env.ClosePopupMessage();
             ItConsole.println("Cancel!");
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         Vector3d p = ctrl.PointList[0];
@@ -1879,7 +1879,7 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         Vector3d p0 = ctrl.PointList[0];
@@ -1893,7 +1893,7 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return VectorDExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         Vector3d p1 = Controller.InteractCtrl.PointList[1];
@@ -1926,7 +1926,7 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return (VectorDExt.InvalidVector3d, VectorDExt.InvalidVector3d);
+            return (VectorExt.InvalidVector3, VectorExt.InvalidVector3);
         }
 
         Vector3d p0 = ctrl.PointList[0];
@@ -1940,7 +1940,7 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return (VectorDExt.InvalidVector3d, VectorDExt.InvalidVector3d);
+            return (VectorExt.InvalidVector3, VectorExt.InvalidVector3);
         }
 
         Vector3d p1 = Controller.InteractCtrl.PointList[1];

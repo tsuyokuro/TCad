@@ -108,7 +108,7 @@ public class Tessellator
         return CurMesh;
     }
 
-    public CadMesh Tessellate(List<Vector3dList> contourList)
+    public CadMesh Tessellate(List<Vector3List> contourList)
     {
         List<Vector3d> vertexList = new();
         List<List<int>> indexContourList = new();
@@ -117,7 +117,7 @@ public class Tessellator
 
         for (int i = 0; i < contourList.Count; i++)
         {
-            Vector3dList vcont = contourList[i];
+            Vector3List vcont = contourList[i];
             List<int> icont = new();
 
             for (int j = 0; j < vcont.Count; j++)

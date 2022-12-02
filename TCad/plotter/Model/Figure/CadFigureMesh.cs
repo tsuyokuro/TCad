@@ -295,7 +295,7 @@ public class CadFigureMesh : CadFigure
         mHeModel.InvertAllFace();
         mHeModel.RecreateNormals();
 
-        //Vector3dList nl = mHeModel.NormalStore;
+        //Vector3List nl = mHeModel.NormalStore;
 
         //for (int i = 0; i < nl.Count; i++)
         //{

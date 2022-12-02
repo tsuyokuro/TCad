@@ -58,7 +58,7 @@ public interface IDrawing : IDisposable
 
     void DrawSelectedPoints(VertexList pointList, DrawPen pen);
 
-    void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen);
+    void DrawExtSnapPoints(Vector3List pointList, DrawPen pen);
 
     void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size);
 

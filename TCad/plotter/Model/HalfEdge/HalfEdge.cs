@@ -59,13 +59,13 @@ public class HeModel
 
     public VertexList VertexStore;
     public FlexArray<HeFace> FaceStore;
-    public Vector3dList NormalStore;
+    public Vector3List NormalStore;
 
     public HeModel()
     {
         VertexStore = new VertexList(8);
         FaceStore = new FlexArray<HeFace>(6);
-        NormalStore = new Vector3dList(8);
+        NormalStore = new Vector3List(8);
     }
 
     public void Clear()
@@ -122,7 +122,7 @@ public class HeModel
 
     public void RecreateNormals()
     {
-        Vector3dList newNormalStore = new Vector3dList(VertexStore.Count);
+        Vector3List newNormalStore = new Vector3List(VertexStore.Count);
 
         int i;
         for (i = 0; i < FaceStore.Count; i++)

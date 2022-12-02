@@ -16,7 +16,7 @@ public class InteractCtrl
 
     private SemaphoreSlim Sem = new SemaphoreSlim(0, 1);
 
-    public Vector3dList PointList = new Vector3dList();
+    public Vector3List PointList = new Vector3List();
 
     public States mState = States.NONE;
     public States State

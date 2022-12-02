@@ -90,7 +90,7 @@ public partial class PlotterController
 
     public PlotterTaskRunner mPlotterTaskRunner;
 
-    private Vector3dList ExtendSnapPointList = new Vector3dList(20);
+    private Vector3List ExtendSnapPointList = new Vector3List(20);
 
     private ContextMenuManager mContextMenuMan;
     public ContextMenuManager ContextMenuMan
@@ -147,7 +147,7 @@ public partial class PlotterController
 
         mPlotterTaskRunner = new PlotterTaskRunner(this);
 
-        ObjDownPoint = VectorDExt.InvalidVector3d;
+        ObjDownPoint = VectorExt.InvalidVector3;
 
         InitHid();
 
