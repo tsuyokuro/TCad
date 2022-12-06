@@ -1,6 +1,12 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public enum ArrowTypes
@@ -24,11 +30,11 @@ public struct ArrowHead
     public CadVertex p3;
     public CadVertex p4;
 
-    public static ArrowHead Create(ArrowTypes type, ArrowPos pos, double len, double width)
+    public static ArrowHead Create(ArrowTypes type, ArrowPos pos, vcompo_t len, vcompo_t width)
     {
         ArrowHead a = default(ArrowHead);
 
-        double w2 = width / 2;
+        vcompo_t w2 = width / 2;
 
         if (pos == ArrowPos.END)
         {
@@ -84,7 +90,7 @@ public struct ArrowHead
         return a;
     }
 
-    public static ArrowHead operator +(ArrowHead a, Vector3d d)
+    public static ArrowHead operator +(ArrowHead a, vector3_t d)
     {
         a.p0 += d;
         a.p1 += d;

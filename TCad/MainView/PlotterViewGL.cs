@@ -15,6 +15,11 @@ using GLFont;
 using TCad.ViewModel;
 using TCad.Util;
 
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
@@ -25,7 +30,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private IPlotterViewModel mVM;
 
-    private Vector3d PrevMousePos = default;
+    private vector3_t PrevMousePos = default;
 
     private MouseButtons DownButton = MouseButtons.None;
 
@@ -222,13 +227,13 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         if (sizeChangeCnt == 1)
         {
-            Vector3d org = default;
+            vector3_t org = default;
             org.X = Width / 2;
             org.Y = Height / 2;
 
             mDrawContext.SetViewOrg(org);
 
-            mController.SetCursorWoldPos(Vector3d.Zero);
+            mController.SetCursorWoldPos(vector3_t.Zero);
         }
 
         sizeChangeCnt++;
@@ -356,7 +361,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         mCurrentContextMenu.Show(this, new Point(x, y));
     }
 
-    public void SetWorldScale(double scale)
+    public void SetWorldScale(vcompo_t scale)
     {
         mDrawContextPers.WorldScale = scale;
         mDrawContextOrtho.WorldScale = scale;
@@ -439,7 +444,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
             if (DownButton == MouseButtons.Middle)
             {
-                Vector3d t = new Vector3d(e.X, e.Y, 0);
+                vector3_t t = new vector3_t(e.X, e.Y, 0);
 
                 Vector2 prev = default;
 
@@ -475,17 +480,17 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private void MoveCamera(DrawContext dc, Vector2 prev, Vector2 current)
     {
-        Vector3d pv = new Vector3d(prev.X, prev.Y, 0);
-        Vector3d cv = new Vector3d(current.X, current.Y, 0);
+        vector3_t pv = new vector3_t(prev.X, prev.Y, 0);
+        vector3_t cv = new vector3_t(current.X, current.Y, 0);
 
-        Vector3d dv = cv - pv;
+        vector3_t dv = cv - pv;
 
         dv.X *= -1.0;
 
         dc.WorldVectorToDevVector(dv);
 
-        Vector3d lookAt = dc.LookAt + dv;
-        Vector3d eye = dc.Eye + dv;
+        vector3_t lookAt = dc.LookAt + dv;
+        vector3_t eye = dc.Eye + dv;
 
         dc.SetCamera(eye, lookAt, dc.UpVector);
     }
@@ -494,15 +499,15 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         Vector2 d = current - prev;
 
-        double rx = d.X * (Math.PI / 1000);
-        double ry = d.Y * (Math.PI / 1000);
+        vcompo_t rx = d.X * (vcompo_t)(Math.PI / 1000);
+        vcompo_t ry = d.Y * (vcompo_t)(Math.PI / 1000);
 
         CadQuaternion q;
         CadQuaternion r;
         CadQuaternion qp;
 
-        Vector3d lookv = dc.LookAt - dc.Eye;
-        Vector3d upv = dc.UpVector;
+        vector3_t lookv = dc.LookAt - dc.Eye;
+        vector3_t upv = dc.UpVector;
 
         q = CadQuaternion.RotateQuaternion(upv, rx);
         r = q.Conjugate();
@@ -512,12 +517,12 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         qp = qp * q;
         lookv = qp.ToVector3();
 
-        Vector3d ev = dc.LookAt - dc.Eye;
+        vector3_t ev = dc.LookAt - dc.Eye;
 
-        Vector3d a = new Vector3d(ev);
-        Vector3d b = new Vector3d(upv);
+        vector3_t a = new vector3_t(ev);
+        vector3_t b = new vector3_t(upv);
 
-        Vector3d axis = CadMath.Normal(a, b);
+        vector3_t axis = CadMath.Normal(a, b);
 
         if (!axis.IsZero())
         {

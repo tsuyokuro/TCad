@@ -3,6 +3,12 @@ using OpenTK.Mathematics;
 using Plotter.Serializer;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class FigUtil
@@ -14,7 +20,7 @@ public class FigUtil
             return;
         }
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         for (int i = 0; i < fig.StoreList.Count; i++)
         {
@@ -32,7 +38,7 @@ public class FigUtil
         }
     }
 
-    public static void MoveAllPoints(CadFigure fig, Vector3d delta)
+    public static void MoveAllPoints(CadFigure fig, vector3_t delta)
     {
         CadUtil.MovePoints(fig.PointList, delta);
     }

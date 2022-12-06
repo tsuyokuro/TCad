@@ -3,6 +3,12 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 /**
@@ -23,59 +29,59 @@ public class DrawingGDIBmp : DrawingGDI
 
     public override void DrawGrid(Gridding grid)
     {
-        Vector3d lt = Vector3d.Zero;
-        Vector3d rb = new Vector3d(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t lt = vector3_t.Zero;
+        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
 
-        Vector3d ltw = DC.DevPointToWorldPoint(lt);
-        Vector3d rbw = DC.DevPointToWorldPoint(rb);
+        vector3_t ltw = DC.DevPointToWorldPoint(lt);
+        vector3_t rbw = DC.DevPointToWorldPoint(rb);
 
-        double minx = Math.Min(ltw.X, rbw.X);
-        double maxx = Math.Max(ltw.X, rbw.X);
+        vcompo_t minx = (vcompo_t)Math.Min(ltw.X, rbw.X);
+        vcompo_t maxx = (vcompo_t)Math.Max(ltw.X, rbw.X);
 
-        double miny = Math.Min(ltw.Y, rbw.Y);
-        double maxy = Math.Max(ltw.Y, rbw.Y);
+        vcompo_t miny = (vcompo_t)Math.Min(ltw.Y, rbw.Y);
+        vcompo_t maxy = (vcompo_t)Math.Max(ltw.Y, rbw.Y);
 
-        double minz = Math.Min(ltw.Z, rbw.Z);
-        double maxz = Math.Max(ltw.Z, rbw.Z);
+        vcompo_t minz = (vcompo_t)Math.Min(ltw.Z, rbw.Z);
+        vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
         Color c = DC.PenColor(DrawTools.PEN_GRID);
 
         int argb = c.ToArgb();
 
-        double n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, grid, 8);
 
-        double sx, sy, sz;
-        double szx = grid.GridSize.X * n;
-        double szy = grid.GridSize.Y * n;
-        double szz = grid.GridSize.Z * n;
+        vcompo_t sx, sy, sz;
+        vcompo_t szx = grid.GridSize.X * n;
+        vcompo_t szy = grid.GridSize.Y * n;
+        vcompo_t szz = grid.GridSize.Z * n;
 
-        sx = Math.Round(minx / szx) * szx;
-        sy = Math.Round(miny / szy) * szy;
-        sz = Math.Round(minz / szz) * szz;
+        sx = (vcompo_t)Math.Round(minx / szx) * szx;
+        sy = (vcompo_t)Math.Round(miny / szy) * szy;
+        sz = (vcompo_t)Math.Round(minz / szz) * szz;
 
         DrawDots(sx, sy, sz, szx, szy, szz, maxx, maxy, maxz, argb);
     }
 
     private void DrawDots(
-        double sx,
-        double sy,
-        double sz,
-        double szx,
-        double szy,
-        double szz,
-        double maxx,
-        double maxy,
-        double maxz,
+        vcompo_t sx,
+        vcompo_t sy,
+        vcompo_t sz,
+        vcompo_t szx,
+        vcompo_t szy,
+        vcompo_t szz,
+        vcompo_t maxx,
+        vcompo_t maxy,
+        vcompo_t maxz,
         int argb
         )
     {
-        double x;
-        double y;
-        double z;
+        vcompo_t x;
+        vcompo_t y;
+        vcompo_t z;
 
-        Vector3d p = default;
-        Vector3d up = default;
+        vector3_t p = default;
+        vector3_t up = default;
 
 
         Bitmap tgt = BmpDC.Image;
@@ -164,9 +170,9 @@ public class DrawingGDIBmp : DrawingGDI
         BmpDC.UnlockBits();
     }
 
-    public override void DrawDot(DrawPen pen, Vector3d p)
+    public override void DrawDot(DrawPen pen, vector3_t p)
     {
-        Vector3d p0 = DC.WorldPointToDevPoint(p);
+        vector3_t p0 = DC.WorldPointToDevPoint(p);
 
         if (p0.X >= 0 && p0.Y >= 0 && p0.X < DC.ViewWidth && p0.Y < DC.ViewHeight)
         {

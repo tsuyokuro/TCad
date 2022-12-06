@@ -9,6 +9,12 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.ViewModel;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller.TaskRunner;
 
 public class PlotterTaskRunner
@@ -40,7 +46,7 @@ public class PlotterTaskRunner
                 return;
             }
 
-            Vector3d normal = CadMath.Normal(
+            vector3_t normal = CadMath.Normal(
                 res.p1 - res.p0, (Controller.DC.ViewDir));
 
             FlipWithPlane(rootFigList, res.p0, normal);
@@ -53,7 +59,7 @@ public class PlotterTaskRunner
         });
     }
 
-    public void FlipWithPlane(List<CadFigure> rootFigList, Vector3d p0, Vector3d normal)
+    public void FlipWithPlane(List<CadFigure> rootFigList, vector3_t p0, vector3_t normal)
     {
         foreach (CadFigure fig in rootFigList)
         {
@@ -64,7 +70,7 @@ public class PlotterTaskRunner
         }
     }
 
-    public void FlipWithPlane(CadFigure fig, Vector3d p0, Vector3d normal)
+    public void FlipWithPlane(CadFigure fig, vector3_t p0, vector3_t normal)
     {
         fig.FlipWithPlane(p0, normal);
     }
@@ -86,14 +92,14 @@ public class PlotterTaskRunner
                 return;
             }
 
-            Vector3d normal = CadMath.Normal(
+            vector3_t normal = CadMath.Normal(
                 res.p1 - res.p0, Controller.DC.ViewDir);
 
             FlipAndCopyWithPlane(rootFigList, res.p0, normal);
         });
     }
 
-    public void FlipAndCopyWithPlane(List<CadFigure> rootFigList, Vector3d p0, Vector3d normal)
+    public void FlipAndCopyWithPlane(List<CadFigure> rootFigList, vector3_t p0, vector3_t normal)
     {
         List<CadFigure> cpy = PlotterClipboard.CopyFigures(rootFigList);
 
@@ -152,7 +158,7 @@ public class PlotterTaskRunner
                 return;
             }
 
-            Vector3d normal = CadMath.Normal(
+            vector3_t normal = CadMath.Normal(
                 res.p1 - res.p0, (Controller.DC.ViewDir));
 
             CutMeshWithVector(mesh, res.p0, res.p1, normal);
@@ -165,7 +171,7 @@ public class PlotterTaskRunner
         });
     }
 
-    public void CutMeshWithVector(CadFigureMesh tfig, Vector3d p0, Vector3d p1, Vector3d normal)
+    public void CutMeshWithVector(CadFigureMesh tfig, vector3_t p0, vector3_t p1, vector3_t normal)
     {
         HeModel he = tfig.mHeModel;
         CadMesh src = HeModelConverter.ToCadMesh(he);
@@ -216,9 +222,9 @@ public class PlotterTaskRunner
                 return;
             }
 
-            Vector3d p0 = res.p0;
+            vector3_t p0 = res.p0;
 
-            double angle = 0;
+            vcompo_t angle = 0;
 
             bool ok = false;
 
@@ -259,7 +265,7 @@ public class PlotterTaskRunner
         });
     }
 
-    public void RotateWithAxis(List<CadFigure> rootFigList, Vector3d org, Vector3d axisDir, double angle)
+    public void RotateWithAxis(List<CadFigure> rootFigList, vector3_t org, vector3_t axisDir, vcompo_t angle)
     {
         foreach (CadFigure fig in rootFigList)
         {
@@ -270,7 +276,7 @@ public class PlotterTaskRunner
         }
     }
 
-    public (Vector3d p0, InteractCtrl.States state) InputPoint()
+    public (vector3_t p0, InteractCtrl.States state) InputPoint()
     {
         InteractCtrl ctrl = Controller.InteractCtrl;
 
@@ -293,7 +299,7 @@ public class PlotterTaskRunner
                 InteractCtrl.States.CANCEL);
         }
 
-        Vector3d p0 = ctrl.PointList[0];
+        vector3_t p0 = ctrl.PointList[0];
         ItConsole.println(p0.CoordString());
         ctrl.End();
         ClosePopupMessage();
@@ -302,7 +308,7 @@ public class PlotterTaskRunner
     }
 
 
-    public (Vector3d p0, Vector3d p1, InteractCtrl.States state) InputLine(string message)
+    public (vector3_t p0, vector3_t p1, InteractCtrl.States state) InputLine(string message)
     {
         InteractCtrl ctrl = Controller.InteractCtrl;
 
@@ -326,7 +332,7 @@ public class PlotterTaskRunner
                 InteractCtrl.States.CANCEL);
         }
 
-        Vector3d p0 = ctrl.PointList[0];
+        vector3_t p0 = ctrl.PointList[0];
         ItConsole.println(p0.CoordString());
 
         ItConsole.println(AnsiEsc.BYellow + "<< Input point 2 >>");
@@ -344,7 +350,7 @@ public class PlotterTaskRunner
                 InteractCtrl.States.CANCEL);
         }
 
-        Vector3d p1 = ctrl.PointList[1];
+        vector3_t p1 = ctrl.PointList[1];
         ItConsole.println(p1.CoordString());
 
         ctrl.End();

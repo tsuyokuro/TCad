@@ -1,6 +1,12 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class CadFigurePoint : CadFigure
@@ -77,7 +83,7 @@ public class CadFigurePoint : CadFigure
             return;
         }
 
-        double size = dc.DevSizeToWoldSize(4);
+        vcompo_t size = dc.DevSizeToWoldSize(4);
 
         dc.Drawing.DrawCross(pen, PointList[0].vector, size);
     }
@@ -106,7 +112,7 @@ public class CadFigurePoint : CadFigure
     {
         CadVertex p = StoreList[0];
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         if (p.Selected)
         {

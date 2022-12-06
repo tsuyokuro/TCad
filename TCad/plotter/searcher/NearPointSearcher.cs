@@ -3,18 +3,24 @@ using OpenTK.Mathematics;
 using Plotter.Controller;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class NearPointSearcher
 {
     public abstract class Result
     {
-        public double Dist = double.MaxValue;
+        public vcompo_t Dist = vcompo_t.MaxValue;
         public CadVertex WoldPoint;
 
         public abstract string ToInfoString();
 
-        public Result(CadVertex wp, double dist)
+        public Result(CadVertex wp, vcompo_t dist)
         {
             WoldPoint = wp;
             Dist = dist;
@@ -39,7 +45,7 @@ public class NearPointSearcher
 
     public CadVertex TargetPoint = CadVertex.InvalidValue;
 
-    public double Range = 128;
+    public vcompo_t Range = 128;
 
     public NearPointSearcher(PlotterController controller)
     {
@@ -47,7 +53,7 @@ public class NearPointSearcher
         DC = Controller.DC;
     }
 
-    public List<Result> Search(CadVertex p, double range)
+    public List<Result> Search(CadVertex p, vcompo_t range)
     {
         TargetPoint = p;
         Range = range;
@@ -78,7 +84,7 @@ public class NearPointSearcher
 
         CadVertex d = p - TargetPoint;
 
-        double dist = d.Norm2D();
+        vcompo_t dist = d.Norm2D();
 
         if (dist > Range)
         {
@@ -100,7 +106,7 @@ public class NearPointSearcher
 
             CadVertex d = p - TargetPoint;
 
-            double dist = d.Norm2D();
+            vcompo_t dist = d.Norm2D();
 
             if (dist > Range)
             {
@@ -128,7 +134,7 @@ public class NearPointSearcher
             CadVertex pw = (seg.P1 - seg.P0) / 2 + seg.P0;
             CadVertex ps = DC.WorldPointToDevPoint(pw);
 
-            double dist = (ps - TargetPoint).Norm2D();
+            vcompo_t dist = (ps - TargetPoint).Norm2D();
 
             if (dist <= Range)
             {
@@ -139,7 +145,7 @@ public class NearPointSearcher
             CadVertex p0 = DC.WorldPointToDevPoint(seg.P0);
             CadVertex p1 = DC.WorldPointToDevPoint(seg.P1);
 
-            double d = CadMath.DistancePointToSeg(p0.vector, p1.vector, TargetPoint.vector);
+            vcompo_t d = CadMath.DistancePointToSeg(p0.vector, p1.vector, TargetPoint.vector);
 
             if (d > Range)
             {
@@ -174,7 +180,7 @@ public class NearPointSearcher
                     continue;
                 }
 
-                Vector3d cv = CrossLineScr(seg0, seg1);
+                vector3_t cv = CrossLineScr(seg0, seg1);
 
                 if (cv.IsInvalid())
                 {
@@ -183,7 +189,7 @@ public class NearPointSearcher
 
                 CadVertex dv = cv - TargetPoint;
 
-                double dist = dv.Norm2D();
+                vcompo_t dist = dv.Norm2D();
 
                 if (dist > Range)
                 {
@@ -201,7 +207,7 @@ public class NearPointSearcher
         }
     }
 
-    private bool IsSegVertex(Vector3d v, SegmentItem seg)
+    private bool IsSegVertex(vector3_t v, SegmentItem seg)
     {
         return (seg.ScrSegment.P0.vector.Equals(v)) || (seg.ScrSegment.P1.vector.Equals(v));
     }
@@ -216,7 +222,7 @@ public class NearPointSearcher
 
     }
 
-    private Vector3d CrossLineScr(SegmentItem seg0, SegmentItem seg1)
+    private vector3_t CrossLineScr(SegmentItem seg0, SegmentItem seg1)
     {
         return CadMath.CrossLine2D(
             seg0.ScrSegment.P0.vector,
@@ -229,7 +235,7 @@ public class NearPointSearcher
     #region Result types
     public class ResultZero : Result
     {
-        public ResultZero(double dist)
+        public ResultZero(vcompo_t dist)
             : base(CadVertex.Zero, dist)
         {
         }
@@ -245,7 +251,7 @@ public class NearPointSearcher
         public CadFigure Fig = null;
         public int PointIndex = -1;
 
-        public ResultPoint(CadVertex wp, double dist, CadFigure fig, int index)
+        public ResultPoint(CadVertex wp, vcompo_t dist, CadFigure fig, int index)
             : base(wp, dist)
         {
             Fig = fig;
@@ -263,7 +269,7 @@ public class NearPointSearcher
         public CadFigure Fig = null;
         public int SegIndex;
 
-        public ResultSegCenter(CadVertex wp, double dist, CadFigure fig, int segIndex)
+        public ResultSegCenter(CadVertex wp, vcompo_t dist, CadFigure fig, int segIndex)
             : base(wp, dist)
         {
             Fig = fig;
@@ -281,7 +287,7 @@ public class NearPointSearcher
         public SegmentItem Seg0 = default;
         public SegmentItem Seg1 = default;
 
-        public ResultCross(CadVertex wp, double dist, SegmentItem seg0, SegmentItem seg1)
+        public ResultCross(CadVertex wp, vcompo_t dist, SegmentItem seg0, SegmentItem seg1)
             : base(wp, dist)
         {
             WoldPoint = wp;

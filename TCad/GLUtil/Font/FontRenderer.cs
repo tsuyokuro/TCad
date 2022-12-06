@@ -5,6 +5,12 @@ using System;
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace GLFont;
 
 public class FontRenderer
@@ -63,16 +69,16 @@ public class FontRenderer
 
     public void Render(FontTex tex)
     {
-        Vector3d p = Vector3d.Zero;
-        Vector3d xv = Vector3d.UnitX * tex.ImgW;
-        Vector3d yv = Vector3d.UnitY * tex.ImgH;
+        vector3_t p = vector3_t.Zero;
+        vector3_t xv = vector3_t.UnitX * tex.ImgW;
+        vector3_t yv = vector3_t.UnitY * tex.ImgH;
 
         Render(tex, p, xv, yv);
     }
 
     public static int Counter = 0; 
 
-    public void Render(FontTex tex, Vector3d p, Vector3d xv, Vector3d yv)
+    public void Render(FontTex tex, vector3_t p, vector3_t xv, vector3_t yv)
     {
         if (!mInitialized)
         {
@@ -105,25 +111,25 @@ public class FontRenderer
 
         mShader.Start(texUnitNumber);
 
-        GL.TexCoord2(1.0, 1.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-        GL.Normal3(new Vector3d(0, 0, 1));
+        GL.Normal3(new vector3_t(0, 0, 1));
 
         GL.Begin(PrimitiveType.Quads);
 
-        GL.TexCoord2(1.0, 1.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
         GL.Vertex3(p + xv + yv);
 
-        GL.TexCoord2(0.0, 1.0);
+        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(1.0));
         GL.Vertex3(p + yv);
 
-        GL.TexCoord2(0.0, 0.0);
+        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(0.0));
         GL.Vertex3(p);
 
-        GL.TexCoord2(1.0, 0.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(0.0));
         GL.Vertex3(p + xv);
 
         GL.End();

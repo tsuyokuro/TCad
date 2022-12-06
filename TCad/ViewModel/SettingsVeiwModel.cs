@@ -4,6 +4,12 @@ using Plotter.Settings;
 using System.ComponentModel;
 using System.Reflection;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class UserSettingDataAttribute : System.Attribute
@@ -229,7 +235,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double InitialMoveLimit
+    public vcompo_t InitialMoveLimit
     {
         set
         {
@@ -277,7 +283,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public Vector3d GridSize
+    public vector3_t GridSize
     {
         set
         {
@@ -289,7 +295,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double PointSnapRange
+    public vcompo_t PointSnapRange
     {
         set
         {
@@ -301,7 +307,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double LineSnapRange
+    public vcompo_t LineSnapRange
     {
         set
         {
@@ -313,7 +319,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MoveKeyUnitX
+    public vcompo_t MoveKeyUnitX
     {
         set
         {
@@ -325,7 +331,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MoveKeyUnitY
+    public vcompo_t MoveKeyUnitY
     {
         set
         {
@@ -364,7 +370,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MagnificationBitmapPrinting
+    public vcompo_t MagnificationBitmapPrinting
     {
         set
         {

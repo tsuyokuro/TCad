@@ -7,6 +7,12 @@ using System.Drawing;
 using System.IO;
 using Path = System.IO.Path;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class CadFigurePicture : CadFigure
@@ -32,7 +38,7 @@ public class CadFigurePicture : CadFigure
         }
     }
 
-    public void Setup(PaperPageSize pageSize, Vector3d pos, string path)
+    public void Setup(PaperPageSize pageSize, vector3_t pos, string path)
     {
         OrgFilePathName = path;
 
@@ -40,20 +46,20 @@ public class CadFigurePicture : CadFigure
 
         mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-        double uw = mBitmap.Width;
-        double uh = mBitmap.Height;
+        vcompo_t uw = mBitmap.Width;
+        vcompo_t uh = mBitmap.Height;
 
-        double w;
-        double h;
+        vcompo_t w;
+        vcompo_t h;
 
         if (pageSize.Width <= pageSize.Height)
         {
-            w = pageSize.Width * 0.5;
+            w = pageSize.Width * (vcompo_t)(0.5);
             h = w * (uh / uw);
         }
         else
         {
-            h = pageSize.Height * 0.5;
+            h = pageSize.Height * (vcompo_t)(0.5);
             w = h * (uw / uh);
         }
 
@@ -137,10 +143,10 @@ public class CadFigurePicture : CadFigure
 
         ImageRenderer renderer = ImageRenderer.Provider.Get();
 
-        Vector3d xv = (Vector3d)(mPointList[1] - mPointList[0]);
-        Vector3d yv = (Vector3d)(mPointList[3] - mPointList[0]);
+        vector3_t xv = (vector3_t)(mPointList[1] - mPointList[0]);
+        vector3_t yv = (vector3_t)(mPointList[3] - mPointList[0]);
 
-        renderer.Render(mBitmap, (Vector3d)mPointList[0], xv, yv);
+        renderer.Render(mBitmap, (vector3_t)mPointList[0], xv, yv);
 
         dc.Drawing.DrawLine(linePen, mPointList[0].vector, mPointList[1].vector);
         dc.Drawing.DrawLine(linePen, mPointList[1].vector, mPointList[2].vector);
@@ -207,7 +213,7 @@ public class CadFigurePicture : CadFigure
             }
         }
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         if (cnt >= 3)
         {
@@ -245,7 +251,7 @@ public class CadFigurePicture : CadFigure
     // 高さが０の場合、移動方向が定まらないので
     // 投影座標系でz=0とした座標から,List[0] - List[1]への垂線を計算して
     // そこへ移動する
-    private void MoveSelectedPointWithHeight(DrawContext dc, Vector3d delta)
+    private void MoveSelectedPointWithHeight(DrawContext dc, vector3_t delta)
     {
         CadSegment seg = CadUtil.PerpSeg(PointList[0], PointList[1],
             StoreList[2] + delta);
@@ -295,9 +301,9 @@ public class CadFigurePicture : CadFigure
     {
         Centroid ret = default;
 
-        Vector3d d = PointList[1].vector - PointList[0].vector;
+        vector3_t d = PointList[1].vector - PointList[0].vector;
 
-        d /= 2.0;
+        d /= (vcompo_t)(2.0);
 
         ret.Point = PointList[0].vector + d;
         ret.Area = 0;

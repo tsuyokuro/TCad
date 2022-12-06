@@ -12,6 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static GLUtil.Tessellator;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace GLFont;
 
 internal class FontTessellator
@@ -24,9 +30,9 @@ internal class FontTessellator
         byte[] tags = outline.Tags;
 
         List<List<int>> contourList = new();
-        List<Vector3d> vertexList = new List<Vector3d>();
+        List<vector3_t> vertexList = new List<vector3_t>();
 
-        Vector3d cv = new();
+        vector3_t cv = new();
 
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
@@ -67,7 +73,7 @@ internal class FontTessellator
         byte[] tags = outline.Tags;
 
         List<List<int>> contList = new();
-        List<Vector3d> vertexList = new List<Vector3d>();
+        List<vector3_t> vertexList = new List<vector3_t>();
 
         int start = 0;
         for (int contIdx = 0; contIdx < outline.ContoursCount; contIdx++)
@@ -77,9 +83,9 @@ internal class FontTessellator
             int end = outline.Contours[contIdx];
             int num = end - start + 1;
 
-            Vector3d prev;
-            Vector3d next = FTV2Vector3d(points[start]);
-            Vector3d cur = FTV2Vector3d(points[((num - 1) % num) + start]);
+            vector3_t prev;
+            vector3_t next = FTV2vector3_t(points[start]);
+            vector3_t cur = FTV2vector3_t(points[((num - 1) % num) + start]);
 
             for (int i=0; i<num; i++)
             {
@@ -87,7 +93,7 @@ internal class FontTessellator
 
                 prev = cur;
                 cur = next;
-                next = FTV2Vector3d(points[((i + 1) % num) + start]);
+                next = FTV2vector3_t(points[((i + 1) % num) + start]);
 
                 if ((tags[idx] & 0x01) != 0) // On Curve
                 {
@@ -96,15 +102,15 @@ internal class FontTessellator
                 }
                 else if ((tags[idx] & 0x03) == 0) // Off Curve
                 {
-                    Vector3d prev2 = prev;
-                    Vector3d next2 = next;
+                    vector3_t prev2 = prev;
+                    vector3_t next2 = next;
 
                     // Previous point is either the real previous point (an "on"
                     // point), or the midpoint between the current one and the
                     // previous "conic off" point.
                     if ((tags[((i - 1 + num) % num) + start] & 0x01) == 0)
                     {
-                        prev2 = (cur + prev) * 0.5;
+                        prev2 = (cur + prev) * (vcompo_t)(0.5);
                         vertexList.Add(prev2);
                         contour.Add(vertexList.Count - 1);
                     }
@@ -112,7 +118,7 @@ internal class FontTessellator
                     // Next point is either the real next point or the midpoint.
                     if ((tags[((i + 1) % num) + start] & 0x01) == 0)
                     {
-                        next2 = (cur + next) * 0.5;
+                        next2 = (cur + next) * (vcompo_t)(0.5);
                     }
 
                     evaluateQuadraticCurve(prev2, cur, next2, steps,
@@ -120,7 +126,7 @@ internal class FontTessellator
                 }
                 else if ((tags[idx] & 0x02) != 0) // Bézier Curve
                 {
-                    Vector3d next2 = FTV2Vector3d(points[((i + 2) % num) + start]);
+                    vector3_t next2 = FTV2vector3_t(points[((i + 2) % num) + start]);
 
                     evaluateCubicCurve(prev, cur, next, next2, steps,
                                         vertexList, contour);
@@ -140,9 +146,9 @@ internal class FontTessellator
         return fontPoly;
     }
 
-    private static Vector3d FTV2Vector3d(FTVector ftv)
+    private static vector3_t FTV2vector3_t(FTVector ftv)
     {
-        Vector3d cv = new();
+        vector3_t cv = new();
         cv.X = ftv.X;
         cv.Y = ftv.Y;
         cv.Z = 0;
@@ -150,38 +156,38 @@ internal class FontTessellator
         return cv;
     }
 
-    private static void evaluateQuadraticCurve(Vector3d A, Vector3d B, Vector3d C, int steps,
-        List<Vector3d> vertexList, List<int> contour)
+    private static void evaluateQuadraticCurve(vector3_t A, vector3_t B, vector3_t C, int steps,
+        List<vector3_t> vertexList, List<int> contour)
     {
         for (int i = 1; i < steps; i++)
         {
-            double t = (double)i / (double)steps;
+            vcompo_t t = (vcompo_t)i / (vcompo_t)steps;
 
-            Vector3d U = (1.0 - t) * A + t * B;
-            Vector3d V = (1.0 - t) * B + t * C;
+            vector3_t U = ((vcompo_t)(1.0) - t) * A + t * B;
+            vector3_t V = ((vcompo_t)(1.0) - t) * B + t * C;
 
-            Vector3d v = (1.0 - t) * U + t * V;
+            vector3_t v = ((vcompo_t)(1.0) - t) * U + t * V;
 
             vertexList.Add(v);
             contour.Add(vertexList.Count - 1);
         }
     }
 
-    private static void evaluateCubicCurve(Vector3d A, Vector3d B, Vector3d C, Vector3d D, int steps,
-        List<Vector3d> vertexList, List<int> contour)
+    private static void evaluateCubicCurve(vector3_t A, vector3_t B, vector3_t C, vector3_t D, int steps,
+        List<vector3_t> vertexList, List<int> contour)
     {
         for (int i = 0; i < steps; i++)
         {
-            double t = (double)i / (double)steps;
+            vcompo_t t = (vcompo_t)i / (vcompo_t)steps;
 
-            Vector3d U = (1.0f - t) * A + t * B;
-            Vector3d V = (1.0f - t) * B + t * C;
-            Vector3d W = (1.0f - t) * C + t * D;
+            vector3_t U = (1.0f - t) * A + t * B;
+            vector3_t V = (1.0f - t) * B + t * C;
+            vector3_t W = (1.0f - t) * C + t * D;
 
-            Vector3d M = (1.0 - t) * U + t * V;
-            Vector3d N = (1.0 - t) * V + t * W;
+            vector3_t M = ((vcompo_t)(1.0) - t) * U + t * V;
+            vector3_t N = ((vcompo_t)(1.0) - t) * V + t * W;
 
-            Vector3d v = (1.0f - t) * M + t * N;
+            vector3_t v = (1.0f - t) * M + t * N;
 
             vertexList.Add(v);
             contour.Add(vertexList.Count - 1);
@@ -199,13 +205,13 @@ internal class FontTessellator
         byte[] tags = outline.Tags;
 
         List<List<int>> contList = new();
-        List<Vector3d> vertexList = new List<Vector3d>();
+        List<vector3_t> vertexList = new List<vector3_t>();
 
-        Vector3d cv = new();
+        vector3_t cv = new();
 
-        List<Vector3d> curvePoints = new();
+        List<vector3_t> curvePoints = new();
 
-        Vector3d lastPoint = default;
+        vector3_t lastPoint = default;
 
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
@@ -226,7 +232,7 @@ internal class FontTessellator
                     if (curvePoints.Count > 0)
                     {
                         curvePoints.Add(cv);
-                        List<Vector3d> svlist = BSpline2D(lastPoint, curvePoints, 4);
+                        List<vector3_t> svlist = BSpline2D(lastPoint, curvePoints, 4);
                         for (int k = 0; k < svlist.Count; k++)
                         {
                             vertexList.Add(svlist[k]);
@@ -257,7 +263,7 @@ internal class FontTessellator
 
             if (curvePoints.Count > 0)
             {
-                List<Vector3d> svlist = BSpline2D(lastPoint, curvePoints, 4);
+                List<vector3_t> svlist = BSpline2D(lastPoint, curvePoints, 4);
                 for (int k = 0; k < svlist.Count; k++)
                 {
                     vertexList.Add(svlist[k]);
@@ -278,9 +284,9 @@ internal class FontTessellator
         return fontPoly;
     }
 
-    private static double BSplineBasis(double p1, double p2, double p3, double t)
+    private static vcompo_t BSplineBasis(vcompo_t p1, vcompo_t p2, vcompo_t p3, vcompo_t t)
     {
-        double x, a;
+        vcompo_t x, a;
         a = 1f - t;
         x = a * a * p1
             + 2f * a * t * p2
@@ -289,13 +295,13 @@ internal class FontTessellator
         return x;
     }
 
-    public static List<Vector3d> BSpline2D(Vector3d startPoint, List<Vector3d> points, int splitNum)
+    public static List<vector3_t> BSpline2D(vector3_t startPoint, List<vector3_t> points, int splitNum)
     {
-        List<Vector3d> controlPoints = points;
+        List<vector3_t> controlPoints = points;
 
-        List<Vector3d> onCurvePoints = new(controlPoints.Count + 1);
+        List<vector3_t> onCurvePoints = new(controlPoints.Count + 1);
 
-        Vector3d v = default;
+        vector3_t v = default;
         v.Z = 0;
 
         onCurvePoints.Add(startPoint);
@@ -313,7 +319,7 @@ internal class FontTessellator
         onCurvePoints.Add(v);
 
 
-        List<Vector3d> bSplinePoints = new(onCurvePoints.Count + controlPoints.Count * (splitNum - 1));
+        List<vector3_t> bSplinePoints = new(onCurvePoints.Count + controlPoints.Count * (splitNum - 1));
 
         bSplinePoints.Add(onCurvePoints[0]);
 
@@ -334,14 +340,14 @@ internal class FontTessellator
         return bSplinePoints;
     }
 
-    public static List<Vector3d> BSpline2D(List<Vector3d> points, int splitNum)
+    public static List<vector3_t> BSpline2D(List<vector3_t> points, int splitNum)
     {
-        List<Vector3d> controlPoints = points;
+        List<vector3_t> controlPoints = points;
         int cpStart = 1;
 
-        List<Vector3d> onCurvePoints = new(controlPoints.Count);
+        List<vector3_t> onCurvePoints = new(controlPoints.Count);
 
-        Vector3d v = default;
+        vector3_t v = default;
         v.Z = 0;
 
         onCurvePoints.Add(points[0]); // Start point
@@ -359,7 +365,7 @@ internal class FontTessellator
         onCurvePoints.Add(v); // End poiint
 
 
-        List<Vector3d> bSplinePoints = new(onCurvePoints.Count + controlPoints.Count * (splitNum - 1));
+        List<vector3_t> bSplinePoints = new(onCurvePoints.Count + controlPoints.Count * (splitNum - 1));
 
         bSplinePoints.Add(onCurvePoints[0]);
 

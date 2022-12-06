@@ -1,5 +1,11 @@
 using TCad.Properties;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public class ContextMenuManager
@@ -20,7 +26,7 @@ public class ContextMenuManager
         mController = controller;
     }
 
-    public void RequestContextMenu(double x, double y)
+    public void RequestContextMenu(vcompo_t x, vcompo_t y)
     {
         mContextMenuInfo.Items.Clear();
 

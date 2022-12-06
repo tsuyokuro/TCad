@@ -1,5 +1,4 @@
 using MessagePack;
-using Plotter.Serializer.v1001;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System.IO;
@@ -11,15 +10,21 @@ using JObj = System.Text.Json.Nodes.JsonObject;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 using System;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Serializer;
 
 public struct CadData
 {
     public CadObjectDB DB;
-    public double WorldScale;
+    public vcompo_t WorldScale;
     public PaperPageSize PageSize;
 
-    public CadData(CadObjectDB db, double worldScale, PaperPageSize pageSize)
+    public CadData(CadObjectDB db, vcompo_t worldScale, PaperPageSize pageSize)
     {
         DB = db;
         WorldScale = worldScale;
@@ -98,15 +103,12 @@ public class MpCadFile
 
         try
         {
-            if (VersionCode_v1001.Version.Equals(version))
-            {
-            }
-            else if (VersionCode_v1002.Version.Equals(version))
+            if (VersionCode_v1002.Version.Equals(version))
             {
                 MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
                 return MpUtil_v1002.CreateCadData_v1002(mpdata);
             }
-            else
+            else if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
                 return MpUtil_v1003.CreateCadData_v1003(mpdata);
@@ -162,11 +164,7 @@ public class MpCadFile
 
         try
         {
-            if (version == VersionCode_v1001.Version.Str)
-            {
-                return null;
-            }
-            else if (version == VersionCode_v1002.Version.Str)
+            if (version == VersionCode_v1002.Version.Str)
             {
                 MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
 
@@ -275,11 +273,7 @@ public class MpCadFile
 
         byte[] bin = MessagePackSerializer.ConvertFromJson(js);
 
-        if (version == VersionCode_v1001.Version.Str)
-        {
-            return null;
-        }
-        else if (version == VersionCode_v1002.Version.Str)
+        if (version == VersionCode_v1002.Version.Str)
         {
             MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
 

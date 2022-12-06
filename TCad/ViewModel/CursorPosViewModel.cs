@@ -1,6 +1,12 @@
 using OpenTK.Mathematics;
 using System.ComponentModel;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class CursorPosViewModel : INotifyPropertyChanged
@@ -33,9 +39,9 @@ public class CursorPosViewModel : INotifyPropertyChanged
         get => mStrCursorPos2;
     }
 
-    private Vector3d mCursorPos;
+    private vector3_t mCursorPos;
 
-    public Vector3d CursorPos
+    public vector3_t CursorPos
     {
         set
         {
@@ -55,9 +61,9 @@ public class CursorPosViewModel : INotifyPropertyChanged
         get => mCursorPos;
     }
 
-    private Vector3d mCursorPos2;
+    private vector3_t mCursorPos2;
 
-    public Vector3d CursorPos2
+    public vector3_t CursorPos2
     {
         set
         {

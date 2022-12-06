@@ -1,4 +1,10 @@
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace SplineCurve;
 
 public class BSplineParam
@@ -15,17 +21,17 @@ public class BSplineParam
     // Knot数
     public int KnotCnt;
 
-    public double[] Knots;
+    public vcompo_t[] Knots;
 
-    public double LowKnot = 0;
+    public vcompo_t LowKnot = 0;
 
-    public double HighKnot = 0;
+    public vcompo_t HighKnot = 0;
 
-    public double Step = 0;
+    public vcompo_t Step = 0;
 
     // i: Knot番号
     // t: 媒介変数
-    public double BasisFunc(int i, double t)
+    public vcompo_t BasisFunc(int i, vcompo_t t)
     {
         return BSpline.BasisFunc(i, Degree, t, Knots);
     }
@@ -42,14 +48,14 @@ public class BSplineParam
 
         LowKnot = Knots[Degree];
         HighKnot = Knots[ctrlCnt];
-        Step = (HighKnot - LowKnot) / (double)DivCnt;
+        Step = (HighKnot - LowKnot) / (vcompo_t)DivCnt;
     }
 
     public void CreateDefaultKnots(bool passOnEdge)
     {
-        Knots = new double[KnotCnt];
+        Knots = new vcompo_t[KnotCnt];
 
-        double x = 0.0;
+        vcompo_t x = (vcompo_t)(0.0);
 
         for (int i = 0; i < KnotCnt; i++)
         {
@@ -60,7 +66,7 @@ public class BSplineParam
             else
             {
                 Knots[i] = x;
-                x += 1.0;
+                x += (vcompo_t)(1.0);
             }
         }
     }

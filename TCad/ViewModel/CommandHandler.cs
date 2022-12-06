@@ -17,6 +17,12 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.ScriptEditor;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class CommandHandler
@@ -379,7 +385,7 @@ public class CommandHandler
     {
         ViewModel.CurrentFileName = null;
 
-        ViewModel.ViewManager.SetWorldScale(1.0);
+        ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
 
         Controller.ClearAll();
         Redraw();

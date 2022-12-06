@@ -5,6 +5,12 @@ using System;
 using System.Collections.Generic;
 
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Serializer.v1002;
 
 public partial class MpUtil_v1002
@@ -26,7 +32,7 @@ public partial class MpUtil_v1002
 
         MpViewInfo_v1002 viewInfo = mpcd.ViewInfo;
 
-        double worldScale = 0;
+        vcompo_t worldScale = 0;
 
         PaperPageSize pps = null;
 
@@ -43,7 +49,7 @@ public partial class MpUtil_v1002
 
         if (worldScale == 0)
         {
-            worldScale = 1.0;
+            worldScale = (vcompo_t)(1.0);
         }
 
         cd.WorldScale = worldScale;
@@ -94,18 +100,18 @@ public partial class MpUtil_v1002
         return ret;
     }
 
-    public static List<MpVector3d_v1002> Vector3dListToMp(Vector3List v)
+    public static List<Mpvector3_t_v1002> vector3_tListToMp(Vector3List v)
     {
-        List<MpVector3d_v1002> ret = new List<MpVector3d_v1002>();
+        List<Mpvector3_t_v1002> ret = new List<Mpvector3_t_v1002>();
         for (int i = 0; i < v.Count; i++)
         {
-            ret.Add(MpVector3d_v1002.Create(v[i]));
+            ret.Add(Mpvector3_t_v1002.Create(v[i]));
         }
 
         return ret;
     }
 
-    public static Vector3List Vector3dListFromMp(List<MpVector3d_v1002> list)
+    public static Vector3List vector3_tListFromMp(List<Mpvector3_t_v1002> list)
     {
         Vector3List ret = new Vector3List(list.Count);
         for (int i = 0; i < list.Count; i++)

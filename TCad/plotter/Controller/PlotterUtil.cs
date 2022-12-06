@@ -1,6 +1,12 @@
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public class PlotterUtil
@@ -33,7 +39,7 @@ public class PlotterUtil
     }
 
     // 指定された図形の面積の総和を求める
-    public static double Area(List<CadFigure> figList)
+    public static vcompo_t Area(List<CadFigure> figList)
     {
         Centroid cent = default(Centroid);
 
@@ -69,14 +75,14 @@ public class PlotterUtil
     // Calculate the intersection point in the screen coordinate system
     // スクリーン座標系での交点を求める
     //
-    public static Vector3d CrossOnScreen(DrawContext dc, Vector3d wp00, Vector3d wp01, Vector3d wp10, Vector3d wp11)
+    public static vector3_t CrossOnScreen(DrawContext dc, vector3_t wp00, vector3_t wp01, vector3_t wp10, vector3_t wp11)
     {
-        Vector3d sp00 = dc.WorldPointToDevPoint(wp00);
-        Vector3d sp01 = dc.WorldPointToDevPoint(wp01);
-        Vector3d sp10 = dc.WorldPointToDevPoint(wp10);
-        Vector3d sp11 = dc.WorldPointToDevPoint(wp11);
+        vector3_t sp00 = dc.WorldPointToDevPoint(wp00);
+        vector3_t sp01 = dc.WorldPointToDevPoint(wp01);
+        vector3_t sp10 = dc.WorldPointToDevPoint(wp10);
+        vector3_t sp11 = dc.WorldPointToDevPoint(wp11);
 
-        Vector3d cp = CadMath.CrossLine2D(sp00, sp01, sp10, sp11);
+        vector3_t cp = CadMath.CrossLine2D(sp00, sp01, sp10, sp11);
 
         return cp;
     }

@@ -3,6 +3,12 @@ using Plotter;
 using Plotter.Controller;
 using System.ComponentModel;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class ViewManager : INotifyPropertyChanged
@@ -55,7 +61,7 @@ public class ViewManager : INotifyPropertyChanged
         DOut.plx("out");
     }
 
-    public void SetWorldScale(double scale)
+    public void SetWorldScale(vcompo_t scale)
     {
         PlotterViewGL1.SetWorldScale(scale);
     }
@@ -78,15 +84,15 @@ public class ViewManager : INotifyPropertyChanged
             case ViewModes.RIGHT:
             case ViewModes.LEFT:
                 dc.SetViewOrg(
-                    new Vector3d(
+                    new vector3_t(
                             dc.ViewWidth / 2, dc.ViewHeight / 2, 0
                         ));
                 break;
 
             case ViewModes.FREE:
-                Vector3d eye = new Vector3d(0, 0, DrawContextGL.DEFAULT_EYE_Z);
-                Vector3d lookAt = Vector3d.Zero;
-                Vector3d up = Vector3d.UnitY;
+                vector3_t eye = new vector3_t(0, 0, DrawContextGL.DEFAULT_EYE_Z);
+                vector3_t lookAt = vector3_t.Zero;
+                vector3_t up = vector3_t.UnitY;
                 dc.SetCamera(eye, lookAt, up);
                 break;
         }
@@ -111,8 +117,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    Vector3d.UnitZ * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
+                    vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, vector3_t.UnitY);
                 nextDC = view.DrawContext;
                 break;
 
@@ -120,8 +126,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    -Vector3d.UnitZ * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
+                    -vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, vector3_t.UnitY);
 
                 nextDC = view.DrawContext;
                 break;
@@ -130,8 +136,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    Vector3d.UnitY * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, -Vector3d.UnitZ);
+                    vector3_t.UnitY * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, -vector3_t.UnitZ);
 
                 nextDC = view.DrawContext;
                 break;
@@ -140,8 +146,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    -Vector3d.UnitY * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitZ);
+                    -vector3_t.UnitY * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, vector3_t.UnitZ);
 
                 nextDC = view.DrawContext;
                 break;
@@ -150,8 +156,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    Vector3d.UnitX * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
+                    vector3_t.UnitX * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, vector3_t.UnitY);
 
                 nextDC = view.DrawContext;
                 break;
@@ -160,8 +166,8 @@ public class ViewManager : INotifyPropertyChanged
                 PlotterViewGL1.EnablePerse(false);
                 view = PlotterViewGL1;
                 view.DrawContext.SetCamera(
-                    -Vector3d.UnitX * DrawContext.STD_EYE_DIST,
-                    Vector3d.Zero, Vector3d.UnitY);
+                    -vector3_t.UnitX * DrawContext.STD_EYE_DIST,
+                    vector3_t.Zero, vector3_t.UnitY);
 
                 nextDC = view.DrawContext;
                 break;

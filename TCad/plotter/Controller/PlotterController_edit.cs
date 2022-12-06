@@ -5,6 +5,12 @@ using TCad.Properties;
 using OpenTK;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 // Edit figure functions
@@ -305,7 +311,7 @@ public partial class PlotterController
         foreach (uint id in ids)
         {
             CadFigure fig = mDB.GetFigure(id);
-            Vector3d old = fig.Normal;
+            vector3_t old = fig.Normal;
 
             fig.Normal *= -1;
 
@@ -390,7 +396,7 @@ public partial class PlotterController
         HistoryMan.foward(ope);
         CurrentLayer.AddFigure(pointFig);
 
-        string s = string.Format("({0:0.000},{1:0.000},{2:0.000})",
+        string s = string.Format("({0:(vcompo_t)(0.000)},{1:(vcompo_t)(0.000)},{2:(vcompo_t)(0.000)})",
                            cent.Point.X, cent.Point.Y, cent.Point.Z);
 
         ItConsole.println("Centroid:" + s);

@@ -1,5 +1,11 @@
 using System;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public static class ColorModel
@@ -7,8 +13,8 @@ public static class ColorModel
     public struct HSV
     {
         public float H; // 色相 ( 0<= H < 360 )
-        public float S; // 彩度 ( 0<= H = 1.0 )
-        public float V; // 明度 ( 0<= H = 1.0 )
+        public float S; // 彩度 ( 0<= H = (vcompo_t)(1.0) )
+        public float V; // 明度 ( 0<= H = (vcompo_t)(1.0) )
 
         public HSV(float h, float s, float v)
         {

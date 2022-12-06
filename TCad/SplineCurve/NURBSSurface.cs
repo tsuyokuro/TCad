@@ -2,6 +2,12 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace SplineCurve;
 
 public class NurbsSurface
@@ -18,7 +24,7 @@ public class NurbsSurface
     public VertexList CtrlPoints = null;
 
     // Weight情報
-    public double[] Weights;
+    public vcompo_t[] Weights;
 
     public int[] CtrlOrder;
 
@@ -112,19 +118,19 @@ public class NurbsSurface
 
     public void SetDefaultWeights()
     {
-        Weights = new double[UCtrlDataCnt*VCtrlDataCnt];
+        Weights = new vcompo_t[UCtrlDataCnt*VCtrlDataCnt];
 
         for (int i = 0; i < Weights.Length; i++)
         {
-            Weights[i] = 1.0;
+            Weights[i] = (vcompo_t)(1.0);
         }
     }
 
-    private Vector3d CalcPoint(double u, double v)
+    private vector3_t CalcPoint(vcompo_t u, vcompo_t v)
     {
-        Vector3d pt = Vector3d.Zero;
+        vector3_t pt = vector3_t.Zero;
 
-        double weight = 0f;
+        vcompo_t weight = 0f;
 
         int sp;
 
@@ -137,8 +143,8 @@ public class NurbsSurface
 
             for (int i = 0; i < ucnt; ++i)
             {
-                double ubs = UBSpline.BasisFunc(i, u);
-                double vbs = VBSpline.BasisFunc(j, v);
+                vcompo_t ubs = UBSpline.BasisFunc(i, u);
+                vcompo_t vbs = VBSpline.BasisFunc(j, v);
 
                 int cp = CtrlOrder[sp + i];
 
@@ -151,20 +157,20 @@ public class NurbsSurface
         return pt / weight;
     }
 
-    public double GetWeight(int u, int v)
+    public vcompo_t GetWeight(int u, int v)
     {
         return Weights[v * UCtrlDataCnt + u];
     }
 
-    public void SetWeight(int u, int v, double val)
+    public void SetWeight(int u, int v, vcompo_t val)
     {
         Weights[v * UCtrlDataCnt + u] = val;
     }
 
     public void Eval(VertexList vl)
     {
-        double u;
-        double v;
+        vcompo_t u;
+        vcompo_t v;
 
         for (int j = 0; j <= VBSpline.DivCnt; ++j)
         {

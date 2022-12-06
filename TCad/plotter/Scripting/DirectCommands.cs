@@ -6,6 +6,12 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Scripting;
 
 public class DirectCommands
@@ -64,7 +70,7 @@ public class DirectCommands
 
         ItConsole.println("BenchDraw end");
         ItConsole.println($"BenchDraw cnt:{i} time:{sw.ElapsedMilliseconds}ms");
-        ItConsole.println($"BenchDraw FPS:" + (double)cnt / sw.ElapsedMilliseconds * 1000);
+        ItConsole.println($"BenchDraw FPS:" + (vcompo_t)cnt / sw.ElapsedMilliseconds * 1000);
         //ItConsole.println($"FontRenderer.Counter:" + FontRenderer.Counter);
     }
 

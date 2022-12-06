@@ -7,6 +7,12 @@ using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public class PlotterPrinter
@@ -49,7 +55,7 @@ public class PlotterPrinter
             return null;
         }
 
-        double upRes = 1.0;
+        vcompo_t upRes = (vcompo_t)(1.0);
 
         deviceSize *= upRes;
 
@@ -57,13 +63,13 @@ public class PlotterPrinter
         dc.SetupTools(DrawModes.PRINTER, 2);
 
         // Bitmapを印刷すると大きさが変わるので、補正
-        double f = SettingsHolder.Settings.MagnificationBitmapPrinting;
+        vcompo_t f = SettingsHolder.Settings.MagnificationBitmapPrinting;
         dc.UnitPerMilli *= f;
-        //DC.UnitPerMilli *= 0.96;
+        //DC.UnitPerMilli *= (vcompo_t)(0.96);
 
-        Vector3d org = dc.ViewOrg;
+        vector3_t org = dc.ViewOrg;
 
-        //org *= 0.96;
+        //org *= (vcompo_t)(0.96);
         org *= f;
 
         dc.SetViewOrg(org);
@@ -100,7 +106,7 @@ public class PlotterPrinter
         fb.End();
         fb.Dispose();
 
-        if (upRes != 1.0)
+        if (upRes != (vcompo_t)(1.0))
         {
             rsBmp = BitmapUtil.ResizeBitmap(bmp,
                                     (int)(bmp.Width / upRes),

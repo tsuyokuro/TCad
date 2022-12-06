@@ -2,6 +2,12 @@ using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 class DrawContextPrinter : DrawContextGDI
@@ -30,10 +36,10 @@ class DrawContextPrinter : DrawContextGDI
             SetViewSize(deviceSize.Width, deviceSize.Height);
         }
 
-        Vector3d org = default;
+        vector3_t org = default;
 
-        org.X = deviceSize.Width / 2.0;
-        org.Y = deviceSize.Height / 2.0;
+        org.X = deviceSize.Width / (vcompo_t)(2.0);
+        org.Y = deviceSize.Height / (vcompo_t)(2.0);
         
         SetViewOrg(org);
 

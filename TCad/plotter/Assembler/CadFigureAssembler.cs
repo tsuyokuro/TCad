@@ -3,6 +3,12 @@ using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class EditResult
@@ -125,7 +131,7 @@ class CadFigureCutter
 
 class CadSegmentCutter
 {
-    public static EditResult CutSegment(CadObjectDB db, MarkSegment seg, Vector3d p)
+    public static EditResult CutSegment(CadObjectDB db, MarkSegment seg, vector3_t p)
     {
         EditResult result = new EditResult();
 

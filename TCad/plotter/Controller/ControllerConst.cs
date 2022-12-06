@@ -1,4 +1,10 @@
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public enum DrawModes
@@ -51,7 +57,7 @@ public enum ControllerStates
 
 class ControllerConst
 {
-    public const double MARK_CURSOR_SIZE = 10.0;
+    public const vcompo_t MARK_CURSOR_SIZE = (vcompo_t)(10.0);
 
-    public const double CURSOR_LOCK_MARK_SIZE = 8.0;
+    public const vcompo_t CURSOR_LOCK_MARK_SIZE = (vcompo_t)(8.0);
 }

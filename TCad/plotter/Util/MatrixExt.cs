@@ -1,17 +1,23 @@
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public static class MatrixExt
 {
-    public static Matrix4d Inv(this Matrix4d m)
+    public static matrix4_t Inv(this matrix4_t m)
     {
-        return Matrix4d.Invert(m);
+        return matrix4_t.Invert(m);
     }
 
-    public static void dump(this Matrix4d m, string name = "")
+    public static void dump(this matrix4_t m, string name = "")
     {
-        DOut.pl(nameof(Matrix4d) + " " + name + " {");
+        DOut.pl(nameof(matrix4_t) + " " + name + " {");
         DOut.Indent++;
         DOut.pl(m.M11.ToString() + ", " + m.M12.ToString() + ", " + m.M13.ToString() + ", " + m.M14.ToString());
         DOut.pl(m.M21.ToString() + ", " + m.M22.ToString() + ", " + m.M23.ToString() + ", " + m.M24.ToString());

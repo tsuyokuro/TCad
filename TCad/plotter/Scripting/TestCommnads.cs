@@ -24,6 +24,12 @@ using GLUtil;
 using SharpFont;
 using Plotter.Controller;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Scripting;
 
 public class TestCommands
@@ -41,7 +47,7 @@ public class TestCommands
 
     private void test002()
     {
-        CadMesh cm = MeshMaker.CreateSphere(new Vector3d(0, 0, 0), 20, 16, 16);
+        CadMesh cm = MeshMaker.CreateSphere(new vector3_t(0, 0, 0), 20, 16, 16);
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -65,7 +71,7 @@ public class TestCommands
         }
 
 
-        CadMesh cm = MeshMaker.CreateExtruded(tfig.GetPoints(16), Vector3d.UnitZ * -20);
+        CadMesh cm = MeshMaker.CreateExtruded(tfig.GetPoints(16), vector3_t.UnitZ * -20);
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -93,12 +99,12 @@ public class TestCommands
             return;
         }
 
-        Vector3d v1 = fig.PointList[0].vector - fig.PointList[1].vector;
-        Vector3d v2 = fig.PointList[2].vector - fig.PointList[1].vector;
+        vector3_t v1 = fig.PointList[0].vector - fig.PointList[1].vector;
+        vector3_t v2 = fig.PointList[2].vector - fig.PointList[1].vector;
 
-        double t = CadMath.AngleOfVector(v1, v2);
+        vcompo_t t = CadMath.AngleOfVector(v1, v2);
 
-        double a = CadMath.Rad2Deg(t);
+        vcompo_t a = CadMath.Rad2Deg(t);
 
         ItConsole.println(string.Format("angle:{0}(deg)", a));
     }
@@ -289,7 +295,7 @@ public class TestCommands
 
         for (int i = 0; i < hem.VertexStore.Count; i++)
         {
-            hem.VertexStore[i] *= 500.0;
+            hem.VertexStore[i] *= (vcompo_t)(500.0);
         }
 
         CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
@@ -360,7 +366,7 @@ public class TestCommands
     {
         CadDxfLoader loader = new CadDxfLoader();
 
-        CadMesh cm = loader.Load(@"F:\work\恐竜.DXF", 20.0);
+        CadMesh cm = loader.Load(@"F:\work\恐竜.DXF", (vcompo_t)(20.0));
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -389,7 +395,7 @@ public class TestCommands
         int ucnt = 8;
         int vcnt = 5;
 
-        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0);
+        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0));
 
         nfig.Setup(2, ucnt, vcnt, vl, null, 16, 16);
 
@@ -410,7 +416,7 @@ public class TestCommands
         int vcnt = 4;
 
         VertexList vl = SplineUtil.CreateBoxControlPoints(
-            ucnt, vcnt, Vector3d.UnitX * 20.0, Vector3d.UnitZ * 20.0, Vector3d.UnitY * -20.0);
+            ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0), vector3_t.UnitY * (vcompo_t)(-20.0));
 
         nfig.Setup(2, ucnt * 2, vcnt, vl, null, 16, 16, false, false, true, true);
 
@@ -548,8 +554,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                v.X = fv.X * 100.0;
-                v.Y = fv.Y * 100.0;
+                v.X = fv.X * (vcompo_t)(100.0);
+                v.Y = fv.Y * (vcompo_t)(100.0);
                 v.Z = 0;
 
                 tmpFig.AddPoint(v);
@@ -588,8 +594,8 @@ public class TestCommands
         DOut.pl("VertexCB vIndex:" + vIndex);
     }
 
-    private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
-                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
+    private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] vcompo_t[] coords,
+                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] vcompo_t[] data,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
                                 ref IntPtr dataOut)
     {
@@ -620,13 +626,13 @@ public class TestCommands
         Glu.TessCallback(htess, GluTessCallback.TessCombine, new Glu.TessCombineCallback(CombineCB));
         Glu.TessCallback(htess, GluTessCallback.TessError, new Glu.TessErrorCallback(ErrorCB));
 
-        double[] va = new double[3];
+        vcompo_t[] va = new vcompo_t[3];
 
         Glu.TessNormal(htess, new Vector3(0f, 0f, 1f));
 
         Glu.TessBeginPolygon(htess, 128);
 
-        double[] tv = new double[3];
+        vcompo_t[] tv = new vcompo_t[3];
 
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
@@ -637,8 +643,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                tv[0] = fv.X * 100.0;
-                tv[1] = fv.Y * 100.0;
+                tv[0] = fv.X * (vcompo_t)(100.0);
+                tv[1] = fv.Y * (vcompo_t)(100.0);
                 tv[2] = 0;
 
                 Glu.TessVertex(htess, tv, idx);
@@ -667,7 +673,7 @@ public class TestCommands
 
         for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
         {
-            fontPoly.Mesh.VertexStore[i] *= 400.0;
+            fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
         }
 
         HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -688,11 +694,11 @@ public class TestCommands
     private void Test6()
     {
         CadFigure cfig = Controller.CurrentFigure;
-        List<Vector3d> vl = CadUtil.GetVector3dListFrom(cfig);
+        List<vector3_t> vl = CadUtil.Getvector3_tListFrom(cfig);
 
-        Vector3d startv = vl[0];
+        vector3_t startv = vl[0];
 
-        List<Vector3d> splineList = FontTessellator.BSpline2D(vl, 4);
+        List<vector3_t> splineList = FontTessellator.BSpline2D(vl, 4);
 
         CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
 
@@ -711,12 +717,12 @@ public class TestCommands
 
         GlyphSlot glyph = fw.GetGlyph('黒');
 
-        List<Vector3d> cvl = new();
+        List<vector3_t> cvl = new();
 
         //--------------
 
         //List<List<int>> conts;
-        //List<Vector3d> vl;
+        //List<vector3_t> vl;
 
         //Test7_sub(glyph.Outline, out conts, out vl);
 
@@ -731,7 +737,7 @@ public class TestCommands
         //        cvl.Add(vl[cont[j]]);
         //    }
 
-        //    CreatePolyLines(cvl, 400.0, true);
+        //    CreatePolyLines(cvl, (vcompo_t)(400.0), true);
         //}
 
         //--------------
@@ -755,14 +761,14 @@ public class TestCommands
                 cvl.Add(fontPoly.VertexList[cont[j]]);
             }
 
-            CreatePolyLines(cvl, 400.0, true);
+            CreatePolyLines(cvl, (vcompo_t)(400.0), true);
         }
 
         if (fontPoly.Mesh != null)
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= 400.0;
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -784,14 +790,14 @@ public class TestCommands
         //        cvl.Add(fontPoly.VertexList[cont[j]]);
         //    }
 
-        //    CreatePolyLines(cvl, 200.0, true);
+        //    CreatePolyLines(cvl, (vcompo_t)(200.0), true);
         //}
 
         //if (fontPoly.Mesh != null)
         //{
         //    for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
         //    {
-        //        fontPoly.Mesh.VertexStore[i] *= 200.0;
+        //        fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(200.0);
         //    }
 
         //    HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -808,14 +814,14 @@ public class TestCommands
     }
 
     private void Test7_sub(Outline outline,
-        out List<List<int>> cl, out List<Vector3d> vl)
+        out List<List<int>> cl, out List<vector3_t> vl)
     {
         FTVector[] points = outline.Points;
 
         List<List<int>> contourList = new();
-        List<Vector3d> vertexList = new List<Vector3d>();
+        List<vector3_t> vertexList = new List<vector3_t>();
 
-        Vector3d cv = new();
+        vector3_t cv = new();
 
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
@@ -857,7 +863,7 @@ public class TestCommands
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= 400.0;
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -874,7 +880,7 @@ public class TestCommands
     }
 
 
-    private void CreatePolyLines(List<Vector3d> vl, double scale, bool isLoop)
+    private void CreatePolyLines(List<vector3_t> vl, vcompo_t scale, bool isLoop)
     {
         CadFigurePolyLines tmpFig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
 

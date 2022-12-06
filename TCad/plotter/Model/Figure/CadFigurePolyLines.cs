@@ -3,6 +3,12 @@ using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class CadFigurePolyLines : CadFigure
@@ -38,24 +44,24 @@ public class CadFigurePolyLines : CadFigure
 
         if (Locked) return;
 
-        Vector3d d;
+        vector3_t d;
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         if (!IsSelectedAll() && mPointList.Count > 2 && RestrictionByNormal)
         {
-            Vector3d vdir = dc.ViewDir;
+            vector3_t vdir = dc.ViewDir;
 
-            Vector3d a = delta;
-            Vector3d b = delta + vdir;
+            vector3_t a = delta;
+            vector3_t b = delta + vdir;
 
             d = CadMath.CrossPlane(a, b, StoreList[0].vector, Normal);
 
             if (!d.IsValid())
             {
-                Vector3d nvNormal = CadMath.Normal(Normal, vdir);
+                vector3_t nvNormal = CadMath.Normal(Normal, vdir);
 
-                double ip = CadMath.InnerProduct(nvNormal, delta);
+                vcompo_t ip = CadMath.InnerProduct(nvNormal, delta);
 
                 d = nvNormal * ip;
             }
@@ -73,7 +79,7 @@ public class CadFigurePolyLines : CadFigure
         });
     }
 
-    public override void MoveAllPoints(Vector3d delta)
+    public override void MoveAllPoints(vector3_t delta)
     {
         if (Locked) return;
 
@@ -121,12 +127,12 @@ public class CadFigurePolyLines : CadFigure
 
         if (SettingsHolder.Settings.DrawNormal && !Normal.IsZero())
         {
-            double len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
-            double arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
-            double arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+            vcompo_t len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
+            vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
+            vcompo_t arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
 
-            Vector3d np0 = PointList[0].vector;
-            Vector3d np1 = np0 + (Normal * len);
+            vector3_t np0 = PointList[0].vector;
+            vector3_t np1 = np0 + (Normal * len);
             dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
         }
     }
@@ -302,9 +308,9 @@ public class CadFigurePolyLines : CadFigure
             return;
         }
 
-        Vector3d prevNormal = Normal;
+        vector3_t prevNormal = Normal;
 
-        Vector3d normal = CadUtil.TypicalNormal(PointList);
+        vector3_t normal = CadUtil.TypicalNormal(PointList);
 
         if (CadMath.InnerProduct(prevNormal, normal) < 0)
         {
@@ -339,9 +345,9 @@ public class CadFigurePolyLines : CadFigure
     {
         Centroid ret = default;
 
-        Vector3d d = PointList[1].vector - PointList[0].vector;
+        vector3_t d = PointList[1].vector - PointList[0].vector;
 
-        d /= 2.0;
+        d /= (vcompo_t)(2.0);
 
         ret.Point = PointList[0].vector + d;
         ret.Area = 0;

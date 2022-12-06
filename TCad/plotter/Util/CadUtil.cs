@@ -3,13 +3,19 @@ using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public delegate bool ForEachDelegate<T>(T obj);
 
 public class CadUtil
 {
-    public static void RotateFigure(CadFigure fig, Vector3d org, Vector3d axis, double t)
+    public static void RotateFigure(CadFigure fig, vector3_t org, vector3_t axis, vcompo_t t)
     {
         CadQuaternion q = CadQuaternion.RotateQuaternion(axis, t);
         CadQuaternion r = q.Conjugate(); ;
@@ -17,7 +23,7 @@ public class CadUtil
         fig.Rotate(org, q, r);
     }
 
-    public static void ScaleFigure(CadFigure fig, Vector3d org, double scale)
+    public static void ScaleFigure(CadFigure fig, vector3_t org, vcompo_t scale)
     {
         int n = fig.PointList.Count;
 
@@ -33,7 +39,7 @@ public class CadUtil
     }
 
     // 三角形の面積 3D対応
-    public static double TriangleArea(CadFigure fig)
+    public static vcompo_t TriangleArea(CadFigure fig)
     {
         return CadMath.TriangleArea(
             fig.GetPointAt(0).vector,
@@ -43,7 +49,7 @@ public class CadUtil
     }
 
     // 三角形の重心を求める
-    public static Vector3d TriangleCentroid(CadFigure fig)
+    public static vector3_t TriangleCentroid(CadFigure fig)
     {
         return CadMath.TriangleCentroid(
             fig.GetPointAt(0).vector,
@@ -77,7 +83,7 @@ public class CadUtil
         return c0;
     }
 
-    public static double AroundLength(CadFigure fig)
+    public static vcompo_t AroundLength(CadFigure fig)
     {
         if (fig == null)
         {
@@ -96,7 +102,7 @@ public class CadUtil
 
         CadVertex pd;
 
-        double d = 0;
+        vcompo_t d = 0;
 
         for (int i = 0; i < cnt - 1; i++)
         {
@@ -141,14 +147,14 @@ public class CadUtil
 
         CadVertex t;
 
-        double maxd = 0;
+        vcompo_t maxd = 0;
 
         for (i = 0; i < points.Count; i++)
         {
             CadVertex fp = points[i];
 
             t = fp - p0;
-            double d = t.Norm();
+            vcompo_t d = t.Norm();
 
             if (d > maxd)
             {
@@ -188,11 +194,11 @@ public class CadUtil
     //    return normal;
     //}
 
-    public static Vector3d TypicalNormal(VertexList points)
+    public static vector3_t TypicalNormal(VertexList points)
     {
         if (points.Count < 3)
         {
-            return Vector3d.Zero;
+            return vector3_t.Zero;
         }
 
         int idx = FindMaxDistantPointIndex(points[0], points);
@@ -210,7 +216,7 @@ public class CadUtil
             idxB = idxB - points.Count;
         }
 
-        Vector3d normal = CadMath.Normal(points[idx].vector, points[idxA].vector, points[idxB].vector);
+        vector3_t normal = CadMath.Normal(points[idx].vector, points[idxA].vector, points[idxB].vector);
 
         return normal;
     }
@@ -227,9 +233,9 @@ public class CadUtil
         }
 
         int i = 0;
-        Vector3d n = default;
-        Vector3d cn = default;
-        double scala = 0;
+        vector3_t n = default;
+        vector3_t cn = default;
+        vcompo_t scala = 0;
 
         for (;i < cnt - 2;)
         {
@@ -273,12 +279,12 @@ public class CadUtil
 
         scala = CadMath.InnerProduct(cn, n);
 
-        if (Math.Abs(scala) < 0.000001)
+        if (Math.Abs(scala) < (vcompo_t)(0.000001))
         {
             return true;
         }
 
-        if (scala < 0.999999)
+        if (scala < (vcompo_t)(0.999999))
         {
             return false;
         }
@@ -316,7 +322,7 @@ public class CadUtil
         return seg;
     }
 
-    public static void MovePoints(VertexList list, Vector3d delta)
+    public static void MovePoints(VertexList list, vector3_t delta)
     {
         for (int i = 0; i < list.Count; i++)
         {
@@ -329,23 +335,23 @@ public class CadUtil
     {
         CadRect rect = default(CadRect);
 
-        double minx = CadConst.MaxValue;
-        double miny = CadConst.MaxValue;
-        double minz = CadConst.MaxValue;
+        vcompo_t minx = CadConst.MaxValue;
+        vcompo_t miny = CadConst.MaxValue;
+        vcompo_t minz = CadConst.MaxValue;
 
-        double maxx = CadConst.MinValue;
-        double maxy = CadConst.MinValue;
-        double maxz = CadConst.MinValue;
+        vcompo_t maxx = CadConst.MinValue;
+        vcompo_t maxy = CadConst.MinValue;
+        vcompo_t maxz = CadConst.MinValue;
 
         foreach (CadVertex p in list)
         {
-            minx = Math.Min(minx, p.X);
-            miny = Math.Min(miny, p.Y);
-            minz = Math.Min(minz, p.Z);
+            minx = (vcompo_t)Math.Min(minx, p.X);
+            miny = (vcompo_t)Math.Min(miny, p.Y);
+            minz = (vcompo_t)Math.Min(minz, p.Z);
 
-            maxx = Math.Max(maxx, p.X);
-            maxy = Math.Max(maxy, p.Y);
-            maxz = Math.Max(maxz, p.Z);
+            maxx = (vcompo_t)Math.Max(maxx, p.X);
+            maxy = (vcompo_t)Math.Max(maxy, p.Y);
+            maxz = (vcompo_t)Math.Max(maxz, p.Z);
         }
 
         rect.p0 = default;
@@ -405,11 +411,11 @@ public class CadUtil
         CadRect rect = default(CadRect);
         CadRect fr;
 
-        double minx = CadConst.MaxValue;
-        double miny = CadConst.MaxValue;
+        vcompo_t minx = CadConst.MaxValue;
+        vcompo_t miny = CadConst.MaxValue;
 
-        double maxx = CadConst.MinValue;
-        double maxy = CadConst.MinValue;
+        vcompo_t maxx = CadConst.MinValue;
+        vcompo_t maxy = CadConst.MinValue;
 
         foreach (CadFigure fig in list)
         {
@@ -417,10 +423,10 @@ public class CadUtil
 
             fr.Normalize();
 
-            minx = Math.Min(minx, fr.p0.X);
-            miny = Math.Min(miny, fr.p0.Y);
-            maxx = Math.Max(maxx, fr.p1.X);
-            maxy = Math.Max(maxy, fr.p1.Y);
+            minx = (vcompo_t)Math.Min(minx, fr.p0.X);
+            miny = (vcompo_t)Math.Min(miny, fr.p0.Y);
+            maxx = (vcompo_t)Math.Max(maxx, fr.p1.X);
+            maxy = (vcompo_t)Math.Max(maxy, fr.p1.Y);
         }
 
         rect.p0 = default;
@@ -441,21 +447,21 @@ public class CadUtil
     {
         CadRect rect = default(CadRect);
 
-        double minx = CadConst.MaxValue;
-        double miny = CadConst.MaxValue;
+        vcompo_t minx = CadConst.MaxValue;
+        vcompo_t miny = CadConst.MaxValue;
 
-        double maxx = CadConst.MinValue;
-        double maxy = CadConst.MinValue;
+        vcompo_t maxx = CadConst.MinValue;
+        vcompo_t maxy = CadConst.MinValue;
 
         list.ForEach(p =>
         {
             CadVertex v = dc.WorldPointToDevPoint(p);
 
-            minx = Math.Min(minx, v.X);
-            miny = Math.Min(miny, v.Y);
+            minx = (vcompo_t)Math.Min(minx, v.X);
+            miny = (vcompo_t)Math.Min(miny, v.Y);
 
-            maxx = Math.Max(maxx, v.X);
-            maxy = Math.Max(maxy, v.Y);
+            maxx = (vcompo_t)Math.Max(maxx, v.X);
+            maxy = (vcompo_t)Math.Max(maxy, v.Y);
         });
 
         rect.p0 = default;
@@ -505,7 +511,7 @@ public class CadUtil
     /// false: 点は矩形外
     /// </returns>
     /// 
-    public static bool IsInRect2D(Vector3d minp, Vector3d maxp, Vector3d p)
+    public static bool IsInRect2D(vector3_t minp, vector3_t maxp, vector3_t p)
     {
         if (p.X < minp.X) return false;
         if (p.X > maxp.X) return false;
@@ -521,31 +527,31 @@ public class CadUtil
     /// </summary>
     /// <param name="v">値</param>
     /// <returns>当プログラムでの標準的な変換方法で変換された文字列</returns>
-    public static string ValToString(double v)
+    public static string ValToString(vcompo_t v)
     {
         return v.ToString("f2");
     }
 
     // 1inchは何ミリ?
-    public const double MILLI_PER_INCH = 25.4;
+    public const vcompo_t MILLI_PER_INCH = (vcompo_t)(25.4);
 
-    public static double MilliToInch(double mm)
+    public static vcompo_t MilliToInch(vcompo_t mm)
     {
         return mm / MILLI_PER_INCH;
     }
 
-    public static double InchToMilli(double inchi)
+    public static vcompo_t InchToMilli(vcompo_t inchi)
     {
         return inchi * MILLI_PER_INCH;
     }
 
-    //public static PointPair LeftTopRightBottom2D(Vector3d p0, Vector3d p1)
+    //public static PointPair LeftTopRightBottom2D(vector3_t p0, vector3_t p1)
     //{
-    //    double lx = p0.X;
-    //    double rx = p1.X;
+    //    vcompo_t lx = p0.X;
+    //    vcompo_t rx = p1.X;
 
-    //    double ty = p0.Y;
-    //    double by = p1.Y;
+    //    vcompo_t ty = p0.Y;
+    //    vcompo_t by = p1.Y;
 
     //    if (p0.X > p1.X)
     //    {
@@ -562,20 +568,20 @@ public class CadUtil
     //    return new PointPair(CadVertex.Create(lx, ty, 0), CadVertex.Create(rx, by, 0));
     //}
 
-    public static List<Vector3d> GetVector3dListFrom(CadFigure fig)
+    public static List<vector3_t> Getvector3_tListFrom(CadFigure fig)
     {
-        List<Vector3d> list = new();
+        List<vector3_t> list = new();
         for (int i=0; i < fig.PointList.Count; i++)
         {
-            list.Add((Vector3d)fig.PointList[i]);
+            list.Add((vector3_t)fig.PointList[i]);
         }
 
         return list;
     }
 
-    public static void SetVertexListTo(CadFigure fig, List<Vector3d> vl)
+    public static void SetVertexListTo(CadFigure fig, List<vector3_t> vl)
     {
-        List<Vector3d> list = new();
+        List<vector3_t> list = new();
         for (int i = 0; i < vl.Count; i++)
         {
             fig.AddPoint(new CadVertex(vl[i]));

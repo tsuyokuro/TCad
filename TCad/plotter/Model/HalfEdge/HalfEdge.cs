@@ -6,6 +6,12 @@ using Plotter;
 using System;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace HalfEdgeNS;
 
 public class HeFace
@@ -132,7 +138,7 @@ public class HeModel
             HalfEdge head = FaceStore[i].Head;
             HalfEdge c = head;
 
-            Vector3d n = CadMath.Normal(
+            vector3_t n = CadMath.Normal(
                 VertexStore[c.Vertex].vector,
                 VertexStore[c.Next.Vertex].vector,
                 VertexStore[c.Next.Next.Vertex].vector
@@ -383,7 +389,7 @@ public class HeModel
     {
         CadVertex t;
 
-        double maxd = 0;
+        vcompo_t maxd = 0;
 
         int ret = -1;
 
@@ -399,7 +405,7 @@ public class HeModel
             CadVertex fp = VertexStore[vi];
 
             t = fp - p0;
-            double d = t.Norm();
+            vcompo_t d = t.Norm();
 
             if (d > maxd)
             {

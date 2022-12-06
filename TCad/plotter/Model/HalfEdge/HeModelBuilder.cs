@@ -3,6 +3,12 @@ using OpenTK.Mathematics;
 using Plotter;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace HalfEdgeNS;
 
 public class HeModelBuilder
@@ -72,7 +78,7 @@ public class HeModelBuilder
         he2.Prev = he1;
 
         // 法線の設定
-        Vector3d normal = CadMath.Normal(
+        vector3_t normal = CadMath.Normal(
             mHeModel.VertexStore[v0].vector,
             mHeModel.VertexStore[v1].vector,
             mHeModel.VertexStore[v2].vector);

@@ -10,6 +10,12 @@ using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
 using static IronPython.Modules._ast;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Serializer.v1003;
 
 public class VersionCode_v1003
@@ -60,7 +66,7 @@ public class MpCadData_v1003
 public class MpViewInfo_v1003
 {
     [Key("WorldScale")]
-    public double WorldScale = 1.0;
+    public vcompo_t WorldScale = (vcompo_t)(1.0);
 
     [Key("Paper")]
     public MpPaperSettings_v1003 PaperSettings = new MpPaperSettings_v1003();
@@ -70,10 +76,10 @@ public class MpViewInfo_v1003
 public class MpPaperSettings_v1003
 {
     [Key("W")]
-    public double Width = 210.0;
+    public vcompo_t Width = (vcompo_t)(210.0);
 
     [Key("H")]
-    public double Height = 297.0;
+    public vcompo_t Height = (vcompo_t)(297.0);
 
     [Key("Landscape")]
     public bool Landscape = false;
@@ -300,7 +306,7 @@ public class MpFigure_v1003
     public bool IsLoop;
 
     [Key("Normal")]
-    public MpVector3d_v1003 Normal;
+    public Mpvector3_t_v1003 Normal;
 
     [Key("ChildList")]
     public List<MpFigure_v1003> ChildList;
@@ -381,7 +387,7 @@ public class MpFigure_v1003
         Type = (byte)fig.Type;
         Locked = fig.Locked;
         IsLoop = fig.IsLoop;
-        Normal = MpVector3d_v1003.Create(fig.Normal);
+        Normal = Mpvector3_t_v1003.Create(fig.Normal);
 
         GeoData = fig.GeometricDataToMp_v1003();
 
@@ -442,20 +448,20 @@ public class MpFigure_v1003
 }
 
 [MessagePackObject]
-public struct MpVector3d_v1003
+public struct Mpvector3_t_v1003
 {
     [Key(0)]
-    public double X;
+    public vcompo_t X;
 
     [Key(1)]
-    public double Y;
+    public vcompo_t Y;
 
     [Key(2)]
-    public double Z;
+    public vcompo_t Z;
 
-    public static MpVector3d_v1003 Create(Vector3d v)
+    public static Mpvector3_t_v1003 Create(vector3_t v)
     {
-        MpVector3d_v1003 ret = new MpVector3d_v1003();
+        Mpvector3_t_v1003 ret = new Mpvector3_t_v1003();
 
         ret.X = v.X;
         ret.Y = v.Y;
@@ -464,9 +470,9 @@ public struct MpVector3d_v1003
         return ret;
     }
 
-    public Vector3d Restore()
+    public vector3_t Restore()
     {
-        return new Vector3d(X, Y, Z);
+        return new vector3_t(X, Y, Z);
     }
 }
 
@@ -566,7 +572,7 @@ public struct MpVertexAttr_v1003
     public MpColor4_v1003 Color2;
 
     [Key("N")]
-    public MpVector3d_v1003 Normal;
+    public Mpvector3_t_v1003 Normal;
 
     public static MpVertexAttr_v1003 Create(CadVertexAttr attr)
     {
@@ -574,7 +580,7 @@ public struct MpVertexAttr_v1003
 
         ret.Color1 = MpColor4_v1003.Create(attr.Color1);
         ret.Color2 = MpColor4_v1003.Create(attr.Color2);
-        ret.Normal =MpVector3d_v1003.Create(attr.Normal);
+        ret.Normal =Mpvector3_t_v1003.Create(attr.Normal);
         ret.Flags = attr.Flags;
         return ret;
     }
@@ -598,7 +604,7 @@ public struct MpVertex_v1003
     public byte Flag;
 
     [Key("P")]
-    public MpVector3d_v1003 P;
+    public Mpvector3_t_v1003 P;
 
     [Key("Attr")]
     public MpVertexAttr_v1003 Attr;
@@ -689,7 +695,7 @@ public class MpHeModel_v1003
     public List<MpVertex_v1003> VertexStore;
 
     [Key("NormalStore")]
-    public List<MpVector3d_v1003> NormalStore;
+    public List<Mpvector3_t_v1003> NormalStore;
 
     [Key("FaceStore")]
     public List<MpHeFace_v1003> FaceStore;
@@ -710,7 +716,7 @@ public class MpHeModel_v1003
 
         ret.VertexStore = MpUtil_v1003.VertexListToMp(model.VertexStore);
 
-        ret.NormalStore = MpUtil_v1003.Vector3dListToMp(model.NormalStore);
+        ret.NormalStore = MpUtil_v1003.vector3_tListToMp(model.NormalStore);
 
         ret.FaceStore = MpUtil_v1003.HeFaceListToMp(model.FaceStore);
 
@@ -731,7 +737,7 @@ public class MpHeModel_v1003
 
         ret.VertexStore = MpUtil_v1003.VertexListFromMp(VertexStore);
 
-        ret.NormalStore = MpUtil_v1003.Vector3dListFromMp(NormalStore);
+        ret.NormalStore = MpUtil_v1003.vector3_tListFromMp(NormalStore);
 
         // Create dictionary
         Dictionary<uint, HalfEdge> dic = new Dictionary<uint, HalfEdge>();
@@ -870,7 +876,7 @@ public class MpNurbsLine_v1003
     public int CtrlDataCnt;
 
     [Key("Weights")]
-    public double[] Weights;
+    public vcompo_t[] Weights;
 
     [Key("CtrlPoints")]
     public List<MpVertex_v1003> CtrlPoints;
@@ -887,7 +893,7 @@ public class MpNurbsLine_v1003
 
         ret.CtrlCnt = src.CtrlCnt;
         ret.CtrlDataCnt = src.CtrlDataCnt;
-        ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
+        ret.Weights = MpUtil_v1003.ArrayClone<vcompo_t>(src.Weights);
         ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
         ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
 
@@ -902,7 +908,7 @@ public class MpNurbsLine_v1003
 
         nurbs.CtrlCnt = CtrlCnt;
         nurbs.CtrlDataCnt = CtrlDataCnt;
-        nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
+        nurbs.Weights = MpUtil_v1003.ArrayClone<vcompo_t>(Weights);
         nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
         nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
 
@@ -928,7 +934,7 @@ public class MpNurbsSurface_v1003
     public int VCtrlDataCnt;
 
     [Key("Weights")]
-    public double[] Weights;
+    public vcompo_t[] Weights;
 
     [Key("CtrlPoints")]
     public List<MpVertex_v1003> CtrlPoints;
@@ -954,7 +960,7 @@ public class MpNurbsSurface_v1003
 
         ret.CtrlPoints = MpUtil_v1003.VertexListToMp(src.CtrlPoints);
 
-        ret.Weights = MpUtil_v1003.ArrayClone<double>(src.Weights);
+        ret.Weights = MpUtil_v1003.ArrayClone<vcompo_t>(src.Weights);
         ret.CtrlOrder = MpUtil_v1003.ArrayClone<int>(src.CtrlOrder);
 
         ret.UBSpline = MpBSplineParam_v1003.Create(src.UBSpline);
@@ -975,7 +981,7 @@ public class MpNurbsSurface_v1003
 
         nurbs.CtrlPoints = MpUtil_v1003.VertexListFromMp(CtrlPoints);
 
-        nurbs.Weights = MpUtil_v1003.ArrayClone<double>(Weights);
+        nurbs.Weights = MpUtil_v1003.ArrayClone<vcompo_t>(Weights);
         nurbs.CtrlOrder = MpUtil_v1003.ArrayClone<int>(CtrlOrder);
 
         nurbs.UBSpline = UBSpline.Restore();
@@ -1002,19 +1008,19 @@ public class MpBSplineParam_v1003
     public int KnotCnt;
 
     [Key("Knots")]
-    public double[] Knots;
+    public vcompo_t[] Knots;
 
     [Key("CtrlCnt")]
     public int CtrlCnt;
 
     [Key("LowKnot")]
-    public double LowKnot = 0;
+    public vcompo_t LowKnot = 0;
 
     [Key("HightKnot")]
-    public double HighKnot = 0;
+    public vcompo_t HighKnot = 0;
 
     [Key("Step")]
-    public double Step = 0;
+    public vcompo_t Step = 0;
 
     public static MpBSplineParam_v1003 Create(BSplineParam src)
     {
@@ -1024,7 +1030,7 @@ public class MpBSplineParam_v1003
         ret.DivCnt = src.DivCnt;
         ret.OutputCnt = src.OutputCnt;
         ret.KnotCnt = src.KnotCnt;
-        ret.Knots = MpUtil_v1003.ArrayClone<double>(src.Knots);
+        ret.Knots = MpUtil_v1003.ArrayClone<vcompo_t>(src.Knots);
         ret.LowKnot = src.LowKnot;
         ret.HighKnot = src.HighKnot;
         ret.Step = src.Step;
@@ -1040,7 +1046,7 @@ public class MpBSplineParam_v1003
         bs.DivCnt = DivCnt;
         bs.OutputCnt = OutputCnt;
         bs.KnotCnt = KnotCnt;
-        bs.Knots = MpUtil_v1003.ArrayClone<double>(Knots);
+        bs.Knots = MpUtil_v1003.ArrayClone<vcompo_t>(Knots);
         bs.LowKnot = LowKnot;
         bs.HighKnot = HighKnot;
         bs.Step = Step;

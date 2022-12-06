@@ -7,6 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace GLUtil;
 
 public class Tessellator
@@ -25,7 +31,7 @@ public class Tessellator
 
     public class VertexContour
     {
-        public List<Vector3d> VList = new();
+        public List<vector3_t> VList = new();
     }
 
     public Tessellator()
@@ -59,7 +65,7 @@ public class Tessellator
     private int StripIdx1;
     private int StripIdx2;
 
-    public CadMesh Tessellate(List<List<int>> contourList, List<Vector3d> vertexList)
+    public CadMesh Tessellate(List<List<int>> contourList, List<vector3_t> vertexList)
     {
         Glu.TessCallback(pTess, GluTessCallback.Begin, MeshBeginCallback);
         Glu.TessCallback(pTess, GluTessCallback.End, MeshEndCallback);
@@ -71,7 +77,7 @@ public class Tessellator
 
         CadVertex cv = new();
 
-        double[] tv = new double[3];
+        vcompo_t[] tv = new vcompo_t[3];
 
         Glu.TessNormal(pTess, new Vector3(0f, 0f, 1f));
         Glu.TessBeginPolygon(pTess, 0);
@@ -86,7 +92,7 @@ public class Tessellator
             {
                 int idx = contour[j];
 
-                Vector3d v = vertexList[idx];
+                vector3_t v = vertexList[idx];
                 tv[0] = v.X;
                 tv[1] = v.Y;
                 tv[2] = 0;
@@ -110,7 +116,7 @@ public class Tessellator
 
     public CadMesh Tessellate(List<Vector3List> contourList)
     {
-        List<Vector3d> vertexList = new();
+        List<vector3_t> vertexList = new();
         List<List<int>> indexContourList = new();
 
         int idx = 0;
@@ -122,7 +128,7 @@ public class Tessellator
 
             for (int j = 0; j < vcont.Count; j++)
             {
-                Vector3d v = vcont[j];
+                vector3_t v = vcont[j];
                 vertexList.Add(v);
                 icont.Add(idx);
 
@@ -267,8 +273,8 @@ public class Tessellator
     }
 
     private void MeshCombine(
-        [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
-        [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
+        [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] vcompo_t[] coords,
+        [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] vcompo_t[] data,
         [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
         ref IntPtr dataOut)
     {

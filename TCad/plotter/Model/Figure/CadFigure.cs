@@ -7,6 +7,12 @@ using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public abstract partial class CadFigure
@@ -80,7 +86,7 @@ public abstract partial class CadFigure
 
     public bool IsLoop { get; set; }
 
-    public Vector3d Normal;
+    public vector3_t Normal;
 
     public virtual VertexList PointList => mPointList;
 
@@ -590,7 +596,7 @@ public abstract partial class CadFigure
         });
     }
 
-    public virtual void MoveAllPoints(Vector3d delta)
+    public virtual void MoveAllPoints(vector3_t delta)
     {
         if (Locked) return;
 
@@ -749,7 +755,7 @@ public abstract partial class CadFigure
         }
     }
 
-    public virtual void Rotate(Vector3d org, CadQuaternion q, CadQuaternion r)
+    public virtual void Rotate(vector3_t org, CadQuaternion q, CadQuaternion r)
     {
         CadQuaternion qp;
 
@@ -774,7 +780,7 @@ public abstract partial class CadFigure
         }
     }
 
-    public virtual void FlipWithPlane(Vector3d p0, Vector3d normal)
+    public virtual void FlipWithPlane(vector3_t p0, vector3_t normal)
     {
         DOut.plx("in");
 
@@ -784,7 +790,7 @@ public abstract partial class CadFigure
         {
             CadVertex v = vl[i];
 
-            Vector3d cp = CadMath.CrossPlane(v.vector, p0, normal);
+            vector3_t cp = CadMath.CrossPlane(v.vector, p0, normal);
 
             CadVertex d = v - cp;
 

@@ -3,6 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using CadDataTypes;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 class CadDxfLoader
@@ -16,7 +22,7 @@ class CadDxfLoader
 
     public delegate void Progress(States state, int percent, CadMesh mesh);
 
-    public async void AsyncLoad(string fname, double scale, Progress progress)
+    public async void AsyncLoad(string fname, vcompo_t scale, Progress progress)
     {
         CadMesh mesh = await Task.Run(() => Load(fname, scale));
 
@@ -33,7 +39,7 @@ class CadDxfLoader
 
     public int TotalFaceCount;
 
-    public CadMesh Load(string fname, double scale)
+    public CadMesh Load(string fname, vcompo_t scale)
     {
         TotalPointCount = 0;
         TotalFaceCount = 0;
@@ -49,7 +55,7 @@ class CadDxfLoader
         int valCnt = 0;
 
 
-        double[] val = new double[3];
+        vcompo_t[] val = new vcompo_t[3];
 
         int code;
 

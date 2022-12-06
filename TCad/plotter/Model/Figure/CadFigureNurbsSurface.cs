@@ -4,6 +4,12 @@ using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using SplineCurve;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class CadFigureNurbsSurface : CadFigure
@@ -43,7 +49,7 @@ public class CadFigureNurbsSurface : CadFigure
         NeedsEval = true;
     }
 
-    public override void MoveAllPoints(Vector3d delta)
+    public override void MoveAllPoints(vector3_t delta)
     {
         if (Locked) return;
 

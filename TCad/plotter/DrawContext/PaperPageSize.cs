@@ -2,16 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class PaperSizes
 {
-    public static Dictionary<PaperKind, (double Width, double Height)> SizeMap =
-        new Dictionary<PaperKind, (double Width, double Height)>();
+    public static Dictionary<PaperKind, (vcompo_t Width, vcompo_t Height)> SizeMap =
+        new Dictionary<PaperKind, (vcompo_t Width, vcompo_t Height)>();
 
-    public static (double Width, double Height) GetSize(PaperKind kind, bool landscape)
+    public static (vcompo_t Width, vcompo_t Height) GetSize(PaperKind kind, bool landscape)
     {
-        (double w, double h) = SizeMap[kind];
+        (vcompo_t w, vcompo_t h) = SizeMap[kind];
 
         if (landscape)
         {
@@ -23,11 +29,11 @@ public class PaperSizes
 
     static PaperSizes()
     {
-        SizeMap[PaperKind.A4] = (210.0, 297.0);
-        SizeMap[PaperKind.A5] = (148.0, 210.0);
-        SizeMap[PaperKind.A6] = (105.0, 148.0);
+        SizeMap[PaperKind.A4] = ((vcompo_t)(210.0), (vcompo_t)(297.0));
+        SizeMap[PaperKind.A5] = ((vcompo_t)(148.0), (vcompo_t)(210.0));
+        SizeMap[PaperKind.A6] = ((vcompo_t)(105.0), (vcompo_t)(148.0));
 
-        SizeMap[PaperKind.B5] = (182.0, 257.0);
+        SizeMap[PaperKind.B5] = ((vcompo_t)(182.0), (vcompo_t)(257.0));
     }
 }
 
@@ -35,11 +41,11 @@ public class PaperSizes
 public class PaperPageSize
 {
     // 1inchは何ミリ?
-    public const double MILLI_PER_INCH = 25.4;
+    public const vcompo_t MILLI_PER_INCH = (vcompo_t)(25.4);
 
     // デフォルト A4縦
-    public double Width = 210.0;
-    public double Height = 297.0;
+    public vcompo_t Width = (vcompo_t)(210.0);
+    public vcompo_t Height = (vcompo_t)(297.0);
 
     public PaperKind mPaperKind = PaperKind.A4;
 
@@ -67,13 +73,13 @@ public class PaperPageSize
         // PageSettingsは、1/100 Inch単位で設定されているのでmmに変換
 
         Width =
-            Math.Round(
-                    settings.Bounds.Width * MILLI_PER_INCH / 100.0,
+            (vcompo_t)Math.Round(
+                    settings.Bounds.Width * MILLI_PER_INCH / (vcompo_t)(100.0),
                     MidpointRounding.AwayFromZero);
 
         Height =
-            Math.Round(
-                    settings.Bounds.Height * MILLI_PER_INCH / 100.0,
+            (vcompo_t)Math.Round(
+                    settings.Bounds.Height * MILLI_PER_INCH / (vcompo_t)(100.0),
                     MidpointRounding.AwayFromZero);
     }
 

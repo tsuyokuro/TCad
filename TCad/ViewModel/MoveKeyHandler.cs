@@ -4,6 +4,12 @@ using Plotter.Controller;
 using Plotter.Settings;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class MoveKeyHandler
@@ -14,7 +20,7 @@ public class MoveKeyHandler
 
     private List<CadFigure> EditFigList;
 
-    private Vector3d Delta = default;
+    private vector3_t Delta = default;
 
     public MoveKeyHandler(PlotterController controller)
     {
@@ -29,7 +35,7 @@ public class MoveKeyHandler
         }
 
         IsStarted = false;
-        Delta = Vector3d.Zero;
+        Delta = vector3_t.Zero;
         EditFigList = null;
     }
 
@@ -43,17 +49,17 @@ public class MoveKeyHandler
         if (!IsStarted)
         {
             EditFigList = Controller.StartEdit();
-            Delta = Vector3d.Zero;
+            Delta = vector3_t.Zero;
             IsStarted = true;
         }
 
         bool moveLittle = CadKeyboard.IsKeyPressed(System.Windows.Forms.Keys.ShiftKey);
-        double a = moveLittle ? 0.1 : 1.0;
+        vcompo_t a = moveLittle ? (vcompo_t)(0.1) : (vcompo_t)(1.0);
 
         //DOut.pl("MoveKeyDown a:" + a);
 
-        Vector3d wx = Controller.DC.DevVectorToWorldVector(Vector3d.UnitX);
-        Vector3d wy = Controller.DC.DevVectorToWorldVector(Vector3d.UnitY);
+        vector3_t wx = Controller.DC.DevVectorToWorldVector(vector3_t.UnitX);
+        vector3_t wy = Controller.DC.DevVectorToWorldVector(vector3_t.UnitY);
 
         wx = wx.UnitVector();
         wy = wy.UnitVector();
@@ -94,7 +100,7 @@ public class MoveKeyHandler
             }
             else
             {
-                Vector3d p = Controller.GetCursorPos();
+                vector3_t p = Controller.GetCursorPos();
                 Controller.SetCursorWoldPos(p + Delta);
                 Controller.Redraw();
             }

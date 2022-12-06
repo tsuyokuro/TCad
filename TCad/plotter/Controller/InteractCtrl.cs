@@ -2,6 +2,12 @@ using CadDataTypes;
 using OpenTK.Mathematics;
 using System.Threading;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public class InteractCtrl
@@ -33,7 +39,7 @@ public class InteractCtrl
         Sem.Release();
     }
 
-    public void SetPoint(Vector3d v)
+    public void SetPoint(vector3_t v)
     {
         lock (PointList)
         {
@@ -64,15 +70,15 @@ public class InteractCtrl
         return mState;
     }
 
-    public void Draw(DrawContext dc, Vector3d tp)
+    public void Draw(DrawContext dc, vector3_t tp)
     {
         if (PointList.Count == 0)
         {
             return;
         }
 
-        Vector3d p0 = PointList[0];
-        Vector3d p1;
+        vector3_t p0 = PointList[0];
+        vector3_t p1;
 
         for (int i = 1; i < PointList.Count; i++)
         {

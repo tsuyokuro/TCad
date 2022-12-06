@@ -4,6 +4,12 @@ using OpenTK.Mathematics;
 using System;
 using System.Windows.Forms;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 class DrawContextGLPers : DrawContextGL
@@ -42,26 +48,26 @@ class DrawContextGLPers : DrawContextGL
         SetupLight();
     }
 
-    public override void SetViewSize(double w, double h)
+    public override void SetViewSize(vcompo_t w, vcompo_t h)
     {
         mViewWidth = w;
         mViewHeight = h;
 
-        mViewOrg.X = w / 2.0;
-        mViewOrg.Y = h / 2.0;
+        mViewOrg.X = w / (vcompo_t)(2.0);
+        mViewOrg.Y = h / (vcompo_t)(2.0);
 
-        mViewCenter.X = w / 2.0;
-        mViewCenter.Y = h / 2.0;
+        mViewCenter.X = w / (vcompo_t)(2.0);
+        mViewCenter.Y = h / (vcompo_t)(2.0);
 
-        DeviceScaleX = w / 2.0;
-        DeviceScaleY = -h / 2.0;
+        DeviceScaleX = w / (vcompo_t)(2.0);
+        DeviceScaleY = -h / (vcompo_t)(2.0);
 
         GL.Viewport(0, 0, (int)mViewWidth, (int)mViewHeight);
 
         CalcProjectionMatrix();
         CalcProjectionZW();
 
-        Matrix2D = Matrix4d.CreateOrthographicOffCenter(
+        Matrix2D = matrix4_t.CreateOrthographicOffCenter(
                                     0, mViewWidth,
                                     mViewHeight, 0,
                                     0, mProjectionFar);
@@ -69,8 +75,8 @@ class DrawContextGLPers : DrawContextGL
 
     public override void CalcProjectionMatrix()
     {
-        double aspect = mViewWidth / mViewHeight;
-        mProjectionMatrix = Matrix4d.CreatePerspectiveFieldOfView(
+        vcompo_t aspect = mViewWidth / mViewHeight;
+        mProjectionMatrix = matrix4_t.CreatePerspectiveFieldOfView(
                                         mFovY,
                                         aspect,
                                         mProjectionNear,
@@ -88,9 +94,9 @@ class DrawContextGLPers : DrawContextGL
         dc.CopyCamera(this);
         dc.SetViewSize(deviceSize.Width, deviceSize.Height);
 
-        Vector3d org = default;
-        org.X = deviceSize.Width / 2.0;
-        org.Y = deviceSize.Height / 2.0;
+        vector3_t org = default;
+        org.X = deviceSize.Width / (vcompo_t)(2.0);
+        org.Y = deviceSize.Height / (vcompo_t)(2.0);
 
         dc.SetViewOrg(org);
 
@@ -103,14 +109,14 @@ class DrawContextGLPers : DrawContextGL
     {
         Vector2 d = current - prev;
 
-        double ry = (d.X / 10.0) * (Math.PI / 20);
-        double rx = (d.Y / 10.0) * (Math.PI / 20);
+        vcompo_t ry = (d.X / (vcompo_t)(10.0)) * (Math.PI / 20);
+        vcompo_t rx = (d.Y / (vcompo_t)(10.0)) * (Math.PI / 20);
 
         CadQuaternion q;
         CadQuaternion r;
         CadQuaternion qp;
 
-        q = CadQuaternion.RotateQuaternion(Vector3d.UnitY, ry);
+        q = CadQuaternion.RotateQuaternion(vector3_t.UnitY, ry);
 
         r = q.Conjugate();
 
@@ -124,12 +130,12 @@ class DrawContextGLPers : DrawContextGL
         qp = qp * q;
         mUpVector = qp.ToVector3();
 
-        Vector3d ev = mLookAt - mEye;
+        vector3_t ev = mLookAt - mEye;
 
-        Vector3d a = new Vector3d(ev);
-        Vector3d b = new Vector3d(mUpVector);
+        vector3_t a = new vector3_t(ev);
+        vector3_t b = new vector3_t(mUpVector);
 
-        Vector3d axis = CadMath.Normal(a, b);
+        vector3_t axis = CadMath.Normal(a, b);
 
         if (!axis.IsZero())
         {
@@ -155,9 +161,9 @@ class DrawContextGLPers : DrawContextGL
         CalcProjectionZW();
     }
 
-    public void MoveForwardEyePoint(double d, bool withLookAt = false)
+    public void MoveForwardEyePoint(vcompo_t d, bool withLookAt = false)
     {
-        Vector3d dv = ViewDir * d;
+        vector3_t dv = ViewDir * d;
 
         if (withLookAt)
         {
@@ -166,13 +172,13 @@ class DrawContextGLPers : DrawContextGL
         }
         else
         {
-            Vector3d eye = mEye + dv;
+            vector3_t eye = mEye + dv;
 
-            Vector3d viewDir = mLookAt - eye;
+            vector3_t viewDir = mLookAt - eye;
 
             viewDir.Normalize();
 
-            if ((ViewDir - viewDir).Length > 1.0)
+            if ((ViewDir - viewDir).Length > (vcompo_t)(1.0))
             {
                 return;
             }
@@ -229,28 +235,28 @@ class DrawContextGLPers : DrawContextGL
     }
 
 
-    public override Vector3d WorldPointToDevPoint(Vector3d pt)
+    public override vector3_t WorldPointToDevPoint(vector3_t pt)
     {
-        Vector3d p = WorldVectorToDevVector(pt);
+        vector3_t p = WorldVectorToDevVector(pt);
         p = p + mViewCenter;
         return p;
     }
 
-    public override Vector3d DevPointToWorldPoint(Vector3d pt)
+    public override vector3_t DevPointToWorldPoint(vector3_t pt)
     {
         pt = pt - mViewCenter;
         return DevVectorToWorldVector(pt);
     }
 
 
-    public override Vector3d WorldVectorToDevVector(Vector3d pt)
+    public override vector3_t WorldVectorToDevVector(vector3_t pt)
     {
-        Vector4d wv = pt.ToVector4(1.0);
+        vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
 
-        Vector4d sv = wv * mViewMatrix;
-        Vector4d pv = sv * mProjectionMatrix;
+        vector4_t sv = wv * mViewMatrix;
+        vector4_t pv = sv * mProjectionMatrix;
 
-        Vector4d dv;
+        vector4_t dv;
 
         dv.X = pv.X / pv.W;
         dv.Y = pv.Y / pv.W;
@@ -264,12 +270,12 @@ class DrawContextGLPers : DrawContextGL
         return dv.ToVector3();
     }
 
-    public override Vector3d DevVectorToWorldVector(Vector3d pt)
+    public override vector3_t DevVectorToWorldVector(vector3_t pt)
     {
         pt.X = pt.X / DeviceScaleX;
         pt.Y = pt.Y / DeviceScaleY;
 
-        Vector4d wv;
+        vector4_t wv;
 
         wv.W = mProjectionW;
         wv.Z = mProjectionZ;
@@ -283,11 +289,11 @@ class DrawContextGLPers : DrawContextGL
         return wv.ToVector3();
     }
 
-    public override double DevSizeToWoldSize(double s)
+    public override vcompo_t DevSizeToWoldSize(vcompo_t s)
     {
-        Vector3d vd = DevVectorToWorldVector(Vector3d.UnitX * s);
-        Vector3d v0 = DevVectorToWorldVector(Vector3d.Zero);
-        Vector3d v = vd - v0;
+        vector3_t vd = DevVectorToWorldVector(vector3_t.UnitX * s);
+        vector3_t v0 = DevVectorToWorldVector(vector3_t.Zero);
+        vector3_t v = vd - v0;
         return v.Norm();
     }
     #endregion

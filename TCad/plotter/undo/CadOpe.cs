@@ -6,6 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 /**
@@ -520,10 +526,10 @@ public class CadOpeRemoveChild : CadOpe
 public class CadOpeChangeNormal : CadOpe
 {
     private uint FigureID;
-    private Vector3d NewNormal;
-    private Vector3d OldNormal;
+    private vector3_t NewNormal;
+    private vector3_t OldNormal;
 
-    public CadOpeChangeNormal(uint figID, Vector3d oldNormal, Vector3d newNormal)
+    public CadOpeChangeNormal(uint figID, vector3_t oldNormal, vector3_t newNormal)
     {
         FigureID = figID;
         OldNormal = oldNormal;

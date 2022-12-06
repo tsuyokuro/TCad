@@ -2,6 +2,12 @@ using System;
 using System.Text.Json;
 
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Serializer;
 
 public static class JsonElementExtends
@@ -18,7 +24,7 @@ public static class JsonElementExtends
         return prop.GetBoolean();
     }
 
-    public static double GetDouble(this JsonElement jo, string key, double defaultValue)
+    public static vcompo_t GetDouble(this JsonElement jo, string key, vcompo_t defaultValue)
     {
         JsonElement prop;
 

@@ -5,6 +5,12 @@ using OpenTK.Mathematics;
 using Plotter;
 using System;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace MeshMakerNS;
 
 public class MeshMaker
@@ -15,7 +21,7 @@ public class MeshMaker
         QUADRANGLE,
     }
 
-    public static CadMesh CreateBox(Vector3d pos, Vector3d sizeV, FaceType faceType = FaceType.TRIANGLE)
+    public static CadMesh CreateBox(vector3_t pos, vector3_t sizeV, FaceType faceType = FaceType.TRIANGLE)
     {
         CadMesh cm = CreateUnitCube(faceType);
 
@@ -33,15 +39,15 @@ public class MeshMaker
     {
         CadMesh cm = new CadMesh(8, 12);
 
-        cm.VertexStore.Add(CadVertex.Create(+0.5, +0.5, +0.5));
-        cm.VertexStore.Add(CadVertex.Create(-0.5, +0.5, +0.5));
-        cm.VertexStore.Add(CadVertex.Create(-0.5, -0.5, +0.5));
-        cm.VertexStore.Add(CadVertex.Create(+0.5, -0.5, +0.5));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(+0.5), (vcompo_t)(+0.5), (vcompo_t)(+0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(-0.5), (vcompo_t)(+0.5), (vcompo_t)(+0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(-0.5), (vcompo_t)(-0.5), (vcompo_t)(+0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(+0.5), (vcompo_t)(-0.5), (vcompo_t)(+0.5)));
 
-        cm.VertexStore.Add(CadVertex.Create(+0.5, +0.5, -0.5));
-        cm.VertexStore.Add(CadVertex.Create(-0.5, +0.5, -0.5));
-        cm.VertexStore.Add(CadVertex.Create(-0.5, -0.5, -0.5));
-        cm.VertexStore.Add(CadVertex.Create(+0.5, -0.5, -0.5));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(+0.5), (vcompo_t)(+0.5), (vcompo_t)(-0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(-0.5), (vcompo_t)(+0.5), (vcompo_t)(-0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(-0.5), (vcompo_t)(-0.5), (vcompo_t)(-0.5)));
+        cm.VertexStore.Add(CadVertex.Create((vcompo_t)(+0.5), (vcompo_t)(-0.5), (vcompo_t)(-0.5)));
 
         if (faceType == FaceType.QUADRANGLE)
         {
@@ -81,13 +87,13 @@ public class MeshMaker
         return cm;
     }
 
-    public static CadMesh CreateUnitCube(Vector3d wv, Vector3d hv, FaceType faceType = FaceType.TRIANGLE)
+    public static CadMesh CreateUnitCube(vector3_t wv, vector3_t hv, FaceType faceType = FaceType.TRIANGLE)
     {
-        Vector3d tv = CadMath.Normal(wv, hv);
+        vector3_t tv = CadMath.Normal(wv, hv);
 
-        Vector3d wv2 = wv / 2;
-        Vector3d hv2 = hv / 2;
-        Vector3d tv2 = tv / 2;
+        vector3_t wv2 = wv / 2;
+        vector3_t hv2 = hv / 2;
+        vector3_t tv2 = tv / 2;
 
         CadMesh cm = new CadMesh(8, 12);
 
@@ -139,7 +145,7 @@ public class MeshMaker
         return cm;
     }
 
-    public static CadMesh CreateTetrahedron(Vector3d pos, Vector3d sizeV)
+    public static CadMesh CreateTetrahedron(vector3_t pos, vector3_t sizeV)
     {
         CadMesh cm = CreateUnitTetrahedron();
 
@@ -157,10 +163,10 @@ public class MeshMaker
     {
         CadMesh cm = new CadMesh(8, 12);
 
-        var v0 = new CadVertex(-0.81649658, -0.47140452, -0.33333333);
-        var v1 = new CadVertex(0.81649658, -0.47140452, -0.33333333);
-        var v2 = new CadVertex(0.00000000, 0.00000000, 1.00000000);
-        var v3 = new CadVertex(0.00000000, 0.94280904, -0.33333333);
+        var v0 = new CadVertex((vcompo_t)(-0.81649658), (vcompo_t)(-0.47140452), (vcompo_t)(-0.33333333));
+        var v1 = new CadVertex((vcompo_t)(0.81649658), (vcompo_t)(-0.47140452), (vcompo_t)(-0.33333333));
+        var v2 = new CadVertex((vcompo_t)(0.00000000), (vcompo_t)(0.00000000), (vcompo_t)(1.00000000));
+        var v3 = new CadVertex((vcompo_t)(0.00000000), (vcompo_t)(0.94280904), (vcompo_t)(-0.33333333));
 
         cm.VertexStore.Add(v0);
         cm.VertexStore.Add(v1);
@@ -175,7 +181,7 @@ public class MeshMaker
         return cm;
     }
 
-    public static CadMesh CreateOctahedron(Vector3d pos, Vector3d sizeV)
+    public static CadMesh CreateOctahedron(vector3_t pos, vector3_t sizeV)
     {
         CadMesh cm = CreateUnitOctahedron();
 
@@ -193,12 +199,12 @@ public class MeshMaker
     {
         CadMesh cm = new CadMesh(8, 12);
 
-        var v0 = new CadVertex(-0.70710678, -0.70710678, 0.00000000);
-        var v1 = new CadVertex(-0.70710678, 0.70710678, 0.00000000);
-        var v2 = new CadVertex(0.70710678, 0.70710678, 0.00000000);
-        var v3 = new CadVertex(0.70710678, -0.70710678, 0.00000000);
-        var v4 = new CadVertex(0.00000000, 0.00000000, -1.00000000);
-        var v5 = new CadVertex(0.00000000, 0.00000000, 1.00000000);
+        var v0 = new CadVertex((vcompo_t)(-0.70710678), (vcompo_t)(-0.70710678), (vcompo_t)(0.00000000));
+        var v1 = new CadVertex((vcompo_t)(-0.70710678), (vcompo_t)(0.70710678), (vcompo_t)(0.00000000));
+        var v2 = new CadVertex((vcompo_t)(0.70710678), (vcompo_t)(0.70710678), (vcompo_t)(0.00000000));
+        var v3 = new CadVertex((vcompo_t)(0.70710678), (vcompo_t)(-0.70710678), (vcompo_t)(0.00000000));
+        var v4 = new CadVertex((vcompo_t)(0.00000000), (vcompo_t)(0.00000000), (vcompo_t)(-1.00000000));
+        var v5 = new CadVertex((vcompo_t)(0.00000000), (vcompo_t)(0.00000000), (vcompo_t)(1.00000000));
 
         cm.VertexStore.Add(v0);
         cm.VertexStore.Add(v1);
@@ -220,7 +226,7 @@ public class MeshMaker
         return cm;
     }
 
-    public static CadMesh CreateCylinder(Vector3d pos, int circleDiv, int slices, double r, double len)
+    public static CadMesh CreateCylinder(vector3_t pos, int circleDiv, int slices, vcompo_t r, vcompo_t len)
     {
         CadMesh mesh = CreateCylinder(circleDiv, slices, r, len);
 
@@ -232,16 +238,16 @@ public class MeshMaker
         return mesh;
     }
 
-    public static CadMesh CreateCylinder(int circleDiv, int slices, double r, double len)
+    public static CadMesh CreateCylinder(int circleDiv, int slices, vcompo_t r, vcompo_t len)
     {
         VertexList vl = new VertexList();
 
-        double sl = slices;
+        vcompo_t sl = slices;
 
-        double dl = len / sl;
-        double y = len / 2;
+        vcompo_t dl = len / sl;
+        vcompo_t y = len / 2;
 
-        for (double i=0; i < sl; i++)
+        for (vcompo_t i=0; i < sl; i++)
         {
             vl.Add(new CadVertex(r, y - (i * dl), 0));
         }
@@ -249,22 +255,22 @@ public class MeshMaker
         vl.Add(new CadVertex(r, -len / 2, 0));
         
         return CreateRotatingBody(
-            circleDiv, Vector3d.Zero, Vector3d.UnitY, vl, true, true, FaceType.TRIANGLE);
+            circleDiv, vector3_t.Zero, vector3_t.UnitY, vl, true, true, FaceType.TRIANGLE);
     }
 
-    public static CadMesh CreateSphere(Vector3d pos, double r, int slices1, int slices2)
+    public static CadMesh CreateSphere(vector3_t pos, vcompo_t r, int slices1, int slices2)
     {
         VertexList vl = new VertexList(slices2);
 
-        double d = Math.PI / slices2;
+        vcompo_t d = (vcompo_t)Math.PI / slices2;
 
 
         for (int i = 0; i < slices2; i++)
         {
-            double a = i * d;
+            vcompo_t a = i * d;
 
-            double x = Math.Sin(a) * r;
-            double y = Math.Cos(a) * r;
+            vcompo_t x = (vcompo_t)Math.Sin(a) * r;
+            vcompo_t y = (vcompo_t)Math.Cos(a) * r;
 
             vl.Add(CadVertex.Create(x, y, 0));
         }
@@ -273,7 +279,7 @@ public class MeshMaker
 
 
         CadMesh mesh = CreateRotatingBody(
-            slices1, Vector3d.Zero, Vector3d.UnitY, vl, false, false, FaceType.TRIANGLE);
+            slices1, vector3_t.Zero, vector3_t.UnitY, vl, false, false, FaceType.TRIANGLE);
 
         for (int i = 0; i < mesh.VertexStore.Count; i++)
         {
@@ -323,20 +329,20 @@ public class MeshMaker
             ps++;
         }
 
-        double d = Math.PI * 2.0 / circleDiv;
+        vcompo_t d = (vcompo_t)Math.PI * (vcompo_t)(2.0) / circleDiv;
 
         for (int i = 0; i < circleDiv; i++)
         {
-            double a = i * d;
+            vcompo_t a = i * d;
 
             for (int vi = s; vi < e; vi++)
             {
                 CadVertex v = vl[vi];
                 CadVertex vv = default(CadVertex);
 
-                vv.X = v.X * Math.Cos(a);
+                vv.X = v.X * (vcompo_t)Math.Cos(a);
                 vv.Y = v.Y;
-                vv.Z = v.X * Math.Sin(a);
+                vv.Z = v.X * (vcompo_t)Math.Sin(a);
 
                 mesh.VertexStore.Add(vv);
             }
@@ -417,7 +423,7 @@ public class MeshMaker
     }
 
     // 回転体の作成
-    public static CadMesh CreateRotatingBody(int circleDiv, Vector3d org, Vector3d axis, VertexList vl, bool topCap, bool btmCap, FaceType facetype = FaceType.TRIANGLE)
+    public static CadMesh CreateRotatingBody(int circleDiv, vector3_t org, vector3_t axis, VertexList vl, bool topCap, bool btmCap, FaceType facetype = FaceType.TRIANGLE)
     {
         if (vl.Count < 2)
         {
@@ -427,10 +433,10 @@ public class MeshMaker
         #region 面の向きが外から中心に向かってみた場合に左回りになるように回転軸の向きを調整
         // vlの全体的な向きを求めるためvl[0]から一番遠い点を求める
         int fi = CadUtil.FindMaxDistantPointIndex(vl[0], vl);
-        Vector3d vldir = (Vector3d)(vl[fi] - vl[0]);
+        vector3_t vldir = (vector3_t)(vl[fi] - vl[0]);
 
         // vlの全体的な向きと回転軸の向きが同じ場合、回転軸の向きを反転
-        double dot = CadMath.InnerProduct(axis, vldir);
+        vcompo_t dot = CadMath.InnerProduct(axis, vldir);
         if (dot > 0)
         {
             axis *= -1;
@@ -439,11 +445,11 @@ public class MeshMaker
 
         CadMesh mesh = new CadMesh(vl.Count * circleDiv, vl.Count * circleDiv);
 
-        CrossInfo crossS = CadMath.PerpCrossLine(org, org + axis, (Vector3d)vl[0]);
-        CrossInfo crossE = CadMath.PerpCrossLine(org, org + axis, (Vector3d)vl.End());
+        CrossInfo crossS = CadMath.PerpCrossLine(org, org + axis, (vector3_t)vl[0]);
+        CrossInfo crossE = CadMath.PerpCrossLine(org, org + axis, (vector3_t)vl.End());
 
-        crossS.Distance = (crossS.CrossPoint - (Vector3d)vl[0]).Length;
-        crossE.Distance = (crossE.CrossPoint - (Vector3d)vl.End()).Length;
+        crossS.Distance = (crossS.CrossPoint - (vector3_t)vl[0]).Length;
+        crossE.Distance = (crossE.CrossPoint - (vector3_t)vl.End()).Length;
 
         int s = 0;
         int e = vl.Count;
@@ -488,14 +494,14 @@ public class MeshMaker
             ps++;
         }
 
-        double d = Math.PI * 2.0 / circleDiv;
+        vcompo_t d = (vcompo_t)Math.PI * (vcompo_t)(2.0) / circleDiv;
 
 
         CadQuaternion qp;
 
         for (int i = 0; i < circleDiv; i++)
         {
-            double a = i * d;
+            vcompo_t a = i * d;
             CadQuaternion q = CadQuaternion.RotateQuaternion(axis, a);
             CadQuaternion con = q.Conjugate();
 
@@ -592,7 +598,7 @@ public class MeshMaker
         return mesh;
     }
 
-    public static CadMesh CreateExtruded(VertexList src, Vector3d dv, int div = 0)
+    public static CadMesh CreateExtruded(VertexList src, vector3_t dv, int div = 0)
     {
         if (src.Count < 3)
         {
@@ -603,7 +609,7 @@ public class MeshMaker
 
         VertexList vl;
 
-        Vector3d n = CadUtil.TypicalNormal(src);
+        vector3_t n = CadUtil.TypicalNormal(src);
 
 
         if (CadMath.InnerProduct(n, dv) <= 0)
@@ -622,9 +628,9 @@ public class MeshMaker
 
         CadFace f;
 
-        Vector3d dt = dv / div;
+        vector3_t dt = dv / div;
 
-        Vector3d sv = Vector3d.Zero;
+        vector3_t sv = vector3_t.Zero;
 
         // 頂点リスト作成
         for (int i = 0; i < div + 1; i++)

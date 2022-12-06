@@ -1,6 +1,12 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace SplineCurve;
 
 public class SplineUtil
@@ -14,19 +20,19 @@ public class SplineUtil
                 u
              ucnt:4
     */
-    public static VertexList CreateFlatControlPoints(int ucnt, int vcnt, Vector3d uunit, Vector3d vunit)
+    public static VertexList CreateFlatControlPoints(int ucnt, int vcnt, vector3_t uunit, vector3_t vunit)
     {
         VertexList vl = new VertexList(ucnt * vcnt);
 
-        Vector3d ud = ((double)(ucnt-1) / 2.0) * uunit;
-        Vector3d vd = ((double)(vcnt-1) / 2.0) * vunit;
+        vector3_t ud = ((vcompo_t)(ucnt-1) / (vcompo_t)(2.0)) * uunit;
+        vector3_t vd = ((vcompo_t)(vcnt-1) / (vcompo_t)(2.0)) * vunit;
 
-        Vector3d p = Vector3d.Zero;
+        vector3_t p = vector3_t.Zero;
 
         p -= ud;
         p -= vd;
 
-        Vector3d lp = p;
+        vector3_t lp = p;
 
         for (int v = 0; v < vcnt; v++)
         {
@@ -46,20 +52,20 @@ public class SplineUtil
 
     public static VertexList CreateBoxControlPoints(
         int ucnt, int vcnt,
-        Vector3d uunit, Vector3d vunit, Vector3d tunit
+        vector3_t uunit, vector3_t vunit, vector3_t tunit
         )
     {
         VertexList vl = new VertexList(ucnt * vcnt);
 
-        Vector3d ud = ((double)(ucnt - 1) / 2.0) * uunit;
-        Vector3d vd = ((double)(vcnt - 1) / 2.0) * vunit;
+        vector3_t ud = ((vcompo_t)(ucnt - 1) / (vcompo_t)(2.0)) * uunit;
+        vector3_t vd = ((vcompo_t)(vcnt - 1) / (vcompo_t)(2.0)) * vunit;
 
-        Vector3d p = Vector3d.Zero;
+        vector3_t p = vector3_t.Zero;
 
         p -= ud;
         p -= vd;
 
-        Vector3d lp = p;
+        vector3_t lp = p;
 
         for (int v = 0; v < vcnt; v++)
         {
@@ -90,7 +96,7 @@ public class SplineUtil
 
 public class BSpline
 {
-    public static double Epsilon = 0.000001f;   // とても小さい値
+    public static vcompo_t Epsilon = 0.000001f;   // とても小さい値
 
     /// <summary>
     /// 
@@ -100,7 +106,7 @@ public class BSpline
     /// <param name="t">媒介変数</param>
     /// <param name="knots">Knot配列</param>
     /// <returns></returns>
-    public static double BasisFunc(int i, int degree, double t, double[] knots)
+    public static vcompo_t BasisFunc(int i, int degree, vcompo_t t, vcompo_t[] knots)
     {
         if (degree == 0)
         {
@@ -114,10 +120,10 @@ public class BSpline
             }
         }
 
-        double w1 = 0d;
-        double w2 = 0d;
-        double d1 = knots[i + degree] - knots[i];
-        double d2 = knots[i + degree + 1] - knots[i + 1];
+        vcompo_t w1 = 0d;
+        vcompo_t w2 = 0d;
+        vcompo_t d1 = knots[i + degree] - knots[i];
+        vcompo_t d2 = knots[i + degree + 1] - knots[i + 1];
 
         if (d1 != 0d)
         {
@@ -129,8 +135,8 @@ public class BSpline
             w2 = (knots[i + degree + 1] - t) / d2;
         }
 
-        double term1 = 0d;
-        double term2 = 0d;
+        vcompo_t term1 = 0d;
+        vcompo_t term2 = 0d;
 
         if (w1 != 0d)
         {
@@ -146,7 +152,7 @@ public class BSpline
     }
 
     // 2次での一様なBスプライン基底関数。
-    public static CadVertex CalcurateUniformBSplinePointWithDegree2(VertexList vl, int i, double t)
+    public static CadVertex CalcurateUniformBSplinePointWithDegree2(VertexList vl, int i, vcompo_t t)
     {
         return 0.5f * (t * t - 2f * t + 1f) * vl[i] +
             0.5f * (-2f * t * t + 2f * t + 1f) * vl[i + 1] +
@@ -154,7 +160,7 @@ public class BSpline
     }
 
     // 3次での一様なBスプライン基底関数。
-    public static CadVertex CalcurateUniformBSplinePointWithDegree3(VertexList vl, int i, double t)
+    public static CadVertex CalcurateUniformBSplinePointWithDegree3(VertexList vl, int i, vcompo_t t)
     {
         return 1f / 6f * (-vl[i] + 3f * vl[i + 1] - 3f * vl[i + 2] + vl[i + 3]) * t * t * t +
             0.5f * (vl[i] - 2f * vl[i + 1] + vl[i + 2]) * t * t +

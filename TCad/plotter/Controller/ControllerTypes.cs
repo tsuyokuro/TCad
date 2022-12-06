@@ -1,6 +1,12 @@
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public struct LayerListInfo
@@ -34,8 +40,8 @@ public struct SelectContext
 {
     public DrawContext DC;
 
-    public Vector3d CursorScrPt;
-    public Vector3d CursorWorldPt;
+    public vector3_t CursorScrPt;
+    public vector3_t CursorWorldPt;
 
     public CadCursor Cursor;
 

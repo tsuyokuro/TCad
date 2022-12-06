@@ -2,6 +2,12 @@ using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace SplineCurve;
 
 public class NurbsLine
@@ -29,7 +35,7 @@ public class NurbsLine
 
     public BSplineParam BSplineP = new BSplineParam();
 
-    public double[] Weights;
+    public vcompo_t[] Weights;
 
     public NurbsLine()
     {
@@ -75,12 +81,12 @@ public class NurbsLine
         }
     }
 
-    private Vector3d CalcPoint(double t)
+    private vector3_t CalcPoint(vcompo_t t)
     {
-        Vector3d linePoint = Vector3d.Zero;
-			double weight = 0f;
+        vector3_t linePoint = vector3_t.Zero;
+			vcompo_t weight = 0f;
 
-        double bs;
+        vcompo_t bs;
 
         int i;
 
@@ -104,7 +110,7 @@ public class NurbsLine
     {
         for (int p = 0; p <= BSplineP.DivCnt; ++p)
         {
-            double t = p * BSplineP.Step + BSplineP.LowKnot;
+            vcompo_t t = p * BSplineP.Step + BSplineP.LowKnot;
             if (t >= BSplineP.HighKnot)
             {
                 t = BSplineP.HighKnot - BSpline.Epsilon;
@@ -116,7 +122,7 @@ public class NurbsLine
 
     public void SetDefaultWeights()
     {
-        Weights = new double[CtrlDataCnt];
+        Weights = new vcompo_t[CtrlDataCnt];
 
         for (int i = 0; i < Weights.Length; ++i)
         {
@@ -124,12 +130,12 @@ public class NurbsLine
         }
     }
 
-    public double GetWeight(int u, int v)
+    public vcompo_t GetWeight(int u, int v)
     {
         return Weights[v * CtrlDataCnt + u];
     }
 
-    public void SetWeight(int u, int v, double val)
+    public void SetWeight(int u, int v, vcompo_t val)
     {
         Weights[v * CtrlDataCnt + u] = val;
     }

@@ -1,5 +1,11 @@
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public static class DrawUtil
@@ -7,34 +13,34 @@ public static class DrawUtil
     public static void DrawArrow(
         IDrawing drawing,
         in DrawPen pen,
-        Vector3d pt0,
-        Vector3d pt1,
+        vector3_t pt0,
+        vector3_t pt1,
         ArrowTypes type,
         ArrowPos pos,
-        double len,
-        double width)
+        vcompo_t len,
+        vcompo_t width)
     {
         drawing.DrawLine(pen, pt0, pt1);
 
-        Vector3d d = pt1 - pt0;
+        vector3_t d = pt1 - pt0;
 
-        double dl = d.Length;
+        vcompo_t dl = d.Length;
 
-        if (dl < 0.00001)
+        if (dl < (vcompo_t)(0.00001))
         {
             return;
         }
 
 
-        Vector3d tmp = new Vector3d(dl, 0, 0);
+        vector3_t tmp = new vector3_t(dl, 0, 0);
 
-        double angle = Vector3d.CalculateAngle(tmp, d);
+        vcompo_t angle = vector3_t.CalculateAngle(tmp, d);
 
-        Vector3d normal = CadMath.CrossProduct(tmp, d);  // 回転軸
+        vector3_t normal = CadMath.CrossProduct(tmp, d);  // 回転軸
 
-        if (normal.Length < 0.0001)
+        if (normal.Length < (vcompo_t)(0.0001))
         {
-            normal = new Vector3d(0, 0, 1);
+            normal = new vector3_t(0, 0, 1);
         }
         else
         {

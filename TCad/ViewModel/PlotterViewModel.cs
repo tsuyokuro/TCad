@@ -7,6 +7,12 @@ using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace TCad.ViewModel;
 
 public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
@@ -210,7 +216,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
-    public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
     {
         if (type == Plotter.Controller.CursorType.TRACKING)
         {
@@ -281,7 +287,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     }
     #endregion Keyboard handling
 
-    public void SetWorldScale(double scale)
+    public void SetWorldScale(vcompo_t scale)
     {
         mViewManager.SetWorldScale(scale);
     }

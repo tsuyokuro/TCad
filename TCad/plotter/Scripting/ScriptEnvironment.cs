@@ -19,6 +19,12 @@ using System.Windows;
 using TCad.ViewModel;
 using Plotter.Controller;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Scripting;
 
 public partial class ScriptEnvironment
@@ -242,7 +248,7 @@ public partial class ScriptEnvironment
 
             if (ret != null)
             {
-                if (ret is double or int or float)
+                if (ret is vcompo_t or int or float)
                 {
                     ItConsole.println(AnsiEsc.BGreen + ret.ToString());
                 }
@@ -254,9 +260,9 @@ public partial class ScriptEnvironment
                 {
                     ItConsole.println(AnsiEsc.BGreen + ret.ToString());
                 }
-                else if (ret is Vector3d)
+                else if (ret is vector3_t)
                 {
-                    Vector3d v = ret;
+                    vector3_t v = ret;
                     ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
                 }
                 else

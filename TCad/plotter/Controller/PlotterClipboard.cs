@@ -3,6 +3,12 @@ using Plotter.Serializer;
 using System.Collections.Generic;
 using System.Windows;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public class PlotterClipboard
@@ -38,11 +44,11 @@ public class PlotterClipboard
         List<CadFigure> figList = BinToFigList(bin);
 
         // Pase figures in fig list
-        Vector3d pp = controller.LastDownPoint;
+        vector3_t pp = controller.LastDownPoint;
 
         MinMax3D mm3d = CadUtil.GetFigureMinMaxIncludeChild(figList);
 
-        Vector3d d = pp - mm3d.GetMinAsVector();
+        vector3_t d = pp - mm3d.GetMinAsVector();
 
         CadOpeList opeRoot = new CadOpeList();
 
@@ -58,7 +64,7 @@ public class PlotterClipboard
         controller.HistoryMan.foward(opeRoot);
     }
 
-    private static void PasteFigure(PlotterController controller, CadFigure fig, Vector3d delta)
+    private static void PasteFigure(PlotterController controller, CadFigure fig, vector3_t delta)
     {
         fig.MoveAllPoints(delta);
 

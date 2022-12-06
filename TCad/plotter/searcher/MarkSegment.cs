@@ -1,6 +1,12 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public struct MarkSegment
@@ -71,11 +77,11 @@ public struct MarkSegment
         }
     }
 
-    public Vector3d CrossPoint;
+    public vector3_t CrossPoint;
 
-    public Vector3d CrossPointScrn;
+    public vector3_t CrossPointScrn;
 
-    public Vector3d CenterPoint
+    public vector3_t CenterPoint
     {
         get
         {
@@ -83,7 +89,7 @@ public struct MarkSegment
         }
     }
 
-    public double Distance;
+    public vcompo_t Distance;
 
     public bool Valid { get { return FigureID != 0; } }
 

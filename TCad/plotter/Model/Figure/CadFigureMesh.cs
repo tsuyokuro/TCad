@@ -7,20 +7,26 @@ using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter;
 
 public class CadFigureMesh : CadFigure
 {
     public HeModel mHeModel;
 
-    public static double EDGE_THRESHOLD;
+    public static vcompo_t EDGE_THRESHOLD;
 
     private FlexArray<IndexPair> SegList = new FlexArray<IndexPair>();
 
 
     static CadFigureMesh()
     {
-        EDGE_THRESHOLD = Math.Cos(CadMath.Deg2Rad(0.5));
+        EDGE_THRESHOLD = (vcompo_t)Math.Cos(CadMath.Deg2Rad((vcompo_t)(0.5)));
     }
 
     public override VertexList PointList => mPointList;
@@ -275,7 +281,7 @@ public class CadFigureMesh : CadFigure
         mHeModel.RemoveVertexs(removeList);
     }
 
-    public override void FlipWithPlane(Vector3d p0, Vector3d normal)
+    public override void FlipWithPlane(vector3_t p0, vector3_t normal)
     {
         VertexList vl = PointList;
 
@@ -283,7 +289,7 @@ public class CadFigureMesh : CadFigure
         {
             CadVertex v = vl[i];
 
-            Vector3d cp = CadMath.CrossPlane(v.vector, p0, normal);
+            vector3_t cp = CadMath.CrossPlane(v.vector, p0, normal);
 
             CadVertex d = v - cp;
 
@@ -299,11 +305,11 @@ public class CadFigureMesh : CadFigure
 
         //for (int i = 0; i < nl.Count; i++)
         //{
-        //    Vector3d v = nl[i];
+        //    vector3_t v = nl[i];
 
-        //    Vector3d cp = CadMath.CrossPlane(v, Vector3d.Zero, normal);
+        //    vector3_t cp = CadMath.CrossPlane(v, vector3_t.Zero, normal);
 
-        //    Vector3d d = v - cp;
+        //    vector3_t d = v - cp;
 
         //    v = cp - d;
 

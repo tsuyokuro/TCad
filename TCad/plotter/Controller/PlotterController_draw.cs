@@ -2,6 +2,12 @@ using MyCollections;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 
+
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+
 namespace Plotter.Controller;
 
 public partial class PlotterController
@@ -103,10 +109,10 @@ public partial class PlotterController
         }
         else
         {
-            dc.Drawing.DrawCrossScrn(dc.GetPen(DrawTools.PEN_AXIS), dc.WorldPointToDevPoint(Vector3d.Zero), 8);
+            dc.Drawing.DrawCrossScrn(dc.GetPen(DrawTools.PEN_AXIS), dc.WorldPointToDevPoint(vector3_t.Zero), 8);
         }
 
-        dc.Drawing.DrawPageFrame(PageSize.Width, PageSize.Height, Vector3d.Zero);
+        dc.Drawing.DrawPageFrame(PageSize.Width, PageSize.Height, vector3_t.Zero);
         DrawGrid(dc);
     }
 
