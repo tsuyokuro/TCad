@@ -246,7 +246,7 @@ public struct CadVertex : IEquatable<CadVertex>
         return Equals(p) && ((Flag & TYPE_MASK) == (p.Flag & TYPE_MASK));
     }
 
-    public bool EqualsThreshold(CadVertex p, vcompo_t m = 0.000001)
+    public bool EqualsThreshold(CadVertex p, vcompo_t m = (vcompo_t)0.000001)
     {
         return (
             X > p.X - m && X < p.X + m &&
@@ -261,7 +261,7 @@ public struct CadVertex : IEquatable<CadVertex>
         return X == v.X & Y == v.Y & Z == v.Z;
     }
 
-    private const vcompo_t HASH_COEFFICIENT = 10000.0;
+    private const vcompo_t HASH_COEFFICIENT = (vcompo_t)10000.0;
 
     public override int GetHashCode()
     {
@@ -532,12 +532,12 @@ public struct CadVertex : IEquatable<CadVertex>
     // ベクトルのノルム(長さ)を求める
     public vcompo_t Norm()
     {
-        return Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
+        return (vcompo_t)Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
     }
 
     public vcompo_t Norm2D()
     {
-        return Math.Sqrt((X * X) + (Y * Y));
+        return (vcompo_t)Math.Sqrt((X * X) + (Y * Y));
     }
 
     // 単位ベクトルを求める
@@ -547,7 +547,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
         vcompo_t norm = this.Norm();
 
-        vcompo_t f = 1.0 / norm;
+        vcompo_t f = (vcompo_t)1.0 / norm;
 
         ret.X = X * f;
         ret.Y = Y * f;
