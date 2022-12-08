@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace GLUtil;
 
@@ -77,7 +77,7 @@ public class Tessellator
 
         CadVertex cv = new();
 
-        vcompo_t[] tv = new vcompo_t[3];
+        double[] tv = new double[3];
 
         Glu.TessNormal(pTess, new Vector3(0f, 0f, 1f));
         Glu.TessBeginPolygon(pTess, 0);
@@ -273,14 +273,14 @@ public class Tessellator
     }
 
     private void MeshCombine(
-        [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] vcompo_t[] coords,
-        [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] vcompo_t[] data,
+        [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
+        [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
         [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
         ref IntPtr dataOut)
     {
         DOut.pl("MeshCombine");
         CadVertex v = new();
-        v.X = coords[0]; v.Y = coords[1]; v.Z = coords[2];
+        v.X = (vcompo_t)coords[0]; v.Y = (vcompo_t)coords[1]; v.Z = (vcompo_t)coords[2];
         CurMesh.VertexStore.Add(v);
 
         int vi = CurMesh.VertexStore.Count - 1;

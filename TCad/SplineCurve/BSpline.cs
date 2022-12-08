@@ -2,10 +2,10 @@ using CadDataTypes;
 using OpenTK.Mathematics;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace SplineCurve;
 
@@ -120,8 +120,8 @@ public class BSpline
             }
         }
 
-        vcompo_t w1 = 0d;
-        vcompo_t w2 = 0d;
+        vcompo_t w1 = 0;
+        vcompo_t w2 = 0;
         vcompo_t d1 = knots[i + degree] - knots[i];
         vcompo_t d2 = knots[i + degree + 1] - knots[i + 1];
 
@@ -135,8 +135,8 @@ public class BSpline
             w2 = (knots[i + degree + 1] - t) / d2;
         }
 
-        vcompo_t term1 = 0d;
-        vcompo_t term2 = 0d;
+        vcompo_t term1 = 0;
+        vcompo_t term2 = 0;
 
         if (w1 != 0d)
         {

@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 using static GLUtil.Tessellator;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace GLFont;
 
@@ -43,8 +43,8 @@ internal class FontTessellator
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X;
-                cv.Y = fv.Y;
+                cv.X = (vcompo_t)fv.X;
+                cv.Y = (vcompo_t)fv.Y;
                 cv.Z = 0;
 
                 vertexList.Add(cv);
@@ -149,8 +149,8 @@ internal class FontTessellator
     private static vector3_t FTV2vector3_t(FTVector ftv)
     {
         vector3_t cv = new();
-        cv.X = ftv.X;
-        cv.Y = ftv.Y;
+        cv.X = (vcompo_t)ftv.X;
+        cv.Y = (vcompo_t)ftv.Y;
         cv.Z = 0;
 
         return cv;
@@ -223,8 +223,8 @@ internal class FontTessellator
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X;
-                cv.Y = fv.Y;
+                cv.X = (vcompo_t)fv.X;
+                cv.Y = (vcompo_t)fv.Y;
                 cv.Z = 0;
 
                 if (tags[idx] == 1) // On curve. It is not Control Point 

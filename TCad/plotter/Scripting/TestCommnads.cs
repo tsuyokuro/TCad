@@ -25,10 +25,10 @@ using SharpFont;
 using Plotter.Controller;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Scripting;
 
@@ -554,8 +554,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                v.X = fv.X * (vcompo_t)(100.0);
-                v.Y = fv.Y * (vcompo_t)(100.0);
+                v.X = (vcompo_t)fv.X * (vcompo_t)(100.0);
+                v.Y = (vcompo_t)fv.Y * (vcompo_t)(100.0);
                 v.Z = 0;
 
                 tmpFig.AddPoint(v);
@@ -594,8 +594,8 @@ public class TestCommands
         DOut.pl("VertexCB vIndex:" + vIndex);
     }
 
-    private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] vcompo_t[] coords,
-                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] vcompo_t[] data,
+    private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
+                                [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
                                 ref IntPtr dataOut)
     {
@@ -632,7 +632,7 @@ public class TestCommands
 
         Glu.TessBeginPolygon(htess, 128);
 
-        vcompo_t[] tv = new vcompo_t[3];
+        double[] tv = new double[3];
 
         int idx = 0;
         for (int i = 0; i < outline.ContoursCount; i++)
@@ -643,8 +643,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                tv[0] = fv.X * (vcompo_t)(100.0);
-                tv[1] = fv.Y * (vcompo_t)(100.0);
+                tv[0] = (vcompo_t)fv.X * (vcompo_t)(100.0);
+                tv[1] = (vcompo_t)fv.Y * (vcompo_t)(100.0);
                 tv[2] = 0;
 
                 Glu.TessVertex(htess, tv, idx);
@@ -832,8 +832,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = points[idx];
-                cv.X = fv.X;
-                cv.Y = fv.Y;
+                cv.X = (vcompo_t)fv.X;
+                cv.Y = (vcompo_t)fv.Y;
                 cv.Z = 0;
 
                 vertexList.Add(cv);

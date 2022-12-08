@@ -18,10 +18,10 @@ using TCad.Dialogs;
 using TCad.ScriptEditor;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace TCad.ViewModel;
 
@@ -471,7 +471,7 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.GridSize = dlg.GridSize;
+            ViewModel.Settings.GridSize = (vector3_t)dlg.GridSize;
             Redraw();
         }
     }
@@ -489,8 +489,8 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.PointSnapRange = dlg.PointSnapRange;
-            ViewModel.Settings.LineSnapRange = dlg.LineSnapRange;
+            ViewModel.Settings.PointSnapRange = (vcompo_t)dlg.PointSnapRange;
+            ViewModel.Settings.LineSnapRange = (vcompo_t)dlg.LineSnapRange;
 
             Redraw();
         }
@@ -511,7 +511,7 @@ public class CommandHandler
         if (result.Value)
         {
             ViewModel.Settings.PrintWithBitmap = dlg.PrintWithBitmap;
-            ViewModel.Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
+            ViewModel.Settings.MagnificationBitmapPrinting = (vcompo_t)dlg.MagnificationBitmapPrinting;
             ViewModel.Settings.PrintLineSmooth = dlg.PrintLineSmooth;
         }
     }
@@ -529,8 +529,8 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.MoveKeyUnitX = dlg.MoveX;
-            ViewModel.Settings.MoveKeyUnitY = dlg.MoveY;
+            ViewModel.Settings.MoveKeyUnitX = (vcompo_t)dlg.MoveX;
+            ViewModel.Settings.MoveKeyUnitY = (vcompo_t)dlg.MoveY;
         }
     }
 
@@ -844,7 +844,7 @@ public class CommandHandler
 
         if (result ?? false)
         {
-            ViewModel.SetWorldScale(dlg.WorldScale);
+            ViewModel.SetWorldScale(((vcompo_t)dlg.WorldScale));
             Redraw();
         }
     }

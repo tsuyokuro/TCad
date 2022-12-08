@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
@@ -123,7 +123,7 @@ public class PointSearcher
 
     public vcompo_t Distance()
     {
-        vcompo_t ret = Double.MaxValue;
+        vcompo_t ret = vcompo_t.MaxValue;
         vcompo_t t;
 
         if (IsXMatch)

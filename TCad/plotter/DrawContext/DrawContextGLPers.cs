@@ -5,10 +5,10 @@ using System;
 using System.Windows.Forms;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
@@ -109,8 +109,8 @@ class DrawContextGLPers : DrawContextGL
     {
         Vector2 d = current - prev;
 
-        vcompo_t ry = (d.X / (vcompo_t)(10.0)) * (Math.PI / 20);
-        vcompo_t rx = (d.Y / (vcompo_t)(10.0)) * (Math.PI / 20);
+        vcompo_t ry = (d.X / ((vcompo_t)10.0)) * ((vcompo_t)Math.PI / 20);
+        vcompo_t rx = (d.Y / ((vcompo_t)10.0)) * ((vcompo_t)Math.PI / 20);
 
         CadQuaternion q;
         CadQuaternion r;

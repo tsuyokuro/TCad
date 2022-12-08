@@ -2,10 +2,10 @@ using OpenTK.Mathematics;
 using System;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
@@ -64,11 +64,11 @@ public struct MinMax2D
 
     public vector3_t GetMinAsVector()
     {
-        return new vector3_t(Min.X, Min.Y, 0);
+        return new vector3_t((vcompo_t)Min.X, (vcompo_t)Min.Y, 0);
     }
 
     public vector3_t GetMaxAsVector()
     {
-        return new vector3_t(Max.X, Max.Y, 0);
+        return new vector3_t((vcompo_t)Max.X, (vcompo_t)Max.Y, 0);
     }
 }

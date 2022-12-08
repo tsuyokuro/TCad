@@ -1,6 +1,12 @@
 using Plotter.Controller;
 using TCad.ViewModel;
 
+
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace Plotter;
 
 public interface IPlotterView
@@ -19,7 +25,7 @@ public interface IPlotterView
 
     void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
 
-    void SetWorldScale(double scale);
+    void SetWorldScale(vcompo_t scale);
 
     void DrawModeUpdated(DrawModes mode);
 

@@ -2,10 +2,10 @@ using OpenTK.Mathematics;
 using System;
 
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
@@ -19,13 +19,13 @@ public struct MinMax3D
     {
         MinMax3D mm = default;
 
-        mm.Min.X = Double.MaxValue;
-        mm.Min.Y = Double.MaxValue;
-        mm.Min.Z = Double.MaxValue;
+        mm.Min.X = vcompo_t.MaxValue;
+        mm.Min.Y = vcompo_t.MaxValue;
+        mm.Min.Z = vcompo_t.MaxValue;
 
-        mm.Max.X = Double.MinValue;
-        mm.Max.Y = Double.MinValue;
-        mm.Max.Z = Double.MinValue;
+        mm.Max.X = vcompo_t.MinValue;
+        mm.Max.Y = vcompo_t.MinValue;
+        mm.Max.Z = vcompo_t.MinValue;
 
         return mm;
     }

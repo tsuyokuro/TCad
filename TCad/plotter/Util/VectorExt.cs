@@ -1,10 +1,10 @@
 using OpenTK.Mathematics;
 using System;
 
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t_ = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
@@ -12,12 +12,12 @@ public static class VectorExt
 {
     public static readonly vector3_t InvalidVector3 = new vector3_t(vcompo_t.NaN, vcompo_t.NaN, vcompo_t.NaN);
 
-    public static vector4_t_ ToVector4(this vector3_t v, vcompo_t w)
+    public static vector4_t ToVector4(this vector3_t v, vcompo_t w)
     {
-        return new vector4_t_(v.X, v.Y, v.Z, w);
+        return new vector4_t(v.X, v.Y, v.Z, w);
     }
 
-    public static vector3_t ToVector3(this vector4_t_ v)
+    public static vector3_t ToVector3(this vector4_t v)
     {
         return new vector3_t(v.X, v.Y, v.Z);
     }
@@ -66,7 +66,7 @@ public static class VectorExt
         v.Z = z;
     }
 
-    public static void Set(out vector4_t_ v, vcompo_t x, vcompo_t y, vcompo_t z, vcompo_t w)
+    public static void Set(out vector4_t v, vcompo_t x, vcompo_t y, vcompo_t z, vcompo_t w)
     {
         v.X = x;
         v.Y = y;
@@ -94,10 +94,10 @@ public static class VectorExt
 
     public static vcompo_t Norm2D(this vector3_t v)
     {
-        return Math.Sqrt((v.X * v.X) + (v.Y * v.Y));
+        return (vcompo_t)Math.Sqrt((v.X * v.X) + (v.Y * v.Y));
     }
 
-    public static bool EqualsThreshold(this vector3_t v, vector3_t p, vcompo_t m = 0.000001)
+    public static bool EqualsThreshold(this vector3_t v, vector3_t p, vcompo_t m = (vcompo_t)0.000001)
     {
         return (
             v.X > p.X - m && v.X < p.X + m &&
