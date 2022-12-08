@@ -115,7 +115,7 @@ public struct CadVertex : IEquatable<CadVertex>
         }
     }
 
-    public static CadVertex Zero = default(CadVertex);
+    public static CadVertex Zero = default;
 
     public static CadVertex UnitX = CadVertex.Create(1, 0, 0);
     public static CadVertex UnitY = CadVertex.Create(0, 1, 0);
@@ -134,7 +134,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
         Flag = 0;
 
-        Attr = default(CadVertexAttr);
+        Attr = default;
     }
 
     public CadVertex(vector3_t pos)
@@ -143,7 +143,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
         Flag = 0;
 
-        Attr = default(CadVertexAttr);
+        Attr = default;
     }
 
     public CadVertex(vcompo_t x, vcompo_t y, vcompo_t z, byte flag, CadVertexAttr attr)
@@ -161,7 +161,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public static CadVertex Create(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        CadVertex v = default(CadVertex);
+        CadVertex v = default;
         v.Set(x, y, z);
 
         v.Flag = 0;
@@ -173,7 +173,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public static CadVertex Create()
     {
-        CadVertex v = default(CadVertex);
+        CadVertex v = default;
         v.Set(0, 0, 0);
 
         v.Flag = 0;
@@ -183,7 +183,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public static CadVertex Create(vector3_t v)
     {
-        CadVertex p = default(CadVertex);
+        CadVertex p = default;
         p.Set(v.X, v.Y, v.Z);
 
         p.Flag = 0;
@@ -193,7 +193,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public static CadVertex Create(vector4_t v)
     {
-        CadVertex p = default(CadVertex);
+        CadVertex p = default;
         p.Set(v.X, v.Y, v.Z);
 
         p.Flag = 0;
@@ -203,7 +203,7 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public static CadVertex CreateInvalid()
     {
-        CadVertex p = default(CadVertex);
+        CadVertex p = default;
         p.Valid = false;
         return p;
     }
@@ -543,7 +543,7 @@ public struct CadVertex : IEquatable<CadVertex>
     // 単位ベクトルを求める
     public CadVertex UnitVector()
     {
-        CadVertex ret = default(CadVertex);
+        CadVertex ret = default;
 
         vcompo_t norm = this.Norm();
 
@@ -556,7 +556,7 @@ public struct CadVertex : IEquatable<CadVertex>
         return ret;
     }
 
-    public string CoordString()
+    private string CoordString()
     {
         return X.ToString() + ", " + Y.ToString() + ", " + Z.ToString();
     }
