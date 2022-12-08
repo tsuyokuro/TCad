@@ -237,7 +237,7 @@ public class PlotterTaskRunner
 
                 if (ok)
                 {
-                    angle = (vcompo_t)dlg.GetDouble();
+                    angle = (vcompo_t)dlg.GetAngle();
                 }
             });
 

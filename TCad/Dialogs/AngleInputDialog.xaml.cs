@@ -2,6 +2,11 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad.Dialogs;
 
 public partial class AngleInputDialog : Window
@@ -61,11 +66,11 @@ public partial class AngleInputDialog : Window
         this.DialogResult = false;
     }
 
-    public double GetDouble()
+    public vcompo_t GetAngle()
     {
         string s = input.Text;
-        double v;
-        Double.TryParse(s, out v);
+        vcompo_t v;
+        vcompo_t.TryParse(s, out v);
 
         return v;
     }

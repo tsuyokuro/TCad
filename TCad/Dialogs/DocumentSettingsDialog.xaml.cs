@@ -3,6 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad.Dialogs;
 
 /// <summary>
@@ -10,7 +15,7 @@ namespace TCad.Dialogs;
 /// </summary>
 public partial class DocumentSettingsDialog : Window
 {
-    public double WorldScale = 1.0;
+    public vcompo_t WorldScale = (vcompo_t)(1.0);
 
     public DocumentSettingsDialog()
     {
@@ -56,9 +61,9 @@ public partial class DocumentSettingsDialog : Window
     private void HandleOK()
     {
         bool ret;
-        double v;
+        vcompo_t v;
 
-        ret = Double.TryParse(reduced_scale.Text, out v);
+        ret = vcompo_t.TryParse(reduced_scale.Text, out v);
 
         WorldScale = v;
 
@@ -76,9 +81,9 @@ public partial class DocumentSettingsDialog : Window
 
         TextBox tb = (TextBox)sender;
 
-        double v;
+        vcompo_t v;
         var tmp = tb.Text + e.Text;
-        ok = Double.TryParse(tmp, out v);
+        ok = vcompo_t.TryParse(tmp, out v);
 
         e.Handled = !ok;
     }

@@ -5,6 +5,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TCad.Controls;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad;
 
 public partial class ColorPickerDialog : Window

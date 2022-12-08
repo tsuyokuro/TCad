@@ -3,12 +3,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad;
 
 public partial class MoveKeySettingsDialog : Window
 {
-    public double MoveX;
-    public double MoveY;
+    public vcompo_t MoveX;
+    public vcompo_t MoveY;
 
     public MoveKeySettingsDialog()
     {
@@ -62,12 +67,12 @@ public partial class MoveKeySettingsDialog : Window
     {
         bool ret = true;
 
-        double v;
+        vcompo_t v;
 
-        ret &= Double.TryParse(move_x.Text, out v);
+        ret &= vcompo_t.TryParse(move_x.Text, out v);
         MoveX = v;
 
-        ret &= Double.TryParse(move_y.Text, out v);
+        ret &= vcompo_t.TryParse(move_y.Text, out v);
         MoveY = v;
 
         DialogResult = ret;
@@ -79,9 +84,9 @@ public partial class MoveKeySettingsDialog : Window
 
         TextBox tb = (TextBox)sender;
 
-        double v;
+        vcompo_t v;
         var tmp = tb.Text + e.Text;
-        ok = Double.TryParse(tmp, out v);
+        ok = vcompo_t.TryParse(tmp, out v);
 
         e.Handled = !ok;
     }

@@ -3,6 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad;
 
 /// <summary>
@@ -11,7 +16,7 @@ namespace TCad;
 public partial class PrintSettingsDialog : Window
 {
     public bool PrintWithBitmap;
-    public double MagnificationBitmapPrinting;
+    public vcompo_t MagnificationBitmapPrinting;
     public bool PrintLineSmooth;
 
     public PrintSettingsDialog()
@@ -63,11 +68,11 @@ public partial class PrintSettingsDialog : Window
     {
         bool ret = true;
 
-        double v;
+        vcompo_t v;
 
         PrintWithBitmap = print_with_bitmap.IsChecked.Value;
 
-        ret &= Double.TryParse(magnification_for_bitmap_printing.Text, out v);
+        ret &= vcompo_t.TryParse(magnification_for_bitmap_printing.Text, out v);
         MagnificationBitmapPrinting = v;
 
         PrintLineSmooth = print_line_smooth.IsChecked.Value;
@@ -81,9 +86,9 @@ public partial class PrintSettingsDialog : Window
 
         TextBox tb = (TextBox)sender;
 
-        double v;
+        vcompo_t v;
         var tmp = tb.Text + e.Text;
-        ok = Double.TryParse(tmp, out v);
+        ok = vcompo_t.TryParse(tmp, out v);
 
         e.Handled = !ok;
     }

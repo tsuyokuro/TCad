@@ -4,11 +4,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+
 namespace TCad;
 
 public partial class GridSettingsDialog : Window
 {
-    public Vector3d GridSize = default;
+    public vector3_t GridSize = default;
 
     public GridSettingsDialog()
     {
@@ -59,15 +64,15 @@ public partial class GridSettingsDialog : Window
     {
         bool ret = true;
 
-        double v;
+        vcompo_t v;
 
-        ret &= Double.TryParse(grid_x_size.Text, out v);
+        ret &= vcompo_t.TryParse(grid_x_size.Text, out v);
         GridSize.X = v;
 
-        ret &= Double.TryParse(grid_y_size.Text, out v);
+        ret &= vcompo_t.TryParse(grid_y_size.Text, out v);
         GridSize.Y = v;
 
-        ret &= Double.TryParse(grid_z_size.Text, out v);
+        ret &= vcompo_t.TryParse(grid_z_size.Text, out v);
         GridSize.Z = v;
 
         this.DialogResult = ret;
@@ -84,9 +89,9 @@ public partial class GridSettingsDialog : Window
 
         TextBox tb = (TextBox)sender;
 
-        double v;
+        vcompo_t v;
         var tmp = tb.Text + e.Text;
-        ok = Double.TryParse(tmp, out v);
+        ok = vcompo_t.TryParse(tmp, out v);
 
         e.Handled = !ok;
     }
