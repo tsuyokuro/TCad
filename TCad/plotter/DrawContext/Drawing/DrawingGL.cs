@@ -339,6 +339,7 @@ public class DrawingGL : IDrawing
             for (; ; )
             {
                 bool drawAsEdge = false;
+                bool isEdge = false;
 
                 pair = c.Pair;
 
@@ -347,6 +348,7 @@ public class DrawingGL : IDrawing
                     if (pair == null)
                     {
                         drawAsEdge = true;
+                        isEdge = true;
                     }
                     else
                     {
@@ -366,21 +368,44 @@ public class DrawingGL : IDrawing
 
                 if (drawAsEdge)
                 {
-                    GL.Color4(edgeColor);
-                    //GL.Begin(PrimitiveType.Lines);
-                    GL.Vertex3(p0);
-                    GL.Vertex3(p1);
-                    //GL.End();
-                }
-                else
-                {
-                    if (drawBorder)
+                    bool draw = true;
+                    if (!isEdge)
                     {
-                        GL.Color4(color);
-                        //GL.Begin(PrimitiveType.Lines);
+                        if (pair != null)
+                        {
+                            if (pair.Face < c.Face)
+                            {
+                                // Already drawed by pair
+                                draw = false;
+                            }
+                        }
+                    }
+
+                    if (draw)
+                    {
+                        GL.Color4(edgeColor);
                         GL.Vertex3(p0);
                         GL.Vertex3(p1);
-                        //GL.End();
+
+                    }
+                }
+                else if (drawBorder)
+                {
+                    bool draw = true;
+                    if (pair != null)
+                    {
+                        if (pair.Face < c.Face)
+                        {
+                            // Already drawed by pair
+                            draw = false;
+                        }
+                    }
+
+                    if (draw)
+                    {
+                        GL.Color4(color);
+                        GL.Vertex3(p0);
+                        GL.Vertex3(p1);
                     }
                 }
 
