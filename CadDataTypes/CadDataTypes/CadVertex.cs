@@ -181,6 +181,12 @@ public struct CadVertex : IEquatable<CadVertex>
         return v;
     }
 
+    // Cpp CLI で使用する際にOverloadが上手く解釈されないので、別名を付ける
+    public static CadVertex Create3(vcompo_t x, vcompo_t y, vcompo_t z)
+    {
+        return Create(x, y, z);
+    }
+
     public static CadVertex Create()
     {
         CadVertex v = default;
