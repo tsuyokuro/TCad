@@ -6,12 +6,7 @@ using System.Collections.Generic;
 using CadDataTypes;
 using SplineCurve;
 using System.Drawing.Printing;
-using OpenTK;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
-using static IronPython.Modules._ast;
-
-
 
 #if DEFAULT_DATA_TYPE_DOUBLE
 using vcompo_t = System.Double;
@@ -24,7 +19,6 @@ using vector3_t = OpenTK.Mathematics.Vector3;
 using vector4_t = OpenTK.Mathematics.Vector4;
 using matrix4_t = OpenTK.Mathematics.Matrix4;
 #endif
-
 
 namespace Plotter.Serializer.v1003;
 
@@ -570,7 +564,7 @@ public struct MpDrawBrush_v1003
 }
 
 [MessagePackObject]
-public struct MpVertexAttr_v1003
+public class MpVertexAttr_v1003
 {
     [Key("flags")]
     public byte Flags;
@@ -608,7 +602,7 @@ public struct MpVertexAttr_v1003
 }
 
 [MessagePackObject]
-public struct MpVertex_v1003
+public class MpVertex_v1003
 {
     [Key("flag")]
     public byte Flag;
@@ -617,7 +611,7 @@ public struct MpVertex_v1003
     public MpVector3_v1003 P;
 
     [Key("Attr")]
-    public MpVertexAttr_v1003 Attr;
+    public MpVertexAttr_v1003 Attr = new();
 
     public static MpVertex_v1003 Create(CadVertex v)
     {

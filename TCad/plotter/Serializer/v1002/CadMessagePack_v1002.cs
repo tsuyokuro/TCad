@@ -6,9 +6,6 @@ using System.Collections.Generic;
 using CadDataTypes;
 using SplineCurve;
 using System.Drawing.Printing;
-using OpenTK;
-using OpenTK.Mathematics;
-
 
 
 #if DEFAULT_DATA_TYPE_DOUBLE
