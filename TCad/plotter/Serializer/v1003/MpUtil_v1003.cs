@@ -110,18 +110,18 @@ public partial class MpUtil_v1003
         return ret;
     }
 
-    public static List<Mpvector3_t_v1003> vector3_tListToMp(Vector3List v)
+    public static List<MpVector3_v1003> Vector3ListToMp(Vector3List v)
     {
-        List<Mpvector3_t_v1003> ret = new List<Mpvector3_t_v1003>();
+        List<MpVector3_v1003> ret = new List<MpVector3_v1003>();
         for (int i = 0; i < v.Count; i++)
         {
-            ret.Add(Mpvector3_t_v1003.Create(v[i]));
+            ret.Add(MpVector3_v1003.Create(v[i]));
         }
 
         return ret;
     }
 
-    public static Vector3List vector3_tListFromMp(List<Mpvector3_t_v1003> list)
+    public static Vector3List Vector3ListFromMp(List<MpVector3_v1003> list)
     {
         Vector3List ret = new Vector3List(list.Count);
         for (int i = 0; i < list.Count; i++)

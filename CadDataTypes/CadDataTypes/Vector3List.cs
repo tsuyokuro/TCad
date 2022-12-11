@@ -17,12 +17,11 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 #endif
 
 
-namespace CadDataTypes
+namespace CadDataTypes;
+
+public class Vector3List : FlexArray<vector3_t>
 {
-    public class Vector3List : FlexArray<vector3_t>
-    {
-        public Vector3List() : base(8) { }
-        public Vector3List(int capa) : base(capa) { }
-        public Vector3List(Vector3List src) : base(src) { }
-    }
+    public Vector3List() : base(8) { }
+    public Vector3List(int capa) : base(capa) { }
+    public Vector3List(Vector3List src) : base(src) { }
 }

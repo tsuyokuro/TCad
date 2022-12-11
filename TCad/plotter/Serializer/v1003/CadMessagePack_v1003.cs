@@ -316,7 +316,7 @@ public class MpFigure_v1003
     public bool IsLoop;
 
     [Key("Normal")]
-    public Mpvector3_t_v1003 Normal;
+    public MpVector3_v1003 Normal;
 
     [Key("ChildList")]
     public List<MpFigure_v1003> ChildList;
@@ -397,7 +397,7 @@ public class MpFigure_v1003
         Type = (byte)fig.Type;
         Locked = fig.Locked;
         IsLoop = fig.IsLoop;
-        Normal = Mpvector3_t_v1003.Create(fig.Normal);
+        Normal = MpVector3_v1003.Create(fig.Normal);
 
         GeoData = fig.GeometricDataToMp_v1003();
 
@@ -458,7 +458,7 @@ public class MpFigure_v1003
 }
 
 [MessagePackObject]
-public struct Mpvector3_t_v1003
+public struct MpVector3_v1003
 {
     [Key(0)]
     public vcompo_t X;
@@ -469,9 +469,9 @@ public struct Mpvector3_t_v1003
     [Key(2)]
     public vcompo_t Z;
 
-    public static Mpvector3_t_v1003 Create(vector3_t v)
+    public static MpVector3_v1003 Create(vector3_t v)
     {
-        Mpvector3_t_v1003 ret = new Mpvector3_t_v1003();
+        MpVector3_v1003 ret = new MpVector3_v1003();
 
         ret.X = v.X;
         ret.Y = v.Y;
@@ -582,7 +582,7 @@ public struct MpVertexAttr_v1003
     public MpColor4_v1003 Color2;
 
     [Key("N")]
-    public Mpvector3_t_v1003 Normal;
+    public MpVector3_v1003 Normal;
 
     public static MpVertexAttr_v1003 Create(CadVertexAttr attr)
     {
@@ -590,7 +590,7 @@ public struct MpVertexAttr_v1003
 
         ret.Color1 = MpColor4_v1003.Create(attr.Color1);
         ret.Color2 = MpColor4_v1003.Create(attr.Color2);
-        ret.Normal =Mpvector3_t_v1003.Create(attr.Normal);
+        ret.Normal =MpVector3_v1003.Create(attr.Normal);
         ret.Flags = attr.Flags;
         return ret;
     }
@@ -614,7 +614,7 @@ public struct MpVertex_v1003
     public byte Flag;
 
     [Key("P")]
-    public Mpvector3_t_v1003 P;
+    public MpVector3_v1003 P;
 
     [Key("Attr")]
     public MpVertexAttr_v1003 Attr;
@@ -705,7 +705,7 @@ public class MpHeModel_v1003
     public List<MpVertex_v1003> VertexStore;
 
     [Key("NormalStore")]
-    public List<Mpvector3_t_v1003> NormalStore;
+    public List<MpVector3_v1003> NormalStore;
 
     [Key("FaceStore")]
     public List<MpHeFace_v1003> FaceStore;
@@ -726,7 +726,7 @@ public class MpHeModel_v1003
 
         ret.VertexStore = MpUtil_v1003.VertexListToMp(model.VertexStore);
 
-        ret.NormalStore = MpUtil_v1003.vector3_tListToMp(model.NormalStore);
+        ret.NormalStore = MpUtil_v1003.Vector3ListToMp(model.NormalStore);
 
         ret.FaceStore = MpUtil_v1003.HeFaceListToMp(model.FaceStore);
 
@@ -747,7 +747,7 @@ public class MpHeModel_v1003
 
         ret.VertexStore = MpUtil_v1003.VertexListFromMp(VertexStore);
 
-        ret.NormalStore = MpUtil_v1003.vector3_tListFromMp(NormalStore);
+        ret.NormalStore = MpUtil_v1003.Vector3ListFromMp(NormalStore);
 
         // Create dictionary
         Dictionary<uint, HalfEdge> dic = new Dictionary<uint, HalfEdge>();
