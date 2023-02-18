@@ -73,21 +73,20 @@ public class PlotterPrinter
         dc.SetupTools(DrawModes.PRINTER, 2);
 
         // Bitmapを印刷すると大きさが変わるので、補正
-        vcompo_t f = SettingsHolder.Settings.MagnificationBitmapPrinting;
-        dc.UnitPerMilli *= f;
-        //DC.UnitPerMilli *= (vcompo_t)(0.96);
+        vcompo_t mag = SettingsHolder.Settings.MagnificationBitmapPrinting;
+
+        dc.UnitPerMilli *= mag;
 
         vector3_t org = dc.ViewOrg;
 
-        //org *= (vcompo_t)(0.96);
-        org *= f;
+        org *= mag;
 
         dc.SetViewOrg(org);
 
-        FrameBufferW fb = new FrameBufferW();
-        fb.Create((int)deviceSize.Width, (int)deviceSize.Height);
+        FrameBufferW frameBuffer = new FrameBufferW();
+        frameBuffer.Create((int)deviceSize.Width, (int)deviceSize.Height);
 
-        fb.Begin();
+        frameBuffer.Begin();
 
         dc.StartDraw();
 
@@ -106,15 +105,16 @@ public class PlotterPrinter
 
         pc.DrawFiguresRaw(dc);
 
-        GL.Enable(EnableCap.LineSmooth);
+        // EnableCap.LineSmoothがONだと線が太くなる(謎)
+        GL.Disable(EnableCap.LineSmooth);
 
         dc.EndDraw();
 
-        Bitmap bmp = fb.GetBitmap();
+        Bitmap bmp = frameBuffer.GetBitmap();
         Bitmap rsBmp = bmp;
 
-        fb.End();
-        fb.Dispose();
+        frameBuffer.End();
+        frameBuffer.Dispose();
 
         if (upRes != (vcompo_t)(1.0))
         {
