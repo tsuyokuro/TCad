@@ -74,7 +74,7 @@ public class CadFileAccessor
 
         foreach (CadFigure c in fig.ChildList)
         {
-            SaveExternalData(fig, fname);
+            SaveExternalData(c, fname);
         }
     }
 
