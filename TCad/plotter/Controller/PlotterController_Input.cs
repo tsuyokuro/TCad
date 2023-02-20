@@ -859,7 +859,8 @@ public partial class PlotterController
 
     public void AddExtendSnapPoint()
     {
-        ExtendSnapPointList.Add(LastDownPoint);
+        //ExtendSnapPointList.Add(LastDownPoint);
+        ExtendSnapPointList.Add(GetCursorPos());
     }
 
     public void ClearExtendSnapPointList()

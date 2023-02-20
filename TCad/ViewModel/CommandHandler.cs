@@ -137,7 +137,8 @@ public class CommandHandler
             { "ctrl+s", new KeyAction(Save , null, "Save")},
             { "ctrl+a", new KeyAction(SelectAll , null, "Select All")},
             { "escape", new KeyAction(Cancel , null)},
-            { "ctrl+p", new KeyAction(InsPoint , null, "Inser Point")},
+            { "ctrl+p", new KeyAction(InsPoint , null, "Insert Point to segment")},
+            { "p", new KeyAction(AddPoint , null, "Add Point to cursor pos")},
             { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
             { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
             { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
@@ -332,6 +333,12 @@ public class CommandHandler
     public void InsPoint()
     {
         Controller.InsPoint();
+        Redraw();
+    }
+
+    public void AddPoint()
+    {
+        Controller.AddPointToCursorPos();
         Redraw();
     }
 

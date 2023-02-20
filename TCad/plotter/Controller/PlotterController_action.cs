@@ -1,5 +1,6 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using System.Collections.Generic;
+using CadDataTypes;
 
 
 
@@ -197,6 +198,20 @@ public partial class PlotterController
         {
             AbendEdit();
         }
+    }
+
+    public void AddPointToCursorPos()
+    {
+        CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
+        fig.AddPoint((CadVertex)GetCursorPos());
+
+        fig.EndCreate(DC);
+
+        CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, fig.ID);
+
+        CurrentLayer.AddFigure(fig);
+
+        HistoryMan.foward(ope);
     }
 
     public void Copy()

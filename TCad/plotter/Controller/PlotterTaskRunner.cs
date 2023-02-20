@@ -281,7 +281,7 @@ public class PlotterTaskRunner
         {
             fig.ForEachFig(f =>
             {
-                CadUtil.RotateFigure(fig, org, axisDir, angle);
+                CadUtil.RotateFigure(f, org, axisDir, angle);
             });
         }
     }
