@@ -20,7 +20,7 @@ import CadDataTypes.VertexList as VertexList
 import CadDataTypes.CadMesh as CadMesh
 import CadDataTypes.CadFace as CadFace
 
-import OpenTK.Mathematics.Vector3d as Vector3d
+import OpenTK.Mathematics.Vector3 as Vector3
 
 #version 1.0
 
@@ -276,7 +276,7 @@ def set_fig_name(id, name):
 def get_point(figID, index):
 	return SE.GetPoint(figID, index);
 
-#[AC] set_point(figID=current_fig_id(), index=0, dv=Vector3d(0,0,0))
+#[AC] set_point(figID=current_fig_id(), index=0, dv=Vector3(0,0,0))
 def set_point(figID, index, dv):
 	return SE.SetPoint(figID, index, dv);
 
@@ -440,14 +440,14 @@ cout = MyConsoleOut()
 sys.stdout = cout
 
 #[AC] point0
-point0 = Vector3d(0,0,0)
+point0 = Vector3(0,0,0)
 
 #[AC] unit_vx
 #[AC] unit_vy
 #[AC] unit_vz
-unit_vx = Vector3d(1,0,0)
-unit_vy = Vector3d(0,1,0)
-unit_vz = Vector3d(0,0,1)
+unit_vx = Vector3(1,0,0)
+unit_vy = Vector3(0,1,0)
+unit_vz = Vector3(0,0,1)
 
 #[AC] w_1x4
 #[AC] t_1x4

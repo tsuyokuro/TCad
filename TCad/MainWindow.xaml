@@ -326,6 +326,14 @@
                                 <MenuItem
                                     Header="Centroid"
                                     Command="{Binding SimpleCmd}" CommandParameter="centroid" />
+
+                                <MenuItem
+                                    Header="Group"
+                                    Command="{Binding SimpleCmd}" CommandParameter="group" />
+                                <MenuItem
+                                    Header="Ungroup"
+                                    Command="{Binding SimpleCmd}" CommandParameter="ungroup" />
+
                                 <MenuItem
                                     Header="Select all"
                                     Command="{Binding SimpleCmd}" CommandParameter="select_all" />

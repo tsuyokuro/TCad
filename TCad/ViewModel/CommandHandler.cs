@@ -118,6 +118,8 @@ public class CommandHandler
             { "set_line_color", SetLineColor },
             { "set_fill_color", SetFillColor },
             { "enter_command", EnterCommand },
+            { "group", Group },
+            { "ungroup", Ungroup },
             { "test", Test },
         };
     }
@@ -624,6 +626,126 @@ public class CommandHandler
             Controller.HistoryMan.foward(ope);
         }
     }
+
+    public void Group()
+    {
+        Group(Controller.GetSelectedFigureList());
+    }
+
+    public void Group(List<CadFigure> targetList)
+    {
+        List<CadFigure> list = FilterRootFigure(targetList);
+
+        if (list.Count < 2)
+        {
+            ItConsole.println(
+                Properties.Resources.error_select_2_or_more
+                );
+
+            return;
+        }
+
+        CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
+
+        CadOpeList opeRoot = new CadOpeList();
+        CadOpe ope;
+
+        foreach (CadFigure fig in list)
+        {
+            int idx = Controller.CurrentLayer.GetFigureIndex(fig.ID);
+
+            if (idx < 0)
+            {
+                continue;
+            }
+
+            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
+            opeRoot.Add(ope);
+
+            Controller.CurrentLayer.RemoveFigureByIndex(idx);
+
+            parent.AddChild(fig);
+        }
+
+        Controller.CurrentLayer.AddFigure(parent);
+
+        ope = new CadOpeAddChildlen(parent, parent.ChildList);
+        opeRoot.Add(ope);
+
+        ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, parent.ID);
+        opeRoot.Add(ope);
+
+        Controller.HistoryMan.foward(opeRoot);
+
+        ItConsole.println(
+                Properties.Resources.notice_was_grouped
+            );
+        Controller.UpdateObjectTree(true);
+    }
+
+    public void Ungroup()
+    {
+        Ungroup(Controller.GetSelectedFigureList());
+    }
+
+    public void Ungroup(List<CadFigure> targetList)
+    {
+        List<CadFigure> list = FilterRootFigure(targetList);
+
+        CadOpeList opeRoot = new CadOpeList();
+
+        CadOpe ope;
+
+        foreach (CadFigure root in list)
+        {
+            root.ForEachFig((fig) =>
+            {
+                if (fig.Parent == null)
+                {
+                    return;
+                }
+
+                fig.Parent = null;
+
+                if (fig.PointCount > 0)
+                {
+                    ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                    opeRoot.Add(ope);
+                    Controller.CurrentLayer.AddFigure(fig);
+                }
+            });
+
+            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, root.ID);
+            opeRoot.Add(ope);
+
+            Controller.CurrentLayer.RemoveFigureByID(root.ID);
+        }
+
+        Controller.HistoryMan.foward(opeRoot);
+
+        ItConsole.println(
+            Properties.Resources.notice_was_ungrouped
+            );
+
+        Controller.UpdateObjectTree(true);
+    }
+
+    public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
+    {
+        HashSet<CadFigure> set = new HashSet<CadFigure>();
+
+        foreach (CadFigure fig in srcList)
+        {
+            set.Add(FigUtil.GetRootFig(fig));
+        }
+
+        List<CadFigure> ret = new List<CadFigure>();
+
+        ret.AddRange(set);
+
+        return ret;
+    }
+
 
     private void EnterCommand()
     {
