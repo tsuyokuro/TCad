@@ -55,7 +55,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.7.5" />
+    <PackageReference Include="OpenTK" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>
