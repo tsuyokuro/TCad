@@ -1,7 +1,6 @@
 # coding: cp932
 
 
-from datetime import datetime as dt
 import time
 import math
 import sys
@@ -245,7 +244,7 @@ def rotate(id, p0, v, t):
 
 #[AC] make_rotating_body_itr(current_fig_id(), top_cap=True, btm_cap=True)
 def make_rotating_body_itr(id, top_cap, btm_cap):
-    print esc_b_green_bg + esc_black + " <<<< Input Axis >>>> " + esc_reset
+    print(esc_b_green_bg + esc_black + " <<<< Input Axis >>>> " + esc_reset)
 
     (p1, p2) = input_line();
 
