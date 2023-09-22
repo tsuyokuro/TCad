@@ -1,6 +1,21 @@
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -40,12 +55,12 @@ public struct MarkPoint : IEquatable<MarkPoint>
 
     public int PointIndex;
 
-    public Vector3d Point;     // Match座標 (World座標系)
+    public vector3_t Point;     // Match座標 (World座標系)
 
-    public Vector3d PointScrn; // Match座標 (Screen座標系)
+    public vector3_t PointScrn; // Match座標 (Screen座標系)
 
-    public double DistanceX;    // X距離 (Screen座標系)
-    public double DistanceY;    // Y距離 (Screen座標系)
+    public vcompo_t DistanceX;    // X距離 (Screen座標系)
+    public vcompo_t DistanceY;    // Y距離 (Screen座標系)
 
     public void reset()
     {

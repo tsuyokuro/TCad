@@ -5,7 +5,7 @@ using ICSharpCode.AvalonEdit.Utils;
 using Microsoft.Win32;
 using OpenTK.Graphics.OpenGL;
 using Plotter;
-using Plotter.Controller;
+using Plotter.Scripting;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;

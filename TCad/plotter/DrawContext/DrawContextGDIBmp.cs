@@ -1,6 +1,22 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Imaging;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -27,8 +43,8 @@ public class DrawContextGDIBmp : DrawContextGDI
         mViewOrg.X = 0;
         mViewOrg.Y = 0;
 
-        mProjectionMatrix = Matrix4d.Identity;
-        mProjectionMatrixInv = Matrix4d.Identity;
+        mProjectionMatrix = matrix4_t.Identity;
+        mProjectionMatrixInv = matrix4_t.Identity;
 
         CalcProjectionMatrix();
         CalcProjectionZW();

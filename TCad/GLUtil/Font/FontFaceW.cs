@@ -1,10 +1,27 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using GLUtil;
+using OpenTK.Graphics.OpenGL;
+using SharpFont;
 using System;
 using System.Collections.Generic;
-using SharpFont;
-using System.Windows.Resources;
-using System.Windows;
 using System.IO;
-using Plotter;
+using System.Windows;
+using System.Windows.Resources;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace GLFont;
 
@@ -16,7 +33,9 @@ public class FontFaceW
 
     private float Size;
 
-    private Dictionary<char, FontTex> Cache = new Dictionary<char, FontTex>();
+    private Dictionary<char, FontTex> TextureCache = new();
+
+    private Dictionary<char, FontPoly> PolyCache = new();
 
     private FontFaceW()
     {
@@ -29,7 +48,7 @@ public class FontFaceW
         FontFace = new Face(mLib, filename, face_index);
         SetSize(this.Size);
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
     private void SetFont(byte[] data, int face_index = 0)
@@ -37,7 +56,7 @@ public class FontFaceW
         FontFace = new Face(mLib, data, face_index);
         SetSize(this.Size);
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
     // url e.g. "/Fonts/mplus-1m-thin.ttf"
@@ -64,14 +83,30 @@ public class FontFaceW
             FontFace.SetCharSize(0, size, 0, 96);
         }
 
-        Cache.Clear();
+        TextureCache.Clear();
     }
 
-    public void CreatePoly(char c)
+    public FontPoly CreatePoly(char c)
     {
+        FontPoly fp;
+
+        if (PolyCache.TryGetValue(c, out fp))
+        {
+            return new(fp);
+        }
+
         uint glyphIndex = FontFace.GetCharIndex(c);
         FontFace.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
-        Outline outLine = FontFace.Glyph.Outline;
+
+        Tessellator tesse = new();
+
+        fp = FontTessellator.Tessellate(FontFace.Glyph, 3, tesse);
+
+        tesse?.Dispose();
+
+        PolyCache.Add(c, fp);
+
+        return new(fp);
     }
 
     public GlyphSlot GetGlyph(char c)
@@ -81,11 +116,11 @@ public class FontFaceW
         return FontFace.Glyph;
     }
 
-    public FontTex CreateTexture(char c)
+    public FontTex CreateTexture(char c, bool attachTexture = false)
     {
         FontTex ft;
 
-        if (Cache.TryGetValue(c, out ft))
+        if (TextureCache.TryGetValue(c, out ft))
         {
             return ft;
         }
@@ -117,6 +152,11 @@ public class FontFaceW
 
             ft.FontW = Math.Max(fontW, ft.ImgW);
             ft.FontH = (int)(top + bottom);
+
+            if (attachTexture)
+            {
+                AttachTexture(ft);
+            }
         }
         else
         {
@@ -125,7 +165,7 @@ public class FontFaceW
             ft.FontH = fontH;
         }
 
-        Cache.Add(c, ft);
+        TextureCache.Add(c, ft);
 
         //ft.dump_b();
         //Console.WriteLine();
@@ -135,6 +175,11 @@ public class FontFaceW
 
     public FontTex CreateTexture(string s)
     {
+        if (s.Length == 1)
+        {
+            return CreateTexture(s[0]);
+        }
+
         List<FontTex> ta = new List<FontTex>();
 
         int fw = 0;
@@ -170,13 +215,35 @@ public class FontFaceW
         return mft;
     }
 
+    private void AttachTexture(in FontTex fontTex)
+    {
+        int texUnitNumber = 0;
+
+        fontTex.TextureID = TextureProvider.Instance.GetNew();
+
+        GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
+
+        GL.BindTexture(TextureTarget.Texture2D, fontTex.TextureID);
+
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+        GL.TexImage2D(
+            TextureTarget.Texture2D, 0,
+            PixelInternalFormat.Alpha8,
+            fontTex.W, fontTex.H, 0,
+            PixelFormat.Alpha,
+            PixelType.UnsignedByte, fontTex.Data);
+    }
+
+
     public class Provider
     {
         private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
 
-        public static FontFaceW GetFromFile(string fname, float size)
+        public static FontFaceW GetFromFile(string fname, float size, int faceIndex)
         {
-            string key = GetKey(fname, size);
+            string key = GetKey(fname, size, faceIndex);
 
             FontFaceW face;
 
@@ -185,7 +252,7 @@ public class FontFaceW
             }
 
             face = new FontFaceW();
-            face.SetFont(fname);
+            face.SetFont(fname, faceIndex);
             face.SetSize(size);
 
             FaceMap.Add(key, face);
@@ -193,9 +260,9 @@ public class FontFaceW
             return face;
         }
 
-        public static FontFaceW GetFromResource(string uri, float size)
+        public static FontFaceW GetFromResource(string uri, float size, int faceIndex)
         {
-            string key = GetKey(uri, size);
+            string key = GetKey(uri, size, faceIndex);
 
             FontFaceW face;
 
@@ -205,7 +272,7 @@ public class FontFaceW
             }
 
             face = new FontFaceW();
-            face.SetResourceFont(uri);
+            face.SetResourceFont(uri, faceIndex);
             face.SetSize(size);
 
             FaceMap.Add(key, face);
@@ -213,10 +280,14 @@ public class FontFaceW
             return face;
         }
 
-
-        private static string GetKey(string name, float size)
+        public static void Dispose()
         {
-            return name + "_" + size.ToString();
+            FaceMap.Clear();
+        }
+
+        private static string GetKey(string name, float size, int faceIndex)
+        {
+            return name + "_" + size.ToString() + "_" + faceIndex.ToString();
         }
     }
 }

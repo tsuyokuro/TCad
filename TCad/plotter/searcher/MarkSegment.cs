@@ -1,10 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -76,11 +87,11 @@ public struct MarkSegment
         }
     }
 
-    public Vector3d CrossPoint;
+    public vector3_t CrossPoint;
 
-    public Vector3d CrossPointScrn;
+    public vector3_t CrossPointScrn;
 
-    public Vector3d CenterPoint
+    public vector3_t CenterPoint
     {
         get
         {
@@ -88,7 +99,7 @@ public struct MarkSegment
         }
     }
 
-    public double Distance;
+    public vcompo_t Distance;
 
     public bool Valid { get { return FigureID != 0; } }
 
@@ -123,8 +134,8 @@ public struct MarkSegment
 
     public void Clean()
     {
-        CrossPoint = VectorExt.InvalidVector3d;
-        CrossPointScrn = VectorExt.InvalidVector3d;
+        CrossPoint = VectorExt.InvalidVector3;
+        CrossPointScrn = VectorExt.InvalidVector3;
     }
 
     public bool IsSelected()

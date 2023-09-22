@@ -1,18 +1,30 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.svg;
 
 public static class FigureXmlExt
 {
-    public static XElement ToPath(CadFigurePolyLines fig, DrawContext dc, double width, double height, double lineW)
+    public static XElement ToPath(CadFigurePolyLines fig, DrawContext dc, vcompo_t width, vcompo_t height, vcompo_t lineW)
     {
         StringBuilder sb = new StringBuilder("");
 
@@ -20,7 +32,7 @@ public static class FigureXmlExt
 
         foreach (CadVertex v in fig.PointList)
         {
-            Vector3d dv = dc.WorldPointToDevPoint(v.vector);
+            vector3_t dv = dc.WorldPointToDevPoint(v.vector);
             if (state == 0)
             {
                 sb.Append("M ");
@@ -53,21 +65,21 @@ public static class FigureXmlExt
 
 public class SvgExporter
 {
-    public double DefaultLineW = 0.2;
+    public vcompo_t DefaultLineW = (vcompo_t)(0.2);
 
 
     public static XDocumentType DocType = new XDocumentType(
-            @"svg", @" -//W3C//DTD SVG 1.1//EN",
-            @"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd",
+            @"svg", @" -//W3C//DTD SVG (vcompo_t)(1.1)//EN",
+            @"http://www.w3.org/Graphics/SVG/(vcompo_t)(1.1)/DTD/svg11.dtd",
             null);
 
 
-    public XDocument ToSvg(List<CadFigure> figList, DrawContext currentDC, double width, double height)
+    public XDocument ToSvg(List<CadFigure> figList, DrawContext currentDC, vcompo_t width, vcompo_t height)
     {
         DrawContext dc = currentDC.Clone();
 
         dc.SetViewSize(width, height);
-        dc.SetViewOrg(new Vector3d(width / 2, height / 2, 0));
+        dc.SetViewOrg(new vector3_t(width / 2, height / 2, 0));
         dc.UnitPerMilli = 1;
 
         XDocument doc = new XDocument();
@@ -83,7 +95,7 @@ public class SvgExporter
     }
 
     public void AddFiguresToElement(
-        XElement parent, List<CadFigure> figList, DrawContext dc, double width, double height)
+        XElement parent, List<CadFigure> figList, DrawContext dc, vcompo_t width, vcompo_t height)
     {
         foreach (CadFigure fig in figList)
         {
@@ -95,14 +107,14 @@ public class SvgExporter
         }
     }
 
-    public static XElement CreateRoot(double width, double height)
+    public static XElement CreateRoot(vcompo_t width, vcompo_t height)
     {
         XElement root = new XElement("svg",
             new XAttribute("width", $"{width}mm"),
             new XAttribute("height", $"{height}mm"),
             new XAttribute("viewBox", $"0 0 {width} {height}"),
             new XAttribute(XNamespace.Xmlns + "svg", "http://www.w3.org/2000/svg"),
-            new XAttribute("version", "1.1")
+            new XAttribute("version", "(vcompo_t)(1.1)")
             );
         return root;
     }

@@ -1,7 +1,23 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 using Plotter.Controller;
 using TCad.Controls;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.ViewModel;
 
@@ -64,7 +80,7 @@ public interface IPlotterViewModel
 
     void LayerListChanged(LayerListInfo layerListInfo);
 
-    void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
 
     void UpdateTreeView(bool remakeTree);
 
@@ -84,7 +100,7 @@ public interface IPlotterViewModel
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
 
-    void SetWorldScale(double scale);
+    void SetWorldScale(vcompo_t scale);
 
     void ExecCommand(string cmd);
 
@@ -114,7 +130,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     public void ChangeMouseCursor(UITypes.MouseCursorType cursorType) { }
     public void ClosePopupMessage() { }
     public void CursorLocked(bool locked) { }
-    public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type) { }
+    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type) { }
     public void DrawModeUpdated(DrawModes mode) { }
 
     public void ExecCommand(string cmd) { }
@@ -124,7 +140,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     public void OpenPopupMessage(string text, UITypes.MessageType messageType) { }
     public void Redraw() { }
     public void SetTreeViewPos(int index) { }
-    public void SetWorldScale(double scale) { }
+    public void SetWorldScale(vcompo_t scale) { }
     public void ShowContextMenu(MenuInfo menuInfo, int x, int y) { }
     public void StateChanged(StateChangedParam si) { }
     public void UpdateTreeView(bool remakeTree) { }

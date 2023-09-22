@@ -1,0 +1,2 @@
+cat list.txt | xargs -L1 python sedpy.py
+

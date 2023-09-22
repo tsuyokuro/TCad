@@ -1,18 +1,29 @@
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Input;
-using CadDataTypes;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using System.Windows.Forms;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public class CadMouse
 {
-    public delegate void ButtonHandler(CadMouse pointer, DrawContext dc, double x, double y);
-    public delegate void MoveHandler(CadMouse pointer, DrawContext dc, double x, double y);
-    public delegate void WheelHandler(CadMouse pointer, DrawContext dc, double x, double y, int delta);
+    public delegate void ButtonHandler(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y);
+    public delegate void MoveHandler(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y);
+    public delegate void WheelHandler(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta);
 
 
     public ButtonHandler LButtonDown;
@@ -25,11 +36,11 @@ public class CadMouse
     public WheelHandler Wheel;
     public MoveHandler PointerMoved;
 
-    public Vector3d LDownPoint = default;
-    public Vector3d RDownPoint = default;
-    public Vector3d MDownPoint = default;
+    public vector3_t LDownPoint = default;
+    public vector3_t RDownPoint = default;
+    public vector3_t MDownPoint = default;
 
-    public void MouseMove(DrawContext dc, double x, double y)
+    public void MouseMove(DrawContext dc, vcompo_t x, vcompo_t y)
     {
         if (PointerMoved != null)
         {
@@ -37,7 +48,7 @@ public class CadMouse
         }
     }
 
-    public void MouseDown(DrawContext dc, MouseButtons btn, double x, double y)
+    public void MouseDown(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
     {
         if (btn == MouseButtons.Left)
         {
@@ -62,7 +73,7 @@ public class CadMouse
         }
     }
 
-    public void MouseUp(DrawContext dc, MouseButtons btn, double x, double y)
+    public void MouseUp(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
     {
         if (btn == MouseButtons.Left)
         {
@@ -78,7 +89,7 @@ public class CadMouse
         }
     }
 
-    public void MouseWheel(DrawContext dc, double x, double y, int delta)
+    public void MouseWheel(DrawContext dc, vcompo_t x, vcompo_t y, int delta)
     {
         if (Wheel != null)
         {

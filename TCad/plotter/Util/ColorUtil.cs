@@ -1,7 +1,23 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -99,7 +115,7 @@ public static class Color4Ext
 {
     public static bool IsInvalid(this Color4 v)
     {
-        return v.A < 0.0;
+        return v.A < (vcompo_t)(0.0);
     }
 
     public static readonly Color4 Invalid = new Color4(0, 0, 0, -1.0f);

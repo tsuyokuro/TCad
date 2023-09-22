@@ -1,23 +1,34 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct MoveInfo
 {
-    public Vector3d Start;
+    public vector3_t Start;
 
-    public Vector3d Moved;
+    public vector3_t Moved;
 
-    public Vector3d CursorScrnPoint;
+    public vector3_t CursorScrnPoint;
 
-    public Vector3d Delta;
+    public vector3_t Delta;
 
-    public MoveInfo(Vector3d start, Vector3d moved, Vector3d cursorPos)
+    public MoveInfo(vector3_t start, vector3_t moved, vector3_t cursorPos)
     {
         Start = start;
         Moved = moved;

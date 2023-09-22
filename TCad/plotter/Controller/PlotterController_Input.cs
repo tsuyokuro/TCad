@@ -1,11 +1,24 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using TCad.Controls;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-using System;
 using System.Collections.Generic;
 using TCad.ViewModel;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -31,18 +44,18 @@ public partial class PlotterController
     private CadRulerSet RulerSet = new CadRulerSet();
 
 
-    public Vector3d StoreViewOrg = default;
+    public vector3_t StoreViewOrg = default;
 
-    public Vector3d SnapPoint;
+    public vector3_t SnapPoint;
 
     public SnapInfo CurrentSnapInfo;
 
     // 生のL button down point (デバイス座標系)
-    public Vector3d RawDownPoint = default;
+    public vector3_t RawDownPoint = default;
 
     // Snap等で補正された L button down point (World座標系)
-    private Vector3d mLastDownPoint = default;
-    public Vector3d LastDownPoint
+    private vector3_t mLastDownPoint = default;
+    public vector3_t LastDownPoint
     {
         get => mLastDownPoint;
         set
@@ -53,10 +66,10 @@ public partial class PlotterController
     }
 
     // 選択したObjectの点の座標 (World座標系)
-    public Vector3d ObjDownPoint = default;
+    public vector3_t ObjDownPoint = default;
 
     // 実際のMouse座標からCross cursorへのOffset
-    public Vector3d CrossCursorOffset = default;
+    public vector3_t CrossCursorOffset = default;
 
     public MarkSegment? LastSelSegment = null;
 
@@ -160,11 +173,11 @@ public partial class PlotterController
         }
     }
 
-    public bool SelectNearest(DrawContext dc, Vector3d pixp)
+    public bool SelectNearest(DrawContext dc, vector3_t pixp)
     {
         SelectContext sc = default;
 
-        ObjDownPoint = VectorExt.InvalidVector3d;
+        ObjDownPoint = VectorExt.InvalidVector3;
 
         RulerSet.Clear();
 
@@ -311,9 +324,9 @@ public partial class PlotterController
             return sc;
         }
 
-        Vector3d center = sc.MarkSeg.CenterPoint;
+        vector3_t center = sc.MarkSeg.CenterPoint;
 
-        Vector3d t = sc.DC.WorldPointToDevPoint(center);
+        vector3_t t = sc.DC.WorldPointToDevPoint(center);
 
         if ((t - sc.CursorScrPt).Norm() < SettingsHolder.Settings.LineSnapRange)
         {
@@ -358,7 +371,7 @@ public partial class PlotterController
         return sc;
     }
 
-    private void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         if (State == ControllerStates.DRAGING_VIEW_ORG)
         {
@@ -373,8 +386,8 @@ public partial class PlotterController
             y = CrossCursor.Pos.Y;
         }
 
-        Vector3d pixp = new Vector3d(x, y, 0) - CrossCursorOffset;
-        Vector3d cp = dc.DevPointToWorldPoint(pixp);
+        vector3_t pixp = new vector3_t(x, y, 0) - CrossCursorOffset;
+        vector3_t cp = dc.DevPointToWorldPoint(pixp);
 
         CrossCursor.Pos = pixp;
         SnapPoint = cp;
@@ -393,7 +406,7 @@ public partial class PlotterController
         ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
-    private void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         //DOut.tpl($"LButtonDown ({x},{y})");
 
@@ -403,7 +416,7 @@ public partial class PlotterController
             y = CrossCursor.Pos.Y;
         }
 
-        Vector3d pixp = new Vector3d(x, y, 0);
+        vector3_t pixp = new vector3_t(x, y, 0);
 
         RawDownPoint = pixp;
 
@@ -426,7 +439,7 @@ public partial class PlotterController
         ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
-    private void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    private void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         CurrentState.LButtonUp(pointer, dc, x, y);
 
@@ -435,7 +448,7 @@ public partial class PlotterController
         CrossCursorOffset = default;
     }
 
-    private void MButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    private void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
 
@@ -449,9 +462,9 @@ public partial class PlotterController
         ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
     }
 
-    private void MButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Vector3d p = DC.WorldPointToDevPoint(SnapPoint);
+        vector3_t p = DC.WorldPointToDevPoint(SnapPoint);
 
         if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
         {
@@ -460,40 +473,40 @@ public partial class PlotterController
 
         StateMachine.PopState();
 
-        CrossCursor.Pos = new Vector3d(x, y, 0);
+        CrossCursor.Pos = new vector3_t(x, y, 0);
 
         ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
-    private void Wheel(CadMouse pointer, DrawContext dc, double x, double y, int delta)
+    private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)
     {
         if (CadKeyboard.IsCtrlKeyDown())
         {
             CursorLocked = false;
 
-            double f;
+            vcompo_t f;
 
             if (delta > 0)
             {
-                f = 1.2;
+                f = (vcompo_t)(1.2);
             }
             else
             {
-                f = 0.8;
+                f = (vcompo_t)(0.8);
             }
 
             ViewUtil.DpiUpDown(dc, f);
         }
     }
 
-    private void RButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    private void RButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         LastDownPoint = SnapPoint;
 
         mContextMenuMan.RequestContextMenu(x, y);
     }
 
-    private void RButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    private void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
@@ -511,7 +524,7 @@ public partial class PlotterController
 
         if (InteractCtrl.IsActive)
         {
-            foreach (Vector3d v in InteractCtrl.PointList)
+            foreach (vector3_t v in InteractCtrl.PointList)
             {
                 mPointSearcher.Check(dc, v);
             }
@@ -535,16 +548,16 @@ public partial class PlotterController
         MarkPoint mx = mPointSearcher.GetXMatch();
         MarkPoint my = mPointSearcher.GetYMatch();
 
-        Vector3d cp = si.Cursor.Pos;
+        vector3_t cp = si.Cursor.Pos;
 
         if (mx.IsValid)
         {
             HighlightPointList.Add(
                 new HighlightPointListItem(mx.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
-            Vector3d tp = dc.WorldPointToDevPoint(mx.Point);
+            vector3_t tp = dc.WorldPointToDevPoint(mx.Point);
 
-            Vector3d distanceX = si.Cursor.DistanceX(tp);
+            vector3_t distanceX = si.Cursor.DistanceX(tp);
 
             cp += distanceX;
 
@@ -557,9 +570,9 @@ public partial class PlotterController
             HighlightPointList.Add(
                 new HighlightPointListItem(my.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
-            Vector3d tp = dc.WorldPointToDevPoint(my.Point);
+            vector3_t tp = dc.WorldPointToDevPoint(my.Point);
 
-            Vector3d distanceY = si.Cursor.DistanceY(tp);
+            vector3_t distanceY = si.Cursor.DistanceY(tp);
 
             cp += distanceY;
 
@@ -602,9 +615,9 @@ public partial class PlotterController
             {
                 HighlightSegList.Add(markSeg);
 
-                Vector3d center = markSeg.CenterPoint;
+                vector3_t center = markSeg.CenterPoint;
 
-                Vector3d t = dc.WorldPointToDevPoint(center);
+                vector3_t t = dc.WorldPointToDevPoint(center);
 
                 if ((t - si.Cursor.Pos).Norm() < SettingsHolder.Settings.LineSnapRange)
                 {
@@ -640,7 +653,7 @@ public partial class PlotterController
     private SnapInfo SnapGrid(DrawContext dc, SnapInfo si)
     {
         mGridding.Clear();
-        mGridding.Check(dc, (Vector3d)si.Cursor.Pos);
+        mGridding.Check(dc, (vector3_t)si.Cursor.Pos);
 
         si.Cursor.Pos = mGridding.MatchD;
 
@@ -678,7 +691,7 @@ public partial class PlotterController
 
                 if (ms.FigureID != ri.Ruler.Fig.ID)
                 {
-                    Vector3d cp = PlotterUtil.CrossOnScreen(dc, ri.Ruler.P0, ri.Ruler.P1, ms.FigSeg.Point0.vector, ms.FigSeg.Point1.vector);
+                    vector3_t cp = PlotterUtil.CrossOnScreen(dc, ri.Ruler.P0, ri.Ruler.P1, ms.FigSeg.Point0.vector, ms.FigSeg.Point1.vector);
 
                     if (cp.IsValid())
                     {
@@ -691,9 +704,9 @@ public partial class PlotterController
             HighlightPointList.Add(new HighlightPointListItem(ri.Ruler.P1, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
             // 点が線分上にある時は、EvalSegSeracherで登録されているのでポイントを追加しない
-            Vector3d p0 = dc.WorldPointToDevPoint(ri.Ruler.P0);
-            Vector3d p1 = dc.WorldPointToDevPoint(ri.Ruler.P1);
-            Vector3d crp = dc.WorldPointToDevPoint(ri.CrossPoint);
+            vector3_t p0 = dc.WorldPointToDevPoint(ri.Ruler.P0);
+            vector3_t p1 = dc.WorldPointToDevPoint(ri.Ruler.P1);
+            vector3_t crp = dc.WorldPointToDevPoint(ri.CrossPoint);
 
             if (!CadMath.IsPointInSeg2D(p0, p1, crp))
             {
@@ -734,7 +747,7 @@ public partial class PlotterController
         // (0, 0, 0)にスナップするようにする
         if (SettingsHolder.Settings.SnapToZero)
         {
-            mPointSearcher.Check(dc, Vector3d.Zero);
+            mPointSearcher.Check(dc, vector3_t.Zero);
         }
 
         // 最後にマウスダウンしたポイントにスナップする
@@ -816,14 +829,14 @@ public partial class PlotterController
 
         ItConsole.println(res.ToInfoString());
 
-        Vector3d sv = DC.WorldPointToDevPoint(res.WoldPoint.vector);
+        vector3_t sv = DC.WorldPointToDevPoint(res.WoldPoint.vector);
 
         LockCursorScrn(sv);
 
         Mouse.MouseMove(dc, sv.X, sv.Y);
     }
 
-    public void LockCursorScrn(Vector3d p)
+    public void LockCursorScrn(vector3_t p)
     {
         CursorLocked = true;
 
@@ -831,12 +844,12 @@ public partial class PlotterController
         CrossCursor.Pos = p;
     }
 
-    public Vector3d GetCursorPos()
+    public vector3_t GetCursorPos()
     {
         return SnapPoint;
     }
 
-    public void SetCursorWoldPos(Vector3d v)
+    public void SetCursorWoldPos(vector3_t v)
     {
         SnapPoint = v;
         CrossCursor.Pos = DC.WorldPointToDevPoint(SnapPoint);
@@ -846,7 +859,8 @@ public partial class PlotterController
 
     public void AddExtendSnapPoint()
     {
-        ExtendSnapPointList.Add(LastDownPoint);
+        //ExtendSnapPointList.Add(LastDownPoint);
+        ExtendSnapPointList.Add(GetCursorPos());
     }
 
     public void ClearExtendSnapPointList()

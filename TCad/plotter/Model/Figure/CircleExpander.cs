@@ -1,7 +1,22 @@
-using System;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
+using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -16,17 +31,17 @@ public static class CircleExpander
         CadVertex va = pa - cp;
         CadVertex vb = pb - cp;
 
-        if (va.Norm() < 0.01)
+        if (va.Norm() < (vcompo_t)(0.01))
         {
             return;
         }
 
 
-        double dt = (2.0 * Math.PI) / (double)splitCnt;
+        vcompo_t dt = ((vcompo_t)(2.0) * (vcompo_t)Math.PI) / (vcompo_t)splitCnt;
 
         int div = splitCnt;
 
-        Vector3d normal = CadMath.Normal(va.vector, vb.vector);
+        vector3_t normal = CadMath.Normal(va.vector, vb.vector);
 
         CadQuaternion q = CadQuaternion.RotateQuaternion(normal, dt);
         CadQuaternion r = q.Conjugate();
@@ -62,16 +77,16 @@ public static class CircleExpander
         CadVertex va = pa - cp;
         CadVertex vb = pb - cp;
 
-        if (va.Norm() < 0.01)
+        if (va.Norm() < (vcompo_t)(0.01))
         {
             return;
         }
 
-        double dt = (2.0 * Math.PI) / (double)splitCnt;
+        vcompo_t dt = ((vcompo_t)(2.0) * (vcompo_t)Math.PI) / (vcompo_t)splitCnt;
 
         int div = splitCnt;
 
-        Vector3d normal = CadMath.Normal(va.vector, vb.vector);
+        vector3_t normal = CadMath.Normal(va.vector, vb.vector);
 
         CadQuaternion q = CadQuaternion.RotateQuaternion(normal, dt);
         CadQuaternion r = q.Conjugate();

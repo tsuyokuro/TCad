@@ -1,18 +1,31 @@
-using System;
-
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using System;
 using System.Windows.Forms;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public abstract class DrawContextGL : DrawContext
 {
-    public const double DEFAULT_EYE_Z = 250.0;
-    public const double DEFAULT_NEAR = 0.1;
-    public const double DEFAULT_FAR = 2000;
+    public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)(250.0);
+    public const vcompo_t DEFAULT_NEAR = (vcompo_t)(0.1);
+    public const vcompo_t DEFAULT_FAR = 2000;
 
     protected Control ViewCtrl;
 
@@ -33,7 +46,7 @@ public abstract class DrawContextGL : DrawContext
 
     public bool LightingEnable = true;
 
-    public Matrix4d Matrix2D = Matrix4d.Identity;
+    public matrix4_t Matrix2D = matrix4_t.Identity;
 
     public ProjectionType mProjectionType = ProjectionType.Perspective;
 
@@ -58,7 +71,7 @@ public abstract class DrawContextGL : DrawContext
     {
         ViewCtrl = control;
 
-        mUnitPerMilli = 1.0;
+        mUnitPerMilli = (vcompo_t)(1.0);
         WorldScale = 1.0f;
 
         InitCamera(ViewingAngleType.STANDERD);
@@ -121,17 +134,17 @@ public abstract class DrawContextGL : DrawContext
 
     public void InitCamera(ViewingAngleType type)
     {
-        double ez = DEFAULT_EYE_Z;
-        double near = DEFAULT_NEAR;
-        double far = DEFAULT_FAR;
+        vcompo_t ez = DEFAULT_EYE_Z;
+        vcompo_t near = DEFAULT_NEAR;
+        vcompo_t far = DEFAULT_FAR;
 
-        mLookAt = Vector3d.Zero;
-        mUpVector = Vector3d.UnitY;
+        mLookAt = vector3_t.Zero;
+        mUpVector = vector3_t.UnitY;
 
         mProjectionNear = near;
         mProjectionFar = far;
 
-        mEye = Vector3d.Zero;
+        mEye = vector3_t.Zero;
 
         // FovY 画角を指定
         // 初期カメラ位置を調整
@@ -140,19 +153,19 @@ public abstract class DrawContextGL : DrawContext
             case ViewingAngleType.TELESCOPE:
                 // 望遠
                 mEye.Z = ez;
-                mFovY = Math.PI / 4;
+                mFovY = (vcompo_t)Math.PI / 4;
                 break;
 
             case ViewingAngleType.STANDERD:
                 // 標準
                 mEye.Z = ez;
-                mFovY = Math.PI / 3;
+                mFovY = (vcompo_t)Math.PI / 3;
                 break;
 
             case ViewingAngleType.WIDE_ANGLE:
                 // 広角
-                mEye.Z = ez * 0.75;
-                mFovY = Math.PI / 2;
+                mEye.Z = ez * (vcompo_t)(0.75);
+                mFovY = (vcompo_t)Math.PI / 2;
                 break;
         }
     }

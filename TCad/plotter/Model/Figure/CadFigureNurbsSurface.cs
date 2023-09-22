@@ -1,8 +1,24 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using SplineCurve;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -43,7 +59,7 @@ public class CadFigureNurbsSurface : CadFigure
         NeedsEval = true;
     }
 
-    public override void MoveAllPoints(Vector3d delta)
+    public override void MoveAllPoints(vector3_t delta)
     {
         if (Locked) return;
 
@@ -122,7 +138,7 @@ public class CadFigureNurbsSurface : CadFigure
     {
         for (int i=0; i<mPointList.Count; i++)
         {
-            ref CadVertex p0 = ref mPointList.Ref(i);
+            ref CadVertex p0 = ref mPointList[i];
 
             if (p0.Selected)
             {

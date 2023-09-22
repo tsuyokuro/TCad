@@ -1,9 +1,24 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using CadDataTypes;
 using HalfEdgeNS;
-using System.Collections.Generic;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
-using CadDataTypes;
+using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -27,14 +42,14 @@ public class DrawingConst
     public const float ExtSnapPointLineWidth = 1;
     public const float ExtSnapPointLineLength = 6;
 
-    public const double AxisLength = 100; // DrawingGDIでしか使っていない
+    public const vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
 
-    public const double NormalLen = 20;
-    public const double NormalArrowLen = 10;
-    public const double NormalArrowWidth = 5;
+    public const vcompo_t NormalLen = 20;
+    public const vcompo_t NormalArrowLen = 10;
+    public const vcompo_t NormalArrowWidth = 5;
 
-    public const double AxisArrowLen = 16;
-    public const double AxisArrowWidth = 8;
+    public const vcompo_t AxisArrowLen = 16;
+    public const vcompo_t AxisArrowWidth = 8;
 }
 
 public interface IDrawing : IDisposable
@@ -47,42 +62,42 @@ public interface IDrawing : IDisposable
 
     void DrawCompass();
 
-    void DrawPageFrame(double w, double h, Vector3d center);
+    void DrawPageFrame(vcompo_t w, vcompo_t h, vector3_t center);
 
     void DrawGrid(Gridding grid);
 
-    void DrawHighlightPoint(Vector3d pt, DrawPen pen);
+    void DrawHighlightPoint(vector3_t pt, DrawPen pen);
 
     void DrawHighlightPoints(List<HighlightPointListItem> list);
 
-    void DrawSelectedPoint(Vector3d pt, DrawPen pen);
+    void DrawSelectedPoint(vector3_t pt, DrawPen pen);
 
     void DrawSelectedPoints(VertexList pointList, DrawPen pen);
 
-    void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen);
+    void DrawExtSnapPoints(Vector3List pointList, DrawPen pen);
 
-    void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size);
+    void DrawMarkCursor(DrawPen pen, vector3_t p, vcompo_t pix_size);
 
-    void DrawRect(DrawPen pen, Vector3d p0, Vector3d p1);
+    void DrawRect(DrawPen pen, vector3_t p0, vector3_t p1);
 
-    void DrawCross(DrawPen pen, Vector3d p, double size);
+    void DrawCross(DrawPen pen, vector3_t p, vcompo_t size);
 
-    void DrawLine(DrawPen pen, Vector3d a, Vector3d b);
+    void DrawLine(DrawPen pen, vector3_t a, vector3_t b);
 
-    void DrawDot(DrawPen pen, Vector3d p);
+    void DrawDot(DrawPen pen, vector3_t p);
 
     void DrawHarfEdgeModel(
-        DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model);
+        DrawBrush brush, DrawPen pen, DrawPen edgePen, vcompo_t edgeThreshold, HeModel model);
 
-    void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s);
+    void DrawText(int font, DrawBrush brush, vector3_t a, vector3_t xdir, vector3_t ydir, DrawTextOption opt, vcompo_t scale, string s);
 
-    void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width);
+    void DrawArrow(DrawPen pen, vector3_t pt0, vector3_t pt1, ArrowTypes type, ArrowPos pos, vcompo_t len, vcompo_t width);
 
     void DrawCrossCursorScrn(CadCursor pp, DrawPen pen);
 
-    void DrawRectScrn(DrawPen pen, Vector3d p0, Vector3d p1);
+    void DrawRectScrn(DrawPen pen, vector3_t p0, vector3_t p1);
 
-    void DrawCrossScrn(DrawPen pen, Vector3d p, double size);
+    void DrawCrossScrn(DrawPen pen, vector3_t p, vcompo_t size);
 
     void DrawBouncingBox(DrawPen pen, MinMax3D mm);
 }

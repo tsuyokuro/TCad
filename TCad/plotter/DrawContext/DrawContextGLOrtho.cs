@@ -1,8 +1,23 @@
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System.Windows.Forms;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -10,7 +25,7 @@ class DrawContextGLOrtho : DrawContextGL
 {
     CadVertex Center = default;
 
-    public override double UnitPerMilli
+    public override vcompo_t UnitPerMilli
     {
         set
         {
@@ -53,15 +68,15 @@ class DrawContextGLOrtho : DrawContextGL
         #region Projection            
         GL.MatrixMode(MatrixMode.Projection);
 
-        Matrix4d proj = mProjectionMatrix;
+        matrix4_t proj = mProjectionMatrix;
 
-        double dx = ViewOrg.X - (ViewWidth / 2.0);
-        double dy = ViewOrg.Y - (ViewHeight / 2.0);
+        vcompo_t dx = ViewOrg.X - (ViewWidth / (vcompo_t)(2.0));
+        vcompo_t dy = ViewOrg.Y - (ViewHeight / (vcompo_t)(2.0));
 
         // x,yの平行移動成分を設定
         // Set x and y translational components
-        proj.M41 = dx / (ViewWidth / 2.0);
-        proj.M42 = -dy / (ViewHeight / 2.0);
+        proj.M41 = dx / (ViewWidth / (vcompo_t)(2.0));
+        proj.M42 = -dy / (ViewHeight / (vcompo_t)(2.0));
 
         GL.LoadMatrix(ref proj);
         #endregion
@@ -69,16 +84,16 @@ class DrawContextGLOrtho : DrawContextGL
         SetupLight();
     }
 
-    public override void SetViewSize(double w, double h)
+    public override void SetViewSize(vcompo_t w, vcompo_t h)
     {
         mViewWidth = w;
         mViewHeight = h;
 
-        DeviceScaleX = w / 2.0;
-        DeviceScaleY = -h / 2.0;
+        DeviceScaleX = w / (vcompo_t)(2.0);
+        DeviceScaleY = -h / (vcompo_t)(2.0);
 
-        mViewCenter.X = w / 2.0;
-        mViewCenter.Y = h / 2.0;
+        mViewCenter.X = w / (vcompo_t)(2.0);
+        mViewCenter.Y = h / (vcompo_t)(2.0);
 
         GL.Viewport(0, 0, (int)mViewWidth, (int)mViewHeight);
 
@@ -88,7 +103,7 @@ class DrawContextGLOrtho : DrawContextGL
         Center.X = w / 2;
         Center.Y = h / 2;
 
-        Matrix2D = Matrix4d.CreateOrthographicOffCenter(
+        Matrix2D = matrix4_t.CreateOrthographicOffCenter(
                                     0, mViewWidth,
                                     mViewHeight, 0,
                                     0, mProjectionFar);
@@ -96,7 +111,7 @@ class DrawContextGLOrtho : DrawContextGL
 
     public override void CalcProjectionMatrix()
     {
-        mProjectionMatrix = Matrix4d.CreateOrthographic(
+        mProjectionMatrix = matrix4_t.CreateOrthographic(
                                         ViewWidth / mUnitPerMilli, ViewHeight / mUnitPerMilli,
                                         mProjectionNear,
                                         mProjectionFar
@@ -113,9 +128,9 @@ class DrawContextGLOrtho : DrawContextGL
         dc.CopyCamera(this);
         dc.SetViewSize(deviceSize.Width, deviceSize.Height);
 
-        Vector3d org = default;
-        org.X = deviceSize.Width / 2.0;
-        org.Y = deviceSize.Height / 2.0;
+        vector3_t org = default;
+        org.X = deviceSize.Width / (vcompo_t)(2.0);
+        org.Y = deviceSize.Height / (vcompo_t)(2.0);
 
         dc.SetViewOrg(org);
 

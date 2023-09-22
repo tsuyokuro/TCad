@@ -1,16 +1,22 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad;
 
@@ -20,7 +26,7 @@ namespace TCad;
 public partial class PrintSettingsDialog : Window
 {
     public bool PrintWithBitmap;
-    public double MagnificationBitmapPrinting;
+    public vcompo_t MagnificationBitmapPrinting;
     public bool PrintLineSmooth;
 
     public PrintSettingsDialog()
@@ -72,11 +78,11 @@ public partial class PrintSettingsDialog : Window
     {
         bool ret = true;
 
-        double v;
+        vcompo_t v;
 
         PrintWithBitmap = print_with_bitmap.IsChecked.Value;
 
-        ret &= Double.TryParse(magnification_for_bitmap_printing.Text, out v);
+        ret &= vcompo_t.TryParse(magnification_for_bitmap_printing.Text, out v);
         MagnificationBitmapPrinting = v;
 
         PrintLineSmooth = print_line_smooth.IsChecked.Value;
@@ -90,9 +96,9 @@ public partial class PrintSettingsDialog : Window
 
         TextBox tb = (TextBox)sender;
 
-        double v;
+        vcompo_t v;
         var tmp = tb.Text + e.Text;
-        ok = Double.TryParse(tmp, out v);
+        ok = vcompo_t.TryParse(tmp, out v);
 
         e.Handled = !ok;
     }

@@ -1,10 +1,27 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using Plotter.Controller.TaskRunner;
+using Plotter.Scripting;
 using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
 using TCad.ViewModel;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -89,7 +106,7 @@ public partial class PlotterController
 
     public PlotterTaskRunner mPlotterTaskRunner;
 
-    private Vector3dList ExtendSnapPointList = new Vector3dList(20);
+    private Vector3List ExtendSnapPointList = new Vector3List(20);
 
     private ContextMenuManager mContextMenuMan;
     public ContextMenuManager ContextMenuMan
@@ -146,7 +163,7 @@ public partial class PlotterController
 
         mPlotterTaskRunner = new PlotterTaskRunner(this);
 
-        ObjDownPoint = VectorExt.InvalidVector3d;
+        ObjDownPoint = VectorExt.InvalidVector3;
 
         InitHid();
 

@@ -1,7 +1,23 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using CadDataTypes;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -16,7 +32,7 @@ class CadDxfLoader
 
     public delegate void Progress(States state, int percent, CadMesh mesh);
 
-    public async void AsyncLoad(string fname, double scale, Progress progress)
+    public async void AsyncLoad(string fname, vcompo_t scale, Progress progress)
     {
         CadMesh mesh = await Task.Run(() => Load(fname, scale));
 
@@ -33,7 +49,7 @@ class CadDxfLoader
 
     public int TotalFaceCount;
 
-    public CadMesh Load(string fname, double scale)
+    public CadMesh Load(string fname, vcompo_t scale)
     {
         TotalPointCount = 0;
         TotalFaceCount = 0;
@@ -49,11 +65,13 @@ class CadDxfLoader
         int valCnt = 0;
 
 
-        double[] val = new double[3];
+        vcompo_t[] val = new vcompo_t[3];
 
         int code;
 
         VertexList pointList = new VertexList();
+
+        VertexList tpList = new VertexList(3);
 
         while (!reader.EndOfStream)
         {
@@ -74,8 +92,31 @@ class CadDxfLoader
 
                 if (pointList.Count > 0)
                 {
-                    AddFace(mesh, pointList);
-                    TotalFaceCount++;
+                    if (pointList.Count == 3)
+                    {
+                        AddFace(mesh, pointList);
+                        TotalFaceCount++;
+                    }
+                    else if (pointList.Count == 4)
+                    {
+                        tpList.Clear();
+                        tpList.Add(pointList[0]);
+                        tpList.Add(pointList[1]);
+                        tpList.Add(pointList[2]);
+                        AddFace(mesh, tpList);
+                        TotalFaceCount++;
+
+                        tpList.Clear();
+                        tpList.Add(pointList[2]);
+                        tpList.Add(pointList[3]);
+                        tpList.Add(pointList[0]);
+                        AddFace(mesh, tpList);
+                        TotalFaceCount++;
+                    }
+                    else
+                    {
+                        DOut.pl("pointList.Count:" + pointList.Count);
+                    }
 
                     pointList.Clear();
                 }
@@ -93,7 +134,7 @@ class CadDxfLoader
                     continue;
                 }
 
-                val[valCnt] = Double.Parse(L2) * scale;
+                val[valCnt] = vcompo_t.Parse(L2) * scale;
                 valCnt++;
 
                 if (valCnt >= 3)

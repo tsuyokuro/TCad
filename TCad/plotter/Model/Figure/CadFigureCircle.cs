@@ -1,9 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
+using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -96,11 +109,11 @@ public class CadFigureCircle : CadFigure
             return;
         }
 
-        Vector3d normal = CadMath.Normal(PointList[0].vector, PointList[2].vector, PointList[1].vector);
+        vector3_t normal = CadMath.Normal(PointList[0].vector, PointList[2].vector, PointList[1].vector);
 
         CircleExpander.Draw(PointList[0], PointList[1], PointList[2], 32, dc, pen);
 
-        double size = dc.DevSizeToWoldSize(4);
+        vcompo_t size = dc.DevSizeToWoldSize(4);
         dc.Drawing.DrawCross(pen, PointList[0].vector, size);
     }
 
@@ -151,7 +164,7 @@ public class CadFigureCircle : CadFigure
     {
         CadVertex cp = StoreList[0];
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         if (cp.Selected)
         {
@@ -171,7 +184,7 @@ public class CadFigureCircle : CadFigure
         vt[3] = StoreList[4] - cp;
         vt.Length = 4;
 
-        if (vt[0].Norm() < 0.01)
+        if (vt[0].Norm() < (vcompo_t)(0.01))
         {
             return;
         }
@@ -196,7 +209,7 @@ public class CadFigureCircle : CadFigure
         int ci = (ai + 2) % 4;
         int di = (ai + 3) % 4;
 
-        Vector3d normal = CadMath.CrossProduct(vt[ai].vector, vt[bi].vector);
+        vector3_t normal = CadMath.CrossProduct(vt[ai].vector, vt[bi].vector);
         normal = normal.UnitVector();
 
         vt[ai] += delta;
@@ -217,7 +230,7 @@ public class CadFigureCircle : CadFigure
 
         }
 
-        CadQuaternion q = CadQuaternion.RotateQuaternion(normal, Math.PI / 2.0);
+        CadQuaternion q = CadQuaternion.RotateQuaternion(normal, (vcompo_t)Math.PI / (vcompo_t)(2.0));
         CadQuaternion r = q.Conjugate();
 
         CadQuaternion qp = CadQuaternion.FromPoint(vt[ai].vector);
@@ -252,20 +265,20 @@ public class CadFigureCircle : CadFigure
     {
         Centroid ret = default;
 
-        Vector3d cp = StoreList[0].vector;
-        Vector3d rp = StoreList[1].vector;
+        vector3_t cp = StoreList[0].vector;
+        vector3_t rp = StoreList[1].vector;
 
-        Vector3d d = rp - cp;
+        vector3_t d = rp - cp;
 
-        double r = d.Norm();
+        vcompo_t r = d.Norm();
 
         ret.Point = cp;
-        ret.Area = r * r * Math.PI;
+        ret.Area = r * r * (vcompo_t)Math.PI;
 
         return ret;
     }
 
-    private Vector3d getRP(DrawContext dc, CadVertex cp, CadVertex p, bool isA)
+    private vector3_t getRP(DrawContext dc, CadVertex cp, CadVertex p, bool isA)
     {
         if (p.Equals(cp))
         {
@@ -273,7 +286,7 @@ public class CadFigureCircle : CadFigure
         }
 
 
-        Vector3d r = CadMath.CrossProduct(p.vector - cp.vector, dc.ViewDir);
+        vector3_t r = CadMath.CrossProduct(p.vector - cp.vector, dc.ViewDir);
 
         r = r.UnitVector();
 

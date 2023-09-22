@@ -1,6 +1,21 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.Windows;
 using System.Windows.Input;
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.Dialogs;
 
@@ -61,11 +76,11 @@ public partial class AngleInputDialog : Window
         this.DialogResult = false;
     }
 
-    public double GetDouble()
+    public vcompo_t GetAngle()
     {
         string s = input.Text;
-        double v;
-        Double.TryParse(s, out v);
+        vcompo_t v;
+        vcompo_t.TryParse(s, out v);
 
         return v;
     }

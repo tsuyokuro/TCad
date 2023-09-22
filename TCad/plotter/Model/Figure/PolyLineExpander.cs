@@ -1,6 +1,22 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using System;
 using System.Drawing;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -194,9 +210,9 @@ public static class PolyLineExpander
     private static CadVertex ForEachBezierPoints3<T>(
         CadVertex p0, CadVertex p1, CadVertex p2, int scnt, bool excludeEdge, Action<CadVertex, T> action, T param)
     {
-        double t = 0;
-        double d = 1.0 / (double)scnt;
-        double e = 1.0;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)scnt;
+        vcompo_t e = (vcompo_t)(1.0);
 
         t = d;
 
@@ -233,9 +249,9 @@ public static class PolyLineExpander
     private static CadVertex ForEachBezierPoints4<T>(
         CadVertex p0, CadVertex p1, CadVertex p2, CadVertex p3, int scnt, bool excludeEdge, Action<CadVertex, T> action, T param)
     {
-        double t = 0;
-        double d = 1.0 / (double)scnt;
-        double e = 1.0;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)scnt;
+        vcompo_t e = (vcompo_t)(1.0);
 
         t = d;
 
@@ -272,8 +288,8 @@ public static class PolyLineExpander
     private static CadVertex ForEachBezierSegs3<T>(
         CadVertex p0, CadVertex p1, CadVertex p2, int s, Action<CadVertex, CadVertex, T> action, T param)
     {
-        double t = 0;
-        double d = 1.0 / (double)s;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)s;
 
         t = d;
 
@@ -282,7 +298,7 @@ public static class PolyLineExpander
         CadVertex t0 = p0;
         CadVertex t1 = p0;
 
-        while (t <= 1.0)
+        while (t <= (vcompo_t)(1.0))
         {
             t1 = default;
             t1 += p0 * BezierFuncs.BernsteinBasisF(n - 1, 0, t);
@@ -302,8 +318,8 @@ public static class PolyLineExpander
     private static CadVertex ForEachBezierSegs4<T>(
         CadVertex p0, CadVertex p1, CadVertex p2, CadVertex p3, int s, Action<CadVertex, CadVertex, T> action, T param)
     {
-        double t = 0;
-        double d = 1.0 / (double)s;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)s;
 
         t = d;
 
@@ -312,7 +328,7 @@ public static class PolyLineExpander
         CadVertex t0 = p0;
         CadVertex t1 = p0;
 
-        while (t <= 1.0)
+        while (t <= (vcompo_t)(1.0))
         {
             t1 = default;
             t1 += p0 * BezierFuncs.BernsteinBasisF(n - 1, 0, t);
@@ -417,8 +433,8 @@ public static class PolyLineExpander
     public static CadVertex DrawBezier3(
         CadVertex p0, CadVertex p1, CadVertex p2, int s, DrawContext dc, DrawPen pen)
     {
-        double t = 0;
-        double d = 1.0 / (double)s;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)s;
 
         t = d;
 
@@ -427,7 +443,7 @@ public static class PolyLineExpander
         CadVertex t0 = p0;
         CadVertex t1 = p0;
 
-        while (t <= 1.0)
+        while (t <= (vcompo_t)(1.0))
         {
             t1 = default;
             t1 += p0 * BezierFuncs.BernsteinBasisF(n - 1, 0, t);
@@ -447,8 +463,8 @@ public static class PolyLineExpander
     public static CadVertex DrawBezier4(
         CadVertex p0, CadVertex p1, CadVertex p2, CadVertex p3, int s, DrawContext dc, DrawPen pen)
     {
-        double t = 0;
-        double d = 1.0 / (double)s;
+        vcompo_t t = 0;
+        vcompo_t d = (vcompo_t)(1.0) / (vcompo_t)s;
 
         t = d;
 
@@ -457,7 +473,7 @@ public static class PolyLineExpander
         CadVertex t0 = p0;
         CadVertex t1 = p0;
 
-        while (t <= 1.0)
+        while (t <= (vcompo_t)(1.0))
         {
             t1 = default;
             t1 += p0 * BezierFuncs.BernsteinBasisF(n - 1, 0, t);

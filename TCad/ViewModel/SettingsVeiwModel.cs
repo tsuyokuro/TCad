@@ -1,9 +1,24 @@
-using System.Reflection;
-using System.ComponentModel;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
-using Plotter.Settings;
 using Plotter.Controller;
+using Plotter.Settings;
+using System.ComponentModel;
+using System.Reflection;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.ViewModel;
 
@@ -230,7 +245,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double InitialMoveLimit
+    public vcompo_t InitialMoveLimit
     {
         set
         {
@@ -278,7 +293,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public Vector3d GridSize
+    public vector3_t GridSize
     {
         set
         {
@@ -290,7 +305,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double PointSnapRange
+    public vcompo_t PointSnapRange
     {
         set
         {
@@ -302,7 +317,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double LineSnapRange
+    public vcompo_t LineSnapRange
     {
         set
         {
@@ -314,7 +329,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MoveKeyUnitX
+    public vcompo_t MoveKeyUnitX
     {
         set
         {
@@ -326,7 +341,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MoveKeyUnitY
+    public vcompo_t MoveKeyUnitY
     {
         set
         {
@@ -365,7 +380,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
     }
 
     [UserSettingData]
-    public double MagnificationBitmapPrinting
+    public vcompo_t MagnificationBitmapPrinting
     {
         set
         {

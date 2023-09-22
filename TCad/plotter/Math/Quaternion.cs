@@ -1,18 +1,32 @@
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System;
-using CadDataTypes;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct CadQuaternion
 {
-    public double t;
-    public double x;
-    public double y;
-    public double z;
+    public vcompo_t t;
+    public vcompo_t x;
+    public vcompo_t y;
+    public vcompo_t z;
 
-    public CadQuaternion(double t, double x, double y, double z)
+    public CadQuaternion(vcompo_t t, vcompo_t x, vcompo_t y, vcompo_t z)
     {
         this.t = t;
         this.x = x;
@@ -24,9 +38,9 @@ public struct CadQuaternion
      * ノルム(長さ)
      * 
      */
-    public double norm()
+    public vcompo_t norm()
     {
-        return Math.Sqrt((t * t) + (x * x) + (y * y) + (z * z));
+        return (vcompo_t)Math.Sqrt((t * t) + (x * x) + (y * y) + (z * z));
     }
 
     /**
@@ -83,7 +97,7 @@ public struct CadQuaternion
         // B = (b; V)
         // AB = (ab - U・V; aV + bU + U×V)
         CadQuaternion ans;
-        double d1, d2, d3, d4;
+        vcompo_t d1, d2, d3, d4;
 
         d1 = q.t * r.t;
         d2 = q.x * r.x;
@@ -116,50 +130,50 @@ public struct CadQuaternion
      * 行列に変換する
      * 
      */
-    public Matrix4d ToMatrix4d()
+    public matrix4_t Tomatrix4_t()
     {
-        return ToMatrix4d(this);
+        return Tomatrix4_t(this);
     }
 
-    public static Matrix4d ToMatrix4d(CadQuaternion q)
+    public static matrix4_t Tomatrix4_t(CadQuaternion q)
     {
-        Matrix4d m = default(Matrix4d);
+        matrix4_t m = default(matrix4_t);
 
-        double xx = q.x * q.x * 2.0;
-        double yy = q.y * q.y * 2.0;
-        double zz = q.z * q.z * 2.0;
-        double xy = q.x * q.y * 2.0;
-        double yz = q.y * q.z * 2.0;
-        double zx = q.z * q.x * 2.0;
-        double xw = q.x * q.t * 2.0;
-        double yw = q.y * q.t * 2.0;
-        double zw = q.z * q.t * 2.0;
+        vcompo_t xx = q.x * q.x * (vcompo_t)(2.0);
+        vcompo_t yy = q.y * q.y * (vcompo_t)(2.0);
+        vcompo_t zz = q.z * q.z * (vcompo_t)(2.0);
+        vcompo_t xy = q.x * q.y * (vcompo_t)(2.0);
+        vcompo_t yz = q.y * q.z * (vcompo_t)(2.0);
+        vcompo_t zx = q.z * q.x * (vcompo_t)(2.0);
+        vcompo_t xw = q.x * q.t * (vcompo_t)(2.0);
+        vcompo_t yw = q.y * q.t * (vcompo_t)(2.0);
+        vcompo_t zw = q.z * q.t * (vcompo_t)(2.0);
 
 
-        // 1.0 - yy - zz, xy + zw,       zx - yw,       0.0
-        // xy - zw,       1.0 - zz - xx, yz + xw,       0.0
-        // zx + yw,       yz - xw,       1.0 - xx - yy, 0.0
-        // 0.0,           0.0,           0.0,           1.0
+        // (vcompo_t)(1.0) - yy - zz, xy + zw,       zx - yw,       (vcompo_t)(0.0)
+        // xy - zw,       (vcompo_t)(1.0) - zz - xx, yz + xw,       (vcompo_t)(0.0)
+        // zx + yw,       yz - xw,       (vcompo_t)(1.0) - xx - yy, (vcompo_t)(0.0)
+        // (vcompo_t)(0.0),           (vcompo_t)(0.0),           (vcompo_t)(0.0),           (vcompo_t)(1.0)
 
-        m.Row0[0] = 1.0 - yy - zz;
+        m.Row0[0] = (vcompo_t)(1.0) - yy - zz;
         m.Row0[1] = xy + zw;
         m.Row0[2] = zx - yw;
-        m.Row0[3] = 0.0;
+        m.Row0[3] = (vcompo_t)(0.0);
 
         m.Row1[0] = xy - zw;
-        m.Row1[1] = 1.0 - zz - xx;
+        m.Row1[1] = (vcompo_t)(1.0) - zz - xx;
         m.Row1[2] = yz + xw;
-        m.Row1[3] = 0.0;
+        m.Row1[3] = (vcompo_t)(0.0);
 
         m.Row2[0] = zx + yw;
         m.Row2[1] = yz - xw;
-        m.Row2[2] = 1.0 - xx - yy;
-        m.Row2[3] = 0.0;
+        m.Row2[2] = (vcompo_t)(1.0) - xx - yy;
+        m.Row2[3] = (vcompo_t)(0.0);
 
-        m.Row3[0] = 0.0;
-        m.Row3[1] = 0.0;
-        m.Row3[2] = 0.0;
-        m.Row3[3] = 1.0;
+        m.Row3[0] = (vcompo_t)(0.0);
+        m.Row3[1] = (vcompo_t)(0.0);
+        m.Row3[2] = (vcompo_t)(0.0);
+        m.Row3[3] = (vcompo_t)(1.0);
 
         return m;
     }
@@ -172,7 +186,7 @@ public struct CadQuaternion
     {
         CadQuaternion res;
 
-        res.t = 1.0;
+        res.t = (vcompo_t)(1.0);
         res.x = 0;
         res.y = 0;
         res.z = 0;
@@ -184,22 +198,22 @@ public struct CadQuaternion
      * Vector (vx, vy, vz)を回転軸としてradianだけ回転する四元数を作成
      * 
      */
-    public static CadQuaternion RotateQuaternion(double vx, double vy, double vz, double radian)
+    public static CadQuaternion RotateQuaternion(vcompo_t vx, vcompo_t vy, vcompo_t vz, vcompo_t radian)
     {
         CadQuaternion ans = default(CadQuaternion);
-        double norm;
-        double c, s;
+        vcompo_t norm;
+        vcompo_t c, s;
 
         norm = vx * vx + vy * vy + vz * vz;
-        if (norm <= 0.0) return ans;
+        if (norm <= (vcompo_t)(0.0)) return ans;
 
-        norm = 1.0 / Math.Sqrt(norm);
+        norm = (vcompo_t)(1.0) / (vcompo_t)Math.Sqrt(norm);
         vx *= norm;
         vy *= norm;
         vz *= norm;
 
-        c = Math.Cos(0.5 * radian);
-        s = Math.Sin(0.5 * radian);
+        c = (vcompo_t)Math.Cos((vcompo_t)(0.5) * radian);
+        s = (vcompo_t)Math.Sin((vcompo_t)(0.5) * radian);
 
         ans.t = c;
         ans.x = s * vx;
@@ -213,15 +227,15 @@ public struct CadQuaternion
      * Vector (v.x, v.y, v.z)を回転軸としてradianだけ回転する四元数を作成
      * 
      */
-    public static CadQuaternion RotateQuaternion(Vector3d axis, double radian)
+    public static CadQuaternion RotateQuaternion(vector3_t axis, vcompo_t radian)
     {
         axis = axis.Normalized();
 
         CadQuaternion ans = default;
-        double c, s;
+        vcompo_t c, s;
 
-        c = Math.Cos(0.5 * radian);
-        s = Math.Sin(0.5 * radian);
+        c = (vcompo_t)Math.Cos((vcompo_t)(0.5) * radian);
+        s = (vcompo_t)Math.Sin((vcompo_t)(0.5) * radian);
 
         ans.t = c;
         ans.x = s * axis.X;
@@ -235,10 +249,10 @@ public struct CadQuaternion
      * CadPoint - 四元数 変換
      * 
      */
-    public static CadQuaternion FromPoint(Vector3d point)
+    public static CadQuaternion FromPoint(vector3_t point)
     {
         CadQuaternion q;
-        q.t = 0.0;
+        q.t = (vcompo_t)(0.0);
         q.x = point.X;
         q.y = point.Y;
         q.z = point.Z;
@@ -246,14 +260,14 @@ public struct CadQuaternion
         return q;
     }
 
-    public static Vector3d ToPoint(CadQuaternion q)
+    public static vector3_t ToPoint(CadQuaternion q)
     {
-        return new Vector3d(q.x, q.y, q.z);
+        return new vector3_t(q.x, q.y, q.z);
     }
 
-    public Vector3d ToPoint()
+    public vector3_t ToPoint()
     {
-        Vector3d p = default;
+        vector3_t p = default;
 
         p.X = x;
         p.Y = y;
@@ -263,13 +277,13 @@ public struct CadQuaternion
     }
 
     /**
-     * Vector3d - 四元数 変換
+     * vector3_t - 四元数 変換
      * 
      */
-    public static CadQuaternion FromVector(Vector3d v)
+    public static CadQuaternion FromVector(vector3_t v)
     {
         CadQuaternion q;
-        q.t = 0.0;
+        q.t = (vcompo_t)(0.0);
         q.x = v.X;
         q.y = v.Y;
         q.z = v.Z;
@@ -277,13 +291,13 @@ public struct CadQuaternion
         return q;
     }
 
-    public static Vector3d ToVector3d(CadQuaternion q)
+    public static vector3_t ToVector3(CadQuaternion q)
     {
-        return new Vector3d(q.x, q.y, q.z);
+        return new vector3_t(q.x, q.y, q.z);
     }
 
-    public Vector3d ToVector3d()
+    public vector3_t ToVector3()
     {
-        return new Vector3d(x, y, z);
+        return new vector3_t(x, y, z);
     }
 }

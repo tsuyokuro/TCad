@@ -1,4 +1,20 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -7,8 +23,8 @@ public static class ColorModel
     public struct HSV
     {
         public float H; // 色相 ( 0<= H < 360 )
-        public float S; // 彩度 ( 0<= H = 1.0 )
-        public float V; // 明度 ( 0<= H = 1.0 )
+        public float S; // 彩度 ( 0<= H = (vcompo_t)(1.0) )
+        public float V; // 明度 ( 0<= H = (vcompo_t)(1.0) )
 
         public HSV(float h, float s, float v)
         {

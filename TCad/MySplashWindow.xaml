@@ -53,14 +53,14 @@
             Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Content="Version 0.5"
+            Content="Version 0.8"
             FontSize="14"
             Foreground="PaleGreen" />
         <Label
             Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Content="Copyright 2017 Tsuyoshi Kuroki All Rights Reserved."
+            Content="Copyright 2022 Tsuyoshi Kuroki All Rights Reserved."
             FontSize="12"
             Foreground="DarkGray" />
     </Grid>

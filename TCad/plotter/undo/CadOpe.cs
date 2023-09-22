@@ -1,14 +1,26 @@
-using MessagePack;
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using CadDataTypes;
+using OpenTK.Mathematics;
+using Plotter.Controller;
 using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1001;
-using Plotter.Controller;
-using System.Windows.Documents;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -524,10 +536,10 @@ public class CadOpeRemoveChild : CadOpe
 public class CadOpeChangeNormal : CadOpe
 {
     private uint FigureID;
-    private Vector3d NewNormal;
-    private Vector3d OldNormal;
+    private vector3_t NewNormal;
+    private vector3_t OldNormal;
 
-    public CadOpeChangeNormal(uint figID, Vector3d oldNormal, Vector3d newNormal)
+    public CadOpeChangeNormal(uint figID, vector3_t oldNormal, vector3_t newNormal)
     {
         FigureID = figID;
         OldNormal = oldNormal;

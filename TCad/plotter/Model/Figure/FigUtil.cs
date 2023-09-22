@@ -1,16 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using MessagePack;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Serializer;
-using Plotter.Serializer.v1001;
-using Plotter.Serializer.v1002;
-using Plotter.Serializer.v1003;
+using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -23,7 +30,7 @@ public class FigUtil
             return;
         }
 
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         for (int i = 0; i < fig.StoreList.Count; i++)
         {
@@ -41,7 +48,7 @@ public class FigUtil
         }
     }
 
-    public static void MoveAllPoints(CadFigure fig, Vector3d delta)
+    public static void MoveAllPoints(CadFigure fig, vector3_t delta)
     {
         CadUtil.MovePoints(fig.PointList, delta);
     }

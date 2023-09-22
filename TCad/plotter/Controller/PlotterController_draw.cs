@@ -1,10 +1,22 @@
-
-using CadDataTypes;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using MyCollections;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -107,10 +119,10 @@ public partial class PlotterController
         }
         else
         {
-            dc.Drawing.DrawCrossScrn(dc.GetPen(DrawTools.PEN_AXIS), dc.WorldPointToDevPoint(Vector3d.Zero), 8);
+            dc.Drawing.DrawCrossScrn(dc.GetPen(DrawTools.PEN_AXIS), dc.WorldPointToDevPoint(vector3_t.Zero), 8);
         }
 
-        dc.Drawing.DrawPageFrame(PageSize.Width, PageSize.Height, Vector3d.Zero);
+        dc.Drawing.DrawPageFrame(PageSize.Width, PageSize.Height, vector3_t.Zero);
         DrawGrid(dc);
     }
 

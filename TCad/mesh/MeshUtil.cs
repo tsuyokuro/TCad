@@ -1,33 +1,47 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using CarveWapper;
-using HalfEdgeNS;
 using MeshMakerNS;
 using MyCollections;
-using OpenTK;
 using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
 
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
+
 namespace MeshUtilNS;
 
 public class MeshUtil
 {
-    public static CadMesh MoveMesh(CadMesh cm, Vector3d mv)
+    public static CadMesh MoveMesh(CadMesh cm, vector3_t mv)
     {
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) += mv;
+            cm.VertexStore[i] += mv;
         }
 
         return cm;
     }
 
-    public static CadMesh ScaleMesh(CadMesh cm, double scale)
+    public static CadMesh ScaleMesh(CadMesh cm, vcompo_t scale)
     {
         for (int i = 0; i < cm.VertexStore.Count; i++)
         {
-            cm.VertexStore.Ref(i) *= scale;
+            cm.VertexStore[i] *= scale;
         }
 
         return cm;
@@ -85,12 +99,12 @@ public class MeshUtil
 
         triangle = GetTriangleWithCenterPoint(src, i1);
 
-        Vector3d tp0 = mesh.VertexStore[ triangle.VList[0] ].vector;
-        Vector3d tp1 = mesh.VertexStore[ triangle.VList[1] ].vector;
-        Vector3d tp2 = mesh.VertexStore[ triangle.VList[2] ].vector;
+        vector3_t tp0 = mesh.VertexStore[ triangle.VList[0] ].vector;
+        vector3_t tp1 = mesh.VertexStore[ triangle.VList[1] ].vector;
+        vector3_t tp2 = mesh.VertexStore[ triangle.VList[2] ].vector;
         
-        Vector3d dir = CadMath.Normal(tp1, tp0, tp2);
-        Vector3d currentDir = Vector3d.Zero;
+        vector3_t dir = CadMath.Normal(tp1, tp0, tp2);
+        vector3_t currentDir = vector3_t.Zero;
 
         while (src.VList.Count > 3)
         {
@@ -113,7 +127,7 @@ public class MeshUtil
 
             bool hasIn = ListContainsPointInTriangle(triangle, src, mesh);
 
-            double scala = CadMath.InnerProduct(dir, currentDir);
+            vcompo_t scala = CadMath.InnerProduct(dir, currentDir);
 
             if (!hasIn && (scala > 0))
             {
@@ -157,7 +171,7 @@ public class MeshUtil
 
         for (int i=0; i< face.VList.Count; i++)
         {
-            Vector3d fv = mesh.VertexStore[ face.VList[i] ].vector;
+            vector3_t fv = mesh.VertexStore[ face.VList[i] ].vector;
 
             if (
                 fv.Equals(mesh.VertexStore[ tps[0] ].vector) ||
@@ -185,14 +199,14 @@ public class MeshUtil
 
         CadVertex t;
 
-        double maxd = 0;
+        vcompo_t maxd = 0;
 
         for (i = 0; i < f.VList.Count; i++)
         {
             CadVertex fp = mesh.VertexStore[ f.VList[i] ];
 
             t = fp - p0;
-            double d = t.Norm();
+            vcompo_t d = t.Norm();
 
             if (d > maxd)
             {
@@ -224,23 +238,23 @@ public class MeshUtil
         return triangle;
     }
 
-    public static bool IsPointInTriangle(Vector3d p, CadFace triangle, CadMesh mesh)
+    public static bool IsPointInTriangle(vector3_t p, CadFace triangle, CadMesh mesh)
     {
         if (triangle.VList.Count < 3)
         {
             return false;
         }
 
-        Vector3d p0 = mesh.VertexStore[ triangle.VList[0] ].vector;
-        Vector3d p1 = mesh.VertexStore[ triangle.VList[1] ].vector;
-        Vector3d p2 = mesh.VertexStore[ triangle.VList[2] ].vector;
+        vector3_t p0 = mesh.VertexStore[ triangle.VList[0] ].vector;
+        vector3_t p1 = mesh.VertexStore[ triangle.VList[1] ].vector;
+        vector3_t p2 = mesh.VertexStore[ triangle.VList[2] ].vector;
 
-        Vector3d c1 = CadMath.CrossProduct(p, p0, p1);
-        Vector3d c2 = CadMath.CrossProduct(p, p1, p2);
-        Vector3d c3 = CadMath.CrossProduct(p, p2, p0);
+        vector3_t c1 = CadMath.CrossProduct(p, p0, p1);
+        vector3_t c2 = CadMath.CrossProduct(p, p1, p2);
+        vector3_t c3 = CadMath.CrossProduct(p, p2, p0);
 
-        double ip12 = CadMath.InnerProduct(c1, c2);
-        double ip13 = CadMath.InnerProduct(c1, c3);
+        vcompo_t ip12 = CadMath.InnerProduct(c1, c2);
+        vcompo_t ip13 = CadMath.InnerProduct(c1, c3);
 
 
         // When all corossProduct result's sign are same, Point is in triangle
@@ -280,17 +294,17 @@ public class MeshUtil
     }
 
     public static (CadMesh m1, CadMesh m2) CutMeshWithVector(
-        CadMesh src, Vector3d p0, Vector3d p1, Vector3d normal)
+        CadMesh src, vector3_t p0, vector3_t p1, vector3_t normal)
     {
-        Vector3d wv = (p1 - p0).UnitVector();
-        Vector3d hv = normal;
+        vector3_t wv = (p1 - p0).UnitVector();
+        vector3_t hv = normal;
 
-        CadMesh cubeA = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.QUADRANGLE);
+        CadMesh cubeA = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.TRIANGLE);
         MoveMesh(cubeA, -hv / 2);
         ScaleMesh(cubeA, 10000);
         MoveMesh(cubeA, (p1 - p0) / 2 + p0);
 
-        CadMesh cubeB = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.QUADRANGLE);
+        CadMesh cubeB = MeshMaker.CreateUnitCube(wv, hv, MeshMaker.FaceType.TRIANGLE);
         MoveMesh(cubeB, hv / 2);
         ScaleMesh(cubeB, 10000);
         MoveMesh(cubeB, (p1 - p0) / 2 + p0);

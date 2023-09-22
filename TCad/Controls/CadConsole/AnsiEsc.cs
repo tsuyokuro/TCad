@@ -1,5 +1,3 @@
-using Plotter;
-using System;
 using System.Windows.Media;
 
 namespace TCad.Controls;

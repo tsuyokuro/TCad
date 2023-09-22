@@ -1,12 +1,21 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace GLFont;
 
@@ -104,6 +113,7 @@ public class FontShader
         if (ShaderProgram != -1)
         {
             GL.DeleteProgram(ShaderProgram);
+            ShaderProgram = -1;
         }
     }
 

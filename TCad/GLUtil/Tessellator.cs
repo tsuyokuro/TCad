@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenGL.GLU;
 using OpenTK.Graphics.ES11;
@@ -5,15 +6,22 @@ using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup.Localizer;
-using static IronPython.Modules.PythonIterTools;
-using static OpenTK.Graphics.OpenGL.GL;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace GLUtil;
 
@@ -31,9 +39,9 @@ public class Tessellator
 
     private BeginMode CurrentMode;
 
-    public class Contour
+    public class VertexContour
     {
-        public List<int> IndexList = new();
+        public List<vector3_t> VList = new();
     }
 
     public Tessellator()
@@ -67,7 +75,7 @@ public class Tessellator
     private int StripIdx1;
     private int StripIdx2;
 
-    public CadMesh Tessellate(List<Contour> contourList, List<Vector3d> vertexList)
+    public CadMesh Tessellate(List<List<int>> contourList, List<vector3_t> vertexList)
     {
         Glu.TessCallback(pTess, GluTessCallback.Begin, MeshBeginCallback);
         Glu.TessCallback(pTess, GluTessCallback.End, MeshEndCallback);
@@ -88,13 +96,13 @@ public class Tessellator
         {
             Glu.TessBeginContour(pTess);
 
-            Contour contour = contourList[i];
+            List<int> contour = contourList[i];
 
-            for (int j = 0; j < contour.IndexList.Count; j++)
+            for (int j = 0; j < contour.Count; j++)
             {
-                int idx = contour.IndexList[j];
+                int idx = contour[j];
 
-                Vector3d v = vertexList[idx];
+                vector3_t v = vertexList[idx];
                 tv[0] = v.X;
                 tv[1] = v.Y;
                 tv[2] = 0;
@@ -115,6 +123,34 @@ public class Tessellator
 
         return CurMesh;
     }
+
+    public CadMesh Tessellate(List<Vector3List> contourList)
+    {
+        List<vector3_t> vertexList = new();
+        List<List<int>> indexContourList = new();
+
+        int idx = 0;
+
+        for (int i = 0; i < contourList.Count; i++)
+        {
+            Vector3List vcont = contourList[i];
+            List<int> icont = new();
+
+            for (int j = 0; j < vcont.Count; j++)
+            {
+                vector3_t v = vcont[j];
+                vertexList.Add(v);
+                icont.Add(idx);
+
+                idx++;
+            }
+
+            indexContourList.Add(icont);
+        }
+
+        return Tessellate(indexContourList, vertexList);
+    }
+
 
     private void FreeTempGCH()
     {
@@ -254,7 +290,7 @@ public class Tessellator
     {
         DOut.pl("MeshCombine");
         CadVertex v = new();
-        v.X = coords[0]; v.Y = coords[1]; v.Z = coords[2];
+        v.X = (vcompo_t)coords[0]; v.Y = (vcompo_t)coords[1]; v.Z = (vcompo_t)coords[2];
         CurMesh.VertexStore.Add(v);
 
         int vi = CurMesh.VertexStore.Count - 1;

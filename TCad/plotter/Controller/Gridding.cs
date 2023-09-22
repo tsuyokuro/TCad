@@ -1,15 +1,29 @@
-using System;
-using CadDataTypes;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public class Gridding
 {
-    private Vector3d mGridSize;
+    private vector3_t mGridSize;
 
-    public Vector3d GridSize
+    public vector3_t GridSize
     {
         set
         {
@@ -22,14 +36,14 @@ public class Gridding
         }
     }
 
-    public double Range = 8;
+    public vcompo_t Range = 8;
 
-    public Vector3d MatchW;
-    public Vector3d MatchD;
+    public vector3_t MatchW;
+    public vector3_t MatchD;
 
     public Gridding()
     {
-        GridSize = new Vector3d(10, 10, 10);
+        GridSize = new vector3_t(10, 10, 10);
     }
 
     public void Clear()
@@ -43,13 +57,13 @@ public class Gridding
         Range = g.Range;
     }
 
-    public void Check(DrawContext dc, Vector3d scrp)
+    public void Check(DrawContext dc, vector3_t scrp)
     {
-        Vector3d p = dc.DevPointToWorldPoint(scrp);
+        vector3_t p = dc.DevPointToWorldPoint(scrp);
 
-        p.X = (long)((p.X + Math.Sign(p.X) * (GridSize.X / 2.0)) / GridSize.X) * GridSize.X;
-        p.Y = (long)((p.Y + Math.Sign(p.Y) * (GridSize.Y / 2.0)) / GridSize.Y) * GridSize.Y;
-        p.Z = (long)((p.Z + Math.Sign(p.Z) * (GridSize.Z / 2.0)) / GridSize.Z) * GridSize.Z;
+        p.X = (long)((p.X + (vcompo_t)Math.Sign(p.X) * (GridSize.X / (vcompo_t)(2.0))) / GridSize.X) * GridSize.X;
+        p.Y = (long)((p.Y + (vcompo_t)Math.Sign(p.Y) * (GridSize.Y / (vcompo_t)(2.0))) / GridSize.Y) * GridSize.Y;
+        p.Z = (long)((p.Z + (vcompo_t)Math.Sign(p.Z) * (GridSize.Z / (vcompo_t)(2.0))) / GridSize.Z) * GridSize.Z;
 
         MatchW = p;
         MatchD = dc.WorldPointToDevPoint(p);
@@ -60,31 +74,31 @@ public class Gridding
      * 画面上での間隔が min より大きくなるように間引く為のサイズの
      * 倍率を求める
      */
-    public double Decimate(DrawContext dc, Gridding grid, double min)
+    public vcompo_t Decimate(DrawContext dc, Gridding grid, vcompo_t min)
     {
-        double scaleX = 1.0;
-        double scaleY = 1.0;
-        double scaleZ = 1.0;
+        vcompo_t scaleX = (vcompo_t)(1.0);
+        vcompo_t scaleY = (vcompo_t)(1.0);
+        vcompo_t scaleZ = (vcompo_t)(1.0);
 
-        double gridSizeX = grid.GridSize.X;
-        double gridSizeY = grid.GridSize.Y;
-        double gridSizeZ = grid.GridSize.Z;
+        vcompo_t gridSizeX = grid.GridSize.X;
+        vcompo_t gridSizeY = grid.GridSize.Y;
+        vcompo_t gridSizeZ = grid.GridSize.Z;
 
-        Vector3d devLen;
-        double t = 1;
-        double d;
+        vector3_t devLen;
+        vcompo_t t = 1;
+        vcompo_t d;
 
-        double devLenX;
-        double devLenY;
-        double devLenZ;
+        vcompo_t devLenX;
+        vcompo_t devLenY;
+        vcompo_t devLenZ;
 
         // X axis
-        devLen = dc.WorldVectorToDevVector(new Vector3d(gridSizeX, 0, 0));
+        devLen = dc.WorldVectorToDevVector(new vector3_t(gridSizeX, 0, 0));
 
-        devLenX = Math.Max(Math.Abs(devLen.X), Math.Abs(devLen.Y));
+        devLenX = (vcompo_t)Math.Max(Math.Abs(devLen.X), (vcompo_t)Math.Abs(devLen.Y));
         if (devLenX != 0 && devLenX < min)
         {
-            d = Math.Ceiling(min / devLenX) * devLenX;
+            d = (vcompo_t)Math.Ceiling(min / devLenX) * devLenX;
             t = d / devLenX;
         }
 
@@ -95,12 +109,12 @@ public class Gridding
 
 
         // Y axis
-        devLen = dc.WorldVectorToDevVector(new Vector3d(0, gridSizeY, 0));
+        devLen = dc.WorldVectorToDevVector(new vector3_t(0, gridSizeY, 0));
 
-        devLenY = Math.Max(Math.Abs(devLen.X), Math.Abs(devLen.Y));
+        devLenY = (vcompo_t)Math.Max(Math.Abs(devLen.X), (vcompo_t)Math.Abs(devLen.Y));
         if (devLenY != 0 && devLenY < min)
         {
-            d = Math.Ceiling(min / devLenY) * devLenY;
+            d = (vcompo_t)Math.Ceiling(min / devLenY) * devLenY;
             t = d / devLenY;
         }
 
@@ -111,13 +125,13 @@ public class Gridding
 
 
         // Z axis
-        devLen = dc.WorldVectorToDevVector(new Vector3d(0, 0, gridSizeZ));
+        devLen = dc.WorldVectorToDevVector(new vector3_t(0, 0, gridSizeZ));
 
-        devLenZ = Math.Max(Math.Abs(devLen.X), Math.Abs(devLen.Y));
+        devLenZ = (vcompo_t)Math.Max(Math.Abs(devLen.X), (vcompo_t)Math.Abs(devLen.Y));
 
         if (devLenZ != 0 && devLenZ < min)
         {
-            d = Math.Ceiling(min / devLenZ) * devLenZ;
+            d = (vcompo_t)Math.Ceiling(min / devLenZ) * devLenZ;
             t = d / devLenZ;
         }
 
@@ -126,6 +140,6 @@ public class Gridding
             scaleZ = t;
         }
 
-        return Math.Max(Math.Max(scaleX, scaleY), scaleZ);
+        return (vcompo_t)Math.Max(Math.Max(scaleX, scaleY), scaleZ);
     }
 }

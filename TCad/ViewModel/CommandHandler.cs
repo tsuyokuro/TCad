@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter;
 using Plotter.Controller;
 using Plotter.Serializer;
@@ -16,6 +17,21 @@ using System.Xml.Linq;
 using TCad.Controls;
 using TCad.Dialogs;
 using TCad.ScriptEditor;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.ViewModel;
 
@@ -102,6 +118,8 @@ public class CommandHandler
             { "set_line_color", SetLineColor },
             { "set_fill_color", SetFillColor },
             { "enter_command", EnterCommand },
+            { "group", Group },
+            { "ungroup", Ungroup },
             { "test", Test },
         };
     }
@@ -121,7 +139,8 @@ public class CommandHandler
             { "ctrl+s", new KeyAction(Save , null, "Save")},
             { "ctrl+a", new KeyAction(SelectAll , null, "Select All")},
             { "escape", new KeyAction(Cancel , null)},
-            { "ctrl+p", new KeyAction(InsPoint , null, "Inser Point")},
+            { "ctrl+p", new KeyAction(InsPoint , null, "Insert Point to segment")},
+            { "p", new KeyAction(AddPoint , null, "Add Point to cursor pos")},
             { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
             { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
             { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
@@ -319,6 +338,12 @@ public class CommandHandler
         Redraw();
     }
 
+    public void AddPoint()
+    {
+        Controller.AddPointToCursorPos();
+        Redraw();
+    }
+
     public void ToLoop()
     {
         Controller.SetLoop(true);
@@ -379,7 +404,7 @@ public class CommandHandler
     {
         ViewModel.CurrentFileName = null;
 
-        ViewModel.ViewManager.SetWorldScale(1.0);
+        ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
 
         Controller.ClearAll();
         Redraw();
@@ -465,7 +490,7 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.GridSize = dlg.GridSize;
+            ViewModel.Settings.GridSize = (vector3_t)dlg.GridSize;
             Redraw();
         }
     }
@@ -483,8 +508,8 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.PointSnapRange = dlg.PointSnapRange;
-            ViewModel.Settings.LineSnapRange = dlg.LineSnapRange;
+            ViewModel.Settings.PointSnapRange = (vcompo_t)dlg.PointSnapRange;
+            ViewModel.Settings.LineSnapRange = (vcompo_t)dlg.LineSnapRange;
 
             Redraw();
         }
@@ -505,7 +530,7 @@ public class CommandHandler
         if (result.Value)
         {
             ViewModel.Settings.PrintWithBitmap = dlg.PrintWithBitmap;
-            ViewModel.Settings.MagnificationBitmapPrinting = dlg.MagnificationBitmapPrinting;
+            ViewModel.Settings.MagnificationBitmapPrinting = (vcompo_t)dlg.MagnificationBitmapPrinting;
             ViewModel.Settings.PrintLineSmooth = dlg.PrintLineSmooth;
         }
     }
@@ -523,8 +548,8 @@ public class CommandHandler
 
         if (result.Value)
         {
-            ViewModel.Settings.MoveKeyUnitX = dlg.MoveX;
-            ViewModel.Settings.MoveKeyUnitY = dlg.MoveY;
+            ViewModel.Settings.MoveKeyUnitX = (vcompo_t)dlg.MoveX;
+            ViewModel.Settings.MoveKeyUnitY = (vcompo_t)dlg.MoveY;
         }
     }
 
@@ -601,6 +626,126 @@ public class CommandHandler
             Controller.HistoryMan.foward(ope);
         }
     }
+
+    public void Group()
+    {
+        Group(Controller.GetSelectedFigureList());
+    }
+
+    public void Group(List<CadFigure> targetList)
+    {
+        List<CadFigure> list = FilterRootFigure(targetList);
+
+        if (list.Count < 2)
+        {
+            ItConsole.println(
+                Properties.Resources.error_select_2_or_more
+                );
+
+            return;
+        }
+
+        CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
+
+        CadOpeList opeRoot = new CadOpeList();
+        CadOpe ope;
+
+        foreach (CadFigure fig in list)
+        {
+            int idx = Controller.CurrentLayer.GetFigureIndex(fig.ID);
+
+            if (idx < 0)
+            {
+                continue;
+            }
+
+            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, fig.ID);
+            opeRoot.Add(ope);
+
+            Controller.CurrentLayer.RemoveFigureByIndex(idx);
+
+            parent.AddChild(fig);
+        }
+
+        Controller.CurrentLayer.AddFigure(parent);
+
+        ope = new CadOpeAddChildlen(parent, parent.ChildList);
+        opeRoot.Add(ope);
+
+        ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, parent.ID);
+        opeRoot.Add(ope);
+
+        Controller.HistoryMan.foward(opeRoot);
+
+        ItConsole.println(
+                Properties.Resources.notice_was_grouped
+            );
+        Controller.UpdateObjectTree(true);
+    }
+
+    public void Ungroup()
+    {
+        Ungroup(Controller.GetSelectedFigureList());
+    }
+
+    public void Ungroup(List<CadFigure> targetList)
+    {
+        List<CadFigure> list = FilterRootFigure(targetList);
+
+        CadOpeList opeRoot = new CadOpeList();
+
+        CadOpe ope;
+
+        foreach (CadFigure root in list)
+        {
+            root.ForEachFig((fig) =>
+            {
+                if (fig.Parent == null)
+                {
+                    return;
+                }
+
+                fig.Parent = null;
+
+                if (fig.PointCount > 0)
+                {
+                    ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
+                    opeRoot.Add(ope);
+                    Controller.CurrentLayer.AddFigure(fig);
+                }
+            });
+
+            ope = new CadOpeRemoveFigure(Controller.CurrentLayer, root.ID);
+            opeRoot.Add(ope);
+
+            Controller.CurrentLayer.RemoveFigureByID(root.ID);
+        }
+
+        Controller.HistoryMan.foward(opeRoot);
+
+        ItConsole.println(
+            Properties.Resources.notice_was_ungrouped
+            );
+
+        Controller.UpdateObjectTree(true);
+    }
+
+    public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
+    {
+        HashSet<CadFigure> set = new HashSet<CadFigure>();
+
+        foreach (CadFigure fig in srcList)
+        {
+            set.Add(FigUtil.GetRootFig(fig));
+        }
+
+        List<CadFigure> ret = new List<CadFigure>();
+
+        ret.AddRange(set);
+
+        return ret;
+    }
+
 
     private void EnterCommand()
     {
@@ -838,7 +983,7 @@ public class CommandHandler
 
         if (result ?? false)
         {
-            ViewModel.SetWorldScale(dlg.WorldScale);
+            ViewModel.SetWorldScale(((vcompo_t)dlg.WorldScale));
             Redraw();
         }
     }

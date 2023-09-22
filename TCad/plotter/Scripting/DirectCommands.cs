@@ -1,9 +1,28 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using GLFont;
+using Plotter.Controller;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Plotter.Controller;
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
+
+namespace Plotter.Scripting;
 
 public class DirectCommands
 {
@@ -36,7 +55,17 @@ public class DirectCommands
     {
         ItConsole.println("BenchDraw start");
 
+        Action draw = () =>
+        {
+            Controller.DC.StartDraw();
+            Controller.Clear();
+            Controller.DrawAll();
+            Controller.DC.EndDraw();
+        };
+
         Thread.Sleep(100);
+
+        FontRenderer.Counter = 0;
 
         Stopwatch sw = new();
         sw.Start();
@@ -44,23 +73,15 @@ public class DirectCommands
         int cnt = 1000;
         while (i < cnt)
         {
-            ThreadUtil.RunOnMainThread(() =>
-            {
-                //Controller.Redraw();
-
-                Controller.DC.StartDraw();
-                Controller.Clear();
-                Controller.DrawAll();
-                Controller.DC.EndDraw();
-
-            }, true);
+            ThreadUtil.RunOnMainThread(draw, true);
             i++;
         }
         sw.Stop();
 
         ItConsole.println("BenchDraw end");
         ItConsole.println($"BenchDraw cnt:{i} time:{sw.ElapsedMilliseconds}ms");
-        ItConsole.println($"BenchDraw FPS:" + ((double)cnt / sw.ElapsedMilliseconds) * 1000);
+        ItConsole.println($"BenchDraw FPS:" + (vcompo_t)cnt / sw.ElapsedMilliseconds * 1000);
+        //ItConsole.println($"FontRenderer.Counter:" + FontRenderer.Counter);
     }
 
     public bool ExecCommand(string s)

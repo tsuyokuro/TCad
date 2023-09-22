@@ -1,12 +1,27 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using OpenTK.Mathematics;
+using Plotter.Controller;
 using Plotter.Serializer;
-using System;
 using System.IO;
 using System.Reflection;
-using OpenTK.Mathematics;
 using System.Text.Json;
 using JObj = System.Text.Json.Nodes.JsonObject;
-using Plotter.Controller;
 //using JObj = Newtonsoft.Json.Linq.JObject;
+
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
 
 
 namespace Plotter.Settings;
@@ -28,19 +43,19 @@ public class PlotterSettings
 
     public bool SnapToGrid = false;
 
-    public Vector3d GridSize;
+    public vector3_t GridSize;
 
-    public double PointSnapRange = 6;
+    public vcompo_t PointSnapRange = 6;
 
-    public double LineSnapRange = 8;
+    public vcompo_t LineSnapRange = 8;
 
-    public double MoveKeyUnitX = 1.0;
+    public vcompo_t MoveKeyUnitX = (vcompo_t)(1.0);
 
-    public double MoveKeyUnitY = 1.0;
+    public vcompo_t MoveKeyUnitY = (vcompo_t)(1.0);
 
     public bool FilterObjectTree = false;
 
-    public double InitialMoveLimit = 6.0;
+    public vcompo_t InitialMoveLimit = (vcompo_t)(6.0);
 
     public bool SnapToZero = true;
 
@@ -72,13 +87,13 @@ public class PlotterSettings
 
     #region Print
     public bool PrintWithBitmap = true;
-    public double MagnificationBitmapPrinting = 0.962;
+    public vcompo_t MagnificationBitmapPrinting = (vcompo_t)(0.962);
     public bool PrintLineSmooth = false;
     #endregion
 
     public PlotterSettings()
     {
-        GridSize = new Vector3d(10, 10, 10);
+        GridSize = new vector3_t(10, 10, 10);
     }
 
     private string FileName()

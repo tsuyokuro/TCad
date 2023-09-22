@@ -1,18 +1,30 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public class ImageRenderer
 {
-    private int Texture = -1;
+    private int TextureID = -1;
 
     private bool mInitialized = false;
 
@@ -27,7 +39,7 @@ public class ImageRenderer
     {
         Dispose();
 
-        Texture = GL.GenTexture();
+        TextureID = TextureProvider.Instance.GetNew();
 
         // Use my shader
         mShader = ImageShader.GetInstance();
@@ -39,14 +51,14 @@ public class ImageRenderer
     {
         if (mInitialized)
         {
-            GL.DeleteTexture(Texture);
+            TextureProvider.Instance.Remove(TextureID);
         }
 
         mInitialized = false;
     }
 
 
-    public void Render(Bitmap bitmap, Vector3d p, Vector3d xv, Vector3d yv)
+    public void Render(Bitmap bitmap, vector3_t p, vector3_t xv, vector3_t yv)
     {
         int texUnitNumber = 1;
 
@@ -58,7 +70,7 @@ public class ImageRenderer
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 
                     
-        GL.BindTexture(TextureTarget.Texture2D, Texture);
+        GL.BindTexture(TextureTarget.Texture2D, TextureID);
 
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
@@ -91,25 +103,25 @@ public class ImageRenderer
         mShader.Start(texUnitNumber);
 
 
-        Vector3d x = xv;
-        Vector3d y = yv;
+        vector3_t x = xv;
+        vector3_t y = yv;
 
-        GL.TexCoord2(1.0, 1.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
 
-        GL.Normal3(new Vector3d(0, 0, 1));
+        GL.Normal3(new vector3_t(0, 0, 1));
 
         GL.Begin(PrimitiveType.Quads);
 
-        GL.TexCoord2(1.0, 1.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
         GL.Vertex3(p + x + y);
 
-        GL.TexCoord2(0.0, 1.0);
+        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(1.0));
         GL.Vertex3(p + y);
 
-        GL.TexCoord2(0.0, 0.0);
+        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(0.0));
         GL.Vertex3(p);
 
-        GL.TexCoord2(1.0, 0.0);
+        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(0.0));
         GL.Vertex3(p + x);
 
         GL.End();

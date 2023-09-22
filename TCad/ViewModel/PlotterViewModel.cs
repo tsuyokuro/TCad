@@ -1,12 +1,27 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using Plotter;
+using Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
-using Plotter.Controller;
-using Plotter;
-using System.Windows.Forms.Design;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.ViewModel;
 
@@ -211,7 +226,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
-    public void CursorPosChanged(Vector3d pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
     {
         if (type == Plotter.Controller.CursorType.TRACKING)
         {
@@ -282,7 +297,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     }
     #endregion Keyboard handling
 
-    public void SetWorldScale(double scale)
+    public void SetWorldScale(vcompo_t scale)
     {
         mViewManager.SetWorldScale(scale);
     }
@@ -355,7 +370,8 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public void SetupTextCommandView(AutoCompleteTextBox textBox)
     {
         CommandTextBox = textBox;
-        CommandTextBox.CandidateList = Controller.ScriptEnv.AutoCompleteList;
+        CommandTextBox.CandidateList.Clear();
+        CommandTextBox.CandidateList.AddRange(Controller.ScriptEnv.AutoCompleteList);
         CommandTextBox.Determined += EvalTextCommand;
     }
 

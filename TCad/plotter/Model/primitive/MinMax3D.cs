@@ -1,45 +1,60 @@
-using System;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct MinMax3D
 {
-    public Vector3d Min;
-    public Vector3d Max;
+    public vector3_t Min;
+    public vector3_t Max;
 
     public static MinMax3D Create(
         )
     {
         MinMax3D mm = default;
 
-        mm.Min.X = Double.MaxValue;
-        mm.Min.Y = Double.MaxValue;
-        mm.Min.Z = Double.MaxValue;
+        mm.Min.X = vcompo_t.MaxValue;
+        mm.Min.Y = vcompo_t.MaxValue;
+        mm.Min.Z = vcompo_t.MaxValue;
 
-        mm.Max.X = Double.MinValue;
-        mm.Max.Y = Double.MinValue;
-        mm.Max.Z = Double.MinValue;
+        mm.Max.X = vcompo_t.MinValue;
+        mm.Max.Y = vcompo_t.MinValue;
+        mm.Max.Z = vcompo_t.MinValue;
 
         return mm;
     }
 
-    public void CheckMin(Vector3d p)
+    public void CheckMin(vector3_t p)
     {
-        Min.X = Math.Min(Min.X, p.X);
-        Min.Y = Math.Min(Min.Y, p.Y);
-        Min.Z = Math.Min(Min.Z, p.Z);
+        Min.X = (vcompo_t)Math.Min(Min.X, p.X);
+        Min.Y = (vcompo_t)Math.Min(Min.Y, p.Y);
+        Min.Z = (vcompo_t)Math.Min(Min.Z, p.Z);
     }
 
-    public void CheckMax(Vector3d p)
+    public void CheckMax(vector3_t p)
     {
-        Max.X = Math.Max(Max.X, p.X);
-        Max.Y = Math.Max(Max.Y, p.Y);
-        Max.Z = Math.Max(Max.Z, p.Z);
+        Max.X = (vcompo_t)Math.Max(Max.X, p.X);
+        Max.Y = (vcompo_t)Math.Max(Max.Y, p.Y);
+        Max.Z = (vcompo_t)Math.Max(Max.Z, p.Z);
     }
 
-    public void Check(Vector3d p)
+    public void Check(vector3_t p)
     {
         CheckMin(p);
         CheckMax(p);
@@ -47,16 +62,16 @@ public struct MinMax3D
 
     public void CheckMin(MinMax3D mm)
     {
-        Min.X = Math.Min(Min.X, mm.Min.X);
-        Min.Y = Math.Min(Min.Y, mm.Min.Y);
-        Min.Z = Math.Min(Min.Z, mm.Min.Z);
+        Min.X = (vcompo_t)Math.Min(Min.X, mm.Min.X);
+        Min.Y = (vcompo_t)Math.Min(Min.Y, mm.Min.Y);
+        Min.Z = (vcompo_t)Math.Min(Min.Z, mm.Min.Z);
     }
 
     public void CheckMax(MinMax3D mm)
     {
-        Max.X = Math.Max(Max.X, mm.Max.X);
-        Max.Y = Math.Max(Max.Y, mm.Max.Y);
-        Max.Z = Math.Max(Max.Z, mm.Max.Z);
+        Max.X = (vcompo_t)Math.Max(Max.X, mm.Max.X);
+        Max.Y = (vcompo_t)Math.Max(Max.Y, mm.Max.Y);
+        Max.Z = (vcompo_t)Math.Max(Max.Z, mm.Max.Z);
     }
 
     public void Check(MinMax3D mm)
@@ -65,12 +80,12 @@ public struct MinMax3D
         CheckMax(mm);
     }
 
-    public Vector3d GetMinAsVector()
+    public vector3_t GetMinAsVector()
     {
         return Min;
     }
 
-    public Vector3d GetMaxAsVector()
+    public vector3_t GetMaxAsVector()
     {
         return Max;
     }

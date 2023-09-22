@@ -1,6 +1,21 @@
-using System;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -21,19 +36,19 @@ public struct MinMax2D
         return mm;
     }
 
-    public void CheckMin(Vector3d p)
+    public void CheckMin(vector3_t p)
     {
-        Min.X = Math.Min(Min.X, p.X);
-        Min.Y = Math.Min(Min.Y, p.Y);
+        Min.X = (vcompo_t)Math.Min(Min.X, p.X);
+        Min.Y = (vcompo_t)Math.Min(Min.Y, p.Y);
     }
 
-    public void CheckMax(Vector3d p)
+    public void CheckMax(vector3_t p)
     {
-        Max.X = Math.Max(Max.X, p.X);
-        Max.Y = Math.Max(Max.Y, p.Y);
+        Max.X = (vcompo_t)Math.Max(Max.X, p.X);
+        Max.Y = (vcompo_t)Math.Max(Max.Y, p.Y);
     }
 
-    public void Check(Vector3d p)
+    public void Check(vector3_t p)
     {
         CheckMin(p);
         CheckMax(p);
@@ -41,14 +56,14 @@ public struct MinMax2D
 
     public void CheckMin(MinMax3D mm)
     {
-        Min.X = Math.Min(Min.X, mm.Min.X);
-        Min.Y = Math.Min(Min.Y, mm.Min.Y);
+        Min.X = (vcompo_t)Math.Min(Min.X, mm.Min.X);
+        Min.Y = (vcompo_t)Math.Min(Min.Y, mm.Min.Y);
     }
 
     public void CheckMax(MinMax3D mm)
     {
-        Max.X = Math.Max(Max.X, mm.Max.X);
-        Max.Y = Math.Max(Max.Y, mm.Max.Y);
+        Max.X = (vcompo_t)Math.Max(Max.X, mm.Max.X);
+        Max.Y = (vcompo_t)Math.Max(Max.Y, mm.Max.Y);
     }
 
     public void Check(MinMax3D mm)
@@ -57,13 +72,13 @@ public struct MinMax2D
         CheckMax(mm);
     }
 
-    public Vector3d GetMinAsVector()
+    public vector3_t GetMinAsVector()
     {
-        return new Vector3d(Min.X, Min.Y, 0);
+        return new vector3_t((vcompo_t)Min.X, (vcompo_t)Min.Y, 0);
     }
 
-    public Vector3d GetMaxAsVector()
+    public vector3_t GetMaxAsVector()
     {
-        return new Vector3d(Max.X, Max.Y, 0);
+        return new vector3_t((vcompo_t)Max.X, (vcompo_t)Max.Y, 0);
     }
 }

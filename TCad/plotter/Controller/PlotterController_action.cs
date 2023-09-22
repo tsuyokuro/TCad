@@ -1,6 +1,21 @@
-using OpenTK;
-using OpenTK.Mathematics;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System.Collections.Generic;
+using CadDataTypes;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -183,6 +198,20 @@ public partial class PlotterController
         {
             AbendEdit();
         }
+    }
+
+    public void AddPointToCursorPos()
+    {
+        CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
+        fig.AddPoint((CadVertex)GetCursorPos());
+
+        fig.EndCreate(DC);
+
+        CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, fig.ID);
+
+        CurrentLayer.AddFigure(fig);
+
+        HistoryMan.foward(ope);
     }
 
     public void Copy()

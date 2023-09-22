@@ -1,13 +1,12 @@
+using Plotter;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows;
-using System.Text.RegularExpressions;
-using Plotter;
 
 namespace TCad.Controls;
 
@@ -125,13 +124,11 @@ public class AutoCompleteTextBox : TextBox
     public List<string> CandidateList
     {
         get;
-        set;
     } = new List<string>();
 
     public TextHistory History
     {
         get;
-        set;
     } = new TextHistory();
 
     public int CandidateWordMin
@@ -452,8 +449,26 @@ public class AutoCompleteTextBox : TextBox
 
         private string empty = "";
 
+        public string Last
+        {
+            get
+            {
+                if (Data.Count == 0)
+                {
+                    return empty;
+                }
+                return Data[Data.Count - 1];
+            }
+        }
+
         public void Add(string s)
         {
+            if (s == Last)
+            {
+                Pos = Data.Count;
+                return;
+            }
+
             Data.Add(s);
             Pos = Data.Count;
         }

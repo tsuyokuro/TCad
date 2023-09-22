@@ -1,18 +1,33 @@
-using CadDataTypes;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 // 直方体の対角線を保持
 public struct CadRect
 {
-    public Vector3d p0;
-    public Vector3d p1;
+    public vector3_t p0;
+    public vector3_t p1;
 
     public void Normalize()
     {
-        Vector3d minv = p0;
-        Vector3d maxv = p0;
+        vector3_t minv = p0;
+        vector3_t maxv = p0;
 
         if (p0.X < p1.X)
         {
@@ -45,13 +60,13 @@ public struct CadRect
         p1 = maxv;
     }
 
-    public Vector3d Center()
+    public vector3_t Center()
     {
-        Vector3d cv = default;
+        vector3_t cv = default;
 
-        cv.X = p0.X + ((p1.X - p0.X) / 2.0);
-        cv.Y = p0.Y + ((p1.Y - p0.Y) / 2.0);
-        cv.Z = p0.Z + ((p1.Z - p0.Z) / 2.0);
+        cv.X = p0.X + ((p1.X - p0.X) / (vcompo_t)(2.0));
+        cv.Y = p0.Y + ((p1.Y - p0.Y) / (vcompo_t)(2.0));
+        cv.Z = p0.Z + ((p1.Z - p0.Z) / (vcompo_t)(2.0));
 
         return cv;
     }

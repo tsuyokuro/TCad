@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 #define TEX_DEPTH_BUFFER
 
 using System;
@@ -5,6 +6,21 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.Versioning;
 using OpenTK.Graphics.OpenGL;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace GLUtil;
 
@@ -36,7 +52,7 @@ class FrameBufferW
         mWidth = width;
         mHeight = height;
 
-        // Color Texture
+        // Color TextureID
         ColorTexDesc = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, ColorTexDesc);
 
@@ -55,7 +71,7 @@ class FrameBufferW
         GL.BindTexture(TextureTarget.Texture2D, 0);
 
 #if TEX_DEPTH_BUFFER
-        // Depth Texture
+        // Depth TextureID
         DepthTexDesc = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, DepthTexDesc);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);

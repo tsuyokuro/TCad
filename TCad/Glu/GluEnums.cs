@@ -1,4 +1,3 @@
-using OpenTK.Graphics.OpenGL;
 #pragma warning disable 1591
 
 namespace OpenGL.GLU;

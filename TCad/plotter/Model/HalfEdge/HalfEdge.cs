@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 
 using CadDataTypes;
 using MyCollections;
@@ -5,6 +6,21 @@ using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace HalfEdgeNS;
 
@@ -59,13 +75,13 @@ public class HeModel
 
     public VertexList VertexStore;
     public FlexArray<HeFace> FaceStore;
-    public Vector3dList NormalStore;
+    public Vector3List NormalStore;
 
     public HeModel()
     {
         VertexStore = new VertexList(8);
         FaceStore = new FlexArray<HeFace>(6);
-        NormalStore = new Vector3dList(8);
+        NormalStore = new Vector3List(8);
     }
 
     public void Clear()
@@ -122,7 +138,7 @@ public class HeModel
 
     public void RecreateNormals()
     {
-        Vector3dList newNormalStore = new Vector3dList(VertexStore.Count);
+        Vector3List newNormalStore = new Vector3List(VertexStore.Count);
 
         int i;
         for (i = 0; i < FaceStore.Count; i++)
@@ -132,7 +148,7 @@ public class HeModel
             HalfEdge head = FaceStore[i].Head;
             HalfEdge c = head;
 
-            Vector3d n = CadMath.Normal(
+            vector3_t n = CadMath.Normal(
                 VertexStore[c.Vertex].vector,
                 VertexStore[c.Next.Vertex].vector,
                 VertexStore[c.Next.Next.Vertex].vector
@@ -383,7 +399,7 @@ public class HeModel
     {
         CadVertex t;
 
-        double maxd = 0;
+        vcompo_t maxd = 0;
 
         int ret = -1;
 
@@ -399,7 +415,7 @@ public class HeModel
             CadVertex fp = VertexStore[vi];
 
             t = fp - p0;
-            double d = t.Norm();
+            vcompo_t d = t.Norm();
 
             if (d > maxd)
             {

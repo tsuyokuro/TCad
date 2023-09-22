@@ -1,7 +1,22 @@
-using System.Collections.Generic;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
+using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -30,12 +45,12 @@ public class TriangleSplitter
 
         triangle = GetTriangleWithCenterPoint(pointList, i1);
 
-        Vector3d tp0 = triangle.PointList[0].vector;
-        Vector3d tp1 = triangle.PointList[1].vector;
-        Vector3d tp2 = triangle.PointList[2].vector;
+        vector3_t tp0 = triangle.PointList[0].vector;
+        vector3_t tp1 = triangle.PointList[1].vector;
+        vector3_t tp2 = triangle.PointList[2].vector;
 
-        Vector3d dir = CadMath.Normal(tp1, tp0, tp2);
-        Vector3d currentDir = Vector3d.Zero;
+        vector3_t dir = CadMath.Normal(tp1, tp0, tp2);
+        vector3_t currentDir = vector3_t.Zero;
 
         while (pointList.Count > 3)
         {
@@ -58,7 +73,7 @@ public class TriangleSplitter
 
             bool hasIn = ListContainsPointInTriangle(pointList, triangle);
 
-            double scala = CadMath.InnerProduct(dir, currentDir);
+            vcompo_t scala = CadMath.InnerProduct(dir, currentDir);
 
             if (!hasIn && (scala > 0))
             {

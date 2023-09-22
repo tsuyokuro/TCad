@@ -1,10 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
 using static Plotter.Controller.PlotterController;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -21,9 +33,9 @@ public class SegSearcher
 
     private CadCursor Target;
 
-    public double Range;
+    public vcompo_t Range;
 
-    public double MinDist = 0;
+    public vcompo_t MinDist = 0;
 
     public bool IsMatch
     {
@@ -37,7 +49,7 @@ public class SegSearcher
 
     public Priority CheckPriority = Priority.NONE;
 
-    public void SetRangePixel(DrawContext dc, double pixel)
+    public void SetRangePixel(DrawContext dc, vcompo_t pixel)
     {
         Range = pixel;
     }
@@ -118,8 +130,8 @@ public class SegSearcher
         CadFigure fig = fseg.Figure;
         int idxA = fseg.Index0;
         int idxB = fseg.Index1;
-        Vector3d a = fseg.Point0.vector;
-        Vector3d b = fseg.Point1.vector;
+        vector3_t a = fseg.Point0.vector;
+        vector3_t b = fseg.Point1.vector;
 
         if (fig.StoreList != null && fig.StoreList.Count > 1)
         {
@@ -132,28 +144,28 @@ public class SegSearcher
             b = fseg.StoredPoint1.vector;
         }
 
-        Vector3d cwp = dc.DevPointToWorldPoint(Target.Pos);
+        vector3_t cwp = dc.DevPointToWorldPoint(Target.Pos);
 
-        Vector3d xfaceNormal = dc.DevVectorToWorldVector(Target.DirX);
-        Vector3d yfaceNormal = dc.DevVectorToWorldVector(Target.DirY);
+        vector3_t xfaceNormal = dc.DevVectorToWorldVector(Target.DirX);
+        vector3_t yfaceNormal = dc.DevVectorToWorldVector(Target.DirY);
 
-        Vector3d cx = CadMath.CrossSegPlane(a, b, cwp, xfaceNormal);
-        Vector3d cy = CadMath.CrossSegPlane(a, b, cwp, yfaceNormal);
+        vector3_t cx = CadMath.CrossSegPlane(a, b, cwp, xfaceNormal);
+        vector3_t cy = CadMath.CrossSegPlane(a, b, cwp, yfaceNormal);
 
         if (!cx.IsValid() && !cy.IsValid())
         {
             return;
         }
 
-        Vector3d p = VectorExt.InvalidVector3d;
-        double mind = double.MaxValue;
+        vector3_t p = VectorExt.InvalidVector3;
+        vcompo_t mind = vcompo_t.MaxValue;
 
-        Vector3d dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));
-        double centerDist = (dcenter - Target.Pos).Norm();
+        vector3_t dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));
+        vcompo_t centerDist = (dcenter - Target.Pos).Norm();
 
         if (CheckPriority == Priority.NONE || centerDist < Range)
         {
-            StackArray<Vector3d> vtbl = default;
+            StackArray<vector3_t> vtbl = default;
 
             vtbl[0] = cx;
             vtbl[1] = cy;
@@ -161,15 +173,15 @@ public class SegSearcher
 
             for (int i = 0; i < vtbl.Length; i++)
             {
-                Vector3d v = vtbl[i];
+                vector3_t v = vtbl[i];
 
                 if (!v.IsValid())
                 {
                     continue;
                 }
 
-                Vector3d devv = dc.WorldPointToDevPoint(v);
-                double td = (devv - Target.Pos).Norm();
+                vector3_t devv = dc.WorldPointToDevPoint(v);
+                vcompo_t td = (devv - Target.Pos).Norm();
 
                 if (td < mind)
                 {
@@ -194,7 +206,7 @@ public class SegSearcher
                 return;
             }
 
-            Vector3d devv = dc.WorldPointToDevPoint(p);
+            vector3_t devv = dc.WorldPointToDevPoint(p);
             mind = (devv - Target.Pos).Norm();
         }
 
@@ -234,16 +246,16 @@ public class SegSearcher
             vl = fig.StoreList;
         }
 
-        Vector3d c = vl[0].vector;
-        Vector3d a = vl[1].vector;
-        Vector3d b = vl[2].vector;
-        Vector3d normal = CadMath.Normal(a - c, b - c);
+        vector3_t c = vl[0].vector;
+        vector3_t a = vl[1].vector;
+        vector3_t b = vl[2].vector;
+        vector3_t normal = CadMath.Normal(a - c, b - c);
 
-        Vector3d tw = Target.Pos;
+        vector3_t tw = Target.Pos;
         tw.Z = 0;
         tw = dc.DevPointToWorldPoint(tw);
 
-        Vector3d crossP = CadMath.CrossPlane(tw, tw + dc.ViewDir, c, normal);
+        vector3_t crossP = CadMath.CrossPlane(tw, tw + dc.ViewDir, c, normal);
 
         if (crossP.IsInvalid())
         {
@@ -253,18 +265,18 @@ public class SegSearcher
             return;
         }
 
-        double r = (a - c).Norm();
-        double tr = (crossP - c).Norm();
+        vcompo_t r = (a - c).Norm();
+        vcompo_t tr = (crossP - c).Norm();
 
-        Vector3d cirP = c + (crossP - c) * (r / tr);
+        vector3_t cirP = c + (crossP - c) * (r / tr);
 
-        Vector3d dcirP = dc.WorldPointToDevPoint(cirP);
-        Vector3d dcrossP = dc.WorldPointToDevPoint(crossP);
+        vector3_t dcirP = dc.WorldPointToDevPoint(cirP);
+        vector3_t dcrossP = dc.WorldPointToDevPoint(crossP);
 
         dcirP.Z = 0;
         dcrossP.Z = 0;
 
-        double dist = (dcirP - Target.Pos).Norm();
+        vcompo_t dist = (dcirP - Target.Pos).Norm();
 
         if (dist > Range)
         {

@@ -1,7 +1,6 @@
 # coding: cp932
 
 
-from datetime import datetime as dt
 import time
 import math
 import sys
@@ -20,7 +19,7 @@ import CadDataTypes.VertexList as VertexList
 import CadDataTypes.CadMesh as CadMesh
 import CadDataTypes.CadFace as CadFace
 
-import OpenTK.Mathematics.Vector3d as Vector3d
+import OpenTK.Mathematics.Vector3 as Vector3
 
 #version 1.0
 
@@ -245,7 +244,7 @@ def rotate(id, p0, v, t):
 
 #[AC] make_rotating_body_itr(current_fig_id(), top_cap=True, btm_cap=True)
 def make_rotating_body_itr(id, top_cap, btm_cap):
-    print esc_b_green_bg + esc_black + " <<<< Input Axis >>>> " + esc_reset
+    print(esc_b_green_bg + esc_black + " <<<< Input Axis >>>> " + esc_reset)
 
     (p1, p2) = input_line();
 
@@ -276,7 +275,7 @@ def set_fig_name(id, name):
 def get_point(figID, index):
 	return SE.GetPoint(figID, index);
 
-#[AC] set_point(figID=current_fig_id(), index=0, dv=Vector3d(0,0,0))
+#[AC] set_point(figID=current_fig_id(), index=0, dv=Vector3(0,0,0))
 def set_point(figID, index, dv):
 	return SE.SetPoint(figID, index, dv);
 
@@ -440,14 +439,14 @@ cout = MyConsoleOut()
 sys.stdout = cout
 
 #[AC] point0
-point0 = Vector3d(0,0,0)
+point0 = Vector3(0,0,0)
 
 #[AC] unit_vx
 #[AC] unit_vy
 #[AC] unit_vz
-unit_vx = Vector3d(1,0,0)
-unit_vy = Vector3d(0,1,0)
-unit_vz = Vector3d(0,0,1)
+unit_vx = Vector3(1,0,0)
+unit_vy = Vector3(0,1,0)
+unit_vz = Vector3(0,0,1)
 
 #[AC] w_1x4
 #[AC] t_1x4

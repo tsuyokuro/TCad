@@ -1,10 +1,25 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using CadDataTypes;
 using HalfEdgeNS;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using OpenTK;
-using OpenTK.Mathematics;
-using CadDataTypes;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -35,10 +50,10 @@ public class DrawingGDI : IDrawing
     #region "Draw base"
     public void DrawAxis()
     {
-        Vector3d p0 = default;
-        Vector3d p1 = default;
+        vector3_t p0 = default;
+        vector3_t p1 = default;
 
-        double len = DrawingConst.AxisLength;
+        vcompo_t len = DrawingConst.AxisLength;
 
         // X軸
         p0.X = -len;
@@ -87,38 +102,38 @@ public class DrawingGDI : IDrawing
 
     public virtual void DrawGrid(Gridding grid)
     {
-        Vector3d lt = Vector3d.Zero;
-        Vector3d rb = new Vector3d(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t lt = vector3_t.Zero;
+        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
 
-        Vector3d ltw = DC.DevPointToWorldPoint(lt);
-        Vector3d rbw = DC.DevPointToWorldPoint(rb);
+        vector3_t ltw = DC.DevPointToWorldPoint(lt);
+        vector3_t rbw = DC.DevPointToWorldPoint(rb);
 
-        double minx = Math.Min(ltw.X, rbw.X);
-        double maxx = Math.Max(ltw.X, rbw.X);
+        vcompo_t minx = (vcompo_t)Math.Min(ltw.X, rbw.X);
+        vcompo_t maxx = (vcompo_t)Math.Max(ltw.X, rbw.X);
 
-        double miny = Math.Min(ltw.Y, rbw.Y);
-        double maxy = Math.Max(ltw.Y, rbw.Y);
+        vcompo_t miny = (vcompo_t)Math.Min(ltw.Y, rbw.Y);
+        vcompo_t maxy = (vcompo_t)Math.Max(ltw.Y, rbw.Y);
 
-        double minz = Math.Min(ltw.Z, rbw.Z);
-        double maxz = Math.Max(ltw.Z, rbw.Z);
+        vcompo_t minz = (vcompo_t)Math.Min(ltw.Z, rbw.Z);
+        vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
         DrawPen pen = DC.GetPen(DrawTools.PEN_GRID);
 
-        Vector3d p = default(Vector3d);
+        vector3_t p = default(vector3_t);
 
 
-        double n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, grid, 8);
 
-        double x, y, z;
-        double sx, sy, sz;
-        double szx = grid.GridSize.X * n;
-        double szy = grid.GridSize.Y * n;
-        double szz = grid.GridSize.Z * n;
+        vcompo_t x, y, z;
+        vcompo_t sx, sy, sz;
+        vcompo_t szx = grid.GridSize.X * n;
+        vcompo_t szy = grid.GridSize.Y * n;
+        vcompo_t szz = grid.GridSize.Z * n;
 
-        sx = Math.Round(minx / szx) * szx;
-        sy = Math.Round(miny / szy) * szy;
-        sz = Math.Round(minz / szz) * szz;
+        sx = (vcompo_t)Math.Round(minx / szx) * szx;
+        sy = (vcompo_t)Math.Round(miny / szy) * szy;
+        sz = (vcompo_t)Math.Round(minz / szz) * szz;
 
         x = sx;
         while (x < maxx)
@@ -179,16 +194,16 @@ public class DrawingGDI : IDrawing
         }
     }
 
-    public void DrawPageFrame(double w, double h, Vector3d center)
+    public void DrawPageFrame(vcompo_t w, vcompo_t h, vector3_t center)
     {
-        Vector3d pt = default(Vector3d);
+        vector3_t pt = default(vector3_t);
 
         // p0
         pt.X = -w / 2 + center.X;
         pt.Y = h / 2 + center.Y;
         pt.Z = 0;
 
-        Vector3d p0 = default(Vector3d);
+        vector3_t p0 = default(vector3_t);
         p0.X = pt.X * DC.UnitPerMilli;
         p0.Y = pt.Y * DC.UnitPerMilli;
 
@@ -199,7 +214,7 @@ public class DrawingGDI : IDrawing
         pt.Y = -h / 2 + center.Y;
         pt.Z = 0;
 
-        Vector3d p1 = default(Vector3d);
+        vector3_t p1 = default(vector3_t);
         p1.X = pt.X * DC.UnitPerMilli;
         p1.Y = pt.Y * DC.UnitPerMilli;
 
@@ -210,9 +225,9 @@ public class DrawingGDI : IDrawing
     #endregion
 
     #region "Draw marker"
-    public void DrawHighlightPoint(Vector3d pt, DrawPen pen)
+    public void DrawHighlightPoint(vector3_t pt, DrawPen pen)
     {
-        Vector3d pp = DC.WorldPointToDevPoint(pt);
+        vector3_t pp = DC.WorldPointToDevPoint(pt);
 
         //DrawCircleScrn(pen, pp, 3);
 
@@ -227,9 +242,9 @@ public class DrawingGDI : IDrawing
         });
     }
 
-    public void DrawSelectedPoint(Vector3d pt, DrawPen pen)
+    public void DrawSelectedPoint(vector3_t pt, DrawPen pen)
     {
-        Vector3d pp = DC.WorldPointToDevPoint(pt);
+        vector3_t pp = DC.WorldPointToDevPoint(pt);
 
         int size = 2;
 
@@ -251,14 +266,14 @@ public class DrawingGDI : IDrawing
         }
     }
 
-    public void DrawMarkCursor(DrawPen pen, Vector3d p, double pix_size)
+    public void DrawMarkCursor(DrawPen pen, vector3_t p, vcompo_t pix_size)
     {
         DrawCross(pen, p, pix_size);
     }
     #endregion
 
     public void DrawHarfEdgeModel(
-        DrawBrush brush, DrawPen pen, DrawPen edgePen, double edgeThreshold, HeModel model)
+        DrawBrush brush, DrawPen pen, DrawPen edgePen, vcompo_t edgeThreshold, HeModel model)
     {
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
@@ -282,7 +297,7 @@ public class DrawingGDI : IDrawing
                 }
                 else
                 {
-                    double s = CadMath.InnerProduct(model.NormalStore[c.Normal], model.NormalStore[pair.Normal]);
+                    vcompo_t s = CadMath.InnerProduct(model.NormalStore[c.Normal], model.NormalStore[pair.Normal]);
 
                     if (Math.Abs(s) < edgeThreshold)
                     {
@@ -295,8 +310,8 @@ public class DrawingGDI : IDrawing
                 DrawPen dpen = edge ? edgePen : pen;
 
                 DrawLine(dpen,
-                    model.VertexStore.Ref(c.Vertex).vector,
-                    model.VertexStore.Ref(next.Vertex).vector
+                    model.VertexStore[c.Vertex].vector,
+                    model.VertexStore[next.Vertex].vector
                     );
 
                 c = next;
@@ -309,31 +324,31 @@ public class DrawingGDI : IDrawing
         }
     }
 
-    public void DrawRect(DrawPen pen, Vector3d p0, Vector3d p1)
+    public void DrawRect(DrawPen pen, vector3_t p0, vector3_t p1)
     {
-        Vector3d pp0 = DC.WorldPointToDevPoint(p0);
-        Vector3d pp1 = DC.WorldPointToDevPoint(p1);
+        vector3_t pp0 = DC.WorldPointToDevPoint(p0);
+        vector3_t pp1 = DC.WorldPointToDevPoint(p1);
 
         DrawRectangleScrn(pen, pp0.X, pp0.Y, pp1.X, pp1.Y);
     }
 
-    public void DrawCross(DrawPen pen, Vector3d p, double size)
+    public void DrawCross(DrawPen pen, vector3_t p, vcompo_t size)
     {
-        double hs = size;
+        vcompo_t hs = size;
 
-        Vector3d px0 = p;
+        vector3_t px0 = p;
         px0.X -= hs;
-        Vector3d px1 = p;
+        vector3_t px1 = p;
         px1.X += hs;
 
-        Vector3d py0 = p;
+        vector3_t py0 = p;
         py0.Y -= hs;
-        Vector3d py1 = p;
+        vector3_t py1 = p;
         py1.Y += hs;
 
-        Vector3d pz0 = p;
+        vector3_t pz0 = p;
         pz0.Z -= hs;
-        Vector3d pz1 = p;
+        vector3_t pz1 = p;
         pz1.Z += hs;
 
         DrawLine(pen, px0, px1);
@@ -341,61 +356,61 @@ public class DrawingGDI : IDrawing
         DrawLine(pen, pz0, pz1);
     }
 
-    public void DrawCrossScrn(DrawPen pen, Vector3d p, double size)
+    public void DrawCrossScrn(DrawPen pen, vector3_t p, vcompo_t size)
     {
         DrawLineScrn(pen, p.X - size, p.Y + 0, p.X + size, p.Y + 0);
         DrawLineScrn(pen, p.X + 0, p.Y + size, p.X + 0, p.Y - size);
     }
 
-    private void DrawXScrn(DrawPen pen, Vector3d p, double size)
+    private void DrawXScrn(DrawPen pen, vector3_t p, vcompo_t size)
     {
         DrawLineScrn(pen, p.X - size, p.Y + size, p.X + size, p.Y - size);
         DrawLineScrn(pen, p.X - size, p.Y - size, p.X + size, p.Y + size);
     }
 
 
-    public void DrawLine(DrawPen pen, Vector3d a, Vector3d b)
+    public void DrawLine(DrawPen pen, vector3_t a, vector3_t b)
     {
         if (pen.GdiPen == null) return;
 
-        Vector3d pa = DC.WorldPointToDevPoint(a);
-        Vector3d pb = DC.WorldPointToDevPoint(b);
+        vector3_t pa = DC.WorldPointToDevPoint(a);
+        vector3_t pb = DC.WorldPointToDevPoint(b);
 
         DC.GdiGraphics.DrawLine(pen.GdiPen, (int)pa.X, (int)pa.Y, (int)pb.X, (int)pb.Y);
     }
 
-    public virtual void DrawDot(DrawPen pen, Vector3d p)
+    public virtual void DrawDot(DrawPen pen, vector3_t p)
     {
-        Vector3d p0 = DC.WorldPointToDevPoint(p);
-        Vector3d p1 = p0;
+        vector3_t p0 = DC.WorldPointToDevPoint(p);
+        vector3_t p1 = p0;
         p0.X = (int)p0.X;
-        p1.X = p0.X + 0.1;
+        p1.X = p0.X + (vcompo_t)(0.1);
 
         DC.GdiGraphics.DrawLine(pen.GdiPen, (float)p0.X, (float)p0.Y, (float)p1.X, (float)p1.Y);
     }
 
-    public void DrawText(int font, DrawBrush brush, Vector3d a, Vector3d xdir, Vector3d ydir, DrawTextOption opt, double scale, string s)
+    public void DrawText(int font, DrawBrush brush, vector3_t a, vector3_t xdir, vector3_t ydir, DrawTextOption opt, vcompo_t scale, string s)
     {
-        Vector3d pa = DC.WorldPointToDevPoint(a);
-        Vector3d d = DC.WorldVectorToDevVector(xdir);
+        vector3_t pa = DC.WorldPointToDevPoint(a);
+        vector3_t d = DC.WorldVectorToDevVector(xdir);
 
         DrawTextScrn(font, brush, pa, d, opt, s);
     }
 
-    private void DrawTextScrn(int font, DrawBrush brush, Vector3d a, Vector3d dir, DrawTextOption opt, string s)
+    private void DrawTextScrn(int font, DrawBrush brush, vector3_t a, vector3_t dir, DrawTextOption opt, string s)
     {
         if (brush.GdiBrush == null) return;
         if (DC.Font(font) == null) return;
 
         if (opt.Option != 0)
         {
-            Vector3d sz = MeasureText(font, s);
+            vector3_t sz = MeasureText(font, s);
 
             if ((opt.Option | DrawTextOption.H_CENTER) != 0)
             {
-                double slen = sz.X / 2;
+                vcompo_t slen = sz.X / 2;
 
-                Vector3d ud = Vector3d.UnitX;
+                vector3_t ud = vector3_t.UnitX;
 
                 if (!dir.IsZero())
                 {
@@ -406,7 +421,7 @@ public class DrawingGDI : IDrawing
             }
         }
 
-        double angle = 0;
+        vcompo_t angle = 0;
 
         if (!(dir.X == 0 && dir.Y == 0))
         {
@@ -427,26 +442,26 @@ public class DrawingGDI : IDrawing
         DC.GdiGraphics.ResetTransform();
     }
 
-    private Vector3d MeasureText(int font, string s)
+    private vector3_t MeasureText(int font, string s)
     {
         if (DC.Font(font) == null)
         {
-            return Vector3d.Zero;
+            return vector3_t.Zero;
         }
 
         SizeF size = DC.GdiGraphics.MeasureString(s, DC.Font(font));
 
-        Vector3d v = new Vector3d(size.Width, size.Height, 0);
+        vector3_t v = new vector3_t(size.Width, size.Height, 0);
 
         return v;
     }
 
     public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
     {
-        double size = Math.Max(DC.ViewWidth, DC.ViewHeight);
+        vcompo_t size = (vcompo_t)Math.Max(DC.ViewWidth, DC.ViewHeight);
 
-        Vector3d p0 = pp.Pos - (pp.DirX * size);
-        Vector3d p1 = pp.Pos + (pp.DirX * size);
+        vector3_t p0 = pp.Pos - (pp.DirX * size);
+        vector3_t p1 = pp.Pos + (pp.DirX * size);
 
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
 
@@ -456,26 +471,26 @@ public class DrawingGDI : IDrawing
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
     }
 
-    public void DrawRectScrn(DrawPen pen, Vector3d pp0, Vector3d pp1)
+    public void DrawRectScrn(DrawPen pen, vector3_t pp0, vector3_t pp1)
     {
         DrawRectangleScrn(pen, pp0.X, pp0.Y, pp1.X, pp1.Y);
     }
 
-    protected void DrawLineScrn(DrawPen pen, Vector3d a, Vector3d b)
+    protected void DrawLineScrn(DrawPen pen, vector3_t a, vector3_t b)
     {
         if (pen.GdiPen == null) return;
 
         DC.GdiGraphics.DrawLine(pen.GdiPen, (int)a.X, (int)a.Y, (int)b.X, (int)b.Y);
     }
 
-    protected void DrawLineScrn(DrawPen pen, double x1, double y1, double x2, double y2)
+    protected void DrawLineScrn(DrawPen pen, vcompo_t x1, vcompo_t y1, vcompo_t x2, vcompo_t y2)
     {
         if (pen.GdiPen == null) return;
 
         DC.GdiGraphics.DrawLine(pen.GdiPen, (int)x1, (int)y1, (int)x2, (int)y2);
     }
 
-    protected void DrawRectangleScrn(DrawPen pen, double x0, double y0, double x1, double y1)
+    protected void DrawRectangleScrn(DrawPen pen, vcompo_t x0, vcompo_t y0, vcompo_t x1, vcompo_t y1)
     {
         if (pen.GdiPen == null) return;
 
@@ -503,13 +518,13 @@ public class DrawingGDI : IDrawing
         DC.GdiGraphics.DrawRectangle(pen.GdiPen, lx, ty, dx, dy);
     }
 
-    protected void DrawCircleScrn(DrawPen pen, Vector3d cp, Vector3d p1)
+    protected void DrawCircleScrn(DrawPen pen, vector3_t cp, vector3_t p1)
     {
-        double r = CadMath.SegNorm(cp, p1);
+        vcompo_t r = CadMath.SegNorm(cp, p1);
         DrawCircleScrn(pen, cp, r);
     }
 
-    protected void DrawCircleScrn(DrawPen pen, Vector3d cp, double r)
+    protected void DrawCircleScrn(DrawPen pen, vector3_t cp, vcompo_t r)
     {
         if (pen.GdiPen == null) return;
 
@@ -517,7 +532,7 @@ public class DrawingGDI : IDrawing
             pen.GdiPen, (int)(cp.X - r), (int)(cp.Y - r), (int)(r * 2), (int)(r * 2));
     }
 
-    protected void FillRectangleScrn(DrawBrush brush, double x0, double y0, double x1, double y1)
+    protected void FillRectangleScrn(DrawBrush brush, vcompo_t x0, vcompo_t y0, vcompo_t x1, vcompo_t y1)
     {
         if (brush.GdiBrush == null) return;
 
@@ -551,15 +566,15 @@ public class DrawingGDI : IDrawing
 
     public void DrawBouncingBox(DrawPen pen, MinMax3D mm)
     {
-        Vector3d p0 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Min.Z);
-        Vector3d p1 = new Vector3d(mm.Min.X, mm.Min.Y, mm.Max.Z);
-        Vector3d p2 = new Vector3d(mm.Max.X, mm.Min.Y, mm.Max.Z);
-        Vector3d p3 = new Vector3d(mm.Max.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p0 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p1 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p2 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p3 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Min.Z);
 
-        Vector3d p4 = new Vector3d(mm.Min.X, mm.Max.Y, mm.Min.Z);
-        Vector3d p5 = new Vector3d(mm.Min.X, mm.Max.Y, mm.Max.Z);
-        Vector3d p6 = new Vector3d(mm.Max.X, mm.Max.Y, mm.Max.Z);
-        Vector3d p7 = new Vector3d(mm.Max.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p4 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p5 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p6 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p7 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Min.Z);
 
         DC.Drawing.DrawLine(pen, p0, p1);
         DC.Drawing.DrawLine(pen, p1, p2);
@@ -577,12 +592,12 @@ public class DrawingGDI : IDrawing
         DC.Drawing.DrawLine(pen, p3, p7);
     }
 
-    public void DrawArrow(DrawPen pen, Vector3d pt0, Vector3d pt1, ArrowTypes type, ArrowPos pos, double len, double width)
+    public void DrawArrow(DrawPen pen, vector3_t pt0, vector3_t pt1, ArrowTypes type, ArrowPos pos, vcompo_t len, vcompo_t width)
     {
         DrawUtil.DrawArrow(this, pen, pt0, pt1, type, pos, len, width);
     }
 
-    public void DrawExtSnapPoints(Vector3dList pointList, DrawPen pen)
+    public void DrawExtSnapPoints(Vector3List pointList, DrawPen pen)
     {
         foreach (var v in pointList)
         {

@@ -1,16 +1,31 @@
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct Centroid
 {
     public bool IsInvalid;
-    public double Area;
-    public Vector3d Point;
+    public vcompo_t Area;
+    public vector3_t Point;
 
     // 三角形から作成
-    public static Centroid Create(Vector3d p0, Vector3d p1, Vector3d p2)
+    public static Centroid Create(vector3_t p0, vector3_t p1, vector3_t p2)
     {
         Centroid ret = default(Centroid);
         ret.set(p0, p1, p2);
@@ -18,7 +33,7 @@ public struct Centroid
     }
 
     // 三角形で設定
-    public void set(Vector3d p0, Vector3d p1, Vector3d p2)
+    public void set(vector3_t p0, vector3_t p1, vector3_t p2)
     {
         Area = CadMath.TriangleArea(p0, p1, p2);
         Point = CadMath.TriangleCentroid(p0, p1, p2);
@@ -33,9 +48,9 @@ public struct Centroid
     // 二つの重心情報から重心を求める
     public static Centroid Merge(Centroid c0, Centroid c1)
     {
-        Vector3d gpt = default;
+        vector3_t gpt = default;
 
-        double ratio = c1.Area / (c0.Area + c1.Area);
+        vcompo_t ratio = c1.Area / (c0.Area + c1.Area);
 
         gpt.X = (c1.Point.X - c0.Point.X) * ratio + c0.Point.X;
         gpt.Y = (c1.Point.Y - c0.Point.Y) * ratio + c0.Point.Y;

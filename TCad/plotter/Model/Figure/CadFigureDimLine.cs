@@ -1,7 +1,21 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
-using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -17,8 +31,8 @@ namespace Plotter;
 
 public class CadFigureDimLine : CadFigure
 {
-    private const double ARROW_LEN = 2;
-    private const double ARROW_W = 1;
+    private const vcompo_t ARROW_LEN = 2;
+    private const vcompo_t ARROW_W = 1;
 
     public int FontID { set; get; } = DrawTools.FONT_SMALL;
 
@@ -117,7 +131,7 @@ public class CadFigureDimLine : CadFigure
 
     public override void MoveSelectedPointsFromStored(DrawContext dc, MoveInfo moveInfo)
     {
-        Vector3d delta = moveInfo.Delta;
+        vector3_t delta = moveInfo.Delta;
 
         if (PointList[0].Selected && PointList[1].Selected &&
             PointList[2].Selected && PointList[3].Selected)
@@ -131,7 +145,7 @@ public class CadFigureDimLine : CadFigure
 
         if (PointList[2].Selected || PointList[3].Selected)
         {
-            Vector3d v0 = StoreList[3].vector - StoreList[0].vector;
+            vector3_t v0 = StoreList[3].vector - StoreList[0].vector;
 
             if (v0.IsZero())
             {
@@ -140,17 +154,17 @@ public class CadFigureDimLine : CadFigure
                 return;
             }
 
-            Vector3d v0u = v0.UnitVector();
+            vector3_t v0u = v0.UnitVector();
 
-            double d = CadMath.InnerProduct(v0u, delta);
+            vcompo_t d = CadMath.InnerProduct(v0u, delta);
 
-            Vector3d vd = v0u * d;
+            vector3_t vd = v0u * d;
 
             CadVertex nv3 = StoreList[3] + vd;
             CadVertex nv2 = StoreList[2] + vd;
 
-            if (nv3.EqualsThreshold(StoreList[0], 0.001) ||
-                nv2.EqualsThreshold(StoreList[1], 0.001))
+            if (nv3.EqualsThreshold(StoreList[0], (vcompo_t)(0.001)) ||
+                nv2.EqualsThreshold(StoreList[1], (vcompo_t)(0.001)))
             {
                 return;
             }
@@ -163,18 +177,18 @@ public class CadFigureDimLine : CadFigure
 
         if (PointList[0].Selected || PointList[1].Selected)
         {
-            Vector3d v0 = StoreList[0].vector;
-            Vector3d v1 = StoreList[1].vector;
-            Vector3d v2 = StoreList[2].vector;
-            Vector3d v3 = StoreList[3].vector;
+            vector3_t v0 = StoreList[0].vector;
+            vector3_t v1 = StoreList[1].vector;
+            vector3_t v2 = StoreList[2].vector;
+            vector3_t v3 = StoreList[3].vector;
 
-            Vector3d lv = v3 - v0;
-            double h = lv.Norm();
+            vector3_t lv = v3 - v0;
+            vcompo_t h = lv.Norm();
 
-            Vector3d planeNormal = CadMath.Normal(v0, v1, v2);
+            vector3_t planeNormal = CadMath.Normal(v0, v1, v2);
 
-            Vector3d cp0 = v0;
-            Vector3d cp1 = v1;
+            vector3_t cp0 = v0;
+            vector3_t cp1 = v1;
 
             if (PointList[0].Selected)
             {
@@ -186,7 +200,7 @@ public class CadFigureDimLine : CadFigure
                 cp1 = CadMath.CrossPlane(v1 + delta, v1, planeNormal);
             }
 
-            if (cp0.EqualsThreshold(cp1, 0.001))
+            if (cp0.EqualsThreshold(cp1, (vcompo_t)(0.001)))
             {
                 return;
             }
@@ -201,8 +215,8 @@ public class CadFigureDimLine : CadFigure
                 PointList[1] = PointList[1].SetVector(cp1);
             }
 
-            Vector3d normal = CadMath.Normal(cp0, cp0 + planeNormal, cp1);
-            Vector3d d = normal * h;
+            vector3_t normal = CadMath.Normal(cp0, cp0 + planeNormal, cp1);
+            vector3_t d = normal * h;
 
             PointList[3] = PointList[3].SetVector(PointList[0] + d);
             PointList[2] = PointList[2].SetVector(PointList[1] + d);
@@ -216,7 +230,7 @@ public class CadFigureDimLine : CadFigure
     // 高さが０の場合、移動方向が定まらないので
     // 投影座標系でz=0とした座標から,List[0] - List[1]への垂線を計算して
     // そこへ移動する
-    private void MoveSelectedPointWithHeight(DrawContext dc, Vector3d delta)
+    private void MoveSelectedPointWithHeight(DrawContext dc, vector3_t delta)
     {
         CadSegment seg = CadUtil.PerpSeg(PointList[0], PointList[1],
             StoreList[2] + delta);
@@ -252,10 +266,10 @@ public class CadFigureDimLine : CadFigure
         dc.Drawing.DrawLine(pen, a.vector, seg.P0.vector);
         dc.Drawing.DrawLine(pen, b.vector, seg.P1.vector);
 
-        Vector3d cp = CadMath.CenterPoint(seg.P0.vector, seg.P1.vector);
+        vector3_t cp = CadMath.CenterPoint(seg.P0.vector, seg.P1.vector);
 
-        double arrowW = ARROW_W / dc.WorldScale;
-        double arrowL = ARROW_LEN / dc.WorldScale;
+        vcompo_t arrowW = ARROW_W / dc.WorldScale;
+        vcompo_t arrowL = ARROW_LEN / dc.WorldScale;
 
         dc.Drawing.DrawArrow(pen, cp, seg.P0.vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
         dc.Drawing.DrawArrow(pen, cp, seg.P1.vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
@@ -266,12 +280,12 @@ public class CadFigureDimLine : CadFigure
         dc.Drawing.DrawLine(linePen, PointList[0].vector, PointList[3].vector);
         dc.Drawing.DrawLine(linePen, PointList[1].vector, PointList[2].vector);
 
-        Vector3d cp = CadMath.CenterPoint(PointList[3].vector, PointList[2].vector);
+        vector3_t cp = CadMath.CenterPoint(PointList[3].vector, PointList[2].vector);
 
-        double arrowW = ARROW_W / dc.WorldScale;
-        double arrowL = ARROW_LEN / dc.WorldScale;
+        vcompo_t arrowW = ARROW_W / dc.WorldScale;
+        vcompo_t arrowL = ARROW_LEN / dc.WorldScale;
 
-        double ww = (PointList[1] - PointList[0]).Norm() / 4.0;
+        vcompo_t ww = (PointList[1] - PointList[0]).Norm() / (vcompo_t)(4.0);
 
         if (ww > arrowL)
         {
@@ -280,11 +294,11 @@ public class CadFigureDimLine : CadFigure
         }
         else
         {
-            Vector3d v0 = cp - PointList[3].vector;
-            Vector3d v1 = cp - PointList[2].vector;
+            vector3_t v0 = cp - PointList[3].vector;
+            vector3_t v1 = cp - PointList[2].vector;
 
-            v0 = -(v0.Normalized() * (arrowL * 1.5)) / dc.WorldScale + PointList[3].vector;
-            v1 = -(v1.Normalized() * (arrowL * 1.5)) / dc.WorldScale + PointList[2].vector;
+            v0 = -(v0.Normalized() * (arrowL * (vcompo_t)(1.5))) / dc.WorldScale + PointList[3].vector;
+            v1 = -(v1.Normalized() * (arrowL * (vcompo_t)(1.5))) / dc.WorldScale + PointList[2].vector;
 
             dc.Drawing.DrawArrow(linePen, v0, PointList[3].vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
             dc.Drawing.DrawArrow(linePen, v1, PointList[2].vector, ArrowTypes.CROSS, ArrowPos.END, arrowL, arrowW);
@@ -294,7 +308,7 @@ public class CadFigureDimLine : CadFigure
 
         CadVertex lineV = PointList[2] - PointList[3];
 
-        double len = lineV.Norm();
+        vcompo_t len = lineV.Norm();
 
         string lenStr = CadUtil.ValToString(len);
 
@@ -306,9 +320,9 @@ public class CadFigureDimLine : CadFigure
 
         // 裏返しになる場合は、反転する
         // If it turns over, reverse it
-        Vector3d normal = CadMath.Normal(lineV.vector, up.vector);
+        vector3_t normal = CadMath.Normal(lineV.vector, up.vector);
 
-        double scala = CadMath.InnerProduct(normal, dc.ViewDir);
+        vcompo_t scala = CadMath.InnerProduct(normal, dc.ViewDir);
 
         if (scala > 0)
         {
@@ -322,7 +336,7 @@ public class CadFigureDimLine : CadFigure
         // up 0                            1 
         // 
         dc.Drawing.DrawText(FontID, textBrush, p.vector, lineV.vector, up.vector,
-            new DrawTextOption(DrawTextOption.H_CENTER), 1.0 / dc.WorldScale,
+            new DrawTextOption(DrawTextOption.H_CENTER), (vcompo_t)(1.0) / dc.WorldScale,
             lenStr);
     }
 }

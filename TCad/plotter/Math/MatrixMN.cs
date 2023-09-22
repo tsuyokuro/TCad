@@ -1,4 +1,20 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -11,35 +27,35 @@ public class MatrixMN
     public int RN = 0;
     public int CN = 0;
 
-    public double[,] v; // RowNum, ColNum
+    public vcompo_t[,] v; // RowNum, ColNum
 
     // 初期化例
-    // MatrixMN m1 = new MatrixMN(new double[,]
+    // MatrixMN m1 = new MatrixMN(new vcompo_t[,]
     // {
     //     { 11, 12, 13 },
     //     { 21, 22, 23 },
     //     { 31, 32, 33 }
     // });
 
-    public MatrixMN(double[,] a)
+    public MatrixMN(vcompo_t[,] a)
     {
         Attach(a);
     }
 
     public MatrixMN(int rownum, int colnum)
     {
-        v = new double[rownum, colnum];
+        v = new vcompo_t[rownum, colnum];
         RN = v.GetLength(0);
         CN = v.GetLength(1);
     }
 
     public void Set(MatrixMN m)
     {
-        v = new double[m.RN, m.CN];
+        v = new vcompo_t[m.RN, m.CN];
         RN = m.RN;
         CN = m.CN;
 
-        v = new double[RN, CN];
+        v = new vcompo_t[RN, CN];
 
         for (int r = 0; r < RN; r++)
         {
@@ -50,13 +66,13 @@ public class MatrixMN
         }
     }
 
-    public void Set(double[,] a)
+    public void Set(vcompo_t[,] a)
     {
         v = a;
         RN = a.GetLength(0);
         CN = a.GetLength(1);
 
-        v = new double[RN, CN];
+        v = new vcompo_t[RN, CN];
 
         for (int r = 0; r < RN; r++)
         {
@@ -67,7 +83,7 @@ public class MatrixMN
         }
     }
 
-    public void Attach(double[,] a)
+    public void Attach(vcompo_t[,] a)
     {
         v = a;
         RN = v.GetLength(0);

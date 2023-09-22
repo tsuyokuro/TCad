@@ -1,34 +1,48 @@
-using CadDataTypes;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct CadCursor
 {
-    public Vector3d Pos;
-    public Vector3d DirX;
-    public Vector3d DirY;
+    public vector3_t Pos;
+    public vector3_t DirX;
+    public vector3_t DirY;
 
-    public Vector3d StorePos;
+    public vector3_t StorePos;
 
     public static CadCursor Create()
     {
         CadCursor cc = default(CadCursor);
 
-        cc.DirX = Vector3d.UnitX;
-        cc.DirY = Vector3d.UnitY;
+        cc.DirX = vector3_t.UnitX;
+        cc.DirY = vector3_t.UnitY;
 
         return cc;
     }
 
-    public static CadCursor Create(Vector3d pixp)
+    public static CadCursor Create(vector3_t pixp)
     {
         CadCursor cc = default(CadCursor);
 
         cc.Pos = pixp;
-        cc.DirX = Vector3d.UnitX;
-        cc.DirY = Vector3d.UnitY;
+        cc.DirX = vector3_t.UnitX;
+        cc.DirY = vector3_t.UnitY;
 
         return cc;
     }
@@ -38,28 +52,28 @@ public struct CadCursor
         StorePos = Pos;
     }
 
-    public Vector3d DistanceX(Vector3d pixp)
+    public vector3_t DistanceX(vector3_t pixp)
     {
-        Vector3d a1 = Pos;
-        Vector3d a2 = Pos + DirY;
+        vector3_t a1 = Pos;
+        vector3_t a2 = Pos + DirY;
 
-        Vector3d b1 = pixp;
-        Vector3d b2 = pixp + DirX;
+        vector3_t b1 = pixp;
+        vector3_t b2 = pixp + DirX;
 
-        Vector3d c = CadMath.CrossLine2D(a1, a2, b1, b2);
+        vector3_t c = CadMath.CrossLine2D(a1, a2, b1, b2);
 
         return pixp - c;
     }
 
-    public Vector3d DistanceY(Vector3d pixp)
+    public vector3_t DistanceY(vector3_t pixp)
     {
-        Vector3d a1 = Pos;
-        Vector3d a2 = Pos + DirX;
+        vector3_t a1 = Pos;
+        vector3_t a2 = Pos + DirX;
 
-        Vector3d b1 = pixp;
-        Vector3d b2 = pixp + DirY;
+        vector3_t b1 = pixp;
+        vector3_t b2 = pixp + DirY;
 
-        Vector3d c = CadMath.CrossLine2D(a1, a2, b1, b2);
+        vector3_t c = CadMath.CrossLine2D(a1, a2, b1, b2);
 
         return pixp - c;
     }

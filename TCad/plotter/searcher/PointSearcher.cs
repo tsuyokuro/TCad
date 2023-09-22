@@ -1,10 +1,25 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 #define LOG_DEBUG
 
 using CadDataTypes;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -19,7 +34,7 @@ public class PointSearcher
 
     public CadCursor Target;    // Cursor(スクリーン座標系)
 
-    public double Range;        // matchする範囲(スクリーン座標系)
+    public vcompo_t Range;        // matchする範囲(スクリーン座標系)
 
     public bool CheckStorePoint = false;
 
@@ -59,7 +74,7 @@ public class PointSearcher
         Clean();
     }
 
-    public void SetRangePixel(DrawContext dc, double pixel)
+    public void SetRangePixel(DrawContext dc, vcompo_t pixel)
     {
         Range = pixel;
     }
@@ -116,10 +131,10 @@ public class PointSearcher
         return XYMatchList;
     }
 
-    public double Distance()
+    public vcompo_t Distance()
     {
-        double ret = Double.MaxValue;
-        double t;
+        vcompo_t ret = vcompo_t.MaxValue;
+        vcompo_t t;
 
         if (IsXMatch)
         {
@@ -129,13 +144,13 @@ public class PointSearcher
         if (IsYMatch)
         {
             t = (YMatch.PointScrn - Target.Pos).Norm();
-            ret = Math.Min(t, ret);
+            ret = (vcompo_t)Math.Min(t, ret);
         }
 
         if (IsXYMatch)
         {
             t = (XYMatch.PointScrn - Target.Pos).Norm();
-            ret = Math.Min(t, ret);
+            ret = (vcompo_t)Math.Min(t, ret);
         }
 
         return ret;
@@ -185,7 +200,7 @@ public class PointSearcher
     //    CheckFigPoint(DC, pt, null, null, 0);
     //}
 
-    public void Check(DrawContext dc, Vector3d pt)
+    public void Check(DrawContext dc, vector3_t pt)
     {
         CheckFigPoint(dc, pt, null, null, 0);
     }
@@ -239,18 +254,18 @@ public class PointSearcher
         }
     }
 
-    private void CheckFigPoint(DrawContext dc, Vector3d pt, CadLayer layer, CadFigure fig, int ptIdx)
+    private void CheckFigPoint(DrawContext dc, vector3_t pt, CadLayer layer, CadFigure fig, int ptIdx)
     {
-        Vector3d ppt = dc.WorldPointToDevPoint(pt);
+        vector3_t ppt = dc.WorldPointToDevPoint(pt);
 
-        double dx = Math.Abs(ppt.X - Target.Pos.X);
-        double dy = Math.Abs(ppt.Y - Target.Pos.Y);
+        vcompo_t dx = (vcompo_t)Math.Abs(ppt.X - Target.Pos.X);
+        vcompo_t dy = (vcompo_t)Math.Abs(ppt.Y - Target.Pos.Y);
 
         CrossInfo cix = CadMath.PerpCrossLine(Target.Pos, Target.Pos + Target.DirX, ppt);
         CrossInfo ciy = CadMath.PerpCrossLine(Target.Pos, Target.Pos + Target.DirY, ppt);
 
-        double nx = (ppt - ciy.CrossPoint).Norm(); // Cursor Y軸からの距離
-        double ny = (ppt - cix.CrossPoint).Norm(); // Cursor X軸からの距離
+        vcompo_t nx = (ppt - ciy.CrossPoint).Norm(); // Cursor Y軸からの距離
+        vcompo_t ny = (ppt - cix.CrossPoint).Norm(); // Cursor X軸からの距離
 
         if (nx <= Range)
         {
@@ -270,8 +285,8 @@ public class PointSearcher
 
         if (dx <= Range && dy <= Range)
         {
-            double minDist = (XYMatch.DistanceX * XYMatch.DistanceX) + (XYMatch.DistanceY * XYMatch.DistanceY);
-            double curDist = (dx * dx) + (dy * dy);
+            vcompo_t minDist = (XYMatch.DistanceX * XYMatch.DistanceX) + (XYMatch.DistanceY * XYMatch.DistanceY);
+            vcompo_t curDist = (dx * dx) + (dy * dy);
 
             if (curDist <= minDist)
             {
@@ -292,7 +307,7 @@ public class PointSearcher
     }
 
     private MarkPoint GetMarkPoint(
-        Vector3d pt, Vector3d ppt, double distx, double disty, CadLayer layer, CadFigure fig, int ptIdx)
+        vector3_t pt, vector3_t ppt, vcompo_t distx, vcompo_t disty, CadLayer layer, CadFigure fig, int ptIdx)
     {
         MarkPoint mp = default;
 

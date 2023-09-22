@@ -1,31 +1,43 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using CadDataTypes;
+using CarveWapper;
+using GLUtil;
+using HalfEdgeNS;
+using LibiglWrapper;
+using MeshMakerNS;
+using MeshUtilNS;
+using Microsoft.Scripting.Hosting;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
-using CadDataTypes;
-using HalfEdgeNS;
-using CarveWapper;
-using MeshUtilNS;
-using MeshMakerNS;
-using TCad.Controls;
-using static Plotter.CadFigure;
-using LibiglWrapper;
-using GLUtil;
-using OpenTK;
-using OpenTK.Mathematics;
-using System.Security.Cryptography;
-using Microsoft.Scripting.Hosting;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.WinForms;
-using OpenTK.Platform;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.Common;
-using TCad.ViewModel;
-using static IronPython.Modules.CTypes;
 using System.Threading;
+using TCad.Controls;
+using TCad.ViewModel;
+using static Plotter.CadFigure;
 
-namespace Plotter.Controller;
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
+
+namespace Plotter.Scripting;
 
 public class ScriptFunctions
 {
@@ -46,17 +58,17 @@ public class ScriptFunctions
 
         Session = new ScriptSession(Env);
 
-        scope.SetVariable("normal", new Func<Vector3d, Vector3d, Vector3d>(CadMath.Normal));
+        scope.SetVariable("normal", new Func<vector3_t, vector3_t, vector3_t>(CadMath.Normal));
         Env.AutoCompleteList.Add("normal(v1, v2)");
 
-        scope.SetVariable("dot_product", new Func<Vector3d, Vector3d, double>(CadMath.InnerProduct));
+        scope.SetVariable("dot_product", new Func<vector3_t, vector3_t, vcompo_t>(CadMath.InnerProduct));
         Env.AutoCompleteList.Add("dot_product(v1, v2)");
 
-        scope.SetVariable("cross_product", new Func<Vector3d, Vector3d, Vector3d>(CadMath.CrossProduct));
+        scope.SetVariable("cross_product", new Func<vector3_t, vector3_t, vector3_t>(CadMath.CrossProduct));
         Env.AutoCompleteList.Add("cross_product(v1, v2)");
     }
 
-    public Vector3d FigVertexAt(CadFigure fig, int index)
+    public vector3_t FigVertexAt(CadFigure fig, int index)
     {
         return fig.GetPointAt(index).vector;
     }
@@ -86,23 +98,23 @@ public class ScriptFunctions
         ItConsole.print(s);
     }
 
-    public void CursorAngleX(double d)
+    public void CursorAngleX(vcompo_t d)
     {
-        double t = -CadMath.Deg2Rad(d);
+        vcompo_t t = -CadMath.Deg2Rad(d);
 
-        Controller.CrossCursor.DirX.X = Math.Cos(t);
-        Controller.CrossCursor.DirX.Y = Math.Sin(t);
+        Controller.CrossCursor.DirX.X = (vcompo_t)Math.Cos(t);
+        Controller.CrossCursor.DirX.Y = (vcompo_t)Math.Sin(t);
     }
 
-    public void CursorAngleY(double d)
+    public void CursorAngleY(vcompo_t d)
     {
-        double t = -CadMath.Deg2Rad(d) + Math.PI / 2;
+        vcompo_t t = -CadMath.Deg2Rad(d) + (vcompo_t)Math.PI / 2;
 
-        Controller.CrossCursor.DirY.X = Math.Cos(t);
-        Controller.CrossCursor.DirY.Y = Math.Sin(t);
+        Controller.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
+        Controller.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
     }
 
-    public void PrintVector(Vector3d v)
+    public void PrintVector(vector3_t v)
     {
         var sb = new StringBuilder();
 
@@ -115,38 +127,38 @@ public class ScriptFunctions
         ItConsole.println(sb.ToString());
     }
 
-    public Vector3d WorldPToDevP(Vector3d w)
+    public vector3_t WorldPToDevP(vector3_t w)
     {
         return Controller.DC.WorldPointToDevPoint(w);
     }
 
-    public Vector3d DevPToWorldP(Vector3d d)
+    public vector3_t DevPToWorldP(vector3_t d)
     {
         return Controller.DC.DevPointToWorldPoint(d);
     }
 
-    public void DumpVector(Vector3d v)
+    public void DumpVector(vector3_t v)
     {
         string s = v.CoordString();
         ItConsole.println(s);
     }
 
-    public Vector3d GetLastDownPoint()
+    public vector3_t GetLastDownPoint()
     {
         return Controller.LastDownPoint;
     }
 
-    public CadVertex CreateVertex(double x, double y, double z)
+    public CadVertex CreateVertex(vcompo_t x, vcompo_t y, vcompo_t z)
     {
         return CadVertex.Create(x, y, z);
     }
 
-    public Vector3d CreateVector(double x, double y, double z)
+    public vector3_t CreateVector(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        return new Vector3d(x, y, z);
+        return new vector3_t(x, y, z);
     }
 
-    public Vector3d GetProjectionDir()
+    public vector3_t GetProjectionDir()
     {
         return -Controller.DC.ViewDir;
     }
@@ -190,7 +202,7 @@ public class ScriptFunctions
         fig.Select();
     }
 
-    public void Scale(uint id, Vector3d org, double scale)
+    public void Scale(uint id, vector3_t org, vcompo_t scale)
     {
         CadFigure fig = Controller.DB.GetFigure(id);
 
@@ -203,7 +215,8 @@ public class ScriptFunctions
 
         StartEdit();
 
-        fig.ForEachFig((f) => {
+        fig.ForEachFig((f) =>
+        {
             CadUtil.ScaleFigure(f, org, scale);
         });
 
@@ -264,15 +277,15 @@ public class ScriptFunctions
         if (list.Count < 2)
         {
             ItConsole.println(
-                global::TCad.Properties.Resources.error_select_2_or_more
+                TCad.Properties.Resources.error_select_2_or_more
                 );
 
             return;
         }
 
-        CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
+        CadFigure parent = Controller.DB.NewFigure(Types.GROUP);
 
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
         CadOpe ope;
 
         foreach (CadFigure fig in list)
@@ -309,7 +322,7 @@ public class ScriptFunctions
         }
 
         ItConsole.println(
-                global::TCad.Properties.Resources.notice_was_grouped
+                TCad.Properties.Resources.notice_was_grouped
             );
 
         Session.PostRemakeObjectTree();
@@ -341,20 +354,21 @@ public class ScriptFunctions
     {
         List<CadFigure> list = FilterRootFigure(targetList);
 
-        CadOpeList opeList = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeList = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         CadOpe ope;
 
         foreach (CadFigure root in list)
         {
-            root.ForEachFig((fig) => {
+            root.ForEachFig((fig) =>
+            {
                 if (fig.Parent == null)
                 {
                     return;
                 }
 
                 fig.Parent = null;
-                
+
                 if (fig.PointCount > 0)
                 {
                     ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
@@ -383,11 +397,11 @@ public class ScriptFunctions
         Session.PostRemakeObjectTree();
     }
 
-    public void MoveLastDownPoint(double x, double y, double z)
+    public void MoveLastDownPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        Vector3d p = Controller.LastDownPoint;
+        vector3_t p = Controller.LastDownPoint;
 
-        Vector3d delta = new Vector3d(x, y, z);
+        vector3_t delta = new vector3_t(x, y, z);
 
         p += delta;
 
@@ -396,37 +410,37 @@ public class ScriptFunctions
         Session.PostRedraw();
     }
 
-    public void SetLastDownPoint(double x, double y, double z)
+    public void SetLastDownPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        Vector3d p = new Vector3d(x, y, z);
+        vector3_t p = new vector3_t(x, y, z);
 
         Controller.LastDownPoint = p;
 
         Session.PostRedraw();
     }
 
-    public Vector3d GetPoint(uint figID, int index)
+    public vector3_t GetPoint(uint figID, int index)
     {
         CadFigure fig = Controller.DB.GetFigure(figID);
         if (fig == null)
         {
-            return VectorExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
         return fig.GetPointAt(index).vector;
     }
 
-    public bool IsValidVector(Vector3d v)
+    public bool IsValidVector(vector3_t v)
     {
         return v.IsValid();
     }
 
-    public bool IsInvalidVector(Vector3d v)
+    public bool IsInvalidVector(vector3_t v)
     {
         return v.IsInvalid();
     }
 
-    public void SetPoint(uint figID, int index, Vector3d v)
+    public void SetPoint(uint figID, int index, vector3_t v)
     {
         CadFigure fig = Controller.DB.GetFigure(figID);
         if (fig == null)
@@ -434,12 +448,12 @@ public class ScriptFunctions
             return;
         }
 
-        fig.PointList.Ref(index).vector = v;
+        fig.PointList[index].vector = v;
     }
 
-    public CadFigure AddLine(Vector3d v0, Vector3d v1)
+    public CadFigure AddLine(vector3_t v0, vector3_t v1)
     {
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigure fig = Controller.DB.NewFigure(Types.POLY_LINES);
         fig.AddPoint((CadVertex)v0);
         fig.AddPoint((CadVertex)v1);
 
@@ -456,15 +470,15 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddPoint(double x, double y, double z)
+    public CadFigure AddPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        Vector3d p = new Vector3d(x, y, z);
+        vector3_t p = new vector3_t(x, y, z);
         return AddPoint(p);
     }
 
-    public CadFigure AddPoint(Vector3d p)
+    public CadFigure AddPoint(vector3_t p)
     {
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.POINT);
+        CadFigure fig = Controller.DB.NewFigure(Types.POINT);
         fig.AddPoint((CadVertex)p);
 
         fig.EndCreate(Controller.DC);
@@ -480,23 +494,23 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddRect(double w, double h)
+    public CadFigure AddRect(vcompo_t w, vcompo_t h)
     {
         return AddRectAt(Controller.LastDownPoint, w, h);
     }
 
-    public CadFigure AddRectAt(Vector3d p, double w, double h)
+    public CadFigure AddRectAt(vector3_t p, vcompo_t w, vcompo_t h)
     {
-        Vector3d viewDir = Controller.DC.ViewDir;
-        Vector3d upDir = Controller.DC.UpVector;
+        vector3_t viewDir = Controller.DC.ViewDir;
+        vector3_t upDir = Controller.DC.UpVector;
 
-        Vector3d wd = CadMath.Normal(viewDir, upDir) * w;
-        Vector3d hd = upDir.UnitVector() * h;
+        vector3_t wd = CadMath.Normal(viewDir, upDir) * w;
+        vector3_t hd = upDir.UnitVector() * h;
 
         CadVertex p0 = (CadVertex)p;
         CadVertex p1 = (CadVertex)p;
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.RECT);
+        CadFigure fig = Controller.DB.NewFigure(Types.RECT);
 
         fig.AddPoint(p0);
 
@@ -526,30 +540,30 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddRectChamfer(double w, double h, double c)
+    public CadFigure AddRectChamfer(vcompo_t w, vcompo_t h, vcompo_t c)
     {
         return AddRectRectChamferAt(Controller.LastDownPoint, w, h, c);
     }
 
-    public CadFigure AddRectRectChamferAt(Vector3d p, double w, double h, double c)
+    public CadFigure AddRectRectChamferAt(vector3_t p, vcompo_t w, vcompo_t h, vcompo_t c)
     {
-        Vector3d viewDir = Controller.DC.ViewDir;
-        Vector3d upDir = Controller.DC.UpVector;
+        vector3_t viewDir = Controller.DC.ViewDir;
+        vector3_t upDir = Controller.DC.UpVector;
 
-        Vector3d wdir = CadMath.Normal(viewDir, upDir);
-        Vector3d hdir = upDir.UnitVector();
+        vector3_t wdir = CadMath.Normal(viewDir, upDir);
+        vector3_t hdir = upDir.UnitVector();
 
-        Vector3d wd = wdir * w;
-        Vector3d hd = hdir * h;
+        vector3_t wd = wdir * w;
+        vector3_t hd = hdir * h;
 
         CadVertex sp = (CadVertex)p;
         CadVertex tp = sp;
 
-        Vector3d wc = wdir * c;
-        Vector3d hc = hdir * c;
+        vector3_t wc = wdir * c;
+        vector3_t hc = hdir * c;
 
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.RECT);
+        CadFigure fig = Controller.DB.NewFigure(Types.RECT);
 
         fig.AddPoint(tp + wc);
 
@@ -592,20 +606,20 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddCircle(double r)
+    public CadFigure AddCircle(vcompo_t r)
     {
         return AddCircleAt(Controller.LastDownPoint, r);
     }
 
-    public CadFigure AddCircleAt(Vector3d p, double r)
+    public CadFigure AddCircleAt(vector3_t p, vcompo_t r)
     {
-        Vector3d viewDir = Controller.DC.ViewDir;
-        Vector3d upDir = Controller.DC.UpVector;
+        vector3_t viewDir = Controller.DC.ViewDir;
+        vector3_t upDir = Controller.DC.UpVector;
 
-        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.CIRCLE);
+        CadFigure fig = Controller.DB.NewFigure(Types.CIRCLE);
 
-        Vector3d p0 = p;
-        Vector3d p1 = p0 + CadMath.Normal(viewDir, upDir) * r;
+        vector3_t p0 = p;
+        vector3_t p1 = p0 + CadMath.Normal(viewDir, upDir) * r;
 
         fig.AddPoint((CadVertex)p0);
         fig.AddPoint((CadVertex)p1);
@@ -624,11 +638,11 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadMesh CreateCadMesh(List<Vector3d> plist, List<CadFace> flist)
+    public CadMesh CreateCadMesh(List<vector3_t> plist, List<CadFace> flist)
     {
         CadMesh cm = new CadMesh(plist.Count, flist.Count);
 
-        foreach (Vector3d p in plist)
+        foreach (vector3_t p in plist)
         {
             cm.VertexStore.Add(new CadVertex(p));
         }
@@ -662,14 +676,14 @@ public class ScriptFunctions
     {
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
         return fig;
     }
 
-    public CadFigure CreateMeshFig(List<Vector3d> plist, List<CadFace> flist)
+    public CadFigure CreateMeshFig(List<vector3_t> plist, List<CadFace> flist)
     {
         var cm = CreateCadMesh(plist, flist);
         return MesthToFig(cm);
@@ -681,10 +695,10 @@ public class ScriptFunctions
         return MesthToFig(cm);
     }
 
-    public CadFigure AddBox(Vector3d pos, double x, double y, double z)
+    public CadFigure AddBox(vector3_t pos, vcompo_t x, vcompo_t y, vcompo_t z)
     {
         CadMesh cm =
-            MeshMaker.CreateBox(pos, new Vector3d(x, y, z), MeshMaker.FaceType.TRIANGLE);
+            MeshMaker.CreateBox(pos, new vector3_t(x, y, z), MeshMaker.FaceType.TRIANGLE);
 
         CadFigure fig = MesthToFig(cm);
 
@@ -701,10 +715,10 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddTetrahedron(Vector3d pos, double x, double y, double z)
+    public CadFigure AddTetrahedron(vector3_t pos, vcompo_t x, vcompo_t y, vcompo_t z)
     {
         CadMesh cm =
-            MeshMaker.CreateTetrahedron(pos, new Vector3d(x, y, z));
+            MeshMaker.CreateTetrahedron(pos, new vector3_t(x, y, z));
 
         CadFigure fig = MesthToFig(cm);
 
@@ -721,10 +735,10 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddOctahedron(Vector3d pos, double x, double y, double z)
+    public CadFigure AddOctahedron(vector3_t pos, vcompo_t x, vcompo_t y, vcompo_t z)
     {
         CadMesh cm =
-            MeshMaker.CreateOctahedron(pos, new Vector3d(x, y, z));
+            MeshMaker.CreateOctahedron(pos, new vector3_t(x, y, z));
 
         CadFigure fig = MesthToFig(cm);
         if (!Session.StartWithSnapshotDB)
@@ -740,7 +754,7 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddCylinder(Vector3d pos, int circleDiv, int slices, double r, double len)
+    public CadFigure AddCylinder(vector3_t pos, int circleDiv, int slices, vcompo_t r, vcompo_t len)
     {
         CadMesh cm = MeshMaker.CreateCylinder(pos, circleDiv, slices, r, len);
 
@@ -758,7 +772,7 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddSphere(Vector3d pos, int slices, double r)
+    public CadFigure AddSphere(vector3_t pos, int slices, vcompo_t r)
     {
         CadMesh cm = MeshMaker.CreateSphere(pos, r, slices, slices);
 
@@ -777,9 +791,9 @@ public class ScriptFunctions
         return fig;
     }
 
-    public CadFigure AddPicture(Vector3d pos, string fname)
+    public CadFigure AddPicture(vector3_t pos, string fname)
     {
-        CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(CadFigure.Types.PICTURE);
+        CadFigurePicture fig = (CadFigurePicture)Controller.DB.NewFigure(Types.PICTURE);
 
         fig.Setup(Controller.PageSize, pos, fname);
 
@@ -796,7 +810,7 @@ public class ScriptFunctions
     }
 
 
-    public void MakeRotatingBody(uint baseFigID, Vector3d org, Vector3d axis, bool topCap, bool btmCap)
+    public void MakeRotatingBody(uint baseFigID, vector3_t org, vector3_t axis, bool topCap, bool btmCap)
     {
         CadFigure baseFig = GetFigure(baseFigID);
 
@@ -805,7 +819,7 @@ public class ScriptFunctions
             return;
         }
 
-        if (baseFig.Type != CadFigure.Types.POLY_LINES)
+        if (baseFig.Type != Types.POLY_LINES)
         {
             return;
         }
@@ -842,9 +856,9 @@ public class ScriptFunctions
         }, true);
     }
 
-    public void Move(uint figID, double x, double y, double z)
+    public void Move(uint figID, vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        Vector3d delta = new Vector3d(x, y, z);
+        vector3_t delta = new vector3_t(x, y, z);
 
         CadFigure fig = Controller.DB.GetFigure(figID);
 
@@ -867,18 +881,18 @@ public class ScriptFunctions
         Session.PostRedraw();
     }
 
-    public void MoveSelectedPoint(double x, double y, double z)
+    public void MoveSelectedPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
         var figList = Controller.GetSelectedFigureList();
 
         StartEdit(figList);
 
-        Vector3d d = new Vector3d(x, y, z);
+        vector3_t d = new vector3_t(x, y, z);
 
         foreach (CadFigure fig in figList)
         {
             int i;
-            for (i=0; i<fig.PointCount; i++)
+            for (i = 0; i < fig.PointCount; i++)
             {
                 CadVertex v = fig.PointList[i];
                 if (v.Selected)
@@ -892,7 +906,7 @@ public class ScriptFunctions
         EndEdit(figList);
     }
 
-    public void SetSelectedSegLen(double len)
+    public void SetSelectedSegLen(vcompo_t len)
     {
         if (Controller.LastSelSegment == null)
         {
@@ -911,18 +925,18 @@ public class ScriptFunctions
         CadVertex pa = fig.GetPointAt(seg.PtIndexA);
         CadVertex pb = fig.GetPointAt(seg.PtIndexB);
 
-        Vector3d v;
+        vector3_t v;
 
         v = pa.vector - Controller.LastDownPoint;
-        double da = v.Norm();
+        vcompo_t da = v.Norm();
 
         v = pb.vector - Controller.LastDownPoint;
-        double db = v.Norm();
+        vcompo_t db = v.Norm();
 
 
         if (da < db)
         {
-            Vector3d np = CadMath.LinePoint(pb.vector, pa.vector, len);
+            vector3_t np = CadMath.LinePoint(pb.vector, pa.vector, len);
             StartEdit();
 
             pa.vector = np;
@@ -933,7 +947,7 @@ public class ScriptFunctions
         }
         else
         {
-            Vector3d np = CadMath.LinePoint(pa.vector, pb.vector, len);
+            vector3_t np = CadMath.LinePoint(pa.vector, pb.vector, len);
             StartEdit();
 
             pb.vector = np;
@@ -953,7 +967,7 @@ public class ScriptFunctions
             AbendEdit();
 
             ItConsole.println(
-                global::TCad.Properties.Resources.error_operation_failed
+                TCad.Properties.Resources.error_operation_failed
                 );
             return;
         }
@@ -961,19 +975,19 @@ public class ScriptFunctions
         EndEdit();
 
         ItConsole.println(
-            global::TCad.Properties.Resources.notice_operation_success
+            TCad.Properties.Resources.notice_operation_success
             );
     }
 
-    public double AreaOfSelected()
+    public vcompo_t AreaOfSelected()
     {
-        double area = PlotterUtil.Area(Controller.DB.GetSelectedFigList());
+        vcompo_t area = PlotterUtil.Area(Controller.DB.GetSelectedFigList());
         ItConsole.println("Area: " + AnsiEsc.BYellow + (area / 100).ToString());
 
         return area;
     }
 
-    public Vector3d CentroidOfSelected()
+    public vector3_t CentroidOfSelected()
     {
         Centroid c = PlotterUtil.Centroid(Controller.DB.GetSelectedFigList());
         return c.Point;
@@ -990,7 +1004,7 @@ public class ScriptFunctions
     //    return fig;
     //}
 
-    public void Rotate(uint figID, Vector3d org, Vector3d axisDir, double angle)
+    public void Rotate(uint figID, vector3_t org, vector3_t axisDir, vcompo_t angle)
     {
         CadFigure fig = Controller.DB.GetFigure(figID);
 
@@ -1019,7 +1033,7 @@ public class ScriptFunctions
         Session.PostRedraw();
     }
 
-    public void RotateWithAxis(CadFigure fig, Vector3d org, Vector3d axisDir, double angle)
+    public void RotateWithAxis(CadFigure fig, vector3_t org, vector3_t axisDir, vcompo_t angle)
     {
         fig.ForEachFig(f =>
         {
@@ -1033,7 +1047,7 @@ public class ScriptFunctions
 
         CadRect r = CadUtil.GetContainsRectScrn(dc, figList);
 
-        CadRect wr = default(CadRect);
+        CadRect wr = default;
         wr.p0 = dc.DevPointToWorldPoint(r.p0);
         wr.p1 = dc.DevPointToWorldPoint(r.p1);
 
@@ -1046,25 +1060,25 @@ public class ScriptFunctions
 
         tdc.SetViewSize(w, h);
 
-        tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
+        tdc.SetViewOrg(new vector3_t(w / 2, h / 2, 0));
 
         tdc.SetupTools(DrawModes.DARK);
 
         DrawPen drawPen = new DrawPen((int)argb, lineW);
 
-        double sw = r.p1.X - r.p0.X;
-        double sh = r.p1.Y - r.p0.Y;
+        vcompo_t sw = r.p1.X - r.p0.X;
+        vcompo_t sh = r.p1.Y - r.p0.Y;
 
-        double a = Math.Min(w, h) / (Math.Max(sw, sh) + lineW);
+        vcompo_t a = (vcompo_t)Math.Min(w, h) / (Math.Max(sw, sh) + lineW);
 
         tdc.DeviceScaleX *= a;
         tdc.DeviceScaleY *= a;
 
         CadRect tr = CadUtil.GetContainsRectScrn(tdc, figList);
 
-        Vector3d trcp = (Vector3d)((tr.p1 - tr.p0) / 2 + tr.p0);
+        vector3_t trcp = (tr.p1 - tr.p0) / 2 + tr.p0;
 
-        Vector3d d = trcp - tdc.ViewOrg;
+        vector3_t d = trcp - tdc.ViewOrg;
 
         tdc.SetViewOrg(tdc.ViewOrg - d);
 
@@ -1153,20 +1167,20 @@ public class ScriptFunctions
         tdc.SetupTools(DrawModes.LIGHT);
         tdc.CopyCamera(orgDC);
         tdc.SetViewSize(w, h);
-        tdc.SetViewOrg(new Vector3d(w / 2, h / 2, 0));
+        tdc.SetViewOrg(new vector3_t(w / 2, h / 2, 0));
 
         CadRect r2 = CadUtil.GetContainsRectScrn(tdc, figList);
 
-        double ow = Math.Abs(r2.p1.X - r2.p0.X);
-        double oh = Math.Abs(r2.p1.Y - r2.p0.Y);
+        vcompo_t ow = (vcompo_t)Math.Abs(r2.p1.X - r2.p0.X);
+        vcompo_t oh = (vcompo_t)Math.Abs(r2.p1.Y - r2.p0.Y);
 
-        double scale = Math.Min((w - paddingX) / ow, (h -paddingY) / oh);
+        vcompo_t scale = (vcompo_t)Math.Min((w - paddingX) / ow, (h - paddingY) / oh);
 
         tdc.WorldScale = scale;
 
         CadRect r3 = CadUtil.GetContainsRectScrn(tdc, figList);
 
-        Vector3d center = r3.Center();
+        vector3_t center = r3.Center();
         ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
 
 
@@ -1220,7 +1234,7 @@ public class ScriptFunctions
     }
 
 
-    public void FaceToDirection(Vector3d dir)
+    public void FaceToDirection(vector3_t dir)
     {
         DrawContext dc = Controller.DC;
 
@@ -1236,14 +1250,14 @@ public class ScriptFunctions
         FaceToDirection(fig, Controller.LastDownPoint, dir);
     }
 
-    private void FaceToDirection(CadFigure fig, Vector3d org, Vector3d dir)
+    private void FaceToDirection(CadFigure fig, vector3_t org, vector3_t dir)
     {
-        if (fig.Type != CadFigure.Types.POLY_LINES)
+        if (fig.Type != Types.POLY_LINES)
         {
             return;
         }
 
-        Vector3d faceNormal = CadUtil.TypicalNormal(fig.PointList);
+        vector3_t faceNormal = CadUtil.TypicalNormal(fig.PointList);
 
         if (faceNormal.EqualsThreshold(dir) || (-faceNormal).EqualsThreshold(dir))
         {
@@ -1258,14 +1272,14 @@ public class ScriptFunctions
         //   /
         //  /
         // 面の法線 faceNormal
-        Vector3d rv = CadMath.Normal(faceNormal, dir);
+        vector3_t rv = CadMath.Normal(faceNormal, dir);
 
-        double t = CadMath.AngleOfVector(faceNormal, dir);
+        vcompo_t t = CadMath.AngleOfVector(faceNormal, dir);
 
         CadUtil.RotateFigure(fig, org, rv, t);
     }
 
-    public void Triangulate(uint figID, double minArea, double maxDegree)
+    public void Triangulate(uint figID, vcompo_t minArea, vcompo_t maxDegree)
     {
         string option = $"a{minArea}q{maxDegree}";
 
@@ -1296,14 +1310,14 @@ public class ScriptFunctions
 
         CadFigure cfig = FigUtil.Clone(tfig);
 
-        Vector3d org = cfig.PointList[0].vector;
-        Vector3d dir = Vector3d.UnitZ;
+        vector3_t org = cfig.PointList[0].vector;
+        vector3_t dir = vector3_t.UnitZ;
 
-        Vector3d faceNormal = CadUtil.TypicalNormal(cfig.PointList);
+        vector3_t faceNormal = CadUtil.TypicalNormal(cfig.PointList);
 
-        Vector3d rotateV = default;
+        vector3_t rotateV = default;
 
-        double t = 0;
+        vcompo_t t = 0;
 
         if (!faceNormal.EqualsThreshold(dir) && !(-faceNormal).EqualsThreshold(dir))
         {
@@ -1320,11 +1334,11 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(m);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
-        for (int i = 0; i<fig.PointCount; i++)
+        for (int i = 0; i < fig.PointCount; i++)
         {
             CadVertex v = fig.PointList[i];
             v.Z = org.Z;
@@ -1336,7 +1350,7 @@ public class ScriptFunctions
             CadUtil.RotateFigure(fig, org, rotateV, -t);
         }
 
-        CadOpeList root = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList root = Session.StartWithSnapshotDB ? null : new CadOpeList();
         CadOpe ope;
 
         if (!Session.StartWithSnapshotDB)
@@ -1360,11 +1374,11 @@ public class ScriptFunctions
     }
 
     // 押し出し
-    public void Extrude(uint id, Vector3d v, double d, int divide)
+    public void Extrude(uint id, vector3_t v, vcompo_t d, int divide)
     {
         CadFigure tfig = Controller.DB.GetFigure(id);
 
-        if (tfig == null || tfig.Type != CadFigure.Types.POLY_LINES)
+        if (tfig == null || tfig.Type != Types.POLY_LINES)
         {
             return;
         }
@@ -1377,7 +1391,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.RecalcNormal();
 
@@ -1417,7 +1431,7 @@ public class ScriptFunctions
         HeModel hm = figMesh.mHeModel;
 
 
-        CadFigure figPoly = Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigure figPoly = Controller.DB.NewFigure(Types.POLY_LINES);
 
         hm.ForReachEdgePoint(v =>
         {
@@ -1458,22 +1472,22 @@ public class ScriptFunctions
 
     public void ToMesh(uint id)
     {
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null: new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         CadFigure orgFig = Controller.DB.GetFigure(id);
 
 
         if (orgFig == null)
         {
-            return;    
+            return;
         }
 
-        if (orgFig.Type != CadFigure.Types.POLY_LINES)
+        if (orgFig.Type != Types.POLY_LINES)
         {
             return;
         }
 
-        CadFigureMesh mesh = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh mesh = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         mesh.CreateModel(orgFig);
 
@@ -1525,7 +1539,7 @@ public class ScriptFunctions
     {
         List<CadFigure> figList = Controller.DB.GetSelectedFigList();
 
-        CadOpeList opeRoot = Session.StartWithSnapshotDB? null : new CadOpeList();
+        CadOpeList opeRoot = Session.StartWithSnapshotDB ? null : new CadOpeList();
 
         for (int i = 0; i < figList.Count; i++)
         {
@@ -1558,7 +1572,7 @@ public class ScriptFunctions
     private CadFigureMesh GetCadFigureMesh(uint id)
     {
         CadFigure fig = Controller.DB.GetFigure(id);
-        if (fig == null || fig.Type != CadFigure.Types.MESH) return null;
+        if (fig == null || fig.Type != Types.MESH) return null;
 
         return (CadFigureMesh)fig;
     }
@@ -1587,7 +1601,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1625,7 +1639,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1663,7 +1677,7 @@ public class ScriptFunctions
 
         HeModel hem = HeModelConverter.ToHeModel(c);
 
-        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
         fig.SetMesh(hem);
 
@@ -1687,19 +1701,19 @@ public class ScriptFunctions
             return;
         }
 
-        (Vector3d p0, Vector3d p1) = InputLine();
+        (vector3_t p0, vector3_t p1) = InputLine();
 
         if (p0.IsInvalid() || p1.IsInvalid())
         {
             return;
         }
 
-        
+
         HeModel he = tfig.mHeModel;
         CadMesh src = HeModelConverter.ToCadMesh(he);
 
-        Vector3d normal = CadMath.Normal(
-            p1 - p0, (Controller.DC.ViewDir));
+        vector3_t normal = CadMath.Normal(
+            p1 - p0, Controller.DC.ViewDir);
 
         (CadMesh m1, CadMesh m2) = MeshUtil.CutMeshWithVector(src, p0, p1, normal);
 
@@ -1709,10 +1723,10 @@ public class ScriptFunctions
             return;
         }
 
-        CadFigureMesh fig1 = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig1 = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
         fig1.SetMesh(HeModelConverter.ToHeModel(m1));
 
-        CadFigureMesh fig2 = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
+        CadFigureMesh fig2 = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
         fig2.SetMesh(HeModelConverter.ToHeModel(m2));
 
         CadOpe ope;
@@ -1779,11 +1793,11 @@ public class ScriptFunctions
         }
     }
 
-    public Vector3d RotateVector(Vector3d v, Vector3d axis, double angle)
+    public vector3_t RotateVector(vector3_t v, vector3_t axis, vcompo_t angle)
     {
         axis = axis.UnitVector();
 
-        double t = CadMath.Deg2Rad(angle);
+        vcompo_t t = CadMath.Deg2Rad(angle);
 
         CadQuaternion q = CadQuaternion.RotateQuaternion(axis, t);
         CadQuaternion r = q.Conjugate(); ;
@@ -1795,7 +1809,7 @@ public class ScriptFunctions
         qp = r * qp;
         qp = qp * q;
 
-        Vector3d rv = v;
+        vector3_t rv = v;
 
         rv = qp.ToPoint();
 
@@ -1819,7 +1833,7 @@ public class ScriptFunctions
         return Controller.CurrentFigure;
     }
 
-    public Vector3d InputPoint()
+    public vector3_t InputPoint()
     {
         Env.OpenPopupMessage("Input point", UITypes.MessageType.INPUT);
 
@@ -1836,10 +1850,10 @@ public class ScriptFunctions
         {
             Env.ClosePopupMessage();
             ItConsole.println("Cancel!");
-            return VectorExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
-        Vector3d p = ctrl.PointList[0];
+        vector3_t p = ctrl.PointList[0];
 
         ItConsole.println(p.CoordString());
 
@@ -1852,19 +1866,20 @@ public class ScriptFunctions
     {
         string s = null;
 
-        ThreadUtil.RunOnMainThread(() => {
-                s = ItConsole.getString(msg, defStr);
-            }, true);
+        ThreadUtil.RunOnMainThread(() =>
+        {
+            s = ItConsole.getString(msg, defStr);
+        }, true);
 
         return s;
     }
 
-    public Vector3d ViewDir()
+    public vector3_t ViewDir()
     {
         return Controller.DC.ViewDir;
     }
 
-    public Vector3d InputUnitVector()
+    public vector3_t InputUnitVector()
     {
         InteractCtrl ctrl = Controller.InteractCtrl;
 
@@ -1880,10 +1895,10 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return VectorExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
-        Vector3d p0 = ctrl.PointList[0];
+        vector3_t p0 = ctrl.PointList[0];
         ItConsole.println(p0.CoordString());
 
         ItConsole.println(AnsiEsc.Yellow + "Input point 2 >>");
@@ -1894,15 +1909,15 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return VectorExt.InvalidVector3d;
+            return VectorExt.InvalidVector3;
         }
 
-        Vector3d p1 = Controller.InteractCtrl.PointList[1];
+        vector3_t p1 = Controller.InteractCtrl.PointList[1];
 
         ctrl.End();
 
 
-        Vector3d v = p1 - p0;
+        vector3_t v = p1 - p0;
 
         v = v.UnitVector();
 
@@ -1911,7 +1926,7 @@ public class ScriptFunctions
         return v;
     }
 
-    public (Vector3d, Vector3d) InputLine()
+    public (vector3_t, vector3_t) InputLine()
     {
         InteractCtrl ctrl = Controller.InteractCtrl;
 
@@ -1927,10 +1942,10 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return (VectorExt.InvalidVector3d, VectorExt.InvalidVector3d);
+            return (VectorExt.InvalidVector3, VectorExt.InvalidVector3);
         }
 
-        Vector3d p0 = ctrl.PointList[0];
+        vector3_t p0 = ctrl.PointList[0];
         ItConsole.println(p0.CoordString());
 
         ItConsole.print(AnsiEsc.Yellow + "Input point 2 >>" + AnsiEsc.Reset + " ");
@@ -1941,10 +1956,10 @@ public class ScriptFunctions
         {
             ctrl.End();
             ItConsole.println("Cancel!");
-            return (VectorExt.InvalidVector3d, VectorExt.InvalidVector3d);
+            return (VectorExt.InvalidVector3, VectorExt.InvalidVector3);
         }
 
-        Vector3d p1 = Controller.InteractCtrl.PointList[1];
+        vector3_t p1 = Controller.InteractCtrl.PointList[1];
         ItConsole.println(p1.CoordString());
 
         ctrl.End();
@@ -1972,7 +1987,7 @@ public class ScriptFunctions
 
     public CadFigure CreatePolyLines()
     {
-        CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(CadFigure.Types.POLY_LINES);
+        CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(Types.POLY_LINES);
         return fig;
     }
 
@@ -2058,15 +2073,15 @@ public class ScriptFunctions
             return;
         }
 
-        if (baseFig.Type != CadFigure.Types.POLY_LINES)
+        if (baseFig.Type != Types.POLY_LINES)
         {
             return;
         }
 
-        (Vector3d p1, Vector3d p2) = InputLine();
+        (vector3_t p1, vector3_t p2) = InputLine();
 
-        Vector3d org = p1;
-        Vector3d axis = (p2 - p1).Normalized();
+        vector3_t org = p1;
+        vector3_t axis = (p2 - p1).Normalized();
 
         CadMesh cm = MeshMaker.CreateRotatingBody(32, org, axis, baseFig.PointList, false, false, MeshMaker.FaceType.QUADRANGLE);
 

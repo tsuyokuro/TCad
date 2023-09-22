@@ -1,16 +1,30 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
+using OpenTK.Mathematics;
 using System;
 using System.Diagnostics;
-using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
 public struct RulerInfo
 {
     public bool IsValid;
-    public Vector3d CrossPoint;
-    public double Distance;
+    public vector3_t CrossPoint;
+    public vcompo_t Distance;
 
     public CadRuler Ruler;
 }
@@ -23,7 +37,7 @@ public struct CadRuler
     public int Idx0;
     public int Idx1;
 
-    public Vector3d P0
+    public vector3_t P0
     {
         get
         {
@@ -38,7 +52,7 @@ public struct CadRuler
         }
     }
 
-    public Vector3d P1
+    public vector3_t P1
     {
         get
         {
@@ -53,27 +67,27 @@ public struct CadRuler
         }
     }
 
-    public RulerInfo Capture(DrawContext dc, CadCursor cursor, double range)
+    public RulerInfo Capture(DrawContext dc, CadCursor cursor, vcompo_t range)
     {
         RulerInfo ret = default(RulerInfo);
 
-        Vector3d cwp = dc.DevPointToWorldPoint(cursor.Pos);
+        vector3_t cwp = dc.DevPointToWorldPoint(cursor.Pos);
 
-        Vector3d xfaceNormal = dc.DevVectorToWorldVector(cursor.DirX);
-        Vector3d yfaceNormal = dc.DevVectorToWorldVector(cursor.DirY);
+        vector3_t xfaceNormal = dc.DevVectorToWorldVector(cursor.DirX);
+        vector3_t yfaceNormal = dc.DevVectorToWorldVector(cursor.DirY);
 
-        Vector3d cx = CadMath.CrossPlane(P0, P1, cwp, xfaceNormal);
-        Vector3d cy = CadMath.CrossPlane(P0, P1, cwp, yfaceNormal);
+        vector3_t cx = CadMath.CrossPlane(P0, P1, cwp, xfaceNormal);
+        vector3_t cy = CadMath.CrossPlane(P0, P1, cwp, yfaceNormal);
 
         if (!cx.IsValid() && !cy.IsValid())
         {
             return ret;
         }
 
-        Vector3d p = VectorExt.InvalidVector3d;
-        double mind = Double.MaxValue;
+        vector3_t p = VectorExt.InvalidVector3;
+        vcompo_t mind = vcompo_t.MaxValue;
 
-        StackArray<Vector3d> vtbl = default;
+        StackArray<vector3_t> vtbl = default;
 
         vtbl[0] = cx;
         vtbl[1] = cy;
@@ -81,16 +95,16 @@ public struct CadRuler
 
         for (int i = 0; i < vtbl.Length; i++)
         {
-            Vector3d v = vtbl[i];
+            vector3_t v = vtbl[i];
 
             if (!v.IsValid())
             {
                 continue;
             }
 
-            Vector3d devv = dc.WorldPointToDevPoint(v);
+            vector3_t devv = dc.WorldPointToDevPoint(v);
 
-            double td = (devv - cursor.Pos).Norm();
+            vcompo_t td = (devv - cursor.Pos).Norm();
 
             if (td < mind)
             {
@@ -189,12 +203,12 @@ public class CadRulerSet
         RCount++;
     }
 
-    public RulerInfo Capture(DrawContext dc, CadCursor cursor, double rangePixel)
+    public RulerInfo Capture(DrawContext dc, CadCursor cursor, vcompo_t rangePixel)
     {
         RulerInfo match = default(RulerInfo);
         RulerInfo ri = default(RulerInfo);
 
-        double min = rangePixel;
+        vcompo_t min = rangePixel;
 
         MatchIndex = -1;
 

@@ -4,7 +4,6 @@
 using namespace CadDataTypes;
 using namespace MyCollections;
 
-
 namespace CarveWapper
 {
 	CadMesh^ CarveW::AMinusB(CadMesh^ a, CadMesh^ b)
@@ -45,7 +44,6 @@ namespace CarveWapper
 		CadMesh^ ret = gcnew CadMesh();
 
 		ret->VertexStore = gcnew VertexList();
-		ret->FaceStore = gcnew FlexArray<CadFace^>();
 
 		int vnum = pmesh->vertices.size();
 
@@ -54,11 +52,12 @@ namespace CarveWapper
 		for (; i < vnum; i++)
 		{
 			carve::poly::Vertex<3> vertex = pmesh->vertices[i];
-			ret->VertexStore->Add(CadVertex::Create(vertex.v.x, vertex.v.y, vertex.v.z));
+			ret->VertexStore->Add(CadVertex::Create3(vertex.v.x, vertex.v.y, vertex.v.z));
 		}
 
-
 		int fnum = pmesh->faces.size();
+
+        ret->FaceStore = gcnew FlexArray<CadFace^>(fnum);
 
 		i = 0;
 		for (; i < fnum; i++)
@@ -90,7 +89,7 @@ namespace CarveWapper
 
 		for (i = 0; i < vnum; i++)
 		{
-			CadVertex v = cadMesh->VertexStore[i];
+			CadVertex v = cadMesh->VertexStore->Data[i];
 			data.addVertex(carve::geom::VECTOR(v.X, v.Y, v.Z));
 		}
 
@@ -98,17 +97,17 @@ namespace CarveWapper
 
 		for (i = 0; i < fnum; i++)
 		{
-			CadFace^ face = cadMesh->FaceStore[i];
+			CadFace^ face = cadMesh->FaceStore->Data[i];
 
 			int pnum = face->VList->Count;
 
 			if (pnum == 3)
 			{
-				data.addFace(face->VList[0], face->VList[1], face->VList[2]);
+				data.addFace(face->VList->Data[0], face->VList->Data[1], face->VList->Data[2]);
 			}
 			else if (pnum == 4)
 			{
-				data.addFace(face->VList[0], face->VList[1], face->VList[2], face->VList[3]);
+				data.addFace(face->VList->Data[0], face->VList->Data[1], face->VList->Data[2], face->VList->Data[3]);
 			}
 			else if (pnum > 4)
 			{
@@ -116,7 +115,7 @@ namespace CarveWapper
 
 				for (int j = 0; j < pnum; j++)
 				{
-					vl.push_back(face->VList[j]);
+					vl.push_back((int)(face->VList->Data[j]));
 				}
 
 				data.addFace(vl.begin(), vl.end());

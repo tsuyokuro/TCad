@@ -1,7 +1,21 @@
-using System;
-using System.ComponentModel;
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
+using System.ComponentModel;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace TCad.ViewModel;
 
@@ -35,9 +49,9 @@ public class CursorPosViewModel : INotifyPropertyChanged
         get => mStrCursorPos2;
     }
 
-    private Vector3d mCursorPos;
+    private vector3_t mCursorPos;
 
-    public Vector3d CursorPos
+    public vector3_t CursorPos
     {
         set
         {
@@ -57,9 +71,9 @@ public class CursorPosViewModel : INotifyPropertyChanged
         get => mCursorPos;
     }
 
-    private Vector3d mCursorPos2;
+    private vector3_t mCursorPos2;
 
-    public Vector3d CursorPos2
+    public vector3_t CursorPos2
     {
         set
         {

@@ -1,7 +1,22 @@
-using OpenTK;
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System.Drawing;
 using System.Windows.Forms;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -18,7 +33,7 @@ public class DrawContextGDI : DrawContext
         get => mGdiGraphics;
     }
 
-    public override double UnitPerMilli
+    public override vcompo_t UnitPerMilli
     {
         set
         {
@@ -54,7 +69,7 @@ public class DrawContextGDI : DrawContext
         SetupDrawing();
     }
 
-    public override void SetViewSize(double w, double h)
+    public override void SetViewSize(vcompo_t w, vcompo_t h)
     {
         mViewWidth = w;
         mViewHeight = h;
@@ -64,8 +79,8 @@ public class DrawContextGDI : DrawContext
             return;
         }
 
-        DeviceScaleX = w / 2.0;
-        DeviceScaleY = -h / 2.0;
+        DeviceScaleX = w / (vcompo_t)(2.0);
+        DeviceScaleY = -h / (vcompo_t)(2.0);
 
         CalcProjectionMatrix();
         CalcProjectionZW();
@@ -112,7 +127,7 @@ public class DrawContextGDI : DrawContext
 
     public override void CalcProjectionMatrix()
     {
-        mProjectionMatrix = Matrix4d.CreateOrthographic(
+        mProjectionMatrix = matrix4_t.CreateOrthographic(
                                         ViewWidth / mUnitPerMilli,
                                         ViewHeight / mUnitPerMilli,
                                         mProjectionNear,

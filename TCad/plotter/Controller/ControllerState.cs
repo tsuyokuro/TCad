@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
@@ -6,6 +7,21 @@ using System.Collections.Generic;
 using TCad.Controls;
 
 using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -17,7 +33,7 @@ public class ControllerStateMachine
 {
     public class StateContext
     {
-        public Vector3d StoredObjDownPoint = default;
+        public vector3_t StoredObjDownPoint = default;
         public PlotterController Controller;
 
         public ControllerState CurrentState
@@ -153,15 +169,15 @@ public class ControllerState
 
     public virtual void Draw(DrawContext dc) { }
 
-    public virtual void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y) { }
+    public virtual void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public virtual void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y) { }
+    public virtual void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public virtual void MButtonDown(CadMouse pointer, DrawContext dc, double x, double y) { }
+    public virtual void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public virtual void MButtonUp(CadMouse pointer, DrawContext dc, double x, double y) { }
+    public virtual void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public virtual void MouseMove(CadMouse pointer, DrawContext dc, double x, double y) { }
+    public virtual void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
     public virtual void Cancel() { }
 }
@@ -201,12 +217,12 @@ public class CreateFigureState : ControllerState
 
         if (creator != null)
         {
-            Vector3d p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
             creator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         if (isStart)
         {
@@ -325,9 +341,9 @@ public class SelectingState : ControllerState
     {
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Vector3d pixp = new(x, y, 0);
+        vector3_t pixp = new(x, y, 0);
 
 
         if (Ctrl.SelectNearest(dc, Ctrl.CrossCursor.Pos))
@@ -349,7 +365,7 @@ public class SelectingState : ControllerState
         }
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         Ctrl.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
@@ -366,8 +382,8 @@ public class SelectingState : ControllerState
 /// </summary>
 public class RubberBandSelectState : ControllerState
 {
-    private Vector3d RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
-    private Vector3d RubberBandScrnPoint1 = default;
+    private vector3_t RubberBandScrnPoint0 = VectorExt.InvalidVector3;
+    private vector3_t RubberBandScrnPoint1 = default;
 
     public override ControllerStates State
     {
@@ -393,14 +409,14 @@ public class RubberBandSelectState : ControllerState
             RubberBandScrnPoint0, RubberBandScrnPoint1);
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Vector3d pixp = new Vector3d(x, y, 0);
+        vector3_t pixp = new vector3_t(x, y, 0);
 
         RubberBandScrnPoint0 = pixp;
         RubberBandScrnPoint1 = pixp;
 
-        if (Ctrl.SelectNearest(dc, (Vector3d)Ctrl.CrossCursor.Pos))
+        if (Ctrl.SelectNearest(dc, (vector3_t)Ctrl.CrossCursor.Pos))
         {
             if (!Ctrl.CursorLocked)
             {
@@ -417,13 +433,13 @@ public class RubberBandSelectState : ControllerState
         }
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Vector3d pixp = new Vector3d(x, y, 0);
+        vector3_t pixp = new vector3_t(x, y, 0);
 
         RubberBandSelect(dc, RubberBandScrnPoint0, pixp);
 
-        RubberBandScrnPoint0 = VectorExt.InvalidVector3d;
+        RubberBandScrnPoint0 = VectorExt.InvalidVector3;
 
         Ctrl.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
@@ -431,7 +447,7 @@ public class RubberBandSelectState : ControllerState
         Context.ChangeState(ControllerStates.SELECT);
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         RubberBandScrnPoint1.X = x;
         RubberBandScrnPoint1.Y = y;
@@ -442,13 +458,13 @@ public class RubberBandSelectState : ControllerState
     {
     }
 
-    private void RubberBandSelect(DrawContext dc, Vector3d p0, Vector3d p1)
+    private void RubberBandSelect(DrawContext dc, vector3_t p0, vector3_t p1)
     {
         Ctrl.LastSelPoint = null;
         Ctrl.LastSelSegment = null;
 
-        Vector3d minp = VectorExt.Min(p0, p1);
-        Vector3d maxp = VectorExt.Max(p0, p1);
+        vector3_t minp = VectorExt.Min(p0, p1);
+        vector3_t maxp = VectorExt.Max(p0, p1);
         Ctrl.DB.ForEachEditableFigure(
             (layer, fig) =>
             {
@@ -456,11 +472,11 @@ public class RubberBandSelectState : ControllerState
             });
     }
 
-    private static void SelectIfContactRect(DrawContext dc, Vector3d minp, Vector3d maxp, CadFigure fig)
+    private static void SelectIfContactRect(DrawContext dc, vector3_t minp, vector3_t maxp, CadFigure fig)
     {
         for (int i = 0; i < fig.PointCount; i++)
         {
-            Vector3d p = dc.WorldPointToDevPoint(fig.PointList[i].vector);
+            vector3_t p = dc.WorldPointToDevPoint(fig.PointList[i].vector);
 
             if (CadUtil.IsInRect2D(minp, maxp, p))
             {
@@ -477,7 +493,7 @@ public class RubberBandSelectState : ControllerState
 /// </summary>
 public class DragingPointsState : ControllerState
 {
-    Vector3d StartPos;
+    vector3_t StartPos;
 
     public override ControllerStates State
     {
@@ -502,11 +518,11 @@ public class DragingPointsState : ControllerState
     {
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         //Ctrl.mPointSearcher.SetIgnoreList(null);
         //Ctrl.mSegSearcher.SetIgnoreList(null);
@@ -521,7 +537,7 @@ public class DragingPointsState : ControllerState
         Context.ChangeState(ControllerStates.SELECT);
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y) 
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) 
     {
         if (isStart)
         {
@@ -530,7 +546,7 @@ public class DragingPointsState : ControllerState
             // 最初だけある程度ずらさないと移動しないようにする
             //
             CadVertex v = CadVertex.Create(x, y, 0);
-            double d = (Ctrl.RawDownPoint - v).Norm();
+            vcompo_t d = (Ctrl.RawDownPoint - v).Norm();
 
             if (d > SettingsHolder.Settings.InitialMoveLimit)
             {
@@ -540,10 +556,10 @@ public class DragingPointsState : ControllerState
         }
         else
         {
-            Vector3d p0 = dc.DevPointToWorldPoint(StartPos);
-            Vector3d p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p0 = dc.DevPointToWorldPoint(StartPos);
+            vector3_t p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
 
-            Vector3d delta = p1 - p0;
+            vector3_t delta = p1 - p0;
 
             Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.CrossCursor.Pos));
 
@@ -585,12 +601,12 @@ public class MeasuringState : ControllerState
     {
         if (Ctrl.MeasureFigureCreator != null)
         {
-            Vector3d p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
             Ctrl.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         Ctrl.LastDownPoint = Ctrl.SnapPoint;
 
@@ -609,11 +625,11 @@ public class MeasuringState : ControllerState
         PutMeasure();
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
@@ -641,7 +657,7 @@ public class MeasuringState : ControllerState
     {
         int pcnt = MeasureFigureCreator.Figure.PointCount;
 
-        double currentD = 0;
+        vcompo_t currentD = 0;
 
         if (pcnt > 1)
         {
@@ -649,10 +665,10 @@ public class MeasuringState : ControllerState
             CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
 
             currentD = (p1 - p0).Norm();
-            currentD = Math.Round(currentD, 4);
+            currentD = (vcompo_t)Math.Round(currentD, 4);
         }
 
-        double a = 0;
+        vcompo_t a = 0;
 
         if (pcnt > 2)
         {
@@ -660,17 +676,17 @@ public class MeasuringState : ControllerState
             CadVertex p1 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 3);
             CadVertex p2 = MeasureFigureCreator.Figure.GetPointAt(pcnt - 1);
 
-            Vector3d v1 = p1.vector - p0.vector;
-            Vector3d v2 = p2.vector - p0.vector;
+            vector3_t v1 = p1.vector - p0.vector;
+            vector3_t v2 = p2.vector - p0.vector;
 
-            double t = CadMath.AngleOfVector(v1, v2);
+            vcompo_t t = CadMath.AngleOfVector(v1, v2);
             a = CadMath.Rad2Deg(t);
-            a = Math.Round(a, 4);
+            a = (vcompo_t)Math.Round(a, 4);
         }
 
-        double totalD = CadUtil.AroundLength(MeasureFigureCreator.Figure);
+        vcompo_t totalD = CadUtil.AroundLength(MeasureFigureCreator.Figure);
 
-        totalD = Math.Round(totalD, 4);
+        totalD = (vcompo_t)Math.Round(totalD, 4);
 
         int cnt = MeasureFigureCreator.Figure.PointCount;
 
@@ -708,15 +724,15 @@ public class DragingViewOrgState : ControllerState
     {
     }
 
-    public override void LButtonDown(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, double x, double y)
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         ViewOrgDrag(pointer, dc, x, y);
     }
@@ -725,13 +741,13 @@ public class DragingViewOrgState : ControllerState
     {
     }
 
-    private void ViewOrgDrag(CadMouse pointer, DrawContext dc, double x, double y)
+    private void ViewOrgDrag(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Vector3d cp = new Vector3d(x, y, 0);
+        vector3_t cp = new vector3_t(x, y, 0);
 
-        Vector3d d = cp - pointer.MDownPoint;
+        vector3_t d = cp - pointer.MDownPoint;
 
-        Vector3d op = Ctrl.StoreViewOrg + d;
+        vector3_t op = Ctrl.StoreViewOrg + d;
 
         ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
 

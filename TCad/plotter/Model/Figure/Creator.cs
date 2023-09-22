@@ -1,6 +1,21 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
-using System.Windows.Documents;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter;
 
@@ -123,8 +138,8 @@ public class PolyLinesCreator : FigCreator
     {
         if (Figure_.PointList.Count > 2)
         {
-            //Vector3d normal = CadUtil.RepresentativeNormal(fig.PointList);
-            //double t = Vector3d.Dot(normal, DC.ViewDir);
+            //vector3_t normal = CadUtil.RepresentativeNormal(fig.PointList);
+            //vcompo_t t = vector3_t.Dot(normal, DC.ViewDir);
 
             Figure_.Normal = dc.ViewDir;
             Figure_.Normal *= -1;
@@ -201,24 +216,24 @@ public class RectCreator : FigCreator
         }
         else
         {
-            Vector3d p0 = Figure_.PointList[0].vector;
-            Vector3d p2 = p.vector;
+            vector3_t p0 = Figure_.PointList[0].vector;
+            vector3_t p2 = p.vector;
 
             if (p0 == p2)
             {
                 return;
             }
 
-            Vector3d hv = CadMath.CrossProduct(dc.UpVector, dc.ViewDir).Normalized();
-            Vector3d uv = dc.UpVector;
+            vector3_t hv = CadMath.CrossProduct(dc.UpVector, dc.ViewDir).Normalized();
+            vector3_t uv = dc.UpVector;
 
-            Vector3d crossV = p2 - p0;
+            vector3_t crossV = p2 - p0;
 
-            Vector3d v1 = CadMath.InnerProduct(crossV, hv) * hv;
-            Vector3d p1 = v1 + p0;
+            vector3_t v1 = CadMath.InnerProduct(crossV, hv) * hv;
+            vector3_t p1 = v1 + p0;
 
-            Vector3d v3 = CadMath.InnerProduct(crossV, uv) * uv;
-            Vector3d p3 = v3 + p0;
+            vector3_t v3 = CadMath.InnerProduct(crossV, uv) * uv;
+            vector3_t p3 = v3 + p0;
 
             Figure_.PointList.Add(new CadVertex(p3));
             Figure_.PointList.Add(new CadVertex(p2));

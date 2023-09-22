@@ -1,3 +1,4 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 using TCad.Properties;
 using Microsoft.Scripting.Hosting;
 using System;
@@ -17,9 +18,24 @@ using Microsoft.Scripting;
 using System.Diagnostics;
 using System.Windows;
 using TCad.ViewModel;
-using static Community.CsharpSqlite.Sqlite3;
+using Plotter.Controller;
 
-namespace Plotter.Controller;
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
+
+namespace Plotter.Scripting;
 
 public partial class ScriptEnvironment
 {
@@ -99,7 +115,7 @@ public partial class ScriptEnvironment
         //string script = "";
 
         Engine = Python.CreateEngine();
-        
+
         mScope = Engine.CreateScope();
         Source = Engine.CreateScriptSourceFromString(script);
 
@@ -150,7 +166,7 @@ public partial class ScriptEnvironment
 
         // Command is python
 
-        await Task.Run( () =>
+        await Task.Run(() =>
         {
             RunScript(s, false);
         });
@@ -234,15 +250,15 @@ public partial class ScriptEnvironment
         {
             Stopwatch sw = new();
             sw.Start();
-            
+
             ret = Engine.Execute(s, mScope);
 
             sw.Stop();
-            ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)" );
+            ItConsole.println("Exec time:" + sw.ElapsedMilliseconds + "(msec)");
 
             if (ret != null)
             {
-                if (ret is double or Int32 or float)
+                if (ret is vcompo_t or int or float)
                 {
                     ItConsole.println(AnsiEsc.BGreen + ret.ToString());
                 }
@@ -254,9 +270,9 @@ public partial class ScriptEnvironment
                 {
                     ItConsole.println(AnsiEsc.BGreen + ret.ToString());
                 }
-                else if (ret is Vector3d)
+                else if (ret is vector3_t)
                 {
-                    Vector3d v = ret;
+                    vector3_t v = ret;
                     ItConsole.println(AnsiEsc.BGreen + "(" + v.X + "," + v.Y + "," + v.Z + ")");
                 }
                 else
@@ -315,7 +331,7 @@ public partial class ScriptEnvironment
         public Action OnStart = () => { };
         public Action OnEnding = () => { };
         public Action OnEnd = () => { };
-        public Func<TraceBackFrame, string, object, bool> onTrace = 
+        public Func<TraceBackFrame, string, object, bool> onTrace =
             (frame, result, payload) => { return true; };
     }
 

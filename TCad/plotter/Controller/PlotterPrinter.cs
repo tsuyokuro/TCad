@@ -1,13 +1,27 @@
+//#define DEFAULT_DATA_TYPE_DOUBLE
 //#define PRINT_WITH_GL_ONLY
 //#define PRINT_WITH_GDI_ONLY
 
 using GLUtil;
-using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Graphics;
+
+
+
+#if DEFAULT_DATA_TYPE_DOUBLE
+using vcompo_t = System.Double;
+using vector3_t = OpenTK.Mathematics.Vector3d;
+using vector4_t = OpenTK.Mathematics.Vector4d;
+using matrix4_t = OpenTK.Mathematics.Matrix4d;
+#else
+using vcompo_t = System.Single;
+using vector3_t = OpenTK.Mathematics.Vector3;
+using vector4_t = OpenTK.Mathematics.Vector4;
+using matrix4_t = OpenTK.Mathematics.Matrix4;
+#endif
+
 
 namespace Plotter.Controller;
 
@@ -51,7 +65,7 @@ public class PlotterPrinter
             return null;
         }
 
-        double upRes = 1.0;
+        vcompo_t upRes = (vcompo_t)(1.0);
 
         deviceSize *= upRes;
 
@@ -59,21 +73,20 @@ public class PlotterPrinter
         dc.SetupTools(DrawModes.PRINTER, 2);
 
         // Bitmapを印刷すると大きさが変わるので、補正
-        double f = SettingsHolder.Settings.MagnificationBitmapPrinting;
-        dc.UnitPerMilli *= f;
-        //DC.UnitPerMilli *= 0.96;
+        vcompo_t mag = SettingsHolder.Settings.MagnificationBitmapPrinting;
 
-        Vector3d org = dc.ViewOrg;
+        dc.UnitPerMilli *= mag;
 
-        //org *= 0.96;
-        org *= f;
+        vector3_t org = dc.ViewOrg;
+
+        org *= mag;
 
         dc.SetViewOrg(org);
 
-        FrameBufferW fb = new FrameBufferW();
-        fb.Create((int)deviceSize.Width, (int)deviceSize.Height);
+        FrameBufferW frameBuffer = new FrameBufferW();
+        frameBuffer.Create((int)deviceSize.Width, (int)deviceSize.Height);
 
-        fb.Begin();
+        frameBuffer.Begin();
 
         dc.StartDraw();
 
@@ -92,17 +105,18 @@ public class PlotterPrinter
 
         pc.DrawFiguresRaw(dc);
 
-        GL.Enable(EnableCap.LineSmooth);
+        // EnableCap.LineSmoothがONだと線が太くなる(謎)
+        GL.Disable(EnableCap.LineSmooth);
 
         dc.EndDraw();
 
-        Bitmap bmp = fb.GetBitmap();
+        Bitmap bmp = frameBuffer.GetBitmap();
         Bitmap rsBmp = bmp;
 
-        fb.End();
-        fb.Dispose();
+        frameBuffer.End();
+        frameBuffer.Dispose();
 
-        if (upRes != 1.0)
+        if (upRes != (vcompo_t)(1.0))
         {
             rsBmp = BitmapUtil.ResizeBitmap(bmp,
                                     (int)(bmp.Width / upRes),
