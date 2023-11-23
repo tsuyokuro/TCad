@@ -114,7 +114,7 @@
                                     x:Name="SubMenuBorder"
                                     Padding="0,0,0,0"
                                     Background="{TemplateBinding Background}"
-                                    BorderBrush="#FF707070"
+                                    BorderBrush="{DynamicResource MenuBoarderColor}"
                                     BorderThickness="1.5">
 
                                     <Grid x:Name="SubMenu" Grid.IsSharedSizeScope="True">
@@ -173,14 +173,14 @@
                             <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
 
-                        <!--  Using the system colors for the Menu Highlight and IsEnabled  -->
+                        <!--  Colors for the Menu Highlight and IsEnabled  -->
                         <Trigger Property="IsHighlighted" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlightBGColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource MenuHighlightTextColor}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuHighlightBGColor}" />
+                            <Setter Property="Foreground" Value="{DynamicResource MenuHighlightTextColor}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuDisableBGColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource MenuDisableTextColor}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuDisableBGColor}" />
+                            <Setter Property="Foreground" Value="{DynamicResource MenuDisableTextColor}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

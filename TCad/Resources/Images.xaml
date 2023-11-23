@@ -1,10 +1,16 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+
     <DrawingImage x:Key="traiangle2DrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
                 <DrawingGroup Transform="1,0,0,1,0,-249">
-                    <GeometryDrawing Brush="#FFF2F2F2" Geometry="F1 M48,48z M0,0z M28.643167,270.55028L39.704889,281.61201 39.740229,270.54167z M45.999999,264.03319L45.999999,297 13.634534,263.99783z" />
-                    <GeometryDrawing Brush="#FFF2F2F2" Geometry="F1 M48,48z M0,0z M8.6496485,288.66104L8.6496485,272.9536 17.708941,288.64475z M1.9999999,249L1.9645877,295.30208 28.918126,295.30208z" />
+                    <GeometryDrawing Brush="{DynamicResource AppIconBrushColor}" Geometry="F1 M48,48z M0,0z M28.643167,270.55028L39.704889,281.61201 39.740229,270.54167z M45.999999,264.03319L45.999999,297 13.634534,263.99783z" />
+                    <GeometryDrawing Brush="{DynamicResource AppIconBrushColor}" Geometry="F1 M48,48z M0,0z M8.6496485,288.66104L8.6496485,272.9536 17.708941,288.64475z M1.9999999,249L1.9645877,295.30208 28.918126,295.30208z" />
                 </DrawingGroup>
             </DrawingGroup>
         </DrawingImage.Drawing>
@@ -15,7 +21,7 @@
     <DrawingImage x:Key="OpenFileDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M48,48z M0,0z M11,44Q9.8,44 8.9,43.1 8,42.2 8,41L8,7Q8,5.8 8.9,4.9 9.8,4 11,4L28,4 40,16 40,29.5 37,29.5 37,18 26,18 26,7 11,7 11,41 31.5,41 31.5,44z M43.9,44.05L37.5,37.65 37.5,43.9 34.5,43.9 34.5,32.5 45.9,32.5 45.9,35.5 39.6,35.5 46,41.9z M11,41L11,7 11,41z" />
+                <GeometryDrawing Brush="{DynamicResource FileIconBrushColor}" Geometry="F1 M48,48z M0,0z M11,44Q9.8,44 8.9,43.1 8,42.2 8,41L8,7Q8,5.8 8.9,4.9 9.8,4 11,4L28,4 40,16 40,29.5 37,29.5 37,18 26,18 26,7 11,7 11,41 31.5,41 31.5,44z M43.9,44.05L37.5,37.65 37.5,43.9 34.5,43.9 34.5,32.5 45.9,32.5 45.9,35.5 39.6,35.5 46,41.9z M11,41L11,7 11,41z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -23,7 +29,7 @@
     <DrawingImage x:Key="SaveFileDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M48,48z M0,0z M42,13.85L42,39Q42,40.2 41.1,41.1 40.2,42 39,42L9,42Q7.8,42 6.9,41.1 6,40.2 6,39L6,9Q6,7.8 6.9,6.9 7.8,6 9,6L34.15,6z M39,15.2L32.8,9 9,9 9,39 39,39z M24,35.75Q26.15,35.75 27.675,34.225 29.2,32.7 29.2,30.55 29.2,28.4 27.675,26.875 26.15,25.35 24,25.35 21.85,25.35 20.325,26.875 18.8,28.4 18.8,30.55 18.8,32.7 20.325,34.225 21.85,35.75 24,35.75z M11.65,18.8L29.55,18.8 29.55,11.65 11.65,11.65z M9,15.2L9,39 9,9z" />
+                <GeometryDrawing Brush="{DynamicResource FileIconBrushColor}" Geometry="F1 M48,48z M0,0z M42,13.85L42,39Q42,40.2 41.1,41.1 40.2,42 39,42L9,42Q7.8,42 6.9,41.1 6,40.2 6,39L6,9Q6,7.8 6.9,6.9 7.8,6 9,6L34.15,6z M39,15.2L32.8,9 9,9 9,39 39,39z M24,35.75Q26.15,35.75 27.675,34.225 29.2,32.7 29.2,30.55 29.2,28.4 27.675,26.875 26.15,25.35 24,25.35 21.85,25.35 20.325,26.875 18.8,28.4 18.8,30.55 18.8,32.7 20.325,34.225 21.85,35.75 24,35.75z M11.65,18.8L29.55,18.8 29.55,11.65 11.65,11.65z M9,15.2L9,39 9,9z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -34,7 +40,7 @@
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
                 <DrawingGroup>
-                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M16,16z M0,0z M12,12L15,12 15,15 12,15z M12,7L15,7 15,10 12,10z M7,12L10,12 10,15 7,15z M2,12L5,12 5,15 2,15z M7,7L10,7 10,10 7,10z M12,2L15,2 15,5 12,5z" />
+                    <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M16,16z M0,0z M12,12L15,12 15,15 12,15z M12,7L15,7 15,10 12,10z M7,12L10,12 10,15 7,15z M2,12L5,12 5,15 2,15z M7,7L10,7 10,10 7,10z M12,2L15,2 15,5 12,5z" />
                 </DrawingGroup>
             </DrawingGroup>
         </DrawingImage.Drawing>
@@ -43,7 +49,7 @@
     <DrawingImage x:Key="baseline_filter_listDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M24,24z M0,0z M10,18L14,18 14,16 10,16 10,18z M3,6L3,8 21,8 21,6 3,6z M6,13L18,13 18,11 6,11 6,13z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M24,24z M0,0z M10,18L14,18 14,16 10,16 10,18z M3,6L3,8 21,8 21,6 3,6z M6,13L18,13 18,11 6,11 6,13z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -52,7 +58,7 @@
     <DrawingImage x:Key="downDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V6.3500002 H6.3499999 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,1.8520833L3.175,4.7625 4.4979167,1.8520833z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,1.8520833L3.175,4.7625 4.4979167,1.8520833z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -60,7 +66,7 @@
     <DrawingImage x:Key="upDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V6.3500002 H6.3499999 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,4.4979167L3.175,1.8520833 4.4979167,4.4979167z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,4.4979167L3.175,1.8520833 4.4979167,4.4979167z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -68,8 +74,8 @@
     <DrawingImage x:Key="bottomDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V6.3500002 H6.3499999 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,1.8520833L3.175,4.4979167 4.4979167,1.8520833z" />
-                <GeometryDrawing Brush="#FFFFFFFF">
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,1.8520833L3.175,4.4979167 4.4979167,1.8520833z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}">
                     <GeometryDrawing.Geometry>
                         <RectangleGeometry RadiusX="0" RadiusY="0" Rect="1.5875,4.4979,3.175,0.5292" />
                     </GeometryDrawing.Geometry>
@@ -81,8 +87,8 @@
     <DrawingImage x:Key="topDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V6.3500002 H6.3499999 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,4.4979167L3.175,1.8520833 4.4979167,4.4979167z" />
-                <GeometryDrawing Brush="#FFFFFFFF">
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M6.3499999,6.3500002z M0,0z M1.8520833,4.4979167L3.175,1.8520833 4.4979167,4.4979167z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}">
                     <GeometryDrawing.Geometry>
                         <RectangleGeometry RadiusX="0" RadiusY="0" Rect="1.5875,1.3229,3.175,0.5292" />
                     </GeometryDrawing.Geometry>
@@ -95,7 +101,7 @@
     <DrawingImage x:Key="baseline_visible_DrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
-                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M24,24z M0,0z M12,4.5C7,4.5 2.73,7.61 1,12 2.73,16.39 7,19.5 12,19.5 17,19.5 21.27,16.39 23,12 21.27,7.61 17,4.5 12,4.5z M12,17C9.24,17 7,14.76 7,12 7,9.24 9.24,7 12,7 14.76,7 17,9.24 17,12 17,14.76 14.76,17 12,17z M12,9C10.34,9 9,10.34 9,12 9,13.66 10.34,15 12,15 13.66,15 15,13.66 15,12 15,10.34 13.66,9 12,9z" />
+                <GeometryDrawing Brush="{DynamicResource StdIconBrushColor}" Geometry="F1 M24,24z M0,0z M12,4.5C7,4.5 2.73,7.61 1,12 2.73,16.39 7,19.5 12,19.5 17,19.5 21.27,16.39 23,12 21.27,7.61 17,4.5 12,4.5z M12,17C9.24,17 7,14.76 7,12 7,9.24 9.24,7 12,7 14.76,7 17,9.24 17,12 17,14.76 14.76,17 12,17z M12,9C10.34,9 9,10.34 9,12 9,13.66 10.34,15 12,15 13.66,15 15,13.66 15,12 15,10.34 13.66,9 12,9z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>

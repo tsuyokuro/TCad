@@ -35,22 +35,22 @@ public abstract class CadObjTreeItem
         }
     }
 
+    public virtual SolidColorBrush Foreground {
+        get { return null; }
+    }
+
+    public virtual SolidColorBrush Background
+    {
+        get { return null; }
+    }
+
+
     public virtual string Text
     {
         get
         {
             return "----";
         }
-    }
-
-    public virtual SolidColorBrush getForeColor()
-    {
-        return null;
-    }
-
-    public virtual SolidColorBrush getBackColor()
-    {
-        return null;
     }
 
     protected List<CadObjTreeItem> mChildren;

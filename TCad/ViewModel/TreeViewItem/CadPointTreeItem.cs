@@ -26,7 +26,7 @@ class CadPointTreeItem : CadObjTreeItem
     public CadFigure Fig;
     public int Index;
 
-    private static SolidColorBrush CheckedBackColor = new SolidColorBrush(Color.FromRgb(0x11, 0x46, 0x11));
+    public static SolidColorBrush CheckedBackColor = new SolidColorBrush(Color.FromRgb(0x11, 0x46, 0x11));
 
     public override bool IsChecked
     {
@@ -48,6 +48,25 @@ class CadPointTreeItem : CadObjTreeItem
         }
     }
 
+    public override SolidColorBrush Foreground
+    {
+        get { return null; }
+    }
+
+    public override SolidColorBrush Background
+    {
+        get
+        {
+            if (!IsChecked)
+            {
+                return null;
+            }
+
+            return CheckedBackColor;
+        }
+    }
+
+
     public override string Text
     {
         get
@@ -64,20 +83,6 @@ class CadPointTreeItem : CadObjTreeItem
         }
     }
 
-    public override SolidColorBrush getForeColor()
-    {
-        return null;
-    }
-
-    public override SolidColorBrush getBackColor()
-    {
-        if (!IsChecked)
-        {
-            return null;
-        }
-
-        return CheckedBackColor;
-    }
 
     public CadPointTreeItem(CadFigure fig, int idx)
     {

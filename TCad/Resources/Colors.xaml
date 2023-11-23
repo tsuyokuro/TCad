@@ -24,6 +24,15 @@
     <SolidColorBrush x:Key="MenuDisableBGColor" Color="#FF3F3F46" />
     <SolidColorBrush x:Key="MenuDisableTextColor" Color="Gray" />
 
+    <SolidColorBrush x:Key="MenuBoarderColor" Color="#FF707070" />
+
+
+    <SolidColorBrush x:Key="MainViewHostBGColor" Color="#FF080808" />
+
+
+    <SolidColorBrush x:Key="CaptionFileNameColor" Color="#FFB0B0B0" />
+
+
     <!-- AutoCompleteTextBox CandidateList -->
     <SolidColorBrush x:Key="CandidateListBGColor" Color="#FF000000" />
     <SolidColorBrush x:Key="CandidateListFGColor" Color="#FFFFFFFF" />
@@ -32,19 +41,55 @@
     <SolidColorBrush x:Key="CandidateListBorderColor" Color="YellowGreen" />
 
 
-    <SolidColorBrush x:Key="ListBoxSelColor" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="ListBoxTextColor" Color="#FFA0A0A0" />
+    <SolidColorBrush x:Key="ListBoxBGColor" Color="#FF252526" />
+
+    <SolidColorBrush x:Key="ListBoxSelTextColor" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListBoxSelBGColor" Color="#FF007ACC" />
 
     <SolidColorBrush x:Key="ToggleButtonCheckedBGColor" Color="#FF007ACC" />
     <SolidColorBrush x:Key="ToggleButtonMouseOverBGColor" Color="CadetBlue" />
     <SolidColorBrush x:Key="ToggleButtonCheckedFGColor" Color="White" />
     <SolidColorBrush x:Key="ToggleButtonMouseOverFGColor" Color="White" />
 
-    <SolidColorBrush x:Key="MsgBGColor" Color="#FF101010" />
-    <SolidColorBrush x:Key="MsgSelectedBGColor" Color="#FF2B537D" />
-    <SolidColorBrush x:Key="MsgTextColor" Color="#FFDDDDDD" />
+    <SolidColorBrush x:Key="PromptBGColor" Color="#FF101010" />
+    <SolidColorBrush x:Key="PromptTextColor" Color="#FFDDDDDD" />
 
     <SolidColorBrush x:Key="TextBoxBGColor" Color="#FF101010" />
     <SolidColorBrush x:Key="TextBoxFGColor" Color="#FFA0A0A0" />
 
     <SolidColorBrush x:Key="DialogBaseColor" Color="#FFEBEBEB" />
+
+    <!-- Drawing Images -->
+    <SolidColorBrush x:Key="AppIconBrushColor" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="StdIconBrushColor" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="FileIconBrushColor" Color="#6BB5FF" />
+
+
+    <!-- Status bar -->
+    <SolidColorBrush x:Key="StatusBarTextColor" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="StatusBarBGColor" Color="#FF252526" />
+
+
+    <!-- ScrollBar -->
+    <!--  色の定義。簡潔に記述する為に半透明の白で指定しているので、親の背景色が白の場合は白以外の色を指定してください  -->
+
+    <!--  スクロールバーの色  -->
+    <SolidColorBrush x:Key="ScrollBarColorBrush" Color="#44ffffff" />
+
+    <!--  スクロールバーボタンの色  -->
+    <SolidColorBrush x:Key="ScrollBarButtonBrush" Color="#00ffffff" />
+
+
+    <!--  ボーダーの色  -->
+    <SolidColorBrush x:Key="ScrollBarBorderBrush" Color="#00ffffff" />
+    <!--  トラック（レーン）の色  -->
+    <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="#11ffffff" />
+    <!--  三角の色  -->
+    <SolidColorBrush x:Key="ScrollBarHilightBrush" Color="#ccffffff" />
+    <!--  ボタンを押した時の色  -->
+    <SolidColorBrush x:Key="ScrollBarPressedBrush" Color="#99ffffff" />
+    <!--  使用不可の色  -->
+    <SolidColorBrush x:Key="ScrollBarDisabledBrush" Color="#44ffffff" />
+
 </ResourceDictionary>

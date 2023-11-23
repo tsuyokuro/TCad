@@ -385,6 +385,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
         if (mRoot == null)
         {
+            Rect sr = new Rect(0, 0, ActualWidth, dispHeight);
+            dc.DrawRectangle(mBackground, null, sr);
             return;
         }
 
@@ -443,10 +445,12 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
             rect.Y = p.Y;
 
-            Brush fbrush = item.getForeColor();
+            Brush fbrush = item.Foreground;
+            Brush bbrush = item.Background;
 
-            Brush bbrush = item.getBackColor();
 
+            // Nullの場合は、デフォルトブラシ
+            // If brush is null then use default brush 
             if (item.IsChecked)
             {
                 fbrush = fbrush ?? mCheckedForeground;

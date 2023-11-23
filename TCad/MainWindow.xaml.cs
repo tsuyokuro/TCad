@@ -13,7 +13,9 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using TCad.Controls;
 using TCad.Dialogs;
+using TCad.Util;
 using TCad.ViewModel;
+using static Community.CsharpSqlite.Sqlite3;
 
 namespace TCad;
 
@@ -210,7 +212,7 @@ public partial class MainWindow : Window, ICadMainWindow
         hsrc.AddHook(WndProc);
 
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
-        viewRoot.Background = new SolidColorBrush(Color.FromArgb(cp.A, cp.R, cp.G, cp.B));
+        XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         ImageRenderer.Provider.Get();
 
@@ -313,7 +315,14 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         DOut.plx("_in");
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
-        viewRoot.Background = new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B));
+        //viewRoot.Background = new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B));
+
+        XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
+
+        //XamlResource.SetValue("MenuBGColor", new SolidColorBrush(Colors.Aqua));
+        //ObjTree.Background = Brushes.Beige;
+        //ObjTree.Foreground = Brushes.Black;
+        ObjTree.Redraw();
     }
     #endregion
 }
