@@ -769,10 +769,20 @@
                     </Grid.RowDefinitions>
 
                     <!-- Main view -->
-                    <WindowsFormsHost Grid.Row="0"
-                        x:Name="viewContainer"
+                    <Border
+                        Grid.Row="0"
+                        Name="viewContainerWrap"
                         Background="{DynamicResource MainViewHostBGColor}"
-                        Focusable="True"/>
+                        BorderThickness="0"
+                        >
+
+                        <WindowsFormsHost
+                            x:Name="viewContainer"
+                            Background="{DynamicResource MainViewHostBGColor}"
+                            Focusable="True"
+                            />
+                        
+                    </Border>
 
                     <!-- Bottom Splitter -->
                     <GridSplitter x:Name="viewBottom" Grid.Row="1"
@@ -851,13 +861,13 @@
                                 Padding="2"
                                 BorderThickness="2"
                                 BorderBrush="{DynamicResource BaseColor}"
-                                Background="{DynamicResource PromptBGColor}"
+                                Background="{DynamicResource BaseColor}"
                                 >
 
                                 <cc:AutoCompleteTextBox
                                     x:Name="textCommand"
                                     Background="{DynamicResource PromptBGColor}"
-                                    BorderBrush="{DynamicResource PromptBGColor}"
+                                    BorderBrush="{DynamicResource BaseColor}"
                                     BorderThickness="1,1,1,1"
                                     CandidateListBorderStyle="{StaticResource CandidateListBorderStyle}"
                                     CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"

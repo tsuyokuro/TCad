@@ -316,6 +316,7 @@ public partial class MainWindow : Window, ICadMainWindow
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
+        //XamlResource.SetValue("BaseColor", new SolidColorBrush(Colors.White));
         //ObjTree.Background = Brushes.Beige;
         //ObjTree.NodeFG = Brushes.Black;
         //ObjTree.LeafFG = Brushes.DarkCyan;
