@@ -48,24 +48,6 @@ class CadPointTreeItem : CadObjTreeItem
         }
     }
 
-    public override SolidColorBrush Foreground
-    {
-        get { return null; }
-    }
-
-    public override SolidColorBrush Background
-    {
-        get
-        {
-            if (!IsChecked)
-            {
-                return null;
-            }
-
-            return CheckedBackColor;
-        }
-    }
-
 
     public override string Text
     {
@@ -86,6 +68,7 @@ class CadPointTreeItem : CadObjTreeItem
 
     public CadPointTreeItem(CadFigure fig, int idx)
     {
+        Type = CadObjTreeItemType.LEAF;
         Fig = fig;
         Index = idx;
     }

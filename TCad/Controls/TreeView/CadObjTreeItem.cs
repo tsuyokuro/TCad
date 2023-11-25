@@ -5,6 +5,14 @@ using System.Windows.Media;
 
 namespace TCad.Controls;
 
+
+public enum CadObjTreeItemType
+{
+    NODE,
+    LEAF,
+}
+
+
 public abstract class CadObjTreeItem
 {
     public class ContextMenuTag
@@ -35,13 +43,11 @@ public abstract class CadObjTreeItem
         }
     }
 
-    public virtual SolidColorBrush Foreground {
-        get { return null; }
-    }
-
-    public virtual SolidColorBrush Background
+    CadObjTreeItemType ItemType = CadObjTreeItemType.NODE;
+    public virtual CadObjTreeItemType Type
     {
-        get { return null; }
+        get => ItemType;
+        set => ItemType = value;
     }
 
 

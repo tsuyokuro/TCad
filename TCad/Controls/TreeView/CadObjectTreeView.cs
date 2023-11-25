@@ -23,6 +23,104 @@ public interface ICadObjectTree
 
 public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 {
+    // Node BG
+    public static readonly DependencyProperty BackgroundProp =
+        DependencyProperty.Register("Background",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(Brushes.Black));
+    public Brush Background
+    {
+        get => (Brush)GetValue(BackgroundProp);
+        set => SetValue(BackgroundProp, value);
+    }
+
+
+    // Node FG
+    public static readonly DependencyProperty NodeFGProp =
+        DependencyProperty.RegisterAttached("NodeFG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(Brushes.White));
+    public Brush NodeFG
+    {
+        get => (Brush)GetValue(NodeFGProp);
+        set => SetValue(NodeFGProp, value);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    // Checked Node FG
+    public static readonly DependencyProperty CheckedNodeFGProp =
+        DependencyProperty.Register("CheckedNodeFG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(Brushes.White));
+    public Brush CheckedNodeFG
+    {
+        get => (Brush)GetValue(CheckedNodeFGProp);
+        set => SetValue(CheckedNodeFGProp, value);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    // Checked Node BG
+    public static readonly DependencyProperty CheckedNodeBGProp =
+        DependencyProperty.Register("CheckedNodeBG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0x22, 0x8B, 0x22))));
+
+    public Brush CheckedNodeBG
+    {
+        get => (Brush)GetValue(CheckedNodeBGProp);
+        set => SetValue(CheckedNodeBGProp, value);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    // Leaf FG
+    public static readonly DependencyProperty LeafFGProp =
+        DependencyProperty.Register("LeafFG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(Brushes.White));
+    public Brush LeafFG
+    {
+        get => (Brush)GetValue(LeafFGProp);
+        set => SetValue(LeafFGProp, value);
+    }
+
+    //--------------------------------------------------------------------------------
+    // Checked Leaf FG
+    public static readonly DependencyProperty CheckedLeafFGProp =
+        DependencyProperty.Register("CheckedLeafFG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(Brushes.White));
+    public Brush CheckedLeafFG
+    {
+        get => (Brush)GetValue(CheckedLeafFGProp);
+        set => SetValue(CheckedLeafFGProp, value);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    // Checked Leaf BG
+    public static readonly DependencyProperty CheckedLeafBGProp =
+        DependencyProperty.Register("CheckedLeafBG",
+                                    typeof(Brush),
+                                    typeof(CadObjectTreeView),
+                                    new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0x11, 0x46, 0x11))));
+
+    public Brush CheckedLeafBG
+    {
+        get => (Brush)GetValue(CheckedLeafBGProp);
+        set => SetValue(CheckedLeafBGProp, value);
+    }
+
+
+
     static CadObjectTreeView()
     {
     }
@@ -40,79 +138,16 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
     }
     #endregion
 
-    public Brush Background
-    {
-        get
-        {
-            return mBackground;
-        }
-        set
-        {
-            mBackground = value;
-        }
-    }
 
-    public Brush Foreground
-    {
-        get
-        {
-            return mForeground;
-        }
-        set
-        {
-            mForeground = value;
-        }
-    }
 
-    public Brush CheckedBackground
-    {
-        get
-        {
-            return mCheckedBackground;
-        }
-        set
-        {
-            mCheckedBackground = value;
-        }
-    }
+    public double TextSize { get; set; } = 16.0;
 
-    public Brush CheckedForeground
-    {
-        get
-        {
-            return mCheckedForeground;
-        }
-        set
-        {
-            mCheckedForeground = value;
-        }
-    }
+    public double ItemHeight { get; set; } = 20.0;
 
-    public double TextSize
-    {
-        get
-        {
-            return mTextSize;
-        }
+    public double IndentSize { get; set; } = 12.0;
 
-        set
-        {
-            mTextSize = value;
-        }
-    }
+    public double SmallIndentSize { get; set; } = 4.0;
 
-    public double ItemHeight
-    {
-        get
-        {
-            return mItemHeight;
-        }
-
-        set
-        {
-            mItemHeight = value;
-        }
-    }
 
     public bool ShowRoot
     {
@@ -133,33 +168,13 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
     protected ScrollViewer Scroll;
 
-    //protected FontFamily mFontFamily;
-
     protected Typeface mTypeface;
 
     protected Typeface mPartsTypeface;
 
-
-    protected Brush mForeground = Brushes.Black;
-
-    protected Brush mBackground = Brushes.White;
-
-    protected Brush mCheckedForeground = Brushes.White;
-
-    protected Brush mCheckedBackground = new SolidColorBrush(Color.FromRgb(0x22,0x8B,0x22));
-
-
-    protected double mItemHeight = 20.0;
-
-    protected double mTextSize = 16.0;
-
-    protected double mIndentSize = 12.0;
-
-    protected double mSmallIndentSize = 4.0;
-
     protected ContextMenu mContextMenu;
 
-    public event Action<CadObjTreeItem, string> ItemCommand; 
+    public event Action<CadObjTreeItem, string> ItemCommand;
 
     FormattedText mExpand;
 
@@ -167,18 +182,19 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
     public CadObjectTreeView()
     {
-        FontFamily font;
-
         mContextMenu = new ContextMenu();
         mContextMenu.BorderBrush = Brushes.Black;
         mContextMenu.Padding = new Thickness(0, 1, 0, 1);
 
-        //font = new FontFamily("ＭＳ ゴシック");
-        font = new FontFamily("Consolas");
-        mTypeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+        {
+            FontFamily font;
 
-        font = new FontFamily("Marlett");   // WindowsのCloseボタン等の部品がFontになったもの
-        mPartsTypeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            font = new FontFamily("Consolas");
+            mTypeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+            font = new FontFamily("Marlett");   // WindowsのCloseボタン等の部品がFontになったもの
+            mPartsTypeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+        }
 
         Loaded += CadObjectTree_Loaded;
         MouseDown += CadObjectTree_MouseDown;
@@ -204,8 +220,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
     protected void CadObjectTree_MouseDown(object sender, MouseButtonEventArgs e)
     {
         Point p = e.GetPosition(this);
-        
-        int idx = (int)(p.Y / mItemHeight);
+
+        int idx = (int)(p.Y / ItemHeight);
 
         if (!ShowRoot)
         {
@@ -221,7 +237,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
         if (e.RightButton == MouseButtonState.Pressed)
         {
-            mRoot.ForEachAll((v)=>{
+            mRoot.ForEachAll((v) => {
                 v.IsChecked = false;
             });
 
@@ -268,7 +284,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
             if (item.Children != null)
             {
-                if (p.X > (level) * mIndentSize)
+                if (p.X > (level) * IndentSize)
                 {
                     item.IsChecked = item.IsChecked == false;
                     OnCheckChanged(item);
@@ -326,13 +342,13 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
     {
         if (Dispatcher.CheckAccess())
         {
-            Scroll.ScrollToVerticalOffset(pos * mItemHeight);
+            Scroll.ScrollToVerticalOffset(pos * ItemHeight);
         }
         else
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                Scroll.ScrollToVerticalOffset(pos * mItemHeight);
+                Scroll.ScrollToVerticalOffset(pos * ItemHeight);
             }));
         }
     }
@@ -354,7 +370,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             return true;
         });
 
-        if (!ShowRoot && idx>=0)
+        if (!ShowRoot && idx >= 0)
         {
             idx--;
         }
@@ -386,11 +402,11 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
         if (mRoot == null)
         {
             Rect sr = new Rect(0, 0, ActualWidth, dispHeight);
-            dc.DrawRectangle(mBackground, null, sr);
+            dc.DrawRectangle(Background, null, sr);
             return;
         }
 
-        double textOffset = (mItemHeight - mTextSize) / 2.0;
+        double textOffset = (ItemHeight - TextSize) / 2.0;
 
         Point p = default(Point);
         Point tp = default(Point);
@@ -398,7 +414,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
         Point mp = default(Point);
 
-        long topNumber = (long)offset / (long)mItemHeight;
+        long topNumber = (long)offset / (long)ItemHeight;
 
         if (!ShowRoot)
         {
@@ -406,21 +422,21 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
         }
 
         p.X = 0;
-        p.Y = mItemHeight * topNumber;
+        p.Y = ItemHeight * topNumber;
 
         if (ShowRoot)
         {
-            p.Y = mItemHeight * topNumber;
+            p.Y = ItemHeight * topNumber;
         }
         else
         {
-            p.Y = mItemHeight * (topNumber - 1);
+            p.Y = ItemHeight * (topNumber - 1);
         }
 
         rect.X = 0;
         rect.Y = p.Y;
         rect.Width = ActualWidth;
-        rect.Height = mItemHeight + 1;
+        rect.Height = ItemHeight + 1;
 
         long skip = topNumber;
 
@@ -445,32 +461,44 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
             rect.Y = p.Y;
 
-            Brush fbrush = item.Foreground;
-            Brush bbrush = item.Background;
+            Brush fbrush;
+            Brush bbrush = Background;
 
 
-            // Nullの場合は、デフォルトブラシ
-            // If brush is null then use default brush 
-            if (item.IsChecked)
+            if (item.Type == CadObjTreeItemType.NODE)
             {
-                fbrush = fbrush ?? mCheckedForeground;
-                bbrush = bbrush ?? mCheckedBackground;
+                if (item.IsChecked)
+                {
+                    fbrush = CheckedNodeFG;
+                    bbrush = CheckedNodeBG;
+                }
+                else
+                {
+                    fbrush = NodeFG;
+                }
             }
             else
             {
-                fbrush = fbrush ?? mForeground;
-                bbrush = bbrush ?? mBackground;
+                if (item.IsChecked)
+                {
+                    fbrush = CheckedLeafFG;
+                    bbrush = CheckedLeafBG;
+                }
+                else
+                {
+                    fbrush = LeafFG;
+                }
             }
 
             dc.DrawRectangle(bbrush, null, rect);
 
             if (item.Children != null)
             {
-                p.X = mIndentSize * (level - topLevel) + mIndentSize;
+                p.X = IndentSize * (level - topLevel) + IndentSize;
             }
             else
             {
-                p.X = mIndentSize * (level - topLevel) + mSmallIndentSize;
+                p.X = IndentSize * (level - topLevel) + SmallIndentSize;
             }
 
             tp = p;
@@ -480,7 +508,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             if (item.Children != null)
             {
                 mp = tp;
-                mp.X -= mIndentSize;
+                mp.X -= IndentSize;
                 //mp.X += 4;
 
                 if (item.IsExpand)
@@ -498,7 +526,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             ft = GetText(item.Text, fbrush);
             dc.DrawText(ft, tp);
 
-            p.Y += mItemHeight;
+            p.Y += ItemHeight;
 
             if (p.Y < rangeY)
             {
@@ -511,7 +539,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
         if (p.Y < rangeY)
         {
             Rect sr = new Rect(0, p.Y, ActualWidth, rangeY - p.Y);
-            dc.DrawRectangle(mBackground, null, sr);
+            dc.DrawRectangle(Background, null, sr);
         }
     }
 
@@ -521,7 +549,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
                                                   System.Globalization.CultureInfo.CurrentCulture,
                                                   System.Windows.FlowDirection.LeftToRight,
                                                   mTypeface,
-                                                  mTextSize,
+                                                  TextSize,
                                                   brush,
                                                   VisualTreeHelper.GetDpi(this).PixelsPerDip);
         return formattedText;
@@ -541,8 +569,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
     protected void CreateParts()
     {
-        mExpand = GetText("4", mForeground, mPartsTypeface, mTextSize + 2);
-        mContract = GetText("6", mForeground, mPartsTypeface, mTextSize + 2);
+        mExpand = GetText("4", NodeFG, mPartsTypeface, TextSize + 2);
+        mContract = GetText("6", NodeFG, mPartsTypeface, TextSize + 2);
     }
 
     public void AttachRoot(CadObjTreeItem root)
@@ -557,7 +585,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
     private void RecalcSize()
     {
         int tc = mRoot.GetTotalCount();
-        Height = mItemHeight * (double)(tc + 2);
+        Height = ItemHeight * (double)(tc + 2);
     }
 
     public void Redraw()

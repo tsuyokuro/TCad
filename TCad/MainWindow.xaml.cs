@@ -15,7 +15,6 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
-using static Community.CsharpSqlite.Sqlite3;
 
 namespace TCad;
 
@@ -313,16 +312,15 @@ public partial class MainWindow : Window, ICadMainWindow
     #region PlotterViewModel Event
     public void DrawModeChanged(DrawModes drawMode)
     {
-        DOut.plx("_in");
+        DOut.plx("in");
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
-        //viewRoot.Background = new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B));
-
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
-        //XamlResource.SetValue("MenuBGColor", new SolidColorBrush(Colors.Aqua));
         //ObjTree.Background = Brushes.Beige;
-        //ObjTree.Foreground = Brushes.Black;
-        ObjTree.Redraw();
+        //ObjTree.NodeFG = Brushes.Black;
+        //ObjTree.LeafFG = Brushes.DarkCyan;
+        //ObjTree.Redraw();
+        DOut.plx("out");
     }
     #endregion
 }

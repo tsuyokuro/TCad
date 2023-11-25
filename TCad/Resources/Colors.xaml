@@ -92,4 +92,11 @@
     <!--  使用不可の色  -->
     <SolidColorBrush x:Key="ScrollBarDisabledBrush" Color="#44ffffff" />
 
+
+    <!-- Tree View -->
+    <SolidColorBrush x:Key="TreeNodeTextColor" Color="#ffffffff" />
+    <SolidColorBrush x:Key="TreeLeafTextColor" Color="DeepSkyBlue" />
+
+
+
 </ResourceDictionary>

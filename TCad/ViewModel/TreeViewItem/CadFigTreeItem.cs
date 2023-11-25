@@ -57,8 +57,11 @@ class CadFigTreeItem : CadObjTreeItem
         }
     }
 
+
     public CadFigTreeItem(CadFigure fig)
     {
+        Type = CadObjTreeItemType.NODE;
+
         Fig = fig;
 
         int idx = 0;

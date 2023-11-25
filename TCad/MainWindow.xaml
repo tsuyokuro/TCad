@@ -649,7 +649,7 @@
                 <!--  Left panel  -->
                 <Border Grid.Column="0"
                     BorderBrush="{DynamicResource BoarderColor}"
-                    BorderThickness="0,0,0,1">
+                    BorderThickness="0,0,0,0">
                     <StackPanel
                         x:Name="LeftPanel"
                         Background="{DynamicResource BaseColor}">
@@ -851,7 +851,7 @@
                                 Padding="2"
                                 BorderThickness="2"
                                 BorderBrush="{DynamicResource BaseColor}"
-                                Background="{DynamicResource MsgBGColor}"
+                                Background="{DynamicResource PromptBGColor}"
                                 >
 
                                 <cc:AutoCompleteTextBox
@@ -1103,7 +1103,7 @@
                                     HorizontalScrollBarVisibility="Hidden"
                                     Style="{StaticResource CustomScrollViewerStyle}"
                                     VerticalScrollBarVisibility="Visible"
-                                    BorderThickness="0,0,1,0">
+                                    BorderThickness="0,0,0,0">
 
                                     <cc:CadObjectTreeView
                                         x:Name="ObjTree"
@@ -1111,7 +1111,8 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         Background="{StaticResource BaseColor}"
-                                        Foreground="{StaticResource TextColor}"
+                                        NodeFG="{StaticResource TreeNodeTextColor}"
+                                        LeafFG="{StaticResource TreeLeafTextColor}"
                                         ItemHeight="15.0"
                                         TextSize="11.0" />
                                 </ScrollViewer>
@@ -1126,7 +1127,7 @@
                 Height="Auto"
                 Background="{DynamicResource StatusBarBGColor}"
                 BorderBrush="{DynamicResource BoarderColor}"
-                BorderThickness="0,0,0,0">
+                BorderThickness="0,2,0,0">
 
                 <Grid
                     Height="28"
