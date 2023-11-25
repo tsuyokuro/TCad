@@ -10,9 +10,23 @@
     Width="442.5"
     Height="440"
     Icon="/Resources/Images/script_icon.png"
-    ResizeMode="CanResizeWithGrip"
-    mc:Ignorable="d">
 
+    WindowStyle="None"
+    BorderBrush="Orange"
+    BorderThickness="1"
+    AllowsTransparency="False"
+    
+    mc:Ignorable="d"
+    >
+
+    <!-- Windowのプロパティーに ResizeMode="CanResizeWithGrip" を入れるとグリップが出るが -->
+    <!-- 有効範囲が狭いので自前で出す -->
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="4" GlassFrameThickness="0" CornerRadius="0"/>
+    </WindowChrome.WindowChrome>
+
+    
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -23,6 +37,7 @@
                 <ResourceDictionary Source="/Resources/ImageCheckBoxs.xaml" />
                 <ResourceDictionary Source="/Resources/MenuStyle.xaml" />
                 <ResourceDictionary Source="/Resources/ScrollBarStyle.xaml" />
+                <ResourceDictionary Source="/Resources/CaptionButtonStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="MyMenu" TargetType="Menu">
@@ -43,60 +58,128 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Name="MaineContainer">
+    <Grid Name="Main">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="100*" />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" Style="{StaticResource MyMenu}">
-            <MenuItem Header="File" Style="{StaticResource MyMenuItem}">
-                <MenuItem
-                    Click="MenuItem_Click"
-                    Header="Open"
-                    Style="{StaticResource MyMenuItem}"
-                    Tag="open_script" />
-                <MenuItem
-                    Click="MenuItem_Click"
-                    Header="Save"
-                    Style="{StaticResource MyMenuItem}"
-                    Tag="save_script" />
-            </MenuItem>
-            <MenuItem Header="Edit" Style="{StaticResource MyMenuItem}">
-                <MenuItem
-                    Click="MenuItem_Click"
-                    Header="Search"
-                    Style="{StaticResource MyMenuItem}"
-                    Tag="search_text" />
-            </MenuItem>
-        </Menu>
-        <Grid Grid.Row="1" Background="{StaticResource MenuBGColor}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Border Margin="4,0,0,0"  Padding="1,0,0,1" Grid.Column="0" Height="24">
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="BtnOpen"
+
+        <Border Grid.Row="0" Padding="2" Background="{DynamicResource CaptionColor}">
+            <Grid Height="Auto"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                Background="{DynamicResource CaptionColor}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Menu Grid.Column="0" Style="{StaticResource MyMenu}" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <MenuItem Header="File" Style="{StaticResource MyMenuItem}">
+                        <MenuItem
+                            Click="MenuItem_Click"
+                            Header="Open"
+                            Style="{StaticResource MyMenuItem}"
+                            Tag="open_script" />
+                        <MenuItem
+                            Click="MenuItem_Click"
+                            Header="Save"
+                            Style="{StaticResource MyMenuItem}"
+                            Tag="save_script" />
+                    </MenuItem>
+                    <MenuItem Header="Edit" Style="{StaticResource MyMenuItem}">
+                        <MenuItem
+                            Click="MenuItem_Click"
+                            Header="Search"
+                            Style="{StaticResource MyMenuItem}"
+                            Tag="search_text" />
+                    </MenuItem>
+                </Menu>
+
+                <TextBlock
+                    x:Name="CurrentFileName"
+                    Grid.Column="1"
+                    Margin="12,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding CaptionFileName}"
+                    FontSize="{StaticResource CaptionFontSize}"
+                    Foreground="{DynamicResource CaptionFileNameColor}">
+                    --
+                </TextBlock>
+
+
+                <StackPanel
+                    Grid.Column="2"
+                    Height="26"
+                    Margin="0,0,4,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource CaptionColor}"
+                    Orientation="Horizontal">
+
+                    <Button
+                        x:Name="BtnMinWindow"
+                        Content="0"
+                        FontSize="{StaticResource CaptionButtonFontSize}"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button
+                        x:Name="BtnMaxWindow"
+                        Content="1"
+                        FontSize="{StaticResource CaptionButtonFontSize}"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button
+                        x:Name="BtnRestWindow"
+                        Content="2"
+                        FontSize="{StaticResource CaptionButtonFontSize}"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button
+                        x:Name="BtnCloseWindow"
+                        Content="r"
+                        FontSize="{StaticResource CaptionButtonFontSize}"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Name="MaineContainer">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="{StaticResource MenuBGColor}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Margin="4,0,0,0"  Padding="1,0,0,1" Grid.Column="0" Height="24">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="BtnOpen"
                             Click="ToolBtn_Click"
                             Tag="open_script"
                             Style="{StaticResource ToolButton3}">
-                        <Image Source="{StaticResource OpenFileDrawingImage}" />
+                            <Image Source="{StaticResource OpenFileDrawingImage}" />
 
-                    </Button>
-                    <Button x:Name="BtnSave"
+                        </Button>
+                        <Button x:Name="BtnSave"
                             Click="ToolBtn_Click"
                             Tag="save_script"
                             Margin="2,0,0,0"
                             Style="{StaticResource ToolButton3}">
-                        <Image Source="{StaticResource SaveFileDrawingImage}" />
-                    </Button>
-                </StackPanel>
-            </Border>
-        </Grid>
-        <avalonEdit:TextEditor
+                            <Image Source="{StaticResource SaveFileDrawingImage}" />
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <avalonEdit:TextEditor
             x:Name="textEditor"
-            Grid.Row="2"
+            Grid.Row="1"
             Margin="0"
             Background="#FF1E1E1E"
             BorderBrush="Black"
@@ -106,34 +189,35 @@
             Foreground="#FFE6E6E6"
             ShowLineNumbers="True"
             SyntaxHighlighting="python">
-            <avalonEdit:TextEditor.Resources>
-                <!--<Style BasedOn="{StaticResource CustomScrollViewerStyle}" TargetType="ScrollViewer" />-->
-                <Style BasedOn="{StaticResource CustomScrollBarStyle}" TargetType="ScrollBar" />
-            </avalonEdit:TextEditor.Resources>
-            <avalonEdit:TextEditor.ContextMenu>
-                <ContextMenu>
-                    <MenuItem
+                <avalonEdit:TextEditor.Resources>
+                    <!--<Style BasedOn="{StaticResource CustomScrollViewerStyle}" TargetType="ScrollViewer" />-->
+                    <Style BasedOn="{StaticResource CustomScrollBarStyle}" TargetType="ScrollBar" />
+                </avalonEdit:TextEditor.Resources>
+                <avalonEdit:TextEditor.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem
                         Click="MenuItem_Click"
                         Header="Copy"
                         Tag="copy_text" />
-                    <MenuItem
+                        <MenuItem
                         Click="MenuItem_Click"
                         Header="Paste"
                         Tag="paste_text" />
-                </ContextMenu>
-            </avalonEdit:TextEditor.ContextMenu>
-        </avalonEdit:TextEditor>
+                    </ContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
+            </avalonEdit:TextEditor>
 
-        <Border Grid.Row="3" Background="#FF1E1E1E">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="10*" />
-                    <ColumnDefinition Width="120" />
-                </Grid.ColumnDefinitions>
+            <Border Grid.Row="2" Background="#FF1E1E1E">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10*" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Button
+                    <Button
                     x:Name="BtnRun"
                     Grid.Column="0"
                     Width="Auto"
@@ -141,52 +225,52 @@
                     Margin="8,2,2,2"
                     Padding="0,0,0,0"
                     HorizontalAlignment="Left">
-                    <Button.Template>
+                        <Button.Template>
 
-                        <ControlTemplate TargetType="Button">
-                            <Border
+                            <ControlTemplate TargetType="Button">
+                                <Border
                                 Name="border"
                                 Padding="0,0,8,0"
                                 Background="#FF333333"
                                 BorderBrush="Transparent"
                                 BorderThickness="0"
                                 CornerRadius="3">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label
                                         Name="label"
                                         Padding="4,2,4,2"
                                         Foreground="White">
-                                        Run
-                                    </Label>
-                                    <Polygon
+                                            Run
+                                        </Label>
+                                        <Polygon
                                         x:Name = "icon"
                                         VerticalAlignment="Center"
                                         Fill="YellowGreen"
                                         Points="0,0 10,6, 0,12"
                                         />
-                                </StackPanel>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Orange" />
-                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
-                                </Trigger>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="Orange" />
+                                        <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                    </Trigger>
 
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Orange" />
-                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Background" Value="Gray" />
-                                    <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
-                                    <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="Orange" />
+                                        <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="border" Property="Background" Value="Gray" />
+                                        <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                        <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
 
-                    </Button.Template>
-                </Button>
-                <Button
+                        </Button.Template>
+                    </Button>
+                    <Button
                     x:Name="BtnStop"
                     Grid.Column="1"
                     Width="Auto"
@@ -194,59 +278,75 @@
                     Margin="2,2,2,2"
                     Padding="0,0,0,0"
                     HorizontalAlignment="Left">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border
-                                Name="border"
-                                Padding="0,0,8,0"
-                                Background="#FF333333"
-                                BorderBrush="Transparent"
-                                BorderThickness="0"
-                                CornerRadius="3">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Name="border"
+                                    Padding="0,0,8,0"
+                                    Background="#FF333333"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    CornerRadius="3">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label
                                         Name="label"
                                         Padding="4,2,4,2"
                                         Foreground="White">
-                                        Stop
-                                    </Label>
-                                    <Polygon
+                                            Stop
+                                        </Label>
+                                        <Polygon
                                         Name="icon"
                                         VerticalAlignment="Center"
                                         Fill="Red"
                                         Points="0,0 0,12 12,12 12,0"
                                         />
-                                </StackPanel>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Orange" />
-                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
-                                </Trigger>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="Orange" />
+                                        <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                    </Trigger>
 
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Orange" />
-                                    <Setter TargetName="label" Property="Foreground" Value="Black" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Background" Value="Gray" />
-                                    <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
-                                    <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="Orange" />
+                                        <Setter TargetName="label" Property="Foreground" Value="Black" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="border" Property="Background" Value="Gray" />
+                                        <Setter TargetName="label" Property="Foreground" Value="DarkGray" />
+                                        <Setter TargetName="icon" Property="Fill" Value="DarkGray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
 
-                    </Button.Template>
-                </Button>
+                        </Button.Template>
+                    </Button>
 
-                <Label Grid.Column="2" x:Name="info" Foreground="White"/>
+                    <Label Grid.Column="2" x:Name="info" Foreground="White"/>
 
-                <Label
+                    <Label
                     x:Name="LblCaretPos"
                     Grid.Column="3"
                     Content=""
                     Foreground="#FFE6E6E6" />
-            </Grid>
-        </Border>
+
+                    <StackPanel
+                        Grid.Column="4"
+                        VerticalAlignment="Bottom"
+                        Orientation="Horizontal">
+                        <Image
+                            Width="12"
+                            Margin="4,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{DynamicResource ResizeGripDrawingImage}"
+                            WindowChrome.ResizeGripDirection="BottomRight" />
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
+    
 </Window>
