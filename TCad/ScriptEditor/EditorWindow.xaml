@@ -154,11 +154,11 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Background="{StaticResource MenuBGColor}">
+            <Grid Grid.Row="0" Background="{DynamicResource MenuBGColor}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Border Margin="4,0,0,0"  Padding="1,0,0,1" Grid.Column="0" Height="24">
+                <Border Margin="4,0,0,4"  Padding="1,0,0,1" Grid.Column="0" Height="24">
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="BtnOpen"
                             Click="ToolBtn_Click"
@@ -178,17 +178,17 @@
                 </Border>
             </Grid>
             <avalonEdit:TextEditor
-            x:Name="textEditor"
-            Grid.Row="1"
-            Margin="0"
-            Background="#FF1E1E1E"
-            BorderBrush="Black"
-            BorderThickness="1"
-            FontFamily="Consolas"
-            FontSize="10pt"
-            Foreground="#FFE6E6E6"
-            ShowLineNumbers="True"
-            SyntaxHighlighting="python">
+                x:Name="textEditor"
+                Grid.Row="1"
+                Margin="0"
+                Background="#FF1E1E1E"
+                BorderBrush="{DynamicResource MenuBGColor}"
+                BorderThickness="1"
+                FontFamily="Consolas"
+                FontSize="10pt"
+                Foreground="#FFE6E6E6"
+                ShowLineNumbers="True"
+                SyntaxHighlighting="python">
                 <avalonEdit:TextEditor.Resources>
                     <!--<Style BasedOn="{StaticResource CustomScrollViewerStyle}" TargetType="ScrollViewer" />-->
                     <Style BasedOn="{StaticResource CustomScrollBarStyle}" TargetType="ScrollBar" />
