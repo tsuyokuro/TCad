@@ -189,8 +189,8 @@ public class ViewManager : INotifyPropertyChanged
                 break;
         }
 
-        if (currentDC != null) currentDC.Deactive();
-        if (nextDC != null) nextDC.Active();
+        if (currentDC != null) currentDC.Deactivate();
+        if (nextDC != null) nextDC.Activate();
 
         SetView(view);
         mContext.Redraw();

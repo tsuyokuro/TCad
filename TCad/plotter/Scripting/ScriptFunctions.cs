@@ -1981,7 +1981,7 @@ public class ScriptFunctions
         {
             Controller.Clear();
             Controller.DrawAll();
-            Controller.PushToView();
+            Controller.UpdateView();
         }, true);
     }
 

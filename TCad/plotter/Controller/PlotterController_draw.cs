@@ -22,9 +22,9 @@ namespace Plotter.Controller;
 
 public partial class PlotterController
 {
-    public void PushToView()
+    public void UpdateView()
     {
-        DC.PushToView();
+        DC.UpdateView();
     }
 
     public void Redraw()
@@ -38,7 +38,7 @@ public partial class PlotterController
         Clear(dc);
         DrawAll(dc);
         dc.EndDraw();
-        dc.PushToView();
+        dc.UpdateView();
     }
 
     public void Clear()

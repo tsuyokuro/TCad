@@ -209,13 +209,15 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 #endif
     }
 
-    public void Redraw()
+    private void Redraw()
     {
-#if MOUSE_THREAD
-        ThreadUtil.RunOnMainThread(mController.Redraw, false);
-#else
+        //#if MOUSE_THREAD
+        //        ThreadUtil.RunOnMainThread(mController.Redraw, false);
+        //#else
+        //        mController.Redraw(mController.DC);
+        //#endif
+
         mController.Redraw(mController.DC);
-#endif
     }
 
     private void OnPaint(object sender, PaintEventArgs e)
@@ -281,7 +283,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         mDrawContext.SetViewSize(Size.Width, Size.Height);
     }
 
-    public void PushToFront(DrawContext dc)
+    public void SwapBuffers(DrawContext dc)
     {
         if (dc == mDrawContext)
         {

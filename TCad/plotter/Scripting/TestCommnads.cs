@@ -1046,7 +1046,7 @@ public class TestCommands
         {
             Controller.Clear();
             Controller.DrawAll();
-            Controller.PushToView();
+            Controller.UpdateView();
         });
     }
 

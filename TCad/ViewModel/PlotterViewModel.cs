@@ -127,13 +127,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     private MoveKeyHandler mMoveKeyHandler;
 
-    public string mCurrentFileName;
     public string CurrentFileName
     {
-        get => mCurrentFileName;
+        get => mController.CurrentFileName;
         set
         {
-            mCurrentFileName = value;
+            mController.CurrentFileName = value;
             CaptionFileName = value;
         }
     }

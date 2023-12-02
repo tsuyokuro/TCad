@@ -12,7 +12,7 @@ namespace TCad.Controls;
 
 public interface ICadObjectTree
 {
-    event Action<CadObjTreeItem> CheckChanged;
+    event Action<CadObjTreeItem> StateChanged;
     event Action<CadObjTreeItem, string> ItemCommand;
 
     void Update(bool remakeTree, bool filter, CadLayer layer);
@@ -127,13 +127,13 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
     #region Event
 
-    public event Action<CadObjTreeItem> CheckChanged;
+    public event Action<CadObjTreeItem> StateChanged;
 
-    protected virtual void OnCheckChanged(CadObjTreeItem item)
+    protected virtual void NotifyStateChanged(CadObjTreeItem item)
     {
-        if (CheckChanged != null)
+        if (StateChanged != null)
         {
-            CheckChanged(item);
+            StateChanged(item);
         }
     }
     #endregion
@@ -242,7 +242,7 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             });
 
             item.IsChecked = true;
-            OnCheckChanged(item);
+            NotifyStateChanged(item);
 
             if (ItemCommand != null)
             {
@@ -273,21 +273,21 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
         }
         else
         {
-            if (!CadKeyboard.IsCtrlKeyDown())
-            {
-                mRoot.ForEachAll((v) => {
-                    v.IsChecked = false;
-                });
-            }
-
             int level = item.GetLevel();
 
             if (item.Children != null)
             {
                 if (p.X > (level) * IndentSize)
                 {
+                    if (!CadKeyboard.IsCtrlKeyDown())
+                    {
+                        mRoot.ForEachAll((v) => {
+                            v.IsChecked = false;
+                        });
+                    }
+
                     item.IsChecked = item.IsChecked == false;
-                    OnCheckChanged(item);
+                    NotifyStateChanged(item);
                 }
                 else
                 {
@@ -297,8 +297,15 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             }
             else
             {
+                if (!CadKeyboard.IsCtrlKeyDown())
+                {
+                    mRoot.ForEachAll((v) => {
+                        v.IsChecked = false;
+                    });
+                }
+
                 item.IsChecked = item.IsChecked == false;
-                OnCheckChanged(item);
+                NotifyStateChanged(item);
             }
         }
 

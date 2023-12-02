@@ -38,6 +38,7 @@ class CadFigTreeItem : CadObjTreeItem
         set
         {
             Fig.IsSelected = value;
+            Fig.Current = value;
             SelectAllPoints(value);
         }
     }

@@ -83,7 +83,7 @@ public class ContextMenuManager
 
         if (mContextMenuInfo.Items.Count > 0)
         {
-            mController.ViewIF.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
+            mController.ViewModelIF.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
         }
     }
 

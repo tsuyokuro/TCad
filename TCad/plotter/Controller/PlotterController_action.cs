@@ -315,7 +315,7 @@ public partial class PlotterController
 
         layer.FigureList = newFigList;
 
-        ViewIF.UpdateTreeView(true);
+        ViewModelIF.UpdateTreeView(true);
     }
 
     #endregion

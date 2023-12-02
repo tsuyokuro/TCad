@@ -136,7 +136,7 @@ public class ScriptSession
         {
             Env.Controller.Clear();
             Env.Controller.DrawAll();
-            Env.Controller.PushToView();
+            Env.Controller.UpdateView();
         }, true);
     }
 }
