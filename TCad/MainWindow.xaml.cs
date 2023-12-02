@@ -100,6 +100,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         textBlockXYZ.DataContext = ViewModel.CursorPosVM;
         textBlockXYZ2.DataContext = ViewModel.CursorPosVM;
+        textBlockXYZ3.DataContext = ViewModel.CursorPosVM;
 
         MainMenu.DataContext = ViewModel;
 

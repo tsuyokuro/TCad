@@ -117,48 +117,6 @@ public partial class PlotterController
     }
     #endregion
 
-    public void SelectFigure(uint figID)
-    {
-        CadFigure fig = DB.GetFigure(figID);
-
-        if (fig == null)
-        {
-            return;
-        }
-
-        fig.Select();
-    }
-
-    public void SelectFigureById(uint id, int idx, bool clearSelect = true)
-    {
-        CadFigure fig = mDB.GetFigure(id);
-
-        if (fig == null)
-        {
-            return;
-        }
-
-        if (idx >= fig.PointCount)
-        {
-            return;
-        }
-
-        if (clearSelect)
-        {
-            ClearSelection();
-        }
-
-        if (idx >= 0)
-        {
-            fig.SelectPointAt(idx, true);
-        }
-        else
-        {
-            fig.Select();
-        }
-
-        CurrentFigure = fig;
-    }
 
     public void MovePointsFromStored(List<CadFigure> figList, MoveInfo moveInfo)
     {

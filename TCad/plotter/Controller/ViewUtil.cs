@@ -18,10 +18,8 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Controller;
 
-public class ViewUtil
+public static class ViewUtil
 {
-    private ViewUtil() { }
-
     public static void SetOrigin(DrawContext dc, int pixX, int pixY)
     {
         vector3_t op = new vector3_t(pixX, pixY, 0);

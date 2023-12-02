@@ -431,6 +431,8 @@ public partial class PlotterController
 
         CurrentState.LButtonDown(pointer, dc, x, y);
 
+        UpdateObjectTree(false);
+
         if (CursorLocked)
         {
             CursorLocked = false;
