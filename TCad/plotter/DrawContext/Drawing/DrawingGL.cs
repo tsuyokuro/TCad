@@ -644,7 +644,6 @@ public class DrawingGL : IDrawing
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
         GL.DisableClientState(ArrayCap.VertexArray);
-        GL.DisableClientState(ArrayCap.NormalArray);
 
         GL.DeleteBuffer(idxBufferId1);
         GL.DeleteBuffer(idxBufferId2);
@@ -993,7 +992,7 @@ public class DrawingGL : IDrawing
         End2D();
     }
 
-    public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
+    public void DrawSelectedPoints_(VertexList pointList, DrawPen pen)
     {
         //Start2D();
         GL.Color4(pen.Color4);
@@ -1032,6 +1031,82 @@ public class DrawingGL : IDrawing
         //End2D();
         GL.Enable(EnableCap.DepthTest);
     }
+
+
+    public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
+    {
+        vboPoints.Clear();
+        ptIndexes1.Clear();
+
+        unsafe
+        {
+            int num = pointList.Data.Length;
+            fixed (CadVertex* ptr = &pointList.Data[0])
+            {
+                CadVertex* p = ptr;
+                UInt64 ep = ((UInt64)p) + ((UInt64)sizeof(CadVertex) * (UInt64)num);
+
+                for (; (UInt64)p < ep ;)
+                {
+                    if (p->Selected)
+                    {
+                        vboPoints.Add(p->vector);
+                    }
+
+                    p++;
+                }
+            }
+        }
+
+        if (vboPoints.Count == 0)
+        {
+            return;
+        }
+
+
+        int stride = Marshal.SizeOf(typeof(vector3_t));
+
+        int vCnt = vboPoints.Count;
+
+        int pointBufferId = GL.GenBuffer();
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, pointBufferId);
+        unsafe
+        {
+            fixed (vector3_t* ptr = &vboPoints.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+        }
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, pointBufferId);
+        unsafe
+        {
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+        }
+
+
+        GL.Disable(EnableCap.DepthTest);
+        GL.Color4(pen.Color4);
+        GL.PointSize(3);
+
+        GL.EnableClientState(ArrayCap.VertexArray);
+
+
+        GL.DrawArrays(PrimitiveType.Points, 0, vCnt);
+
+
+        GL.DisableClientState(ArrayCap.VertexArray);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+        GL.Enable(EnableCap.DepthTest);
+    }
+
+
 
     private void DrawRect2D(vector3_t p0, vector3_t p1, DrawPen pen)
     {
