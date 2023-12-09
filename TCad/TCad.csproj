@@ -62,8 +62,6 @@
     <None Remove="Resources\Cursors\dot.cur" />
     <None Remove="Resources\Cursors\mini_cross.cur" />
     <None Remove="Resources\Cursors\null.cur" />
-    <None Remove="Resources\Images\script_icon.png" />
-    <None Remove="Resources\Images\triangle2.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,10 +82,6 @@
     <Resource Include="Resources\Cursors\dot.cur" />
     <Resource Include="Resources\Cursors\mini_cross.cur" />
     <Resource Include="Resources\Cursors\null.cur" />
-    <Resource Include="Resources\Images\script_icon.png" />
-    <Resource Include="Resources\Images\triangle2.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>

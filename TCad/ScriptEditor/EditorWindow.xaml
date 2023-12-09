@@ -9,7 +9,6 @@
     Title="Script editor"
     Width="442.5"
     Height="440"
-    Icon="/Resources/Images/script_icon.png"
 
     WindowStyle="None"
     BorderBrush="Orange"
