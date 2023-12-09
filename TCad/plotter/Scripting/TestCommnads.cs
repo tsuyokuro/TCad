@@ -719,38 +719,12 @@ public class TestCommands
 
     private void Test7()
     {
-        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-
-        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        GlyphSlot glyph = fw.GetGlyph('黒');
+        GlyphSlot glyph = fw.GetGlyph('い');
 
         List<vector3_t> cvl = new();
-
-        //--------------
-
-        //List<List<int>> conts;
-        //List<vector3_t> vl;
-
-        //Test7_sub(glyph.Outline, out conts, out vl);
-
-        //cvl.Clear();
-        //for (int i = 0; i < conts.Count; i++)
-        //{
-        //    List<int> cont = conts[i];
-
-        //    cvl.Clear();
-        //    for (int j = 0; j < cont.Count; j++)
-        //    {
-        //        cvl.Add(vl[cont[j]]);
-        //    }
-
-        //    CreatePolyLines(cvl, (vcompo_t)(400.0), true);
-        //}
-
-        //--------------
 
         Tessellator tesse = new();
 
@@ -758,7 +732,7 @@ public class TestCommands
 
         tesse?.Dispose();
 
-        FontPoly cpyFontpoly = new(fontPoly);
+        //FontPoly cpyFontpoly = new(fontPoly);
 
         cvl.Clear();
         for (int i = 0; i < fontPoly.ContourList.Count; i++)
@@ -787,35 +761,6 @@ public class TestCommands
             Controller.CurrentLayer.AddFigure(fig);
         }
 
-        //fontPoly = cpyFontpoly;
-
-        //cvl.Clear();
-        //for (int i = 0; i < fontPoly.ContourList.Count; i++)
-        //{
-        //    List<int> cont = fontPoly.ContourList[i];
-
-        //    cvl.Clear();
-        //    for (int j = 0; j < cont.Count; j++)
-        //    {
-        //        cvl.Add(fontPoly.VertexList[cont[j]]);
-        //    }
-
-        //    CreatePolyLines(cvl, (vcompo_t)(200.0), true);
-        //}
-
-        //if (fontPoly.Mesh != null)
-        //{
-        //    for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
-        //    {
-        //        fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(200.0);
-        //    }
-
-        //    HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
-        //    CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
-        //    fig.SetMesh(hem);
-        //    Controller.CurrentLayer.AddFigure(fig);
-        //}
-
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
@@ -823,41 +768,6 @@ public class TestCommands
         });
     }
 
-    private void Test7_sub(Outline outline,
-        out List<List<int>> cl, out List<vector3_t> vl)
-    {
-        FTVector[] points = outline.Points;
-
-        List<List<int>> contourList = new();
-        List<vector3_t> vertexList = new List<vector3_t>();
-
-        vector3_t cv = new();
-
-        int idx = 0;
-        for (int i = 0; i < outline.ContoursCount; i++)
-        {
-            List<int> contour = new();
-
-            int n = outline.Contours[i];
-            for (; idx <= n;)
-            {
-                FTVector fv = points[idx];
-                cv.X = (vcompo_t)fv.X;
-                cv.Y = (vcompo_t)fv.Y;
-                cv.Z = 0;
-
-                vertexList.Add(cv);
-                contour.Add(idx);
-
-                idx++;
-            }
-
-            contourList.Add(contour);
-        }
-
-        vl = vertexList;
-        cl = contourList;
-    }
 
     private void Test8()
     {
@@ -867,7 +777,7 @@ public class TestCommands
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        FontPoly fontPoly = fw.CreatePoly('の');
+        FontPoly fontPoly = fw.CreatePoly('お');
 
         if (fontPoly.Mesh != null)
         {
@@ -888,7 +798,6 @@ public class TestCommands
             Controller.Redraw();
         });
     }
-
 
     private void CreatePolyLines(List<vector3_t> vl, vcompo_t scale, bool isLoop)
     {
