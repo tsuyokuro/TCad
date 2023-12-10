@@ -23,8 +23,6 @@ namespace Plotter;
 
 public class CadFigurePolyLines : CadFigure
 {
-    protected bool RestrictionByNormal = false;
-
     public CadFigurePolyLines()
     {
         Type = Types.POLY_LINES;
@@ -58,8 +56,12 @@ public class CadFigurePolyLines : CadFigure
 
         vector3_t delta = moveInfo.Delta;
 
-        if (!IsSelectedAll() && mPointList.Count > 2 && RestrictionByNormal)
+        bool restrictWithNormal = moveInfo.Restrict.IsOn(MoveRestriction.POLY_LINES_WITH_NORMAL);
+
+        if (!IsSelectedAll() && mPointList.Count > 2 && restrictWithNormal)
         {
+            // 同じ平面上に制限する
+
             vector3_t vdir = dc.ViewDir;
 
             vector3_t a = delta;
@@ -81,7 +83,12 @@ public class CadFigurePolyLines : CadFigure
             d = delta;
         }
 
-        FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
+        MoveInfo mvInfo = moveInfo;
+
+        mvInfo.Delta = d;
+
+
+        FigUtil.MoveSelectedPointsFromStored(this, dc, mvInfo);
 
         mChildList.ForEach(c =>
         {
