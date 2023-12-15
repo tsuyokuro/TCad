@@ -46,7 +46,7 @@ public static class DrawUtil
 
         vcompo_t angle = vector3_t.CalculateAngle(tmp, d);
 
-        vector3_t normal = CadMath.CrossProduct(tmp, d);  // 回転軸
+        vector3_t normal = CadMath.OuterProduct(tmp, d);  // 回転軸
 
         if (normal.Length < (vcompo_t)(0.0001))
         {

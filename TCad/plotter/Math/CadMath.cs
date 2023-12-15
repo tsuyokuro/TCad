@@ -93,17 +93,17 @@ public partial class CadMath
 
     // 外積
     #region Cross product
-    public static vcompo_t CrossProduct2D(vector3_t v1, vector3_t v2)
+    public static vcompo_t OuterProduct2D(vector3_t v1, vector3_t v2)
     {
         return (v1.X * v2.Y) - (v1.Y * v2.X);
     }
 
-    public static vcompo_t CrossProduct2D(vector3_t v0, vector3_t v1, vector3_t v2)
+    public static vcompo_t OuterProduct2D(vector3_t v0, vector3_t v1, vector3_t v2)
     {
-        return CrossProduct2D(v1 - v0, v2 - v0);
+        return OuterProduct2D(v1 - v0, v2 - v0);
     }
 
-    public static vector3_t CrossProduct(vector3_t v1, vector3_t v2)
+    public static vector3_t OuterProduct(vector3_t v1, vector3_t v2)
     {
         vector3_t res = default;
 
@@ -114,19 +114,20 @@ public partial class CadMath
         return res;
     }
 
-    public static vector3_t CrossProduct(vector3_t v0, vector3_t v1, vector3_t v2)
+    public static vector3_t OuterProduct(vector3_t v0, vector3_t v1, vector3_t v2)
     {
-        return CrossProduct(v1 - v0, v2 - v0);
+        return OuterProduct(v1 - v0, v2 - v0);
     }
     #endregion
 
     /**
      * 法線を求める
      * 
-     *      v2
-     *     / 
-     *    /
-     * v0/_________v1
+     * Normal 
+     *   |   v2
+     *   |  / 
+     *   | /
+     * v0|/_________v1
      *
      */
     public static vector3_t Normal(vector3_t v0, vector3_t v1, vector3_t v2)
@@ -134,7 +135,7 @@ public partial class CadMath
         vector3_t va = v1 - v0;
         vector3_t vb = v2 - v0;
 
-        vector3_t normal = CrossProduct(va, vb);
+        vector3_t normal = OuterProduct(va, vb);
 
         if (normal.IsZero())
         {
@@ -149,15 +150,16 @@ public partial class CadMath
     /**
      * 法線を求める
      * 
-     *       vb
-     *      / 
-     *     /
-     * 0 /_________va
+     * Normal 
+     *   |   vb
+     *   |  / 
+     *   | /
+     * 0 |/_________va
      * 
      */
     public static vector3_t Normal(vector3_t va, vector3_t vb)
     {
-        vector3_t normal = CrossProduct(va, vb);
+        vector3_t normal = OuterProduct(va, vb);
 
         if (normal.IsZero())
         {
@@ -207,7 +209,7 @@ public partial class CadMath
         vector3_t v1 = p0 - p1;
         vector3_t v2 = p2 - p1;
 
-        vector3_t cp = CrossProduct(v1, v2);
+        vector3_t cp = OuterProduct(v1, v2);
 
         vcompo_t area = cp.Norm() / (vcompo_t)(2.0);
 
@@ -254,7 +256,7 @@ public partial class CadMath
         }
 
         // 外積結果が a->p a->b を辺とする平行四辺形の面積になる
-        vcompo_t d = (vcompo_t)Math.Abs(CrossProduct2D(ab, ap));
+        vcompo_t d = (vcompo_t)Math.Abs(OuterProduct2D(ab, ap));
 
         vcompo_t abl = ab.Norm2D();
 
@@ -289,7 +291,7 @@ public partial class CadMath
             return bp.Norm();
         }
 
-        vector3_t cp = CrossProduct(ab, ap);
+        vector3_t cp = OuterProduct(ab, ap);
 
         // 外積結果の長さが a->p a->b を辺とする平行四辺形の面積になる
         vcompo_t s = cp.Norm();
@@ -306,9 +308,9 @@ public partial class CadMath
         vector3_t p2
         )
     {
-        vcompo_t c1 = CrossProduct2D(p, p0, p1);
-        vcompo_t c2 = CrossProduct2D(p, p1, p2);
-        vcompo_t c3 = CrossProduct2D(p, p2, p0);
+        vcompo_t c1 = OuterProduct2D(p, p0, p1);
+        vcompo_t c2 = OuterProduct2D(p, p1, p2);
+        vcompo_t c3 = OuterProduct2D(p, p2, p0);
 
         // 外積の結果の符号が全て同じなら点は三角形の中
         // When all corossProduct result's sign are same, Point is in triangle
@@ -329,8 +331,8 @@ public partial class CadMath
         )
     {
         vector3_t c1 = GetC1(p, p0, p1);
-        vector3_t c2 = CrossProduct(p, p1, p2);
-        vector3_t c3 = CrossProduct(p, p2, p0);
+        vector3_t c2 = OuterProduct(p, p1, p2);
+        vector3_t c3 = OuterProduct(p, p2, p0);
 
         vcompo_t ip12 = InnerProduct(c1, c2);
         vcompo_t ip13 = InnerProduct(c1, c3);
@@ -347,7 +349,7 @@ public partial class CadMath
 
     private static vector3_t GetC1(vector3_t p, vector3_t p0, vector3_t p1)
     {
-        return CrossProduct(p, p0, p1);
+        return OuterProduct(p, p0, p1);
     }
 
 
@@ -759,13 +761,13 @@ public partial class CadMath
             return VectorExt.InvalidVector3;
         }
 
-        vcompo_t cpBA = CrossProduct2D(b, a);
+        vcompo_t cpBA = OuterProduct2D(b, a);
 
         if (cpBA == 0)
         {
             return VectorExt.InvalidVector3;
         }
 
-        return a1 + a * CrossProduct2D(b, b1 - a1) / cpBA;
+        return a1 + a * OuterProduct2D(b, b1 - a1) / cpBA;
     }
 }

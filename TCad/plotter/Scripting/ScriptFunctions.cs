@@ -64,7 +64,7 @@ public class ScriptFunctions
         scope.SetVariable("dot_product", new Func<vector3_t, vector3_t, vcompo_t>(CadMath.InnerProduct));
         Env.AutoCompleteList.Add("dot_product(v1, v2)");
 
-        scope.SetVariable("cross_product", new Func<vector3_t, vector3_t, vector3_t>(CadMath.CrossProduct));
+        scope.SetVariable("cross_product", new Func<vector3_t, vector3_t, vector3_t>(CadMath.OuterProduct));
         Env.AutoCompleteList.Add("cross_product(v1, v2)");
     }
 

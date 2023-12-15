@@ -224,7 +224,7 @@ public class RectCreator : FigCreator
                 return;
             }
 
-            vector3_t hv = CadMath.CrossProduct(dc.UpVector, dc.ViewDir).Normalized();
+            vector3_t hv = CadMath.OuterProduct(dc.UpVector, dc.ViewDir).Normalized();
             vector3_t uv = dc.UpVector;
 
             vector3_t crossV = p2 - p0;
