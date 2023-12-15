@@ -307,9 +307,6 @@ public class MpFigure_v1002
     [Key("IsLoop")]
     public bool IsLoop;
 
-    [Key("Normal")]
-    public MpVector3_v1002 Normal;
-
     [Key("ChildList")]
     public List<MpFigure_v1002> ChildList;
 
@@ -384,7 +381,6 @@ public class MpFigure_v1002
         Type = (byte)fig.Type;
         Locked = fig.Locked;
         IsLoop = fig.IsLoop;
-        Normal = MpVector3_v1002.Create(fig.Normal);
 
         GeoData = fig.GeometricDataToMp_v1002();
 
@@ -406,7 +402,6 @@ public class MpFigure_v1002
         fig.ID = ID;
         fig.Locked = Locked;
         fig.IsLoop = IsLoop;
-        fig.Normal = Normal.Restore();
 
         if (ChildList != null)
         {

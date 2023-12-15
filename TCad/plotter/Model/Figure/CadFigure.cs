@@ -96,7 +96,6 @@ public abstract partial class CadFigure
 
     public bool IsLoop { get; set; }
 
-    public vector3_t Normal;
 
     public virtual VertexList PointList => mPointList;
 
@@ -521,8 +520,6 @@ public abstract partial class CadFigure
         Type = fig.Type;
         IsLoop = fig.IsLoop;
         Locked = fig.Locked;
-        Normal = fig.Normal;
-        //Thickness = fig.Thickness;
 
         mPointList.Clear();
         mPointList.AddRange(fig.mPointList);
@@ -558,8 +555,6 @@ public abstract partial class CadFigure
         DOut.pl("Name=" + name);
         DOut.pl("LayerID=" + LayerID.ToString());
         DOut.pl("Type=" + Type.ToString());
-
-        Normal.dump("Normal=");
 
         DOut.pl("PointList [");
         DOut.Indent++;
@@ -687,11 +682,6 @@ public abstract partial class CadFigure
         return default(Centroid);
     }
 
-    public virtual void RecalcNormal()
-    {
-        Normal = CadUtil.TypicalNormal(PointList);
-    }
-
     public virtual CadSegment GetSegmentAt(int n)
     {
         return FigUtil.GetSegmentAt(this, n);
@@ -701,7 +691,6 @@ public abstract partial class CadFigure
     {
         return FigUtil.GetFigSegmentAt(this, n);
     }
-
 
     public virtual int SegmentCount
     {
@@ -812,7 +801,6 @@ public abstract partial class CadFigure
             vl[i] = v;
         }
 
-        RecalcNormal();
 
         DOut.plx("out");
     }

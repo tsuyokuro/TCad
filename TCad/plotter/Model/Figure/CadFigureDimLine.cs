@@ -223,9 +223,6 @@ public class CadFigureDimLine : CadFigure
         }
     }
 
-    public override void InvertDir()
-    {
-    }
 
     // 高さが０の場合、移動方向が定まらないので
     // 投影座標系でz=0とした座標から,List[0] - List[1]への垂線を計算して

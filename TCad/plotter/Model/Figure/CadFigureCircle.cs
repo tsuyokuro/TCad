@@ -27,10 +27,6 @@ public class CadFigureCircle : CadFigure
         get => 0;
     }
 
-    public override void InvertDir()
-    {
-        Normal = -Normal;
-    }
 
     public CadFigureCircle()
     {

@@ -146,7 +146,6 @@ public class CadFigureNurbsLine : CadFigure
     public override void InvertDir()
     {
         mPointList.Reverse();
-        Normal = -Normal;
     }
 
     public override void SetPointAt(int index, CadVertex pt)
@@ -157,7 +156,6 @@ public class CadFigureNurbsLine : CadFigure
     public override void EndEdit()
     {
         base.EndEdit();
-        RecalcNormal();
     }
 
 

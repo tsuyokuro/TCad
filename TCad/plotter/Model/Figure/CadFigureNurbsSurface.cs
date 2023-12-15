@@ -242,10 +242,6 @@ public class CadFigureNurbsSurface : CadFigure
     }
 
 
-    public override void InvertDir()
-    {
-    }
-
     public override void SetPointAt(int index, CadVertex pt)
     {
         mPointList[index] = pt;
@@ -254,7 +250,6 @@ public class CadFigureNurbsSurface : CadFigure
     public override void EndEdit()
     {
         base.EndEdit();
-        RecalcNormal();
     }
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)

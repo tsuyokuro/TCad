@@ -292,9 +292,6 @@
                                     <MenuItem
                                         Header="Flip and copy"
                                         Command="{Binding SimpleCmd}" CommandParameter="flip_and_copy_with_vector" />
-                                    <MenuItem
-                                        Header="Flip Normal"
-                                        Command="{Binding SimpleCmd}" CommandParameter="flip_normal" />
                                 </MenuItem>
                                 <MenuItem
                                     Header="Clear layer"

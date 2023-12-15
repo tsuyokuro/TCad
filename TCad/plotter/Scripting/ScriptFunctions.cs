@@ -1393,7 +1393,6 @@ public class ScriptFunctions
 
         CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(Types.MESH);
 
-        fig.RecalcNormal();
 
         fig.SetMesh(hem);
 

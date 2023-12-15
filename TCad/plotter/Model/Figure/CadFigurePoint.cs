@@ -81,10 +81,6 @@ public class CadFigurePoint : CadFigure
         // NOP
     }
 
-    public override void InvertDir()
-    {
-        // NOP
-    }
 
     private void drawPoint(DrawContext dc, DrawPen pen)
     {

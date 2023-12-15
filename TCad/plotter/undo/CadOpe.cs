@@ -548,14 +548,10 @@ public class CadOpeChangeNormal : CadOpe
 
     public override void Undo(PlotterController pc)
     {
-        CadFigure fig = pc.DB.GetFigure(FigureID);
-        fig.Normal = OldNormal;
     }
 
     public override void Redo(PlotterController pc)
     {
-        CadFigure fig = pc.DB.GetFigure(FigureID);
-        fig.Normal = NewNormal;
     }
 }
 
