@@ -613,17 +613,13 @@ public partial class CadMath
         }
 
         vcompo_t d = InnerProduct(normal, p);
-        vcompo_t t = (d - NewMethod1(a, normal)) / de;
+        vcompo_t t = (d - InnerProduct(normal, a)) / de;
 
         cp = a + (e * t);
 
         return cp;
     }
 
-    private static vcompo_t NewMethod1(vector3_t a, vector3_t normal)
-    {
-        return InnerProduct(normal, a);
-    }
 
     private static vcompo_t GetR0Max()
     {

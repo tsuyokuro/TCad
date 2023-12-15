@@ -62,16 +62,28 @@ public class CadFigurePolyLines : CadFigure
         {
             // 同じ平面上に制限する
 
+            vector3_t normal = CadMath.Normal(StoreList[0].vector, StoreList[1].vector, StoreList[2].vector);
+
             vector3_t vdir = dc.ViewDir;
 
-            vector3_t a = delta;
-            vector3_t b = delta + vdir;
 
-            d = CadMath.CrossPlane(a, b, StoreList[0].vector, Normal);
+            vector3_t a = vector3_t.Zero;
+            vector3_t b = vdir;
 
-            if (!d.IsValid())
+            vector3_t d0 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            a = delta;
+            b = delta + vdir;
+
+            vector3_t d1 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            if (d0.IsValid() && d1.IsValid())
             {
-                vector3_t nvNormal = CadMath.Normal(Normal, vdir);
+                d = d1 - d0;
+            }
+            else
+            {
+                vector3_t nvNormal = CadMath.Normal(normal, vdir);
 
                 vcompo_t ip = CadMath.InnerProduct(nvNormal, delta);
 
