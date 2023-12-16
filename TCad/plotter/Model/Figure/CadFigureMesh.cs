@@ -74,16 +74,26 @@ public class CadFigureMesh : CadFigure
             int idx = mHeModel.AddVertex(fig.PointList[i]);
         }
 
-        List<CadFigure> figList = TriangleSplitter.Split(fig, 16);
+        List<Vector3List> trList = TriangleSplitter.Split(fig, 16);
 
         HeModelBuilder mb = new HeModelBuilder();
 
         mb.Start(mHeModel);
 
-        for (int i = 0; i < figList.Count; i++)
+        CadVertex v0 = new();
+        CadVertex v1 = new();
+        CadVertex v2 = new();
+
+
+        for (int i = 0; i < trList.Count; i++)
         {
-            CadFigure t = figList[i];
-            mb.AddTriangle(t.PointList[0], t.PointList[1], t.PointList[2]);
+            Vector3List t = trList[i];
+            v0.vector = t[0];
+            v1.vector = t[1];
+            v2.vector = t[2];
+
+
+            mb.AddTriangle(v0, v1, v2);
         }
     }
 

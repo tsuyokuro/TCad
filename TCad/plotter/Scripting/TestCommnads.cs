@@ -222,9 +222,18 @@ public class TestCommands
             return;
         }
 
-        List<CadFigure> triangles = TriangleSplitter.Split(fig);
+        List<Vector3List> triangles = TriangleSplitter.Split(fig);
 
-        Controller.TempFigureList.AddRange(triangles);
+        foreach (Vector3List triangle in triangles)
+        {
+            CadFigure tfig = CadFigure.Create(CadFigure.Types.POLY_LINES);
+            foreach (vector3_t v in triangle)
+            {
+                tfig.AddPoint(new CadVertex(v));
+            }
+
+            Controller.TempFigureList.Add(tfig);
+        }
     }
 
     private void testMesh()

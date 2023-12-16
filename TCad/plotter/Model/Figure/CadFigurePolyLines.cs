@@ -328,7 +328,7 @@ public class CadFigurePolyLines : CadFigure
     {
         Centroid ret = default;
 
-        List<CadFigure> triangles = TriangleSplitter.Split(this);
+        List<Vector3List> triangles = TriangleSplitter.Split(this);
 
         ret = CadUtil.TriangleListCentroid(triangles);
 
