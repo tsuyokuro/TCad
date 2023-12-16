@@ -297,6 +297,11 @@ public class MpLayer_v1003
 [MessagePackObject]
 public class MpFigure_v1003
 {
+    public const uint VERSION = 0x00001000;
+
+    [Key("V")]
+    public uint V;
+
     [Key("ID")]
     public uint ID;
 
@@ -384,10 +389,13 @@ public class MpFigure_v1003
 
     public void StoreCommon(CadFigure fig)
     {
+        V = VERSION;
+
         ID = fig.ID;
         Type = (byte)fig.Type;
         Locked = fig.Locked;
-        IsLoop = fig.IsLoop;
+
+        //IsLoop = fig.IsLoop;
 
         GeoData = fig.GeometricDataToMp_v1003();
 
@@ -411,7 +419,14 @@ public class MpFigure_v1003
     {
         fig.ID = ID;
         fig.Locked = Locked;
-        fig.IsLoop = IsLoop;
+
+        // PolyLinesの新Versionでは、GeoDataにIsLoopを格納するようにした
+        // このため、古いVersionのファイルを読み込んだ場合は、GeoDataに
+        // IsLoopが入っていないため設定する
+        if (V == 0)
+        {
+            fig.IsLoop = IsLoop;
+        }
 
         if (ChildList != null)
         {
@@ -429,6 +444,7 @@ public class MpFigure_v1003
         }
 
         fig.GeometricDataFromMp_v1003(GeoData);
+
 
         fig.Name = Name;
 
@@ -638,6 +654,7 @@ public class MpVertex_v1003
 [MessagePack.Union(2, typeof(MpNurbsLineGeometricData_v1003))]
 [MessagePack.Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
 [MessagePack.Union(4, typeof(MpPictureGeometricData_v1003))]
+[MessagePack.Union(5, typeof(MpPolyLinesGeometricData_v1003))]
 public interface MpGeometricData_v1003
 {
 }
@@ -650,6 +667,18 @@ public class MpSimpleGeometricData_v1003 : MpGeometricData_v1003
     [Key("PointList")]
     public List<MpVertex_v1003> PointList;
 }
+
+[MessagePackObject]
+public class MpPolyLinesGeometricData_v1003 : MpGeometricData_v1003
+{
+    [Key("IsLoop")]
+    public bool IsLoop;
+
+
+    [Key("PointList")]
+    public List<MpVertex_v1003> PointList;
+}
+
 
 [MessagePackObject]
 public class MpPictureGeometricData_v1003 : MpGeometricData_v1003

@@ -94,8 +94,10 @@ public abstract partial class CadFigure
         set;
     }
 
-    public bool IsLoop { get; set; }
-
+    public virtual bool IsLoop {
+        get => false;
+        set { /* Nop */ }
+    }
 
     public virtual VertexList PointList => mPointList;
 

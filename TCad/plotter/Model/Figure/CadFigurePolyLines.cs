@@ -3,6 +3,10 @@ using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
+using Plotter.Serializer.v1002;
+using Plotter.Serializer.v1003;
+
+
 
 
 
@@ -23,6 +27,14 @@ namespace Plotter;
 
 public class CadFigurePolyLines : CadFigure
 {
+    public bool IsLoop_ = false;
+
+    public override bool IsLoop
+    {
+        set => IsLoop_ = value;
+        get => IsLoop_;
+    }
+
     public CadFigurePolyLines()
     {
         Type = Types.POLY_LINES;
@@ -358,4 +370,54 @@ public class CadFigurePolyLines : CadFigure
 
         return ret;
     }
+
+    #region serialize
+
+    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
+    {
+        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
+        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
+        return geo;
+    }
+
+    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
+    {
+        if (!(geo is MpSimpleGeometricData_v1002))
+        {
+            return;
+        }
+
+        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
+
+        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
+    }
+
+
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    {
+        MpPolyLinesGeometricData_v1003 geo = new();
+        geo.IsLoop = IsLoop_;
+        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+        return geo;
+    }
+
+    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    {
+        MpPolyLinesGeometricData_v1003 g = geo as MpPolyLinesGeometricData_v1003;
+        if (g != null)
+        {
+            IsLoop_ = g.IsLoop;
+            mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        }
+
+        MpSimpleGeometricData_v1003 g2 = geo as MpSimpleGeometricData_v1003;
+        if (g2 != null)
+        {
+            mPointList = MpUtil_v1003.VertexListFromMp(g2.PointList);
+        }
+    }
+
+
+
+    #endregion
 }
