@@ -5,6 +5,8 @@ using Plotter.Settings;
 using System.Collections.Generic;
 using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
+using Plotter.Serializer;
+
 
 
 
@@ -397,7 +399,7 @@ public class CadFigurePolyLines : CadFigure
     {
         MpPolyLinesGeometricData_v1003 geo = new();
         geo.IsLoop = IsLoop_;
-        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+        geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
         return geo;
     }
 
@@ -407,13 +409,15 @@ public class CadFigurePolyLines : CadFigure
         if (g != null)
         {
             IsLoop_ = g.IsLoop;
-            mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+            mPointList = MpUtil.VertexListFromMp(g.PointList);
+            return;
         }
 
         MpSimpleGeometricData_v1003 g2 = geo as MpSimpleGeometricData_v1003;
         if (g2 != null)
         {
-            mPointList = MpUtil_v1003.VertexListFromMp(g2.PointList);
+            DOut.tpl("#### GeometricDataFromMp_v1003 OLD data !!!!! ####");
+            mPointList = MpUtil.VertexListFromMp(g2.PointList);
         }
     }
 

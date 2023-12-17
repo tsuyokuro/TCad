@@ -854,7 +854,7 @@ public abstract partial class CadFigure
 
         MpSimpleGeometricData_v1003 g = (MpSimpleGeometricData_v1003)geo;
 
-        mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        mPointList = MpUtil.VertexListFromMp(g.PointList);
     }
     #endregion
 } // End of class CadFigure

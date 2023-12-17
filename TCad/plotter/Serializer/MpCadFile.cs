@@ -121,7 +121,7 @@ public class MpCadFile
             else if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
-                return MpUtil_v1003.CreateCadData_v1003(mpdata);
+                return mpdata.Restore();
             }
         }
         catch
@@ -313,7 +313,7 @@ public class MpCadFile
 
     public static void Save(string fname, CadData cd)
     {
-        var mpcd = MpUtil_v1003.CreateMpCadData_v1003(cd);
+        var mpcd = MpCadData_v1003.Create(cd);
 
         mpcd.MpDB.GarbageCollect();
 
@@ -341,7 +341,8 @@ public class MpCadFile
         headerJs = headerJs.Substring(1, headerJs.Length - 2);
 
 
-        var data = MpUtil_v1003.CreateMpCadData_v1003(cd);
+        var data = MpCadData_v1003.Create(cd);
+
         string dbJs = MessagePackSerializer.SerializeToJson(data);
         dbJs = dbJs.Trim();
         dbJs = dbJs.Substring(1, dbJs.Length - 2);

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using Path = System.IO.Path;
+using Plotter.Serializer;
+
 
 
 
@@ -378,7 +380,7 @@ public class CadFigurePicture : CadFigure
     {
         MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
         geo.FilePathName = FilePathName;
-        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+        geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
         return geo;
     }
 
@@ -391,7 +393,7 @@ public class CadFigurePicture : CadFigure
 
         MpPictureGeometricData_v1003 g = (MpPictureGeometricData_v1003)geo;
         FilePathName = g.FilePathName;
-        mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
+        mPointList = MpUtil.VertexListFromMp(g.PointList);
     }
     #endregion
 }

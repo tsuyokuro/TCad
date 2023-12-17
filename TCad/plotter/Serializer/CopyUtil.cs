@@ -33,12 +33,6 @@ public class CopyUtil
     // MpFigure func(CadFigure fig, bool withChild = false)
     private static Func<CadFigure, bool, MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
 
-    // List<CadFigure> func(List<MpFigure> list)
-    //private static Func<List<MpFigure_v1003>, List<CadFigure>> MpToFigList = MpUtil_v1003.FigureListFromMp_v1003;
-
-    // List<MpFigure> func(List<CadFigure> figList, bool withChild = false)
-    //private static Func<List<CadFigure>, bool, List<MpFigure_v1003>> FigListToMp = MpUtil_v1003.FigureListToMp_v1003;
-
 
     private static MessagePackSerializerOptions lz4Options
     {
