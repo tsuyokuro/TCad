@@ -141,7 +141,8 @@ public class MpCadObjectDB_v1003
         ret.LayerIdCount = db.LayerIdProvider.Counter;
         ret.FigureIdCount = db.FigIdProvider.Counter;
 
-        ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
+        //ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
+        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1003>(db.FigureMap, MpFigure_v1003.Create);
 
         ret.LayerList = MpUtil_v1003.LayerListToMp(db.LayerList);
 
@@ -195,7 +196,7 @@ public class MpCadObjectDB_v1003
         ret.FigIdProvider.Counter = FigureIdCount;
 
         // Figure map
-        List<CadFigure> figList = MpUtil_v1003.FigureListFromMp_v1003(FigureList);
+        List<CadFigure> figList = MpUtil.FigureListFromMp<MpFigure_v1003>(FigureList);
 
         var dic = new Dictionary<uint, CadFigure>();
 
@@ -272,7 +273,7 @@ public class MpLayer_v1003
         ret.Visible = layer.Visible;
         ret.Locked = layer.Locked;
 
-        ret.FigureIdList = MpUtil_v1003.FigureListToIdList(layer.FigureList);
+        ret.FigureIdList = MpUtil.FigureListToIdList(layer.FigureList);
 
         return ret;
     }
@@ -295,7 +296,7 @@ public class MpLayer_v1003
 }
 
 [MessagePackObject]
-public class MpFigure_v1003
+public class MpFigure_v1003 : MpFigure
 {
     public const uint VERSION = 0x00001000;
 
@@ -407,12 +408,12 @@ public class MpFigure_v1003
 
     public void StoreChildIdList(CadFigure fig)
     {
-        ChildIdList = MpUtil_v1003.FigureListToIdList(fig.ChildList);
+        ChildIdList = MpUtil.FigureListToIdList(fig.ChildList);
     }
 
     public void StoreChildList(CadFigure fig)
     {
-        ChildList = MpUtil_v1003.FigureListToMp_v1003(fig.ChildList);
+        ChildList = MpUtil.FigureListToMp<MpFigure_v1003>(fig.ChildList,Create);
     }
 
     public void RestoreTo(CadFigure fig)
@@ -430,7 +431,7 @@ public class MpFigure_v1003
 
         if (ChildList != null)
         {
-            fig.ChildList = MpUtil_v1003.FigureListFromMp_v1003(ChildList);
+            fig.ChildList = MpUtil.FigureListFromMp<MpFigure_v1003>(ChildList);
 
             for (int i = 0; i < fig.ChildList.Count; i++)
             {
@@ -452,7 +453,7 @@ public class MpFigure_v1003
         fig.FillBrush = FillBrush.Restore();
     }
 
-    public CadFigure Restore()
+    public override CadFigure Restore()
     {
         CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
 

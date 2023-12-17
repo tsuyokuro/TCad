@@ -88,16 +88,6 @@ public partial class MpUtil_v1003
         return ret;
     }
 
-    public static List<uint> FigureListToIdList(List<CadFigure> figList )
-    {
-        List<uint> ret = new List<uint>();
-        for (int i = 0; i < figList.Count; i++)
-        {
-            ret.Add(figList[i].ID);
-        }
-
-        return ret;
-    }
 
     public static VertexList VertexListFromMp(List<MpVertex_v1003> list)
     {
@@ -132,39 +122,6 @@ public partial class MpUtil_v1003
         return ret;
     }
 
-    public static List<MpFigure_v1003> FigureListToMp_v1003(List<CadFigure> figList, bool withChild = false)
-    {
-        List<MpFigure_v1003> ret = new List<MpFigure_v1003>();
-        for (int i = 0; i < figList.Count; i++)
-        {
-            ret.Add(MpFigure_v1003.Create(figList[i], withChild));
-        }
-
-        return ret;
-    }
-
-    public static List<CadFigure> FigureListFromMp_v1003(List<MpFigure_v1003> list)
-    {
-        List<CadFigure> ret = new List<CadFigure>();
-        for (int i = 0; i < list.Count; i++)
-        {
-            ret.Add(list[i].Restore());
-        }
-
-        return ret;
-    }
-
-    public static List<MpFigure_v1003> FigureMapToMp_v1003(
-        Dictionary<uint, CadFigure> figMap, bool withChild = false)
-    {
-        List<MpFigure_v1003> ret = new List<MpFigure_v1003>();
-        foreach (CadFigure fig in figMap.Values)
-        {
-            ret.Add(MpFigure_v1003.Create(fig, withChild));
-        }
-
-        return ret;
-    }
 
     public static List<MpHeFace_v1003> HeFaceListToMp(FlexArray<HeFace> list)
     {

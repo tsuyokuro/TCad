@@ -7,6 +7,8 @@ using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
+using Plotter.Serializer;
+
 
 
 
@@ -839,7 +841,7 @@ public abstract partial class CadFigure
     public virtual MpGeometricData_v1003 GeometricDataToMp_v1003()
     {
         MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
-        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
+        geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList, MpVertex_v1003.Create);
         return geo;
     }
 

@@ -26,9 +26,6 @@ public class CopyUtil
 {
     private delegate T Deserialize_<T>(ReadOnlyMemory<byte> buffer, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default);
 
-    // List<MpFigure> func(List<CadFigure> figList, bool withChild = false)
-    private static Func<List<CadFigure>, bool, List<MpFigure_v1003>> FigListToMp = MpUtil_v1003.FigureListToMp_v1003;
-    
     private static Deserialize_<List<MpFigure_v1003>> Deserialize = MessagePackSerializer.Deserialize<List<MpFigure_v1003>>;
     
     private static Deserialize_<MpFigure_v1003> DeserializeFig = MessagePackSerializer.Deserialize<MpFigure_v1003>;
@@ -37,7 +34,11 @@ public class CopyUtil
     private static Func<CadFigure, bool, MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
 
     // List<CadFigure> func(List<MpFigure> list)
-    private static Func<List<MpFigure_v1003>, List<CadFigure>> MpToFigList = MpUtil_v1003.FigureListFromMp_v1003;
+    //private static Func<List<MpFigure_v1003>, List<CadFigure>> MpToFigList = MpUtil_v1003.FigureListFromMp_v1003;
+
+    // List<MpFigure> func(List<CadFigure> figList, bool withChild = false)
+    //private static Func<List<CadFigure>, bool, List<MpFigure_v1003>> FigListToMp = MpUtil_v1003.FigureListToMp_v1003;
+
 
     private static MessagePackSerializerOptions lz4Options
     {
@@ -46,7 +47,7 @@ public class CopyUtil
 
     public static byte[] FigListToBin(List<CadFigure> figList)
     {
-        var mpfigList = FigListToMp(figList, true);
+        var mpfigList = MpUtil.FigureListToMp<MpFigure_v1003>(figList, CreateMpFig, true);
 
         byte[] bin = MessagePackSerializer.Serialize(mpfigList);
 
@@ -57,7 +58,7 @@ public class CopyUtil
     {
         var mpfigList = Deserialize(bin);
 
-        var figList = MpToFigList(mpfigList);
+        var figList = MpUtil.FigureListFromMp<MpFigure_v1003>(mpfigList);
 
         return figList;
     }
