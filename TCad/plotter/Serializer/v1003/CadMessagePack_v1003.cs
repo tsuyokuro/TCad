@@ -608,7 +608,7 @@ public struct MpDrawBrush_v1003
 }
 
 [MessagePackObject]
-public class MpVertexAttr_v1003
+public struct MpVertexAttr_v1003
 {
     [Key("flags")]
     public byte Flags;
@@ -646,7 +646,7 @@ public class MpVertexAttr_v1003
 }
 
 [MessagePackObject]
-public class MpVertex_v1003 : MpVertex
+public struct MpVertex_v1003 : MpVertex
 {
     [Key("flag")]
     public byte Flag;
@@ -655,7 +655,11 @@ public class MpVertex_v1003 : MpVertex
     public MpVector3_v1003 P;
 
     [Key("Attr")]
-    public MpVertexAttr_v1003 Attr = new();
+    public MpVertexAttr_v1003 Attr;
+
+    public MpVertex_v1003()
+    {
+    }
 
     public static MpVertex_v1003 Create(CadVertex v)
     {
@@ -672,7 +676,7 @@ public class MpVertex_v1003 : MpVertex
         return ret;
     }
 
-    public override CadVertex Restore()
+    public CadVertex Restore()
     {
         CadVertex v = CadVertex.Create(P.X, P.Y, P.Z);
         v.Flag = Flag;

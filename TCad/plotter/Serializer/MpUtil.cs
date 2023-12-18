@@ -37,8 +37,8 @@ public abstract class MpFigure
     public abstract CadFigure Restore();
 }
 
-public abstract class MpVertex {
-    public abstract CadVertex Restore();
+public interface MpVertex {
+    public CadVertex Restore();
 }
 
 public interface MpVector3
