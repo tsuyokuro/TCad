@@ -1,6 +1,13 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text;
+using System.IO;
+using System.Xml;
+using System.Runtime.Serialization.Json;
+
+
 
 
 
@@ -75,6 +82,28 @@ public static class JsonElementExtends
         catch (ArgumentException)
         {
             return defaultValue;
+        }
+    }
+}
+
+public static class JsonObjExtends
+{
+    public static string ToIndentedString(this JsonObject jo)
+    {
+        return convertToIndentedJson(jo.ToJsonString());
+    }
+
+
+    public static string convertToIndentedJson(string json)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes(json);
+        using (MemoryStream stream = new MemoryStream())
+        using (XmlDictionaryWriter writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Encoding.UTF8, true, true))
+        using (XmlDictionaryReader reader = JsonReaderWriterFactory.CreateJsonReader(buffer, XmlDictionaryReaderQuotas.Max))
+        {
+            writer.WriteNode(reader, true);
+            writer.Flush();
+            return Encoding.UTF8.GetString(stream.ToArray());
         }
     }
 }

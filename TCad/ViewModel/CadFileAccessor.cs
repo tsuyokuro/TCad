@@ -32,7 +32,7 @@ public class CadFileAccessor
 
         SaveExternalData(vm.Controller.DB, fname);
 
-        if (fname.EndsWith(".txt"))
+        if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             SaveToMsgPackJsonFile(fname, vm);
         }
@@ -44,7 +44,7 @@ public class CadFileAccessor
 
     public static void LoadFile(string fname, IPlotterViewModel vm)
     {
-        if (fname.EndsWith(".txt"))
+        if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             LoadFromMsgPackJsonFile(fname, vm);
         }
@@ -164,11 +164,6 @@ public class CadFileAccessor
     private static void LoadFromMsgPackJsonFile(string fname, IPlotterViewModel vm)
     {
         CadData? cd = MpCadFile.LoadJson(fname);
-
-        if (cd == null)
-        {
-            cd = MpCadFile.LoadJson_OLD(fname);
-        }
 
         if (cd == null) return;
 

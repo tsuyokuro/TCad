@@ -8,8 +8,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 using JObj = System.Text.Json.Nodes.JsonObject;
+using JNode = System.Text.Json.Nodes.JsonNode;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 using System;
+using System.Xml;
+using System.Runtime.Serialization.Json;
+
+
 
 
 
@@ -257,59 +262,6 @@ public class MpCadFile
         return str;
     }
 
-    public static CadData? LoadJson_OLD(string fname)
-    {
-        StreamReader reader = new StreamReader(fname);
-
-        reader.ReadLine(); // skip "{\n"
-        string header = reader.ReadLine();
-        Regex headerPtn = new Regex(@"version=([0-9a-fA-F\.]+)");
-
-        Match m = headerPtn.Match(header);
-
-        string version = "";
-
-        if (m.Groups.Count >= 1)
-        {
-            version = m.Groups[1].Value;
-        }
-
-        string js = reader.ReadToEnd();
-        reader.Close();
-
-        js = js.Trim();
-        js = js.Substring(0, js.Length - 1);
-        js = "{" + js + "}";
-
-        byte[] bin = MessagePackSerializer.ConvertFromJson(js);
-
-        if (version == VersionCode_v1002.Version.Str)
-        {
-            MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-
-            CadData cd = new CadData(
-                mpcd.GetDB(),
-                mpcd.ViewInfo.WorldScale,
-                mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                );
-
-            return cd;
-        }
-        else if (version == VersionCode_v1003.Version.Str)
-        {
-            MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-
-            CadData cd = new CadData(
-                mpcd.GetDB(),
-                mpcd.ViewInfo.WorldScale,
-                mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                );
-
-            return cd;
-        }
-
-        return null;
-    }
 
     public static void Save(string fname, CadData cd)
     {
@@ -330,27 +282,23 @@ public class MpCadFile
 
     public static void SaveAsJson(string fname, CadData cd)
     {
-        JObj n = new JObj();
-        JObj header = new JObj();
+        JObj root = new();
+        JObj header = new();
 
         header.Add("type", MpCadFile.JsonSign);
         header.Add("version", MpCadFile.CurrentVersion.Str);
-        n.Add("header", header);
-
-        string headerJs = n.ToString();
-        headerJs = headerJs.Substring(1, headerJs.Length - 2);
+        root.Add("header", header);
 
 
         var data = MpCadData_v1003.Create(cd);
 
         string dbJs = MessagePackSerializer.SerializeToJson(data);
-        dbJs = dbJs.Trim();
-        dbJs = dbJs.Substring(1, dbJs.Length - 2);
 
-        string ss = @"{" +
-                    headerJs + "," +
-                    @"""body"":" + "{" + dbJs + "}" +
-                    "}";
+
+        JObj body = (JObj)JObj.Parse(dbJs);
+        root.Add("body", body);
+
+        string ss = root.ToIndentedString();
 
         StreamWriter writer = new StreamWriter(fname);
 

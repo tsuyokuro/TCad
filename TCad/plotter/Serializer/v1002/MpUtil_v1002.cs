@@ -28,11 +28,8 @@ public partial class MpUtil_v1002
     public static MpCadData_v1002 CreateMpCadData_v1002(CadData cd)
     {
         MpCadData_v1002 data = MpCadData_v1002.Create(cd.DB);
-
         data.ViewInfo.WorldScale = cd.WorldScale;
-
         data.ViewInfo.PaperSettings.Set(cd.PageSize);
-
         return data;
     }
 

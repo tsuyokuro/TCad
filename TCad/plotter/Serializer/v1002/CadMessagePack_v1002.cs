@@ -45,11 +45,8 @@ public class MpCadData_v1002
     public static MpCadData_v1002 Create(CadObjectDB db)
     {
         MpCadData_v1002 ret = new MpCadData_v1002();
-
         ret.MpDB = MpCadObjectDB_v1002.Create(db);
-
         ret.ViewInfo = new MpViewInfo_v1002();
-
         return ret;
     }
 
