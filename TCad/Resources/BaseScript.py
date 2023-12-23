@@ -1,5 +1,7 @@
 # coding: cp932
 
+# TCad script
+# version 1.0
 
 import time
 import math
@@ -21,7 +23,6 @@ import CadDataTypes.CadFace as CadFace
 
 import OpenTK.Mathematics.Vector3 as Vector3
 
-#version 1.0
 
 
 ###############################################################################
@@ -191,7 +192,7 @@ def add_tetra(pos, size_x, size_y, size_z):
 def add_octa(pos, size_x, size_y, size_z):
     return SE.AddOctahedron(pos, size_x, size_y, size_z)
 
-#[AC] add_picture(last_down(), r"F:\work4\test.png")
+#[AC] add_picture(last_down(), r"H:\work4\test.png")
 def add_picture(pos, fname):
     return SE.AddPicture(pos, fname)
 

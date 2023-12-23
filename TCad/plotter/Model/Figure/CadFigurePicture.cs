@@ -190,11 +190,8 @@ public class CadFigurePicture : CadFigure
 
         if (cnt == 1)
         {
-            //DrawDim(DC, PointList[0], tp, tp, pen);
             return;
         }
-
-        //DrawDim(DC, PointList[0], PointList[1], tp, pen);
     }
 
     public override void StartCreate(DrawContext dc)
@@ -238,38 +235,97 @@ public class CadFigurePicture : CadFigure
 
         if (cnt == 1)
         {
-            if (PointList[0].Selected)
+            vector3_t d;
+
+            vector3_t normal = CadMath.Normal(StoreList[0].vector, StoreList[1].vector, StoreList[2].vector);
+
+            vector3_t vdir = dc.ViewDir;
+
+
+            vector3_t a = vector3_t.Zero;
+            vector3_t b = vdir;
+
+            vector3_t d0 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            a = delta;
+            b = delta + vdir;
+
+            vector3_t d1 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            if (d0.IsValid() && d1.IsValid())
             {
+                d = d1 - d0;
+            }
+            else
+            {
+                vector3_t nvNormal = CadMath.Normal(normal, vdir);
 
+                vcompo_t ip = CadMath.InnerProduct(nvNormal, delta);
 
-                return;
+                d = nvNormal * ip;
             }
 
-            if (PointList[1].Selected)
-            {
-                return;
-            }
+            AdjustPoints(GetTargetPointIndex(), d);
         }
-        else if (cnt == 2)
+
+        mChildList.ForEach(c =>
         {
-
-        }
+            c.MoveSelectedPointsFromStored(dc, moveInfo);
+        });
     }
+
+
+    void AdjustPoints(int mIdx, vector3_t d)
+    {
+        int aIdx = (mIdx + 2) % 4; // 対角のIndex
+        int bIdx = (mIdx + 1) % 4; // 次のIndex
+        int cIdx = (mIdx + 3) % 4; // 前のIndex
+
+        bool keepAspect = false;
+
+        CrossInfo ci;
+        if (keepAspect) { 
+            ci = CadMath.PerpCrossLine(
+                vector3_t.Zero,
+                mPointList[aIdx].vector - mPointList[mIdx].vector,
+                d
+                );
+            d = ci.CrossPoint;
+        }
+
+        mPointList[mIdx] = StoreList[mIdx] + d;
+
+        ci = CadMath.PerpCrossLine(
+            StoreList[aIdx].vector, StoreList[bIdx].vector,
+            mPointList[mIdx].vector
+            );
+        mPointList[bIdx].vector = ci.CrossPoint;
+
+        ci = CadMath.PerpCrossLine(
+            StoreList[cIdx].vector, StoreList[aIdx].vector,
+            mPointList[mIdx].vector
+            );
+        mPointList[cIdx].vector = ci.CrossPoint;
+    }
+
+
+
+    private int GetTargetPointIndex()
+    {
+        for (int i = 0; i < mPointList.Count; i++)
+        {
+            if (mPointList[i].Selected)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
 
     public override void InvertDir()
     {
-    }
-
-    // 高さが０の場合、移動方向が定まらないので
-    // 投影座標系でz=0とした座標から,List[0] - List[1]への垂線を計算して
-    // そこへ移動する
-    private void MoveSelectedPointWithHeight(DrawContext dc, vector3_t delta)
-    {
-        CadSegment seg = CadUtil.PerpSeg(PointList[0], PointList[1],
-            StoreList[2] + delta);
-
-        PointList[2] = PointList[2].SetVector(seg.P1.vector);
-        PointList[3] = PointList[3].SetVector(seg.P0.vector);
     }
 
     public override void EndEdit()
