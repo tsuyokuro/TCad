@@ -59,6 +59,45 @@ public class MpCadData_v1002
 
         return DB;
     }
+
+    public CadData Restore()
+    {
+        CadData cd = new CadData();
+
+        vcompo_t worldScale = 0;
+
+        PaperPageSize pps = null;
+
+        if (ViewInfo != null)
+        {
+            worldScale = ViewInfo.WorldScale;
+
+            if (ViewInfo.PaperSettings != null)
+            {
+                pps = ViewInfo.PaperSettings.GetPaperPageSize();
+            }
+        }
+
+
+        if (worldScale == 0)
+        {
+            worldScale = (vcompo_t)(1.0);
+        }
+
+        cd.WorldScale = worldScale;
+
+
+        if (pps == null)
+        {
+            pps = new PaperPageSize();
+        }
+
+        cd.PageSize = pps;
+
+        cd.DB = MpDB.Restore();
+
+        return cd;
+    }
 }
 
 [MessagePackObject]

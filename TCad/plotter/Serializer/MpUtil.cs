@@ -53,6 +53,11 @@ public abstract class MpHeFace
 
 public class MpUtil
 {
+    //=========================================================================
+    //
+    // Convert Cad Object to MessagePack Object
+    //
+
     public static List<TMpLayer> LayerListToMp<TMpLayer>(
         List<CadLayer> src,
         Func<CadLayer, TMpLayer> creator
@@ -67,18 +72,47 @@ public class MpUtil
         return ret;
     }
 
-    public static List<CadLayer> LayerListFromMp<TMpLayer>(
-        List<TMpLayer> src, Dictionary<uint, CadFigure> dic
-        ) where TMpLayer : MpLayer
+    public static List<TMpFig> FigureListToMp<TMpFig>(
+        List<CadFigure> figList,
+        Func<CadFigure, bool, TMpFig> creator,
+        bool withChild = false) where TMpFig : MpFigure
     {
-        List<CadLayer> ret = new List<CadLayer>();
-        for (int i = 0; i < src.Count; i++)
+        List<TMpFig> ret = new List<TMpFig>();
+        for (int i = 0; i < figList.Count; i++)
         {
-            ret.Add(src[i].Restore(dic));
+            ret.Add(creator(figList[i], withChild));
         }
 
         return ret;
     }
+
+
+    public static List<TMpFig> FigureMapToMp<TMpFig> (
+        Dictionary<uint, CadFigure> figMap,
+        Func<CadFigure, bool, TMpFig> creator,
+        bool withChild = false) where TMpFig : MpFigure
+    {
+        List<TMpFig> ret = new List<TMpFig>();
+        foreach (CadFigure fig in figMap.Values)
+        {
+            ret.Add(creator(fig, withChild));
+        }
+        return ret;
+    }
+
+    //-------------------------------------------------------------------------
+
+    public static List<uint> FigureListToIdList(List<CadFigure> figList)
+    {
+        List<uint> ret = new List<uint>();
+        for (int i = 0; i < figList.Count; i++)
+        {
+            ret.Add(figList[i].ID);
+        }
+
+        return ret;
+    }
+
 
     public static List<TMpVertex> VertexListToMp<TMpVertex>(
         VertexList v,
@@ -94,20 +128,8 @@ public class MpUtil
         return ret;
     }
 
-    public static VertexList VertexListFromMp<TMpVertex>(
-        List<TMpVertex> list) where TMpVertex : MpVertex
-    {
-        VertexList ret = new VertexList(list.Count);
-        for (int i = 0; i < list.Count; i++)
-        {
-            ret.Add(list[i].Restore());
-        }
-
-        return ret;
-    }
-
     public static List<TMpVector3> Vector3ListToMp<TMpVector3>(
-        Vector3List v, Func<vector3_t, TMpVector3> creator) 
+        Vector3List v, Func<vector3_t, TMpVector3> creator)
     {
         List<TMpVector3> ret = new List<TMpVector3>();
         for (int i = 0; i < v.Count; i++)
@@ -118,40 +140,44 @@ public class MpUtil
         return ret;
     }
 
-    public static Vector3List Vector3ListFromMp<TMpVector3>(
-        List<TMpVector3> list) where TMpVector3 : MpVector3
+    public static List<TMpHeFace> HeFaceListToMp<TMpHeFace>(
+        FlexArray<HeFace> list, Func<HeFace, TMpHeFace> creator)
     {
-        Vector3List ret = new Vector3List(list.Count);
+        List<TMpHeFace> ret = new();
         for (int i = 0; i < list.Count; i++)
         {
-            ret.Add(list[i].Restore());
+            ret.Add(creator(list[i]));
+        }
+
+        return ret;
+    }
+
+    public static List<TMpHalfEdge> HalfEdgeListToMp<TMpHalfEdge>(
+        List<HalfEdge> list, Func<HalfEdge, TMpHalfEdge> creator)
+    {
+        List <TMpHalfEdge > ret = new();
+        for (int i = 0; i < list.Count; i++)
+        {
+            ret.Add(creator(list[i]));
         }
 
         return ret;
     }
 
 
-    public static List<uint> FigureListToIdList(List<CadFigure> figList)
+    //=========================================================================
+    //
+    // Restore Cad Object from MessagePack Object
+    //
+
+    public static List<CadLayer> LayerListFromMp<TMpLayer>(
+        List<TMpLayer> src, Dictionary<uint, CadFigure> dic
+        ) where TMpLayer : MpLayer
     {
-        List<uint> ret = new List<uint>();
-        for (int i = 0; i < figList.Count; i++)
+        List<CadLayer> ret = new List<CadLayer>();
+        for (int i = 0; i < src.Count; i++)
         {
-            ret.Add(figList[i].ID);
-        }
-
-        return ret;
-    }
-
-
-    public static List<TMpFig> FigureListToMp<TMpFig>(
-        List<CadFigure> figList,
-        Func<CadFigure, bool, TMpFig> creator,
-        bool withChild = false) where TMpFig : MpFigure
-    {
-        List<TMpFig> ret = new List<TMpFig>();
-        for (int i = 0; i < figList.Count; i++)
-        {
-            ret.Add(creator(figList[i], withChild));
+            ret.Add(src[i].Restore(dic));
         }
 
         return ret;
@@ -170,26 +196,26 @@ public class MpUtil
         return ret;
     }
 
-    public static List<TMpFig> FigureMapToMp<TMpFig> (
-        Dictionary<uint, CadFigure> figMap,
-        Func<CadFigure, bool, TMpFig> creator,
-        bool withChild = false) where TMpFig : MpFigure
-    {
-        List<TMpFig> ret = new List<TMpFig>();
-        foreach (CadFigure fig in figMap.Values)
-        {
-            ret.Add(creator(fig, withChild));
-        }
-        return ret;
-    }
+    //-------------------------------------------------------------------------
 
-    public static List<TMpHeFace> HeFaceListToMp<TMpHeFace>(
-        FlexArray<HeFace> list, Func<HeFace, TMpHeFace> creator)
+    public static VertexList VertexListFromMp<TMpVertex>(
+        List<TMpVertex> list) where TMpVertex : MpVertex
     {
-        List<TMpHeFace> ret = new();
+        VertexList ret = new VertexList(list.Count);
         for (int i = 0; i < list.Count; i++)
         {
-            ret.Add(creator(list[i]));
+            ret.Add(list[i].Restore());
+        }
+
+        return ret;
+    }
+    public static Vector3List Vector3ListFromMp<TMpVector3>(
+        List<TMpVector3> list) where TMpVector3 : MpVector3
+    {
+        Vector3List ret = new Vector3List(list.Count);
+        for (int i = 0; i < list.Count; i++)
+        {
+            ret.Add(list[i].Restore());
         }
 
         return ret;
@@ -209,17 +235,8 @@ public class MpUtil
         return ret;
     }
 
-    public static List<TMpHalfEdge> HalfEdgeListToMp<TMpHalfEdge>(
-        List<HalfEdge> list, Func<HalfEdge, TMpHalfEdge> creator)
-    {
-        List <TMpHalfEdge > ret = new();
-        for (int i = 0; i < list.Count; i++)
-        {
-            ret.Add(creator(list[i]));
-        }
 
-        return ret;
-    }
+    //=========================================================================
 
     public static T[] ArrayClone<T>(T[] src)
     {

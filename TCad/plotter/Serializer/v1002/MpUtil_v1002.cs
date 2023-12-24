@@ -33,47 +33,6 @@ public partial class MpUtil_v1002
         return data;
     }
 
-    public static CadData CreateCadData_v1002(MpCadData_v1002 mpcd)
-    {
-        CadData cd = new CadData();
-
-        MpViewInfo_v1002 viewInfo = mpcd.ViewInfo;
-
-        vcompo_t worldScale = 0;
-
-        PaperPageSize pps = null;
-
-        if (viewInfo != null)
-        {
-            worldScale = viewInfo.WorldScale;
-
-            if (viewInfo.PaperSettings != null)
-            {
-                pps = viewInfo.PaperSettings.GetPaperPageSize();
-            }
-        }
-
-
-        if (worldScale == 0)
-        {
-            worldScale = (vcompo_t)(1.0);
-        }
-
-        cd.WorldScale = worldScale;
-
-
-        if (pps == null)
-        {
-            pps = new PaperPageSize();
-        }
-
-        cd.PageSize = pps;
-
-        cd.DB = mpcd.GetDB();
-
-        return cd;
-    }
-
     public static List<MpVertex_v1002> VertexListToMp(VertexList v)
     {
         List<MpVertex_v1002> ret = new List<MpVertex_v1002>();

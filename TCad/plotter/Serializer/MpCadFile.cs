@@ -121,7 +121,7 @@ public class MpCadFile
             if (VersionCode_v1002.Version.Equals(version))
             {
                 MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
-                return MpUtil_v1002.CreateCadData_v1002(mpdata);
+                return mpdata.Restore();
             }
             else if (VersionCode_v1003.Version.Equals(version))
             {
@@ -182,26 +182,12 @@ public class MpCadFile
             if (version == VersionCode_v1002.Version.Str)
             {
                 MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
+                return mpcd.Restore();
             }
             else if (version == VersionCode_v1003.Version.Str)
             {
                 MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
+                return mpcd.Restore();
             }
         }
         catch

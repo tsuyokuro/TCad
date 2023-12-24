@@ -59,16 +59,6 @@ public class MpCadData_v1003
         return ret;
     }
 
-    public CadObjectDB GetDB()
-    {
-        if (DB == null)
-        {
-            DB = MpDB.Restore();
-        }
-
-        return DB;
-    }
-
     public CadData Restore()
     {
         CadData cd = new CadData();
@@ -103,11 +93,10 @@ public class MpCadData_v1003
 
         cd.PageSize = pps;
 
-        cd.DB = GetDB();
+        cd.DB = MpDB.Restore();
 
         return cd;
     }
-
 }
 
 [MessagePackObject]
