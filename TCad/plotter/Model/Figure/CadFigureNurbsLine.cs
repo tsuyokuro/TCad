@@ -22,7 +22,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureNurbsLine : CadFigure
+public partial class CadFigureNurbsLine : CadFigure
 {
     public NurbsLine Nurbs;
 
@@ -166,55 +166,4 @@ public class CadFigureNurbsLine : CadFigure
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
     }
-
-
-    #region Serialize
-
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpNurbsLineGeometricData_v1002 geo = new MpNurbsLineGeometricData_v1002();
-        geo.Nurbs = MpNurbsLine_v1002.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpNurbsLineGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpNurbsLineGeometricData_v1002 g = (MpNurbsLineGeometricData_v1002)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.OutCnt);
-    }
-
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpNurbsLineGeometricData_v1003 geo = new MpNurbsLineGeometricData_v1003();
-        geo.Nurbs = MpNurbsLine_v1003.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
-    {
-        if (!(geo is MpNurbsLineGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpNurbsLineGeometricData_v1003 g = (MpNurbsLineGeometricData_v1003)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.OutCnt);
-    }
-    #endregion
 }

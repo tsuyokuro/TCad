@@ -27,7 +27,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigurePicture : CadFigure
+public partial class CadFigurePicture : CadFigure
 {
     //  3-------------------2
     //  |                   |
@@ -378,78 +378,4 @@ public class CadFigurePicture : CadFigure
 
         return ret;
     }
-
-    #region Serialize
-    public override void SaveExternalFiles(string fname)
-    {
-        if (OrgFilePathName == null)
-        {
-            return;
-        }
-
-        string name = Path.GetFileName(OrgFilePathName);
-
-        string dpath = FileUtil.GetExternalDataDir(fname);
-
-        Directory.CreateDirectory(dpath);
-
-        string dpathName = Path.Combine(dpath, name);
-
-        File.Copy(OrgFilePathName, dpathName, true);
-
-        FilePathName = name;
-
-        OrgFilePathName = null;
-    }
-
-    public override void LoadExternalFiles(string fname)
-    {
-        string basePath = FileUtil.GetExternalDataDir(fname);
-        string dfname = Path.Combine(basePath, FilePathName);
-
-        mBitmap = new Bitmap(Image.FromFile(dfname));
-
-        mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-    }
-
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
-        geo.FilePathName = FilePathName;
-        geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
-    {
-        if (!(geo is MpPictureGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpPictureGeometricData_v1003 g = (MpPictureGeometricData_v1003)geo;
-        FilePathName = g.FilePathName;
-        mPointList = MpUtil.VertexListFromMp(g.PointList);
-    }
-    #endregion
 }

@@ -20,7 +20,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureCircle : CadFigure
+public partial class CadFigureCircle : CadFigure
 {
     public override int SegmentCount
     {

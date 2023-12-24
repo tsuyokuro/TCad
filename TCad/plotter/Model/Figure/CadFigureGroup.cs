@@ -20,7 +20,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureGroup : CadFigure
+public partial class CadFigureGroup : CadFigure
 {
     public CadFigureGroup()
     {

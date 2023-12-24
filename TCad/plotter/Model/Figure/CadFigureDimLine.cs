@@ -29,7 +29,7 @@ namespace Plotter;
 // 
 //
 
-public class CadFigureDimLine : CadFigure
+public partial class CadFigureDimLine : CadFigure
 {
     private const vcompo_t ARROW_LEN = 2;
     private const vcompo_t ARROW_W = 1;

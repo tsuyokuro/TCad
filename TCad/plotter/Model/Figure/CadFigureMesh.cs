@@ -25,7 +25,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureMesh : CadFigure
+public partial class CadFigureMesh : CadFigure
 {
     public HeModel mHeModel;
 
@@ -352,52 +352,4 @@ public class CadFigureMesh : CadFigure
     public override void EndCreate(DrawContext dc)
     {
     }
-
-
-    #region Serialize
-
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpMeshGeometricData_v1002 mpGeo = new MpMeshGeometricData_v1002();
-        mpGeo.HeModel = MpHeModel_v1002.Create(mHeModel);
-
-        return mpGeo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 mpGeo)
-    {
-        if (!(mpGeo is MpMeshGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpMeshGeometricData_v1002 meshGeo = (MpMeshGeometricData_v1002)mpGeo;
-
-        //mHeModel = meshGeo.HeModel.Restore();
-        //mPointList = mHeModel.VertexStore;
-        SetMesh(meshGeo.HeModel.Restore());
-    }
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpMeshGeometricData_v1003 mpGeo = new MpMeshGeometricData_v1003();
-        mpGeo.HeModel = MpHeModel_v1003.Create(mHeModel);
-
-        return mpGeo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 mpGeo)
-    {
-        if (!(mpGeo is MpMeshGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpMeshGeometricData_v1003 meshGeo = (MpMeshGeometricData_v1003)mpGeo;
-
-        //mHeModel = meshGeo.HeModel.Restore();
-        //mPointList = mHeModel.VertexStore;
-        SetMesh(meshGeo.HeModel.Restore());
-    }
-    #endregion
 }
