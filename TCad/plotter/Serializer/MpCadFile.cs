@@ -79,12 +79,56 @@ public class CadFileException : Exception
     }
 }
 
+public enum SerializeType
+{
+    MP_BIN,
+    JSON,
+}
+
+public class SerializeContext
+{
+    static SerializeContext MpBin =
+        new SerializeContext(MpCadFile.CurrentVersion,SerializeType.MP_BIN);
+
+    static SerializeContext Json =
+        new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+
+    public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
+
+    public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
+
+    public SerializeContext(VersionCode version, SerializeType serializeType)
+    {
+        Version = version;
+        SerializeType = serializeType;
+    }
+}
+
+public class DeserializeContext
+{
+    static DeserializeContext MpBin =
+        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+
+    static DeserializeContext Json =
+        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+
+    public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
+    public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
+
+    public DeserializeContext(VersionCode version, SerializeType serializeType)
+    {
+        Version = version;
+        SerializeType = serializeType;
+    }
+}
+
 public class MpCadFile
 {
+    public static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 3);
+
     private static byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
     private static byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
     private static string JsonSign = "TCAD_JSON";
-    private static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 3);
 
     static MpCadFile()
     {
