@@ -44,11 +44,11 @@ public class MpCadData_v1003
     [IgnoreMember]
     CadObjectDB DB = null;
 
-    public static MpCadData_v1003 Create(CadData cadData)
+    public static MpCadData_v1003 Create(SerializeContext sc, CadData cadData)
     {
         MpCadData_v1003 ret = new MpCadData_v1003();
 
-        ret.MpDB = MpCadObjectDB_v1003.Create(cadData.DB);
+        ret.MpDB = MpCadObjectDB_v1003.Create(sc, cadData.DB);
 
         ret.ViewInfo = new MpViewInfo_v1003();
 
@@ -59,7 +59,7 @@ public class MpCadData_v1003
         return ret;
     }
 
-    public CadData Restore()
+    public CadData Restore(DeserializeContext dsc)
     {
         CadData cd = new CadData();
 
@@ -93,7 +93,7 @@ public class MpCadData_v1003
 
         cd.PageSize = pps;
 
-        cd.DB = MpDB.Restore();
+        cd.DB = MpDB.Restore(dsc);
 
         return cd;
     }
@@ -167,7 +167,7 @@ public class MpCadObjectDB_v1003
     [Key("CurrentLayerID")]
     public uint CurrentLayerID;
 
-    public static MpCadObjectDB_v1003 Create(CadObjectDB db)
+    public static MpCadObjectDB_v1003 Create(SerializeContext sc, CadObjectDB db)
     {
         MpCadObjectDB_v1003 ret = new MpCadObjectDB_v1003();
 
@@ -175,9 +175,9 @@ public class MpCadObjectDB_v1003
         ret.FigureIdCount = db.FigIdProvider.Counter;
 
         //ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
-        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1003>(db.FigureMap, MpFigure_v1003.Create);
+        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1003>(sc, db.FigureMap, MpFigure_v1003.Create);
 
-        ret.LayerList = MpUtil.LayerListToMp(db.LayerList, MpLayer_v1003.Create);
+        ret.LayerList = MpUtil.LayerListToMp(sc, db.LayerList, MpLayer_v1003.Create);
 
         ret.CurrentLayerID = db.CurrentLayerID;
 
@@ -221,7 +221,7 @@ public class MpCadObjectDB_v1003
         }
     }
 
-    public CadObjectDB Restore()
+    public CadObjectDB Restore(DeserializeContext dsc)
     {
         CadObjectDB ret = new CadObjectDB();
 
@@ -229,7 +229,7 @@ public class MpCadObjectDB_v1003
         ret.FigIdProvider.Counter = FigureIdCount;
 
         // Figure map
-        List<CadFigure> figList = MpUtil.FigureListFromMp<MpFigure_v1003>(FigureList);
+        List<CadFigure> figList = MpUtil.FigureListFromMp<MpFigure_v1003>(dsc, FigureList);
 
         var dic = new Dictionary<uint, CadFigure>();
 
@@ -253,7 +253,7 @@ public class MpCadObjectDB_v1003
 
 
         // Layer map
-        ret.LayerList = MpUtil.LayerListFromMp(LayerList, dic);
+        ret.LayerList = MpUtil.LayerListFromMp(dsc, LayerList, dic);
 
         ret.LayerMap = new Dictionary<uint, CadLayer>();
 
@@ -298,7 +298,7 @@ public class MpLayer_v1003 : MpLayer
     [Key("FigIdList")]
     public List<uint> FigureIdList;
 
-    public static MpLayer_v1003 Create(CadLayer layer)
+    public static MpLayer_v1003 Create(SerializeContext sc, CadLayer layer)
     {
         MpLayer_v1003 ret = new MpLayer_v1003();
 
@@ -311,7 +311,7 @@ public class MpLayer_v1003 : MpLayer
         return ret;
     }
 
-    public override CadLayer Restore(Dictionary<uint, CadFigure> dic)
+    public override CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic)
     {
         CadLayer ret = new CadLayer();
         ret.ID = ID;
@@ -366,15 +366,15 @@ public class MpFigure_v1003 : MpFigure
     [IgnoreMember]
     public CadFigure TempFigure = null;
 
-    public static MpFigure_v1003 Create(CadFigure fig, bool withChild = false)
+    public static MpFigure_v1003 Create(SerializeContext sc, CadFigure fig, bool withChild = false)
     {
         MpFigure_v1003 ret = new MpFigure_v1003();
 
-        ret.StoreCommon(fig);
+        ret.StoreCommon(sc, fig);
 
         if (withChild)
         {
-            ret.StoreChildList(fig);
+            ret.StoreChildList(sc, fig);
         }
         else
         {
@@ -418,7 +418,7 @@ public class MpFigure_v1003 : MpFigure
         }
     }
 
-    public void StoreCommon(CadFigure fig)
+    public void StoreCommon(SerializeContext sc, CadFigure fig)
     {
         V = VERSION;
 
@@ -426,7 +426,7 @@ public class MpFigure_v1003 : MpFigure
         Type = (byte)fig.Type;
         Locked = fig.Locked;
 
-        GeoData = fig.GeometricDataToMp_v1003();
+        GeoData = fig.GeometricDataToMp_v1003(sc);
 
         Name = fig.Name;
 
@@ -439,12 +439,12 @@ public class MpFigure_v1003 : MpFigure
         ChildIdList = MpUtil.FigureListToIdList(fig.ChildList);
     }
 
-    public void StoreChildList(CadFigure fig)
+    public void StoreChildList(SerializeContext sc, CadFigure fig)
     {
-        ChildList = MpUtil.FigureListToMp<MpFigure_v1003>(fig.ChildList,Create);
+        ChildList = MpUtil.FigureListToMp<MpFigure_v1003>(sc, fig.ChildList,Create);
     }
 
-    public void RestoreTo(CadFigure fig)
+    public void RestoreTo(DeserializeContext dsc, CadFigure fig)
     {
         fig.ID = ID;
         fig.Locked = Locked;
@@ -452,7 +452,7 @@ public class MpFigure_v1003 : MpFigure
 
         if (ChildList != null)
         {
-            fig.ChildList = MpUtil.FigureListFromMp<MpFigure_v1003>(ChildList);
+            fig.ChildList = MpUtil.FigureListFromMp<MpFigure_v1003>(dsc, ChildList);
 
             for (int i = 0; i < fig.ChildList.Count; i++)
             {
@@ -465,7 +465,7 @@ public class MpFigure_v1003 : MpFigure
             fig.ChildList.Clear();
         }
 
-        fig.GeometricDataFromMp_v1003(GeoData);
+        fig.GeometricDataFromMp_v1003(dsc, GeoData);
 
 
         fig.Name = Name;
@@ -474,11 +474,11 @@ public class MpFigure_v1003 : MpFigure
         fig.FillBrush = FillBrush.Restore();
     }
 
-    public override CadFigure Restore()
+    public override CadFigure Restore(DeserializeContext dsc)
     {
         CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
 
-        RestoreTo(fig);
+        RestoreTo(dsc, fig);
 
         return fig;
     }

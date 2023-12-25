@@ -30,14 +30,15 @@ public class CadFileAccessor
             FileUtil.OverWriteExtData(vm.CurrentFileName, fname);
         }
 
-        SaveExternalData(vm.Controller.DB, fname);
 
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
+            SaveExternalData(SerializeContext.Json, vm.Controller.DB, fname);
             SaveToMsgPackJsonFile(fname, vm);
         }
         else
         {
+            SaveExternalData(SerializeContext.MpBin, vm.Controller.DB, fname);
             SaveToMsgPackFile(fname, vm);
         }
     }
@@ -47,61 +48,62 @@ public class CadFileAccessor
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             LoadFromMsgPackJsonFile(fname, vm);
+            LoadExternalData(DeserializeContext.Json, vm.Controller.DB, fname);
         }
         else
         {
             LoadFromMsgPackFile(fname, vm);
+            LoadExternalData(DeserializeContext.MpBin, vm.Controller.DB, fname);
         }
 
-        LoadExternalData(vm.Controller.DB, fname);
         vm.Controller.Redraw();
     }
 
-    private static void SaveExternalData(CadObjectDB db, string fname)
+    private static void SaveExternalData(SerializeContext sc, CadObjectDB db, string fname)
     {
         foreach (CadLayer layer in db.LayerList)
         {
             foreach (CadFigure fig in layer.FigureList)
             {
-                SaveExternalData(fig, fname);
+                SaveExternalData(sc, fig, fname);
             }
         }
     }
 
-    private static void SaveExternalData(CadFigure fig, string fname)
+    private static void SaveExternalData(SerializeContext sc, CadFigure fig, string fname)
     {
-        fig.SaveExternalFiles(fname);
+        fig.SaveExternalFiles(sc, fname);
 
         foreach (CadFigure c in fig.ChildList)
         {
-            SaveExternalData(c, fname);
+            SaveExternalData(sc, c, fname);
         }
     }
 
-    private static void LoadExternalData(CadObjectDB db, string fname)
+    private static void LoadExternalData(DeserializeContext dsc, CadObjectDB db, string fname)
     {
         foreach (CadLayer layer in db.LayerList)
         {
             foreach (CadFigure fig in layer.FigureList)
             {
-                LoadExternalData(fig, fname);
+                LoadExternalData(dsc, fig, fname);
             }
         }
     }
 
-    private static void LoadExternalData(CadFigure fig, string fname)
+    private static void LoadExternalData(DeserializeContext dsc, CadFigure fig, string fname)
     {
         if (!File.Exists(fname))
         {
             return;
         }
 
-        fig.LoadExternalFiles(fname);
+        fig.LoadExternalFiles(dsc, fname);
 
         foreach (CadFigure c in fig.ChildList)
         {
             try {
-                LoadExternalData(c, fname);
+                LoadExternalData(dsc, c, fname);
             }
             catch
             {

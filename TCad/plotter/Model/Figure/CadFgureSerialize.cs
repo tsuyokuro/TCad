@@ -21,13 +21,16 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
+//=============================================================================
+// CaFigure
+//
 public abstract partial class CadFigure
 {
-    public virtual void SaveExternalFiles(string fname)
+    public virtual void SaveExternalFiles(SerializeContext sc, string fname)
     {
     }
 
-    public virtual void LoadExternalFiles(string fname)
+    public virtual void LoadExternalFiles(DeserializeContext dsc, string fname)
     {
     }
 
@@ -51,14 +54,14 @@ public abstract partial class CadFigure
     }
 
 
-    public virtual MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public virtual MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
         geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList, MpVertex_v1003.Create);
         return geo;
     }
 
-    public virtual void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    public virtual void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 geo)
     {
         if (!(geo is MpSimpleGeometricData_v1003))
         {
@@ -71,6 +74,9 @@ public abstract partial class CadFigure
     }
 }
 
+//=============================================================================
+// CaFigureMesh
+//
 public partial class CadFigureMesh : CadFigure
 {
     public override MpGeometricData_v1002 GeometricDataToMp_v1002()
@@ -95,7 +101,7 @@ public partial class CadFigureMesh : CadFigure
         SetMesh(meshGeo.HeModel.Restore());
     }
 
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpMeshGeometricData_v1003 mpGeo = new MpMeshGeometricData_v1003();
         mpGeo.HeModel = MpHeModel_v1003.Create(mHeModel);
@@ -103,7 +109,7 @@ public partial class CadFigureMesh : CadFigure
         return mpGeo;
     }
 
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 mpGeo)
+    public override void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 mpGeo)
     {
         if (!(mpGeo is MpMeshGeometricData_v1003))
         {
@@ -118,6 +124,9 @@ public partial class CadFigureMesh : CadFigure
     }
 }
 
+//=============================================================================
+// CadFigureNurbsLine
+//
 public partial class CadFigureNurbsLine : CadFigure
 {
     public override MpGeometricData_v1002 GeometricDataToMp_v1002()
@@ -144,14 +153,14 @@ public partial class CadFigureNurbsLine : CadFigure
     }
 
 
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpNurbsLineGeometricData_v1003 geo = new MpNurbsLineGeometricData_v1003();
         geo.Nurbs = MpNurbsLine_v1003.Create(Nurbs);
         return geo;
     }
 
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    public override void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 geo)
     {
         if (!(geo is MpNurbsLineGeometricData_v1003))
         {
@@ -168,6 +177,9 @@ public partial class CadFigureNurbsLine : CadFigure
     }
 }
 
+//=============================================================================
+// CadFigureNurbsSurface
+//
 public partial class CadFigureNurbsSurface : CadFigure
 {
     public override MpGeometricData_v1002 GeometricDataToMp_v1002()
@@ -195,14 +207,14 @@ public partial class CadFigureNurbsSurface : CadFigure
         NeedsEval = true;
     }
 
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpNurbsSurfaceGeometricData_v1003 geo = new MpNurbsSurfaceGeometricData_v1003();
         geo.Nurbs = MpNurbsSurface_v1003.Create(Nurbs);
         return geo;
     }
 
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    public override void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 geo)
     {
         if (!(geo is MpNurbsSurfaceGeometricData_v1003))
         {
@@ -221,9 +233,12 @@ public partial class CadFigureNurbsSurface : CadFigure
     }
 }
 
+//=============================================================================
+// CadFigurePicture
+//
 public partial class CadFigurePicture : CadFigure
 {
-    public override void SaveExternalFiles(string fname)
+    public override void SaveExternalFiles(SerializeContext sc, string fname)
     {
         if (OrgFilePathName == null)
         {
@@ -245,7 +260,7 @@ public partial class CadFigurePicture : CadFigure
         OrgFilePathName = null;
     }
 
-    public override void LoadExternalFiles(string fname)
+    public override void LoadExternalFiles(DeserializeContext dsc, string fname)
     {
         string basePath = FileUtil.GetExternalDataDir(fname);
         string dfname = Path.Combine(basePath, FilePathName);
@@ -275,7 +290,7 @@ public partial class CadFigurePicture : CadFigure
     }
 
 
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
         geo.FilePathName = FilePathName;
@@ -283,7 +298,7 @@ public partial class CadFigurePicture : CadFigure
         return geo;
     }
 
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    public override void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 geo)
     {
         if (!(geo is MpPictureGeometricData_v1003))
         {
@@ -296,6 +311,9 @@ public partial class CadFigurePicture : CadFigure
     }
 }
 
+//=============================================================================
+// CadFigurePolyLines
+//
 public partial class CadFigurePolyLines : CadFigure
 {
     public override MpGeometricData_v1002 GeometricDataToMp_v1002()
@@ -318,7 +336,7 @@ public partial class CadFigurePolyLines : CadFigure
     }
 
 
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
+    public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpPolyLinesGeometricData_v1003 geo = new();
         geo.IsLoop = IsLoop_;
@@ -326,7 +344,7 @@ public partial class CadFigurePolyLines : CadFigure
         return geo;
     }
 
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
+    public override void GeometricDataFromMp_v1003(DeserializeContext dsc, MpGeometricData_v1003 geo)
     {
         MpPolyLinesGeometricData_v1003 g = geo as MpPolyLinesGeometricData_v1003;
         if (g != null)
@@ -345,21 +363,37 @@ public partial class CadFigurePolyLines : CadFigure
     }
 }
 
+
+//=============================================================================
+// CadFigureCircle
+//
 public partial class CadFigureCircle : CadFigure
 {
     // No spcial data for Serialize
 }
 
+
+//=============================================================================
+// CadFigureDimLine
+//
 public partial class CadFigureDimLine : CadFigure
 {
     // No spcial data for Serialize
 }
 
+
+//=============================================================================
+// CadFigureGroup
+//
 public partial class CadFigureGroup : CadFigure
 {
     // No spcial data for Serialize
 }
 
+
+//=============================================================================
+// CadFigurePoint
+//
 public partial class CadFigurePoint : CadFigure
 {
     // No spcial data for Serialize

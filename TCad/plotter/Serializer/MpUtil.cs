@@ -29,13 +29,14 @@ namespace Plotter.Serializer;
 
 public abstract class MpLayer
 {
-    public abstract CadLayer Restore(Dictionary<uint, CadFigure> dic);
+    public abstract CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic);
 }
 
 public abstract class MpFigure
 {
-    public abstract CadFigure Restore();
+    public abstract CadFigure Restore(DeserializeContext dsc);
 }
+
 
 public interface MpVertex {
     public CadVertex Restore();
@@ -59,28 +60,30 @@ public class MpUtil
     //
 
     public static List<TMpLayer> LayerListToMp<TMpLayer>(
+        SerializeContext sc,
         List<CadLayer> src,
-        Func<CadLayer, TMpLayer> creator
+        Func<SerializeContext, CadLayer, TMpLayer> creator
         )
     {
         List<TMpLayer> ret = new();
         for (int i = 0; i < src.Count; i++)
         {
-            ret.Add(creator(src[i]));
+            ret.Add(creator(sc, src[i]));
         }
 
         return ret;
     }
 
     public static List<TMpFig> FigureListToMp<TMpFig>(
+        SerializeContext sc,
         List<CadFigure> figList,
-        Func<CadFigure, bool, TMpFig> creator,
+        Func<SerializeContext, CadFigure, bool, TMpFig> creator,
         bool withChild = false) where TMpFig : MpFigure
     {
         List<TMpFig> ret = new List<TMpFig>();
         for (int i = 0; i < figList.Count; i++)
         {
-            ret.Add(creator(figList[i], withChild));
+            ret.Add(creator(sc, figList[i], withChild));
         }
 
         return ret;
@@ -88,14 +91,15 @@ public class MpUtil
 
 
     public static List<TMpFig> FigureMapToMp<TMpFig> (
+        SerializeContext sc,
         Dictionary<uint, CadFigure> figMap,
-        Func<CadFigure, bool, TMpFig> creator,
+        Func<SerializeContext, CadFigure, bool, TMpFig> creator,
         bool withChild = false) where TMpFig : MpFigure
     {
         List<TMpFig> ret = new List<TMpFig>();
         foreach (CadFigure fig in figMap.Values)
         {
-            ret.Add(creator(fig, withChild));
+            ret.Add(creator(sc, fig, withChild));
         }
         return ret;
     }
@@ -171,26 +175,29 @@ public class MpUtil
     //
 
     public static List<CadLayer> LayerListFromMp<TMpLayer>(
+        DeserializeContext dsc,
         List<TMpLayer> src, Dictionary<uint, CadFigure> dic
         ) where TMpLayer : MpLayer
     {
         List<CadLayer> ret = new List<CadLayer>();
         for (int i = 0; i < src.Count; i++)
         {
-            ret.Add(src[i].Restore(dic));
+            ret.Add(src[i].Restore(dsc, dic));
         }
 
         return ret;
     }
 
 
-    public static List<CadFigure> FigureListFromMp<TMpFig>(List<TMpFig> list)
+    public static List<CadFigure> FigureListFromMp<TMpFig>(
+        DeserializeContext dsc,
+        List<TMpFig> list)
         where TMpFig : MpFigure
     {
         List<CadFigure> ret = new List<CadFigure>();
         for (int i = 0; i < list.Count; i++)
         {
-            ret.Add(list[i].Restore());
+            ret.Add(list[i].Restore(dsc));
         }
 
         return ret;

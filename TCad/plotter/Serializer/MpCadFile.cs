@@ -87,10 +87,10 @@ public enum SerializeType
 
 public class SerializeContext
 {
-    static SerializeContext MpBin =
+    public static SerializeContext MpBin =
         new SerializeContext(MpCadFile.CurrentVersion,SerializeType.MP_BIN);
 
-    static SerializeContext Json =
+    public static SerializeContext Json =
         new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
 
     public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
@@ -106,10 +106,10 @@ public class SerializeContext
 
 public class DeserializeContext
 {
-    static DeserializeContext MpBin =
+    public static DeserializeContext MpBin =
         new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
 
-    static DeserializeContext Json =
+    public static DeserializeContext Json =
         new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
 
     public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
@@ -170,7 +170,7 @@ public class MpCadFile
             else if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
-                return mpdata.Restore();
+                return mpdata.Restore(DeserializeContext.MpBin);
             }
         }
         catch
@@ -231,7 +231,7 @@ public class MpCadFile
             else if (version == VersionCode_v1003.Version.Str)
             {
                 MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-                return mpcd.Restore();
+                return mpcd.Restore(DeserializeContext.Json);
             }
         }
         catch
@@ -295,7 +295,7 @@ public class MpCadFile
 
     public static void Save(string fname, CadData cd)
     {
-        var mpcd = MpCadData_v1003.Create(cd);
+        var mpcd = MpCadData_v1003.Create(SerializeContext.MpBin, cd);
 
         mpcd.MpDB.GarbageCollect();
 
@@ -320,7 +320,7 @@ public class MpCadFile
         root.Add("header", header);
 
 
-        var data = MpCadData_v1003.Create(cd);
+        var data = MpCadData_v1003.Create(SerializeContext.Json, cd);
 
         string dbJs = MessagePackSerializer.SerializeToJson(data);
 
