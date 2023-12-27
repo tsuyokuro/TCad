@@ -1,7 +1,6 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System.Collections.Generic;
 using System.Drawing;

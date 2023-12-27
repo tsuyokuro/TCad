@@ -1,6 +1,5 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using MessagePack;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System.IO;
 using System.Linq;
@@ -162,12 +161,7 @@ public class MpCadFile
 
         try
         {
-            if (VersionCode_v1002.Version.Equals(version))
-            {
-                MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
-                return mpdata.Restore();
-            }
-            else if (VersionCode_v1003.Version.Equals(version))
+            if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
                 return mpdata.Restore(DeserializeContext.MpBin);
@@ -223,12 +217,7 @@ public class MpCadFile
 
         try
         {
-            if (version == VersionCode_v1002.Version.Str)
-            {
-                MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-                return mpcd.Restore();
-            }
-            else if (version == VersionCode_v1003.Version.Str)
+            if (version == VersionCode_v1003.Version.Str)
             {
                 MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
                 return mpcd.Restore(DeserializeContext.Json);

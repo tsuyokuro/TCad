@@ -2,7 +2,6 @@
 using CadDataTypes;
 using SplineCurve;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 
 

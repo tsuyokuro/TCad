@@ -1,4 +1,3 @@
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using Plotter.Serializer;
 using System.Windows.Media.Media3D;
@@ -34,26 +33,6 @@ public abstract partial class CadFigure
     {
     }
 
-    public virtual MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public virtual void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
-
     public virtual MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
@@ -79,28 +58,6 @@ public abstract partial class CadFigure
 //
 public partial class CadFigureMesh : CadFigure
 {
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpMeshGeometricData_v1002 mpGeo = new MpMeshGeometricData_v1002();
-        mpGeo.HeModel = MpHeModel_v1002.Create(mHeModel);
-
-        return mpGeo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 mpGeo)
-    {
-        if (!(mpGeo is MpMeshGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpMeshGeometricData_v1002 meshGeo = (MpMeshGeometricData_v1002)mpGeo;
-
-        //mHeModel = meshGeo.HeModel.Restore();
-        //mPointList = mHeModel.VertexStore;
-        SetMesh(meshGeo.HeModel.Restore());
-    }
-
     public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpMeshGeometricData_v1003 mpGeo = new MpMeshGeometricData_v1003();
@@ -129,30 +86,6 @@ public partial class CadFigureMesh : CadFigure
 //
 public partial class CadFigureNurbsLine : CadFigure
 {
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpNurbsLineGeometricData_v1002 geo = new MpNurbsLineGeometricData_v1002();
-        geo.Nurbs = MpNurbsLine_v1002.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpNurbsLineGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpNurbsLineGeometricData_v1002 g = (MpNurbsLineGeometricData_v1002)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.OutCnt);
-    }
-
-
     public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpNurbsLineGeometricData_v1003 geo = new MpNurbsLineGeometricData_v1003();
@@ -182,31 +115,6 @@ public partial class CadFigureNurbsLine : CadFigure
 //
 public partial class CadFigureNurbsSurface : CadFigure
 {
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpNurbsSurfaceGeometricData_v1002 geo = new MpNurbsSurfaceGeometricData_v1002();
-        geo.Nurbs = MpNurbsSurface_v1002.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpNurbsSurfaceGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpNurbsSurfaceGeometricData_v1002 g = (MpNurbsSurfaceGeometricData_v1002)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.UOutCnt * Nurbs.VOutCnt);
-
-        NeedsEval = true;
-    }
-
     public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpNurbsSurfaceGeometricData_v1003 geo = new MpNurbsSurfaceGeometricData_v1003();
@@ -270,25 +178,6 @@ public partial class CadFigurePicture : CadFigure
         mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
     }
 
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
 
     public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
@@ -316,26 +205,6 @@ public partial class CadFigurePicture : CadFigure
 //
 public partial class CadFigurePolyLines : CadFigure
 {
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
-
     public override MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpPolyLinesGeometricData_v1003 geo = new();
