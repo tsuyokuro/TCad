@@ -227,17 +227,6 @@ public abstract partial class CadFigure
         return fig;
     }
 
-    public virtual void ClearPoints()
-    {
-        mPointList.Clear();
-    }
-
-    public virtual void CopyPoints(CadFigure fig)
-    {
-        if (Locked) return;
-        mPointList.Clear();
-        mPointList.AddRange(fig.mPointList);
-    }
 
     public virtual void AddPoints(VertexList points, int sp, int num)
     {
@@ -258,28 +247,6 @@ public abstract partial class CadFigure
         foreach (CadVertex p in points)
         {
             AddPoint(p);
-        }
-    }
-
-    public virtual void AddPointsReverse(VertexList points)
-    {
-        int cnt = points.Count;
-        int i = cnt - 1;
-
-        for (; i >= 0; i--)
-        {
-            AddPoint(points[i]);
-        }
-    }
-
-    public virtual void AddPointsReverse(VertexList points, int sp)
-    {
-        int cnt = points.Count;
-        int i = cnt - 1 - sp;
-
-        for (; i >= 0; i--)
-        {
-            AddPoint(points[i]);
         }
     }
 
