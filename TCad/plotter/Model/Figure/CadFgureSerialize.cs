@@ -4,6 +4,8 @@ using System.Windows.Media.Media3D;
 using CadDataTypes;
 using System.Drawing;
 using System.IO;
+using System;
+
 
 
 #if DEFAULT_DATA_TYPE_DOUBLE
@@ -148,34 +150,34 @@ public partial class CadFigurePicture : CadFigure
 {
     public override void SaveExternalFiles(SerializeContext sc, string fname)
     {
-        if (OrgFilePathName == null)
-        {
-            return;
-        }
+        //if (OrgFilePathName == null)
+        //{
+        //    return;
+        //}
 
-        string name = Path.GetFileName(OrgFilePathName);
+        //string name = Path.GetFileName(OrgFilePathName);
 
-        string dpath = FileUtil.GetExternalDataDir(fname);
+        //string dpath = FileUtil.GetExternalDataDir(fname);
 
-        Directory.CreateDirectory(dpath);
+        //Directory.CreateDirectory(dpath);
 
-        string dpathName = Path.Combine(dpath, name);
+        //string dpathName = Path.Combine(dpath, name);
 
-        File.Copy(OrgFilePathName, dpathName, true);
+        //File.Copy(OrgFilePathName, dpathName, true);
 
-        FilePathName = name;
+        //FilePathName = name;
 
-        OrgFilePathName = null;
+        //OrgFilePathName = null;
     }
 
     public override void LoadExternalFiles(DeserializeContext dsc, string fname)
     {
-        string basePath = FileUtil.GetExternalDataDir(fname);
-        string dfname = Path.Combine(basePath, FilePathName);
+        //string basePath = FileUtil.GetExternalDataDir(fname);
+        //string dfname = Path.Combine(basePath, FilePathName);
 
-        mBitmap = new Bitmap(Image.FromFile(dfname));
+        //mBitmap = new Bitmap(Image.FromFile(dfname));
 
-        mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        //mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
     }
 
 
@@ -184,6 +186,19 @@ public partial class CadFigurePicture : CadFigure
         MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
         geo.FilePathName = FilePathName;
         geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
+        if (sc.SerializeType == SerializeType.JSON)
+        {
+            geo.Base64 = Convert.ToBase64String(SrcData, 0, SrcData.Length);
+            geo.Bytes = null;
+        }
+        else
+        {
+            geo.Base64 = null;
+            geo.Bytes = new byte[SrcData.Length];
+            SrcData.CopyTo(geo.Bytes,0);
+        }
+
+
         return geo;
     }
 
@@ -197,6 +212,20 @@ public partial class CadFigurePicture : CadFigure
         MpPictureGeometricData_v1003 g = (MpPictureGeometricData_v1003)geo;
         FilePathName = g.FilePathName;
         mPointList = MpUtil.VertexListFromMp(g.PointList);
+
+        if (dsc.SerializeType == SerializeType.JSON)
+        {
+            SrcData = Convert.FromBase64String(g.Base64);
+        }
+        else
+        {
+            SrcData = new byte[g.Bytes.Length];
+            g.Bytes.CopyTo(SrcData, 0);
+        }
+
+        Image image = ImageUtil.ByteArrayToImage(SrcData);
+        mBitmap = new Bitmap(image);
+        mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
     }
 }
 

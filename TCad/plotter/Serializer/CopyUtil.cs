@@ -30,8 +30,7 @@ public class CopyUtil
     
     private static Deserialize_<MpFigure_v1003> DeserializeFig = MessagePackSerializer.Deserialize<MpFigure_v1003>;
 
-    // MpFigure func(CadFigure fig, bool withChild = false)
-    private static Func<SerializeContext, CadFigure, bool, MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
+    private static MpFigCreator<MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
 
     private static SerializeContext SC = SerializeContext.MpBin;
     private static DeserializeContext DSC = DeserializeContext.MpBin;

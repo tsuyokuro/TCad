@@ -714,6 +714,12 @@ public class MpPictureGeometricData_v1003 : MpGeometricData_v1003
 
     [Key("PointList")]
     public List<MpVertex_v1003> PointList;
+
+    [Key("Bytes")]
+    public Byte[] Bytes = null;
+
+    [Key("base64")]
+    public string Base64 = null;
 }
 
 // CadFigureMesh    

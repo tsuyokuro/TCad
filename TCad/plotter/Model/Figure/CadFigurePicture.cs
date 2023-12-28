@@ -36,6 +36,8 @@ public partial class CadFigurePicture : CadFigure
 
     private Bitmap mBitmap;
 
+    private byte[] SrcData; 
+
     public string OrgFilePathName;
     public string FilePathName;
 
@@ -52,6 +54,21 @@ public partial class CadFigurePicture : CadFigure
     public void Setup(PaperPageSize pageSize, vector3_t pos, string path)
     {
         OrgFilePathName = path;
+
+        FileStream fs = new FileStream(
+            path,
+            FileMode.Open,
+            FileAccess.Read);
+
+        SrcData = new byte[fs.Length];
+
+        fs.Read(SrcData, 0, SrcData.Length);
+
+        fs.Close();
+
+        //mBitmap = new Bitmap(Image.FromFile(path));
+
+        Image image = ImageUtil.ByteArrayToImage(SrcData);
 
         mBitmap = new Bitmap(Image.FromFile(path));
 
@@ -280,7 +297,7 @@ public partial class CadFigurePicture : CadFigure
         int bIdx = (mIdx + 1) % 4; // 次のIndex
         int cIdx = (mIdx + 3) % 4; // 前のIndex
 
-        bool keepAspect = false;
+        bool keepAspect = true;
 
         CrossInfo ci;
         if (keepAspect) { 

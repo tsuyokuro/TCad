@@ -27,6 +27,19 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Serializer;
 
+public delegate T MpLayerCreator<T>(SerializeContext context, CadLayer layer);
+
+public delegate T MpFigCreator<T>(SerializeContext context, CadFigure fig, bool withChild);
+
+public delegate T MpVertexCreator<T>(CadVertex v);
+
+public delegate T MpVector3Creator<T>(vector3_t v);
+
+public delegate T MpHeFaceCreator<T>(HeFace heFace);
+
+public delegate T MpHalfEdgeCreator<T>(HalfEdge he);
+
+
 public abstract class MpLayer
 {
     public abstract CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic);
@@ -62,7 +75,7 @@ public class MpUtil
     public static List<TMpLayer> LayerListToMp<TMpLayer>(
         SerializeContext sc,
         List<CadLayer> src,
-        Func<SerializeContext, CadLayer, TMpLayer> creator
+        MpLayerCreator<TMpLayer> creator
         )
     {
         List<TMpLayer> ret = new();
@@ -77,8 +90,9 @@ public class MpUtil
     public static List<TMpFig> FigureListToMp<TMpFig>(
         SerializeContext sc,
         List<CadFigure> figList,
-        Func<SerializeContext, CadFigure, bool, TMpFig> creator,
-        bool withChild = false) where TMpFig : MpFigure
+        MpFigCreator<TMpFig> creator,
+        bool withChild = false
+        )
     {
         List<TMpFig> ret = new List<TMpFig>();
         for (int i = 0; i < figList.Count; i++)
@@ -93,8 +107,9 @@ public class MpUtil
     public static List<TMpFig> FigureMapToMp<TMpFig> (
         SerializeContext sc,
         Dictionary<uint, CadFigure> figMap,
-        Func<SerializeContext, CadFigure, bool, TMpFig> creator,
-        bool withChild = false) where TMpFig : MpFigure
+        MpFigCreator<TMpFig> creator,
+        bool withChild = false
+        )
     {
         List<TMpFig> ret = new List<TMpFig>();
         foreach (CadFigure fig in figMap.Values)
@@ -120,7 +135,7 @@ public class MpUtil
 
     public static List<TMpVertex> VertexListToMp<TMpVertex>(
         VertexList v,
-        Func<CadVertex, TMpVertex> creator
+        MpVertexCreator<TMpVertex> creator
         )
     {
         List<TMpVertex> ret = new List<TMpVertex>();
@@ -133,7 +148,9 @@ public class MpUtil
     }
 
     public static List<TMpVector3> Vector3ListToMp<TMpVector3>(
-        Vector3List v, Func<vector3_t, TMpVector3> creator)
+        Vector3List v,
+        MpVector3Creator<TMpVector3> creator
+        )
     {
         List<TMpVector3> ret = new List<TMpVector3>();
         for (int i = 0; i < v.Count; i++)
@@ -145,7 +162,9 @@ public class MpUtil
     }
 
     public static List<TMpHeFace> HeFaceListToMp<TMpHeFace>(
-        FlexArray<HeFace> list, Func<HeFace, TMpHeFace> creator)
+        FlexArray<HeFace> list,
+        MpHeFaceCreator<TMpHeFace> creator
+        )
     {
         List<TMpHeFace> ret = new();
         for (int i = 0; i < list.Count; i++)
@@ -157,7 +176,7 @@ public class MpUtil
     }
 
     public static List<TMpHalfEdge> HalfEdgeListToMp<TMpHalfEdge>(
-        List<HalfEdge> list, Func<HalfEdge, TMpHalfEdge> creator)
+        List<HalfEdge> list, MpHalfEdgeCreator<TMpHalfEdge> creator)
     {
         List <TMpHalfEdge > ret = new();
         for (int i = 0; i < list.Count; i++)
