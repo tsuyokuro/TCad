@@ -65,7 +65,7 @@ public partial class ScriptEnvironment
 
     public ScriptEnvironment(PlotterController controller)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         Controller = controller;
 
@@ -79,7 +79,7 @@ public partial class ScriptEnvironment
 
         mScriptFunctions.Init(this, mScope);
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     private static readonly Regex AutoCompPtn = new(@"#\[AC\][ \t]*(.+)\n");

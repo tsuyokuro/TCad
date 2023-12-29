@@ -508,7 +508,7 @@ public abstract partial class CadFigure
     #region "Dump" 
     public void SimpleDump(string prefix = nameof(CadFigure))
     {
-        DOut.pl(
+        Log.pl(
             prefix +
             "(" + this.GetHashCode().ToString() + ")" +
             "ID=" + ID.ToString());
@@ -516,39 +516,39 @@ public abstract partial class CadFigure
 
     public void Dump(string prefix = nameof(CadFigure))
     {
-        DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
-        DOut.Indent++;
-        DOut.pl("ID=" + ID.ToString());
+        Log.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
+        Log.Indent++;
+        Log.pl("ID=" + ID.ToString());
 
         string name = Name == null ? "null" : Name.ToString();
 
-        DOut.pl("Name=" + name);
-        DOut.pl("LayerID=" + LayerID.ToString());
-        DOut.pl("Type=" + Type.ToString());
+        Log.pl("Name=" + name);
+        Log.pl("LayerID=" + LayerID.ToString());
+        Log.pl("Type=" + Type.ToString());
 
-        DOut.pl("PointList [");
-        DOut.Indent++;
+        Log.pl("PointList [");
+        Log.Indent++;
         foreach (CadVertex point in PointList)
         {
             point.dump("");
         }
-        DOut.Indent--;
-        DOut.pl("]");
+        Log.Indent--;
+        Log.pl("]");
 
 
-        DOut.pl("ParentID=" + (mParent != null ? mParent.ID : 0));
+        Log.pl("ParentID=" + (mParent != null ? mParent.ID : 0));
 
-        DOut.pl("Child [");
-        DOut.Indent++;
+        Log.pl("Child [");
+        Log.Indent++;
         foreach (CadFigure fig in mChildList)
         {
-            DOut.pl("" + fig.ID);
+            Log.pl("" + fig.ID);
         }
-        DOut.Indent--;
-        DOut.pl("]");
+        Log.Indent--;
+        Log.pl("]");
 
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     #endregion
@@ -751,7 +751,7 @@ public abstract partial class CadFigure
 
     public virtual void FlipWithPlane(vector3_t p0, vector3_t normal)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         VertexList vl = PointList;
 
@@ -772,7 +772,7 @@ public abstract partial class CadFigure
         }
 
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
 } // End of class CadFigure

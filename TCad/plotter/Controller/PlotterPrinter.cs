@@ -31,7 +31,7 @@ public class PlotterPrinter
 
     public void PrintPage(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
-        DOut.pl($"Dev Width:{deviceSize.Width} Height:{deviceSize.Height}");
+        Log.pl($"Dev Width:{deviceSize.Width} Height:{deviceSize.Height}");
 #if PRINT_WITH_GL_ONLY
         Bitmap bmp = GetPrintableBmp(pc, pageSize, deviceSize);
         printerGraphics.DrawImage(bmp, 0, 0);

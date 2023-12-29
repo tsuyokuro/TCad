@@ -64,10 +64,10 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     public static PlotterViewGL Create(IPlotterViewModel vm)
     {
-        DOut.plx("in");
+        Log.plx("in");
         PlotterViewGL v = new PlotterViewGL(vm);
         v.MakeCurrent();
-        DOut.plx("out");
+        Log.plx("out");
         return v;
     }
 
@@ -106,7 +106,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private void OnLoad(object sender, EventArgs e)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         GL.ClearColor(Color4.Black);
         GL.Enable(EnableCap.DepthTest);
@@ -124,7 +124,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         SwapBuffers();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     protected void SetupCursor()

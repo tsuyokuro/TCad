@@ -52,7 +52,7 @@ public class ScriptSession
             return;
         }
 
-        DOut.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
+        Log.pl(nameof(ScriptSession) + " AddOpe " + ope.GetType().Name);
         mCadOpeList.Add(ope);
     }
 

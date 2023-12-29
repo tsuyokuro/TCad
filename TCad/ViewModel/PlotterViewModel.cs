@@ -154,7 +154,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public PlotterViewModel(ICadMainWindow mainWindow)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         CurrentFigCmd = new(this);
         SimpleCmd = new(this);
@@ -182,7 +182,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
 
@@ -377,12 +377,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void Open()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         Settings.Load();
         mViewManager.SetupViews();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void Close()

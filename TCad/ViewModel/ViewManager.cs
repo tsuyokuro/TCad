@@ -62,13 +62,13 @@ public class ViewManager : INotifyPropertyChanged
 
     public void SetupViews()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         PlotterViewGL1 = PlotterViewGL.Create(mContext);
 
         ViewMode = ViewModes.FRONT;
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void SetWorldScale(vcompo_t scale)

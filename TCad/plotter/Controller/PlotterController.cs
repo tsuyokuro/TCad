@@ -140,7 +140,7 @@ public partial class PlotterController
     /// 
     public PlotterController(IPlotterViewModel vm)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         if (vm == null)
         {
@@ -168,7 +168,7 @@ public partial class PlotterController
 
         InitHid();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void ChangeState(ControllerStates state)

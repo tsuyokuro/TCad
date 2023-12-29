@@ -101,15 +101,15 @@ public struct MarkPoint : IEquatable<MarkPoint>
 
     public void dump(string name = "MarkPoint")
     {
-        DOut.pl(name + " {");
+        Log.pl(name + " {");
         if (Figure != null)
         {
-            DOut.pl($"FigID:{Figure.ID}");
+            Log.pl($"FigID:{Figure.ID}");
         }
-        DOut.pl($"PointIndex:{PointIndex}");
+        Log.pl($"PointIndex:{PointIndex}");
         Point.dump("Point");
         PointScrn.dump("PointScrn");
-        DOut.pl("}");
+        Log.pl("}");
     }
 
     public bool Equals(MarkPoint other)

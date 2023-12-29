@@ -189,7 +189,7 @@ public class TestCommands
         }
 
         sw.Stop();
-        DOut.pl(sw.ElapsedMilliseconds.ToString() + " milli sec");
+        Log.pl(sw.ElapsedMilliseconds.ToString() + " milli sec");
     }
 
     private void test010()
@@ -515,7 +515,7 @@ public class TestCommands
                     Controller.PageSize.Width,
                     Controller.PageSize.Height);
 
-        DOut.pl(doc.ToString());
+        Log.pl(doc.ToString());
         doc.Save(@"f:\work2\test.svg");
     }
 
@@ -541,16 +541,16 @@ public class TestCommands
         Pen pen2 = dpen2.GdiPen;
         Pen pen3 = dpen3.GdiPen;
 
-        DOut.pl("pen1==pen2: " + ReferenceEquals(pen1, pen2));
-        DOut.pl("pen1==pen3: " + ReferenceEquals(pen1, pen3));
+        Log.pl("pen1==pen2: " + ReferenceEquals(pen1, pen2));
+        Log.pl("pen1==pen3: " + ReferenceEquals(pen1, pen3));
 
 
         SolidBrush br1 = dbr1.GdiBrush;
         SolidBrush br2 = dbr2.GdiBrush;
         SolidBrush br3 = dbr3.GdiBrush;
 
-        DOut.pl("br1==br2: " + ReferenceEquals(pen1, pen2));
-        DOut.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
+        Log.pl("br1==br2: " + ReferenceEquals(pen1, pen2));
+        Log.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
     }
 
     private void Test3()
@@ -599,18 +599,18 @@ public class TestCommands
     public void BeginCB(int mode)
     {
         BeginMode beginMode = (BeginMode)mode;
-        DOut.pl("MeshBegin mode:" + beginMode.ToString());
+        Log.pl("MeshBegin mode:" + beginMode.ToString());
     }
 
     public void EndCB()
     {
-        DOut.pl("MeshEnd");
+        Log.pl("MeshEnd");
     }
 
     public void VertexCB(IntPtr data)
     {
         int vIndex = (int)data;
-        DOut.pl("VertexCB vIndex:" + vIndex);
+        Log.pl("VertexCB vIndex:" + vIndex);
     }
 
     private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
@@ -618,13 +618,13 @@ public class TestCommands
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
                                 ref IntPtr dataOut)
     {
-        DOut.pl("MeshCombine");
+        Log.pl("MeshCombine");
         dataOut = IntPtr.Zero;
     }
 
     void ErrorCB(int err)
     {
-        DOut.pl("MeshError err:" + err);
+        Log.pl("MeshError err:" + err);
     }
 
     private void Test4()
@@ -830,7 +830,7 @@ public class TestCommands
         {
             int name1 = TextureProvider.Instance.GetNew();
             int name2 = TextureProvider.Instance.GetNew();
-            DOut.pl("end");
+            Log.pl("end");
         });
     }
 

@@ -52,13 +52,13 @@ public class CadOpeDBSnapShot : CadOpe
     public void StoreBefore(CadObjectDB db)
     {
         Before = CopyUtil.DBToLz4(db);
-        DOut.pl(nameof(CadOpeDBSnapShot) + " StoreBefore data size:" + Before.Length);
+        Log.pl(nameof(CadOpeDBSnapShot) + " StoreBefore data size:" + Before.Length);
     }
 
     public void StoreAfter(CadObjectDB db)
     {
         After = CopyUtil.DBToLz4(db);
-        DOut.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
+        Log.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
     }
 
     public override void Undo(PlotterController pc)

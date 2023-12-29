@@ -255,7 +255,7 @@ public partial class CadFigurePolyLines : CadFigure
         MpSimpleGeometricData_v1003 g2 = geo as MpSimpleGeometricData_v1003;
         if (g2 != null)
         {
-            DOut.tpl("#### GeometricDataFromMp_v1003 OLD data !!!!! ####");
+            Log.tpl("#### GeometricDataFromMp_v1003 OLD data !!!!! ####");
             mPointList = MpUtil.VertexListFromMp(g2.PointList);
         }
     }

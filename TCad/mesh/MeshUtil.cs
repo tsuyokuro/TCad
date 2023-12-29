@@ -317,7 +317,7 @@ public class MeshUtil
         }
         catch (Exception e)
         {
-            DOut.pl(e.Message);
+            Log.pl(e.Message);
             return (null, null);
         }
 

@@ -19,7 +19,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public static class DOut
+public static class Log
 {
     public static ulong PutCount = 0;
 

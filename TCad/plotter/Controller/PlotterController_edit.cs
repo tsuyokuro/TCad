@@ -352,7 +352,7 @@ public partial class PlotterController
             ins = ins1;
         }
 
-        DOut.pl($"ins={ins} pcnt={fig.PointCount}");
+        Log.pl($"ins={ins} pcnt={fig.PointCount}");
 
         fig.InsertPointAt(ins, (CadVertex)LastDownPoint);
 

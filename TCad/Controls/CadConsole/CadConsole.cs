@@ -168,7 +168,7 @@ public partial class CadConsoleView : FrameworkElement
 
     protected override void OnInitialized(EventArgs e) {
         base.OnInitialized(e);
-        DOut.plx("");
+        Log.plx("");
 
         if (FontFamily == null)
         {
@@ -192,7 +192,7 @@ public partial class CadConsoleView : FrameworkElement
 
     private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
     {
-        DOut.plx("");
+        Log.plx("");
         mIsLoaded = true;
 
         mAutoScroller = new AutoScroller(this);

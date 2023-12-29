@@ -100,7 +100,7 @@ public class ControllerStateMachine
     {
         if (mCurrentState != null)
         {
-            DOut.pl(mCurrentState.GetType().Name + " Exit");
+            Log.pl(mCurrentState.GetType().Name + " Exit");
             mCurrentState.Exit();
         }
 
@@ -108,7 +108,7 @@ public class ControllerStateMachine
 
         if (mCurrentState != null)
         {
-            DOut.pl(mCurrentState.GetType().Name + " Enter");
+            Log.pl(mCurrentState.GetType().Name + " Enter");
             mCurrentState.Enter();
         }
 

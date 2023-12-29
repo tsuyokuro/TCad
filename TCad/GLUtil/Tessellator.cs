@@ -166,12 +166,12 @@ public class Tessellator
     {
         CurrentMode = (BeginMode)mode;
         VCnt = 0;
-        DOut.pl("MeshBegin PrimitiveType:" + CurrentMode.ToString());
+        Log.pl("MeshBegin PrimitiveType:" + CurrentMode.ToString());
     }
 
     private void MeshEnd()
     {
-        DOut.pl("MeshEnd");
+        Log.pl("MeshEnd");
     }
 
     private void MeshVertex(IntPtr data)
@@ -180,7 +180,7 @@ public class Tessellator
 
         // data is not address, it is value of vertex index
         int vIndex = (int)data;
-        DOut.pl("MeshVertex vIndex:" + vIndex);
+        Log.pl("MeshVertex vIndex:" + vIndex);
 
         switch (CurrentMode)
         {
@@ -288,7 +288,7 @@ public class Tessellator
         [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
         ref IntPtr dataOut)
     {
-        DOut.pl("MeshCombine");
+        Log.pl("MeshCombine");
         CadVertex v = new();
         v.X = (vcompo_t)coords[0]; v.Y = (vcompo_t)coords[1]; v.Z = (vcompo_t)coords[2];
         CurMesh.VertexStore.Add(v);
@@ -305,6 +305,6 @@ public class Tessellator
 
     void MeshError(int err)
     {
-        DOut.pl("MeshError err:" + err);
+        Log.pl("MeshError err:" + err);
     }
 }

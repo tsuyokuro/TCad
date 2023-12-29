@@ -44,12 +44,12 @@ public struct CadSegment
 
     public void dump(string name = "FigureSegment")
     {
-        DOut.pl(name + "{");
-        DOut.Indent++;
-        DOut.pl("Valid:" + Valid.ToString());
+        Log.pl(name + "{");
+        Log.Indent++;
+        Log.pl("Valid:" + Valid.ToString());
         P0.dump("P0");
         P1.dump("P1");
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 }

@@ -135,19 +135,19 @@ public class MatrixMN
 
     public void dump()
     {
-        DOut.pl(nameof(MatrixMN) + "{");
-        DOut.Indent++;
+        Log.pl(nameof(MatrixMN) + "{");
+        Log.Indent++;
 
         for (int r = 0; r < RN; r++)
         {
             for (int c = 0; c < CN; c++)
             {
-                DOut.p(v[r, c].ToString() + ",");
+                Log.p(v[r, c].ToString() + ",");
             }
-            DOut.pl("");
+            Log.pl("");
         }
 
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 }

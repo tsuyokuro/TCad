@@ -26,7 +26,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
     public MainWindow()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         InitializeComponent();
 
@@ -56,7 +56,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         InitPopup();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public CadConsoleView GetBuiltinConsole()
@@ -206,7 +206,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         var hsrc = HwndSource.FromVisual(this) as HwndSource;
         hsrc.AddHook(WndProc);
@@ -216,7 +216,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ImageRenderer.Provider.Get();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     #region "Key handling"
@@ -313,7 +313,7 @@ public partial class MainWindow : Window, ICadMainWindow
     #region PlotterViewModel Event
     public void DrawModeChanged(DrawModes drawMode)
     {
-        DOut.plx("in");
+        Log.plx("in");
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
@@ -322,7 +322,7 @@ public partial class MainWindow : Window, ICadMainWindow
         //ObjTree.NodeFG = Brushes.Black;
         //ObjTree.LeafFG = Brushes.DarkCyan;
         //ObjTree.Redraw();
-        DOut.plx("out");
+        Log.plx("out");
     }
     #endregion
 }

@@ -229,7 +229,7 @@ public abstract class EventHandler<EventT> where EventT : EventHandlerEvent, new
                 }
                 else
                 {
-                    DOut.tpl("remove what:" + what);
+                    Log.tpl("remove what:" + what);
                     FreeEvents.Push(evt);
                 }
             }

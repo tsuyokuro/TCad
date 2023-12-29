@@ -83,7 +83,7 @@ public class NearPointSearcher
             return (int)(a.Dist * 1000 - b.Dist * 1000);
         });
 
-        DOut.pl($"ResultList.Count:{ResultList.Count}");
+        Log.pl($"ResultList.Count:{ResultList.Count}");
 
         return ResultList;
     }

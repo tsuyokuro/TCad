@@ -157,7 +157,7 @@ public class MpCadFile
 
         fs.Close();
 
-        DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
+        Log.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
         try
         {

@@ -39,7 +39,7 @@ public class HistoryManager
 
     public void foward(CadOpe ope)
     {
-        DOut.plx(ope.GetType().Name);
+        Log.plx(ope.GetType().Name);
         if (ope is null)
         {
             return;
@@ -81,7 +81,7 @@ public class HistoryManager
             return;
         }
 
-        DOut.plx("Undo ope:" + ope.GetType().Name);
+        Log.plx("Undo ope:" + ope.GetType().Name);
 
         ope.Undo(mPC);
 
@@ -99,7 +99,7 @@ public class HistoryManager
             return;
         }
 
-        DOut.plx("Redo ope:" + ope.GetType().Name);
+        Log.plx("Redo ope:" + ope.GetType().Name);
 
         ope.Redo(mPC);
         mUndoStack.Push(ope);
@@ -107,41 +107,41 @@ public class HistoryManager
 
     public void dumpUndoStack()
     {
-        DOut.plx("UndoStack");
-        DOut.pl("{");
-        DOut.Indent++;
+        Log.plx("UndoStack");
+        Log.pl("{");
+        Log.Indent++;
         foreach (CadOpe ope in mUndoStack)
         {
             dumpCadOpe(ope);
         }
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     public static void dumpCadOpe(CadOpe ope)
     {
-        DOut.pl(ope.GetType().Name);
+        Log.pl(ope.GetType().Name);
 
         if (ope is CadOpeList)
         {
-            DOut.pl("{");
-            DOut.Indent++;
+            Log.pl("{");
+            Log.Indent++;
             foreach (CadOpe item in ((CadOpeList)ope).OpeList) {
                 dumpCadOpe(item);
             }
-            DOut.Indent--;
-            DOut.pl("}");
+            Log.Indent--;
+            Log.pl("}");
         }
         else if (ope is CadOpeFigureSnapShotList)
         {
-            DOut.pl("{");
-            DOut.Indent++;
+            Log.pl("{");
+            Log.Indent++;
             foreach (CadOpe item in ((CadOpeFigureSnapShotList)ope).SnapShotList)
             {
                 dumpCadOpe(item);
             }
-            DOut.Indent--;
-            DOut.pl("}");
+            Log.Indent--;
+            Log.pl("}");
         }
     }
 }
