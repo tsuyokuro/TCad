@@ -115,7 +115,7 @@ class CadDxfLoader
                     }
                     else
                     {
-                        DOut.pl("pointList.Count:" + pointList.Count);
+                        Log.pl("pointList.Count:" + pointList.Count);
                     }
 
                     pointList.Clear();

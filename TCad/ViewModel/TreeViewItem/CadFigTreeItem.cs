@@ -38,6 +38,7 @@ class CadFigTreeItem : CadObjTreeItem
         set
         {
             Fig.IsSelected = value;
+            Fig.Current = value;
             SelectAllPoints(value);
         }
     }
@@ -57,8 +58,11 @@ class CadFigTreeItem : CadObjTreeItem
         }
     }
 
+
     public CadFigTreeItem(CadFigure fig)
     {
+        Type = CadObjTreeItemType.NODE;
+
         Fig = fig;
 
         int idx = 0;

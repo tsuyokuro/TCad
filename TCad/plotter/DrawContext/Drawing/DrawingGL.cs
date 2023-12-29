@@ -86,7 +86,9 @@ public class DrawingGL : IDrawing
     {
         //DrawHeFaces(brush, model);
         DrawHeFacesVBO(brush, model);
-        DrawHeEdges(pen, edgePen, edgeThreshold, model);
+
+        //DrawHeEdges(pen, edgePen, edgeThreshold, model);
+        DrawHeEdgesVBO(pen, edgePen, edgeThreshold, model);
 
         if (SettingsHolder.Settings.DrawNormal)
         {
@@ -114,8 +116,6 @@ public class DrawingGL : IDrawing
 
             HalfEdge c = head;
 
-            //GL.Begin(PrimitiveType.Polygon);
-
             if (f.Normal != HeModel.INVALID_INDEX)
             {
                 vector3_t nv = model.NormalStore.Data[f.Normal];
@@ -133,12 +133,8 @@ public class DrawingGL : IDrawing
                     break;
                 }
             }
-
-            //GL.End();
         }
         GL.End();
-
-        //DisableLight();
     }
 
     public struct VboVertex
@@ -150,6 +146,11 @@ public class DrawingGL : IDrawing
     FlexArray<int> indexes = new(1000);
     FlexArray<VboVertex> vboVertices = new();
 
+    FlexArray<vector3_t> vboPoints = new();
+    FlexArray<int> ptIndexes1 = new(1000);
+    FlexArray<int> ptIndexes2 = new(1000);
+
+
     private void DrawHeFacesVBO(DrawBrush brush, HeModel model)
     {
         if (brush.IsInvalid)
@@ -157,11 +158,6 @@ public class DrawingGL : IDrawing
             return;
         }
 
-        EnableLight();
-        GL.Enable(EnableCap.ColorMaterial);
-        GL.Color4(brush.Color4);
-
-        vboVertices.Clear();
 
         vboVertices.Clear();
         indexes.Clear();
@@ -178,8 +174,8 @@ public class DrawingGL : IDrawing
 
             for (; ; )
             {
-                v.Pos = (Vector3)model.VertexStore.Data[c.Vertex].vector;
-                v.Normal = (Vector3)model.NormalStore[c.Normal];
+                v.Pos = (vector3_t)model.VertexStore.Data[c.Vertex].vector;
+                v.Normal = (vector3_t)model.NormalStore[c.Normal];
                 vboVertices.Add(v);
                 indexes.Add(vIndex);
                 vIndex++;
@@ -191,9 +187,13 @@ public class DrawingGL : IDrawing
                     break;
                 }
             }
-
-            //GL.End();
         }
+
+
+        EnableLight();
+        GL.Enable(EnableCap.ColorMaterial);
+        GL.Color4(brush.Color4);
+
 
         int stride = Marshal.SizeOf(typeof(VboVertex));
 
@@ -228,7 +228,7 @@ public class DrawingGL : IDrawing
         unsafe
         {
             GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
-            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(Vector3));
+            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(vector3_t));
         }
 
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId);
@@ -242,8 +242,6 @@ public class DrawingGL : IDrawing
 
         GL.DeleteBuffer(idxBufferId);
         GL.DeleteBuffer(vertexBufferId);
-
-        //DisableLight();
     }
 
 
@@ -422,6 +420,236 @@ public class DrawingGL : IDrawing
 
         GL.End();
     }
+
+
+    private void DrawHeEdgesVBO(DrawPen borderPen, DrawPen edgePen, vcompo_t edgeThreshold, HeModel model)
+    {
+        if (edgePen.IsNull)
+        {
+            return;
+        }
+
+        bool drawBorder = !borderPen.IsInvalid;
+        bool drawEdge = !edgePen.IsInvalid;
+
+        if (!drawBorder && !drawEdge)
+        {
+            return;
+        }
+
+        vboPoints.Clear();  // 頂点バッファ
+        ptIndexes1.Clear(); // エッジ線用index buffer
+        ptIndexes2.Clear(); // ポリゴン境界線用index buffer
+
+        int vIdx0;
+        int vIdx1;
+
+        // エッジ線と境界線のIndex bufferを作成
+        for (int i = 0; i < model.FaceStore.Count; i++)
+        {
+            HeFace f = model.FaceStore[i];
+
+            HalfEdge head = f.Head;
+
+            HalfEdge c = head;
+
+            HalfEdge pair;
+
+
+            vIdx0 = c.Vertex;
+
+            for (; ; )
+            {
+                bool drawAsEdge = false;
+                bool isEdge = false;
+
+                pair = c.Pair;
+
+                if (drawEdge)
+                {
+                    if (pair == null)
+                    {
+                        drawAsEdge = true;
+                        isEdge = true;
+                    }
+                    else
+                    {
+                        if (edgeThreshold != 0)
+                        {
+                            vcompo_t s = CadMath.InnerProduct(model.NormalStore[c.Normal], model.NormalStore[pair.Normal]);
+
+                            if (Math.Abs(s) <= edgeThreshold)
+                            {
+                                drawAsEdge = true;
+                            }
+                        }
+                    }
+                }
+
+                vIdx1 = c.Next.Vertex;
+
+                if (drawAsEdge)
+                {
+                    bool draw = true;
+                    if (!isEdge)
+                    {
+                        if (pair != null)
+                        {
+                            if (pair.Face < c.Face)
+                            {
+                                // Already drawed by pair
+                                draw = false;
+                            }
+                        }
+                    }
+
+                    if (draw)
+                    {
+                        // エッジ線用Indexを追加
+                        ptIndexes1.Add(vIdx0);
+                        ptIndexes1.Add(vIdx1);
+                    }
+                }
+                else if (drawBorder)
+                {
+                    bool draw = true;
+                    if (pair != null)
+                    {
+                        if (pair.Face < c.Face)
+                        {
+                            // Already drawed by pair
+                            draw = false;
+                        }
+                    }
+
+                    if (draw)
+                    {
+                        // 境界線用Indexを追加
+                        ptIndexes2.Add(vIdx0);
+                        ptIndexes2.Add(vIdx1);
+                    }
+                }
+
+                vIdx0 = vIdx1;
+
+                c = c.Next;
+
+                if (c == head)
+                {
+                    break;
+                }
+            }
+        }
+
+        // エッジ線、境界線が存在しない場合、終了
+        if (ptIndexes1.Count < 2 && ptIndexes2.Count < 2)
+        {
+            return;
+        }
+
+        vector3_t shift = GetShiftForOutLine();
+
+        // 面に埋もれないように少し手前にシフトした頂点Bufferを作成
+        for (int i = 0; i < model.VertexStore.Count; i++)
+        {
+            vboPoints.Add(model.VertexStore[i].vector + shift);
+        }
+
+
+        Color4 color = borderPen.Color4;
+        Color4 edgeColor = edgePen.Color4;
+
+
+        int stride = Marshal.SizeOf(typeof(vector3_t));
+
+        int vCnt = vboPoints.Count;
+
+        int vertexBufferId = GL.GenBuffer();
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            fixed (vector3_t* ptr = &vboPoints.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+        }
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+
+        int idxCnt1 = ptIndexes1.Count;
+        int idxBufferId1 = 0;
+
+        if (idxCnt1 > 1)
+        {
+            idxBufferId1 = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId1);
+            unsafe
+            {
+                fixed (int* ptr = &ptIndexes1.Data[0])
+                {
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, idxCnt1 * sizeof(int), (nint)ptr, BufferUsageHint.StaticDraw);
+                }
+            }
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        int idxCnt2 = ptIndexes2.Count;
+        int idxBufferId2 = 0;
+
+        if (idxCnt2 > 1)
+        {
+            idxBufferId2 = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId2);
+            unsafe
+            {
+                fixed (int* ptr = &ptIndexes2.Data[0])
+                {
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, idxCnt2 * sizeof(int), (nint)ptr, BufferUsageHint.StaticDraw);
+                }
+            }
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        GL.EnableClientState(ArrayCap.VertexArray);
+        GL.DisableClientState(ArrayCap.NormalArray);
+
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+        }
+
+
+        DisableLight();
+        GL.LineWidth(1.0f);
+
+        if (idxCnt1 > 1)
+        {
+            GL.Color4(edgeColor);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId1);
+            GL.DrawElements(BeginMode.Lines, idxCnt1, DrawElementsType.UnsignedInt, 0);
+        }
+
+        if (idxCnt2 > 1)
+        {
+            GL.Color4(color);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId2);
+            GL.DrawElements(BeginMode.Lines, idxCnt2, DrawElementsType.UnsignedInt, 0);
+        }
+
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+        GL.DisableClientState(ArrayCap.VertexArray);
+
+        GL.DeleteBuffer(idxBufferId1);
+        GL.DeleteBuffer(idxBufferId2);
+        GL.DeleteBuffer(vertexBufferId);
+    }
+
 
     private const vcompo_t AXIS_MARGIN = 24;
     private vcompo_t AxisLength()
@@ -764,7 +992,7 @@ public class DrawingGL : IDrawing
         End2D();
     }
 
-    public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
+    public void DrawSelectedPoints_(VertexList pointList, DrawPen pen)
     {
         //Start2D();
         GL.Color4(pen.Color4);
@@ -803,6 +1031,82 @@ public class DrawingGL : IDrawing
         //End2D();
         GL.Enable(EnableCap.DepthTest);
     }
+
+
+    public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
+    {
+        vboPoints.Clear();
+        ptIndexes1.Clear();
+
+        unsafe
+        {
+            int num = pointList.Data.Length;
+            fixed (CadVertex* ptr = &pointList.Data[0])
+            {
+                CadVertex* p = ptr;
+                UInt64 ep = ((UInt64)p) + ((UInt64)sizeof(CadVertex) * (UInt64)num);
+
+                for (; (UInt64)p < ep ;)
+                {
+                    if (p->Selected)
+                    {
+                        vboPoints.Add(p->vector);
+                    }
+
+                    p++;
+                }
+            }
+        }
+
+        if (vboPoints.Count == 0)
+        {
+            return;
+        }
+
+
+        int stride = Marshal.SizeOf(typeof(vector3_t));
+
+        int vCnt = vboPoints.Count;
+
+        int pointBufferId = GL.GenBuffer();
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, pointBufferId);
+        unsafe
+        {
+            fixed (vector3_t* ptr = &vboPoints.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+        }
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, pointBufferId);
+        unsafe
+        {
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+        }
+
+
+        GL.Disable(EnableCap.DepthTest);
+        GL.Color4(pen.Color4);
+        GL.PointSize(3);
+
+        GL.EnableClientState(ArrayCap.VertexArray);
+
+
+        GL.DrawArrays(PrimitiveType.Points, 0, vCnt);
+
+
+        GL.DisableClientState(ArrayCap.VertexArray);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+        GL.Enable(EnableCap.DepthTest);
+    }
+
+
 
     private void DrawRect2D(vector3_t p0, vector3_t p1, DrawPen pen)
     {
@@ -1482,7 +1786,7 @@ public class DrawingGL : IDrawing
 
         vcompo_t angle = vector3_t.CalculateAngle(tmp, d);
 
-        vector3_t normal = CadMath.CrossProduct(tmp, d);  // 回転軸
+        vector3_t normal = CadMath.OuterProduct(tmp, d);  // 回転軸
 
         if (normal.Length < (vcompo_t)(0.0001))
         {

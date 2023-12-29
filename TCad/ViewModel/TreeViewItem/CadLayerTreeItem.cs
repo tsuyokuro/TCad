@@ -44,8 +44,10 @@ class CadLayerTreeItem : CadObjTreeItem
         }
     }
 
+
     public CadLayerTreeItem(CadLayer layer)
     {
+        Type = CadObjTreeItemType.NODE;
         AddChildren(layer);
     }
 

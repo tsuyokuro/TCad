@@ -316,53 +316,53 @@ public class CadObjectDB
     #region "For debug"
     public void dump()
     {
-        DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
-        DOut.Indent++;
+        Log.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
+        Log.Indent++;
 
         {
             List<uint> ids = new List<uint>(mLayerIdMap.Keys);
 
-            DOut.pl("Layer map {");
-            DOut.Indent++;
+            Log.pl("Layer map {");
+            Log.Indent++;
             foreach (uint id in ids)
             {
                 CadLayer layer = mLayerIdMap[id];
                 layer.sdump();
             }
-            DOut.Indent--;
-            DOut.pl("}");
+            Log.Indent--;
+            Log.pl("}");
         }
 
         {
-            DOut.pl("Layer list {");
-            DOut.Indent++;
+            Log.pl("Layer list {");
+            Log.Indent++;
             foreach (CadLayer layer in mLayerList)
             {
                 layer.dump();
             }
-            DOut.Indent--;
-            DOut.pl("}");
+            Log.Indent--;
+            Log.pl("}");
         }
 
         dumpFigureMap();
 
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     public void dumpFigureMap()
     {
         List<uint> ids = new List<uint>(mFigureIdMap.Keys);
 
-        DOut.pl("Figure map {");
-        DOut.Indent++;
+        Log.pl("Figure map {");
+        Log.Indent++;
         foreach (uint id in ids)
         {
             CadFigure fig = mFigureIdMap[id];
             fig.Dump("fig");
         }
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     #endregion

@@ -136,14 +136,6 @@ public class PolyLinesCreator : FigCreator
 
     public override void EndCreate(DrawContext dc)
     {
-        if (Figure_.PointList.Count > 2)
-        {
-            //vector3_t normal = CadUtil.RepresentativeNormal(fig.PointList);
-            //vcompo_t t = vector3_t.Dot(normal, DC.ViewDir);
-
-            Figure_.Normal = dc.ViewDir;
-            Figure_.Normal *= -1;
-        }
 
         Figure_.EndCreate(dc);
     }
@@ -224,7 +216,7 @@ public class RectCreator : FigCreator
                 return;
             }
 
-            vector3_t hv = CadMath.CrossProduct(dc.UpVector, dc.ViewDir).Normalized();
+            vector3_t hv = CadMath.OuterProduct(dc.UpVector, dc.ViewDir).Normalized();
             vector3_t uv = dc.UpVector;
 
             vector3_t crossV = p2 - p0;
@@ -259,8 +251,6 @@ public class RectCreator : FigCreator
 
     public override void EndCreate(DrawContext dc)
     {
-        Figure_.Normal = dc.ViewDir;
-        Figure_.Normal *= -1;
         Figure_.Type = CadFigure.Types.POLY_LINES;
         Figure_.EndCreate(dc);
     }

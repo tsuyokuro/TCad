@@ -176,7 +176,7 @@ public partial class App : Application
 
         sw.Stop();
 
-        DOut.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
+        Log.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
 
         SplashWindow.Close();
         SplashWindow = null;
@@ -186,17 +186,17 @@ public partial class App : Application
     {
         if (DOutTarget == DebugOutTarget.Console)
         {
-            DOut.Print = Console.Write;
-            DOut.PrintLn = Console.WriteLine;
+            Log.Print = Console.Write;
+            Log.PrintLn = Console.WriteLine;
 
-            DOut.pl("DOut's output setting is Console");
+            Log.pl("DOut's output setting is Console");
         }
         else if (DOutTarget == DebugOutTarget.DebugServer)
         {
-            DOut.Print = DServer.Print;
-            DOut.PrintLn = DServer.PrintLn;
+            Log.Print = DServer.Print;
+            Log.PrintLn = DServer.PrintLn;
 
-            DOut.pl("DOut's output setting is DebugServer");
+            Log.pl("DOut's output setting is DebugServer");
         }
     }
 

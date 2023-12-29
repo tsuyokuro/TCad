@@ -20,17 +20,13 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureCircle : CadFigure
+public partial class CadFigureCircle : CadFigure
 {
     public override int SegmentCount
     {
         get => 0;
     }
 
-    public override void InvertDir()
-    {
-        Normal = -Normal;
-    }
 
     public CadFigureCircle()
     {
@@ -209,7 +205,7 @@ public class CadFigureCircle : CadFigure
         int ci = (ai + 2) % 4;
         int di = (ai + 3) % 4;
 
-        vector3_t normal = CadMath.CrossProduct(vt[ai].vector, vt[bi].vector);
+        vector3_t normal = CadMath.OuterProduct(vt[ai].vector, vt[bi].vector);
         normal = normal.UnitVector();
 
         vt[ai] += delta;
@@ -219,7 +215,7 @@ public class CadFigureCircle : CadFigure
 
         if (!uva.EqualsThreshold(uvb))
         {
-            normal = CadMath.CrossProduct(vt[ai].vector, vt[bi].vector);
+            normal = CadMath.OuterProduct(vt[ai].vector, vt[bi].vector);
 
             if (normal.IsZero())
             {
@@ -286,7 +282,7 @@ public class CadFigureCircle : CadFigure
         }
 
 
-        vector3_t r = CadMath.CrossProduct(p.vector - cp.vector, dc.ViewDir);
+        vector3_t r = CadMath.OuterProduct(p.vector - cp.vector, dc.ViewDir);
 
         r = r.UnitVector();
 

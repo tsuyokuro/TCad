@@ -132,13 +132,13 @@ public static class VectorExt
 
     public static void dump(this vector3_t v, string prefix = nameof(vector3_t))
     {
-        DOut.pl(prefix + "{");
-        DOut.Indent++;
-        DOut.pl("x:" + v.X.ToString());
-        DOut.pl("y:" + v.Y.ToString());
-        DOut.pl("z:" + v.Z.ToString());
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.pl(prefix + "{");
+        Log.Indent++;
+        Log.pl("x:" + v.X.ToString());
+        Log.pl("y:" + v.Y.ToString());
+        Log.pl("z:" + v.Z.ToString());
+        Log.Indent--;
+        Log.pl("}");
     }
 }
 

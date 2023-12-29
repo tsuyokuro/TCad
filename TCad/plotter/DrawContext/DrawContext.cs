@@ -29,12 +29,6 @@ public abstract class DrawContext : IDisposable
         Perspective,
     }
 
-    //protected Action<DrawContext> mPushToViewAction;
-    //public Action<DrawContext> PushToViewAction
-    //{
-    //    set => mPushToViewAction = value;
-    //    get => mPushToViewAction;
-    //}
 
     IPlotterViewForDC mPlotterView;
     public IPlotterViewForDC PlotterView
@@ -163,22 +157,16 @@ public abstract class DrawContext : IDisposable
 
     public DrawContext()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         OptionSet = new DrawOptionSet(this);
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
-    public virtual void Active()
-    {
+    public virtual void Activate() {}
 
-    }
-
-    public virtual void Deactive()
-    {
-
-    }
+    public virtual void Deactivate() {}
 
     public virtual void SetViewOrg(vector3_t org)
     {
@@ -208,9 +196,9 @@ public abstract class DrawContext : IDisposable
     {
     }
 
-    public void PushToView()
+    public void UpdateView()
     {
-        mPlotterView?.PushToFront(this);
+        mPlotterView?.SwapBuffers(this);
     }
 
     public void MakeCurrent()
@@ -390,18 +378,18 @@ public abstract class DrawContext : IDisposable
     {
         ViewOrg.dump("ViewOrg");
 
-        DOut.pl("View Width=" + mViewWidth.ToString() + " Height=" + mViewHeight.ToString());
+        Log.pl("View Width=" + mViewWidth.ToString() + " Height=" + mViewHeight.ToString());
 
         CadVertex t = CadVertex.Create(mViewDir);
         t.dump("ViewDir");
 
-        DOut.pl("ViewMatrix");
+        Log.pl("ViewMatrix");
         mViewMatrix.dump();
 
-        DOut.pl("ProjectionMatrix");
+        Log.pl("ProjectionMatrix");
         mProjectionMatrix.dump();
 
-        DOut.pl($"ProjectionW={mProjectionW}");
-        DOut.pl($"ProjectionZ={mProjectionZ}");
+        Log.pl($"ProjectionW={mProjectionW}");
+        Log.pl($"ProjectionZ={mProjectionZ}");
     }
 }

@@ -52,13 +52,13 @@ public class CadOpeDBSnapShot : CadOpe
     public void StoreBefore(CadObjectDB db)
     {
         Before = CopyUtil.DBToLz4(db);
-        DOut.pl(nameof(CadOpeDBSnapShot) + " StoreBefore data size:" + Before.Length);
+        Log.pl(nameof(CadOpeDBSnapShot) + " StoreBefore data size:" + Before.Length);
     }
 
     public void StoreAfter(CadObjectDB db)
     {
         After = CopyUtil.DBToLz4(db);
-        DOut.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
+        Log.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
     }
 
     public override void Undo(PlotterController pc)
@@ -548,14 +548,10 @@ public class CadOpeChangeNormal : CadOpe
 
     public override void Undo(PlotterController pc)
     {
-        CadFigure fig = pc.DB.GetFigure(FigureID);
-        fig.Normal = OldNormal;
     }
 
     public override void Redo(PlotterController pc)
     {
-        CadFigure fig = pc.DB.GetFigure(FigureID);
-        fig.Normal = NewNormal;
     }
 }
 

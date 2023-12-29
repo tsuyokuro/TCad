@@ -162,7 +162,7 @@ public class AutoCompleteTextBox : TextBox
     protected override void OnInitialized(EventArgs e)
     {
         base.OnInitialized(e);
-        DOut.plx("in");
+        Log.plx("in");
 
         mCandidatePopup.ListBox.MouseUp += CandidateListBox_MouseUp;
         mCandidatePopup.ListBox.PreviewKeyDown += CandidateListBox_PreviewKeyDown;
@@ -195,7 +195,7 @@ public class AutoCompleteTextBox : TextBox
             mCandidatePopup.ScrollViewer.MaxHeight = ((int)formattedText.Height + 3) * rowCnt + 1;
         }
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)

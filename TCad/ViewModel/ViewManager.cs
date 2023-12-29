@@ -62,13 +62,13 @@ public class ViewManager : INotifyPropertyChanged
 
     public void SetupViews()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         PlotterViewGL1 = PlotterViewGL.Create(mContext);
 
         ViewMode = ViewModes.FRONT;
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void SetWorldScale(vcompo_t scale)
@@ -189,8 +189,8 @@ public class ViewManager : INotifyPropertyChanged
                 break;
         }
 
-        if (currentDC != null) currentDC.Deactive();
-        if (nextDC != null) nextDC.Active();
+        if (currentDC != null) currentDC.Deactivate();
+        if (nextDC != null) nextDC.Activate();
 
         SetView(view);
         mContext.Redraw();

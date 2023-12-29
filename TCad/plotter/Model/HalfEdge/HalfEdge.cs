@@ -268,7 +268,7 @@ public class HeModel
             he.Vertex = indexMap[he.Vertex];
             if (he.Vertex == -1)
             {
-                DOut.pl("HeModel.RemoveVertexs error. he.Vertex == -1");
+                Log.pl("HeModel.RemoveVertexs error. he.Vertex == -1");
             }
         });
 
@@ -350,7 +350,7 @@ public class HeModel
 
         if (s == -1)
         {
-            DOut.pl("HeModel.GetOuterEdge not found start HalfEdge");
+            Log.pl("HeModel.GetOuterEdge not found start HalfEdge");
             return ret;
         }
 

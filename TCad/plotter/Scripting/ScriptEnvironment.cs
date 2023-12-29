@@ -65,7 +65,7 @@ public partial class ScriptEnvironment
 
     public ScriptEnvironment(PlotterController controller)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         Controller = controller;
 
@@ -79,7 +79,7 @@ public partial class ScriptEnvironment
 
         mScriptFunctions.Init(this, mScope);
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     private static readonly Regex AutoCompPtn = new(@"#\[AC\][ \t]*(.+)\n");
@@ -137,12 +137,12 @@ public partial class ScriptEnvironment
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewIF.OpenPopupMessage(text, type);
+        Controller.ViewModelIF.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewIF.ClosePopupMessage();
+        Controller.ViewModelIF.ClosePopupMessage();
     }
 
     public async void ExecuteCommandAsync(string s)
@@ -173,7 +173,7 @@ public partial class ScriptEnvironment
 
         Controller.Clear();
         Controller.DrawAll();
-        Controller.PushToView();
+        Controller.UpdateView();
     }
 
     private Thread mScriptThread = null;
@@ -220,7 +220,7 @@ public partial class ScriptEnvironment
 
         Controller.Clear();
         Controller.DrawAll();
-        Controller.PushToView();
+        Controller.UpdateView();
         Controller.UpdateObjectTree(true);
 
         if (callback != null)

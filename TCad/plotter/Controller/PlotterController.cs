@@ -87,7 +87,7 @@ public partial class PlotterController
     public bool ContinueCreate { set; get; } = true;
 
     private IPlotterViewModel mPlotterVM = IPlotterViewModel.Dummy;
-    public IPlotterViewModel ViewIF
+    public IPlotterViewModel ViewModelIF
     {
         get => mPlotterVM;
         private set => mPlotterVM = value;
@@ -116,8 +116,9 @@ public partial class PlotterController
 
     public string CurrentFileName
     {
-        get => ViewIF?.CurrentFileName;
-    }
+        get;
+        set;
+    } = null;
 
     private ControllerStateMachine StateMachine;
 
@@ -139,14 +140,14 @@ public partial class PlotterController
     /// 
     public PlotterController(IPlotterViewModel vm)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         if (vm == null)
         {
             throw new System.ArgumentNullException(nameof(vm));
         }
 
-        ViewIF = vm;
+        ViewModelIF = vm;
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);
@@ -167,7 +168,7 @@ public partial class PlotterController
 
         InitHid();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void ChangeState(ControllerStates state)
@@ -178,17 +179,17 @@ public partial class PlotterController
     #region ObjectTree handling
     public void UpdateObjectTree(bool remakeTree)
     {
-        ViewIF.UpdateTreeView(remakeTree);
+        ViewModelIF.UpdateTreeView(remakeTree);
     }
 
     public void SetObjectTreePos(int index)
     {
-        ViewIF.SetTreeViewPos(index);
+        ViewModelIF.SetTreeViewPos(index);
     }
 
     public int FindObjectTreeItem(uint id)
     {
-        return ViewIF.FindTreeViewItemIndex(id);
+        return ViewModelIF.FindTreeViewItemIndex(id);
     }
     #endregion ObjectTree handling
 
@@ -196,7 +197,7 @@ public partial class PlotterController
     #region Notify
     public void UpdateLayerList()
     {
-        ViewIF.LayerListChanged(GetLayerListInfo());
+        ViewModelIF.LayerListChanged(GetLayerListInfo());
     }
 
     private LayerListInfo GetLayerListInfo()
@@ -210,7 +211,7 @@ public partial class PlotterController
 
     public void NotifyStateChange(StateChangedParam param)
     {
-        ViewIF.StateChanged(param);
+        ViewModelIF.StateChanged(param);
     }
     #endregion Notify
 

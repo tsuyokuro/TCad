@@ -64,10 +64,10 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     public static PlotterViewGL Create(IPlotterViewModel vm)
     {
-        DOut.plx("in");
+        Log.plx("in");
         PlotterViewGL v = new PlotterViewGL(vm);
         v.MakeCurrent();
-        DOut.plx("out");
+        Log.plx("out");
         return v;
     }
 
@@ -106,7 +106,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private void OnLoad(object sender, EventArgs e)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         GL.ClearColor(Color4.Black);
         GL.Enable(EnableCap.DepthTest);
@@ -124,7 +124,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         SwapBuffers();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     protected void SetupCursor()
@@ -209,13 +209,15 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 #endif
     }
 
-    public void Redraw()
+    private void Redraw()
     {
-#if MOUSE_THREAD
-        ThreadUtil.RunOnMainThread(mController.Redraw, false);
-#else
+        //#if MOUSE_THREAD
+        //        ThreadUtil.RunOnMainThread(mController.Redraw, false);
+        //#else
+        //        mController.Redraw(mController.DC);
+        //#endif
+
         mController.Redraw(mController.DC);
-#endif
     }
 
     private void OnPaint(object sender, PaintEventArgs e)
@@ -281,7 +283,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         mDrawContext.SetViewSize(Size.Width, Size.Height);
     }
 
-    public void PushToFront(DrawContext dc)
+    public void SwapBuffers(DrawContext dc)
     {
         if (dc == mDrawContext)
         {

@@ -105,14 +105,14 @@ public struct FigureSegment
 
     public void dump(string name = "FigureSegment")
     {
-        DOut.pl(name + "{");
-        DOut.Indent++;
-        DOut.pl("FigureID:" + Figure.ID.ToString());
-        DOut.pl("SegIndex:" + SegIndex.ToString());
-        DOut.pl("Index0:" + Index0.ToString());
-        DOut.pl("Index1:" + Index1.ToString());
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.pl(name + "{");
+        Log.Indent++;
+        Log.pl("FigureID:" + Figure.ID.ToString());
+        Log.pl("SegIndex:" + SegIndex.ToString());
+        Log.pl("Index0:" + Index0.ToString());
+        Log.pl("Index1:" + Index1.ToString());
+        Log.Indent--;
+        Log.pl("}");
 
     }
 }

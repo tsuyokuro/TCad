@@ -1,7 +1,6 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using SplineCurve;
 
@@ -22,7 +21,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureNurbsSurface : CadFigure
+public partial class CadFigureNurbsSurface : CadFigure
 {
     public NurbsSurface Nurbs;
 
@@ -242,10 +241,6 @@ public class CadFigureNurbsSurface : CadFigure
     }
 
 
-    public override void InvertDir()
-    {
-    }
-
     public override void SetPointAt(int index, CadVertex pt)
     {
         mPointList[index] = pt;
@@ -254,63 +249,9 @@ public class CadFigureNurbsSurface : CadFigure
     public override void EndEdit()
     {
         base.EndEdit();
-        RecalcNormal();
     }
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
     {
     }
-
-    #region Serialize
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpNurbsSurfaceGeometricData_v1002 geo = new MpNurbsSurfaceGeometricData_v1002();
-        geo.Nurbs = MpNurbsSurface_v1002.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpNurbsSurfaceGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpNurbsSurfaceGeometricData_v1002 g = (MpNurbsSurfaceGeometricData_v1002)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.UOutCnt * Nurbs.VOutCnt);
-
-        NeedsEval = true;
-    }
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpNurbsSurfaceGeometricData_v1003 geo = new MpNurbsSurfaceGeometricData_v1003();
-        geo.Nurbs = MpNurbsSurface_v1003.Create(Nurbs);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
-    {
-        if (!(geo is MpNurbsSurfaceGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpNurbsSurfaceGeometricData_v1003 g = (MpNurbsSurfaceGeometricData_v1003)geo;
-
-        Nurbs = g.Nurbs.Restore();
-
-        mPointList = Nurbs.CtrlPoints;
-
-        NurbsPointList = new VertexList(Nurbs.UOutCnt * Nurbs.VOutCnt);
-
-        NeedsEval = true;
-    }
-
-    #endregion
 }

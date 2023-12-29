@@ -233,11 +233,6 @@ public partial class PlotterController
             {
                 fig.IsLoop = isLoop;
 
-                if (isLoop)
-                {
-                    fig.RecalcNormal();
-                }
-
                 ope = new CadOpeSetClose(CurrentLayer.ID, id, isLoop);
                 opeRoot.OpeList.Add(ope);
             }
@@ -312,26 +307,6 @@ public partial class PlotterController
         UpdateObjectTree(true);
     }
 
-    public void FlipNormal()
-    {
-        List<uint> ids = DB.GetSelectedFigIDList();
-
-        CadOpeList opeList = new CadOpeList();
-
-        foreach (uint id in ids)
-        {
-            CadFigure fig = mDB.GetFigure(id);
-            vector3_t old = fig.Normal;
-
-            fig.Normal *= -1;
-
-            CadOpe ope = new CadOpeChangeNormal(id, old, fig.Normal);
-            opeList.Add(ope);
-        }
-
-
-        HistoryMan.foward(opeList);
-    }
 
     public bool InsPointToLastSelectedSeg()
     {
@@ -377,7 +352,7 @@ public partial class PlotterController
             ins = ins1;
         }
 
-        DOut.pl($"ins={ins} pcnt={fig.PointCount}");
+        Log.pl($"ins={ins} pcnt={fig.PointCount}");
 
         fig.InsertPointAt(ins, (CadVertex)LastDownPoint);
 

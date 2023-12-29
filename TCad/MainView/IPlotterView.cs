@@ -31,6 +31,8 @@ public interface IPlotterView
         get;
     }
 
+    void EnablePerse(bool enable);
+
     void CursorLocked(bool locked);
 
     void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
@@ -45,5 +47,5 @@ public interface IPlotterView
 public interface IPlotterViewForDC
 {
     void GLMakeCurrent();
-    void PushToFront(DrawContext dc);
+    void SwapBuffers(DrawContext dc);
 }

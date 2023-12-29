@@ -13,13 +13,15 @@
     Title="TCad"
     Width="1177.667"
     Height="732"
-    Background="Black"
+    WindowStyle="None"
     BorderBrush="#FF14A9FF"
     BorderThickness="1"
-    mc:Ignorable="d">
+    AllowsTransparency="False"
+    mc:Ignorable="d"
+    >
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" ResizeBorderThickness="4" />
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="4" GlassFrameThickness="0" CornerRadius="0"/>
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
@@ -44,8 +46,8 @@
 
             <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
 
-                <Setter Property="Background" Value="{StaticResource BaseColor}" />
-                <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+                <Setter Property="Background" Value="{DynamicResource ListBoxBGColor}" />
+                <Setter Property="Foreground" Value="{DynamicResource ListBoxTextColor}" />
 
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="Template">
@@ -59,34 +61,8 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource ListBoxSelColor}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <Style x:Key="MsgListBoxItem" TargetType="ListBoxItem">
-
-                <Setter Property="Background" Value="{StaticResource MsgBGColor}" />
-                <Setter Property="Foreground" Value="{StaticResource MsgTextColor}" />
-
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListBoxItem">
-                            <Border
-                                Name="Border"
-                                Padding="0"
-                                SnapsToDevicePixels="true">
-                                <ContentPresenter />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsSelected" Value="true">
-                                    <Setter Property="Foreground" Value="{StaticResource MsgTextColor}" />
-                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource MsgSelectedBGColor}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource ListBoxSelTextColor}" />
+                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListBoxSelBGColor}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -103,21 +79,21 @@
 
             <!--<DataTemplate x:Key="AutoCompleteBoxItemTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="{Binding Data}" Foreground="{StaticResource TextColor}"/>
+                    <Label Content="{Binding Data}" Foreground="{DynamicResource TextColor}"/>
                 </StackPanel>
             </DataTemplate>-->
 
 
             <Style TargetType="Menu">
-                <Setter Property="Foreground" Value="{StaticResource MenuTextColor}" />
-                <Setter Property="Background" Value="{StaticResource MenuBGColor}" />
+                <Setter Property="Foreground" Value="{DynamicResource MenuTextColor}" />
+                <Setter Property="Background" Value="{DynamicResource MenuBGColor}" />
             </Style>
 
             <Style BasedOn="{StaticResource MLB_MenuItem}" TargetType="MenuItem">
-                <Setter Property="Foreground" Value="{StaticResource MenuTextColor}" />
-                <Setter Property="Background" Value="{StaticResource MenuBGColor}" />
+                <Setter Property="Foreground" Value="{DynamicResource MenuTextColor}" />
+                <Setter Property="Background" Value="{DynamicResource MenuBGColor}" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="BorderBrush" Value="{StaticResource MenuBGColor}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource MenuBGColor}" />
                 <Setter Property="Padding" Value="0,0,0,0" />
             </Style>
 
@@ -134,8 +110,8 @@
                                            Fill="{TemplateBinding Foreground}"/>-->
                                 <Rectangle
                                     Height="1"
-                                    Fill="{StaticResource MenuSepColor}"
-                                    Stroke="{StaticResource MenuSepColor}" />
+                                    Fill="{DynamicResource MenuSepColor}"
+                                    Stroke="{DynamicResource MenuSepColor}" />
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
@@ -146,7 +122,7 @@
                 <Setter Property="Control.Template">
                     <Setter.Value>
                         <ControlTemplate>
-                            <Rectangle Fill="#FFFFFFFF" />
+                            <Rectangle Fill="{DynamicResource BoarderColor}" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -197,12 +173,12 @@
         </cc:WorkAreaPopup>
 
         <!--  Caption area  -->
-        <Border Grid.Row="0" Padding="2" Background="{StaticResource CaptionColor}">
+        <Border Grid.Row="0" Name="CaptionArea" Padding="0" Background="{DynamicResource CaptionColor}">
             <Grid
                 Height="Auto"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Top"
-                Background="{StaticResource CaptionColor}">
+                Background="{DynamicResource CaptionColor}">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -216,30 +192,30 @@
                     Grid.Column="0"
                     Width="{StaticResource AppIconSize}"
                     Height="{StaticResource AppIconSize}"
-                    Margin="8,0,0,0"
+                    Margin="8,4,2,0"
                     VerticalAlignment="Center"
                     Source="{StaticResource traiangle2DrawingImage}" />
                 <TextBlock
                     Grid.Column="1"
-                    Margin="4,0,4,0"
+                    Margin="4,4,4,0"
                     VerticalAlignment="Center"
                     Text="TCad"
                     FontSize="{StaticResource CaptionFontSize}"
                     FontWeight="ExtraBold"
-                    Foreground="{StaticResource AppTitleColor}" />
+                    Foreground="{DynamicResource AppTitleColor}" />
 
 
                 <!--  Menu area  -->
                 <Border
                     Grid.Column="2"
                     Height="Auto"
-                    Background="{StaticResource MenuBGColor}">
+                    Background="{DynamicResource MenuBGColor}">
                     <StackPanel Orientation="Horizontal">
                         <Menu
                             x:Name="MainMenu"
                             Width="Auto"
                             Height="Auto"
-                            Margin="0,0,0,0"
+                            Margin="0,4,0,0"
                             VerticalAlignment="Center"
                             WindowChrome.IsHitTestVisibleInChrome="True">
 
@@ -316,9 +292,6 @@
                                     <MenuItem
                                         Header="Flip and copy"
                                         Command="{Binding SimpleCmd}" CommandParameter="flip_and_copy_with_vector" />
-                                    <MenuItem
-                                        Header="Flip Normal"
-                                        Command="{Binding SimpleCmd}" CommandParameter="flip_normal" />
                                 </MenuItem>
                                 <MenuItem
                                     Header="Clear layer"
@@ -477,38 +450,50 @@
                     VerticalAlignment="Center"
                     Text="{Binding CaptionFileName}"
                     FontSize="{StaticResource CaptionFontSize}"
-                    Foreground="#FFB0B0B0" />
+                    Foreground="{DynamicResource CaptionFileNameColor}" />
 
                 <StackPanel
                     Grid.Column="4"
                     Height="26"
-                    Margin="0,0,4,0"
+                    Margin="0,0,0,0"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Background="{StaticResource CaptionColor}"
+                    VerticalAlignment="Top"
+                    Background="{DynamicResource CaptionColor}"
                     Orientation="Horizontal">
 
                     <Button
                         x:Name="BtnMinWindow"
                         Content="0"
+                        VerticalAlignment="Top"
+                        Width="{StaticResource CaptionButtonWidth}"
+                        Height="{StaticResource CaptionButtonHeight}"
                         FontSize="{StaticResource CaptionButtonFontSize}"
                         Style="{DynamicResource CaptionButtonStyleKey}"
                         WindowChrome.IsHitTestVisibleInChrome="True" />
                     <Button
                         x:Name="BtnMaxWindow"
                         Content="1"
+                        VerticalAlignment="Top"
+                        Width="{StaticResource CaptionButtonWidth}"
+                        Height="{StaticResource CaptionButtonHeight}"
                         FontSize="{StaticResource CaptionButtonFontSize}"
                         Style="{DynamicResource CaptionButtonStyleKey}"
                         WindowChrome.IsHitTestVisibleInChrome="True" />
                     <Button
                         x:Name="BtnRestWindow"
                         Content="2"
+                        VerticalAlignment="Top"
+                        Width="{StaticResource CaptionButtonWidth}"
+                        Height="{StaticResource CaptionButtonHeight}"
                         FontSize="{StaticResource CaptionButtonFontSize}"
                         Style="{DynamicResource CaptionButtonStyleKey}"
                         WindowChrome.IsHitTestVisibleInChrome="True" />
                     <Button
                         x:Name="BtnCloseWindow"
                         Content="r"
+                        VerticalAlignment="Top"
+                        Width="{StaticResource CaptionButtonWidth}"
+                        Height="{StaticResource CaptionButtonHeight}"
                         FontSize="{StaticResource CaptionButtonFontSize}"
                         Style="{DynamicResource CaptionButtonStyleKey}"
                         WindowChrome.IsHitTestVisibleInChrome="True" />
@@ -538,8 +523,8 @@
                 Height="Auto"
                 HorizontalAlignment="Stretch"
                 BorderThickness="0"
-                Padding="0,2,0,3"
-                Background="{StaticResource ToolBarBGColor}">
+                Padding="0,8,0,3"
+                Background="{DynamicResource ToolBarBGColor}">
                 <StackPanel Orientation ="Horizontal">
 
                     <!-- File Tool Bar -->
@@ -551,7 +536,7 @@
                             Tag="open_script"
                             Style="{StaticResource ToolButton3}"
                             Command="{Binding SimpleCmd}" CommandParameter="open_file">
-                            <Image Source="{StaticResource OpenFileDrawingImage}" />
+                            <Image Source="{DynamicResource OpenFileDrawingImage}" />
 
                         </Button>
                         <Button x:Name="BtnSave"
@@ -560,7 +545,7 @@
                             Margin="4,0,0,0"
                             Style="{StaticResource ToolButton3}"
                             Command="{Binding SimpleCmd}" CommandParameter="save_file" >
-                            <Image Source="{StaticResource SaveFileDrawingImage}" />
+                            <Image Source="{DynamicResource SaveFileDrawingImage}" />
                         </Button>
                     </StackPanel>
 
@@ -582,7 +567,7 @@
                                 Width="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Source="{StaticResource SnapToPointDrawingImage}" />
+                                Source="{DynamicResource SnapToPointDrawingImage}" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -595,7 +580,7 @@
                                 Width="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Source="{StaticResource SnapToSegDrawingImage}" />
+                                Source="{DynamicResource SnapToSegDrawingImage}" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -608,7 +593,7 @@
                                 Width="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Source="{StaticResource SnapToLineDrawingImage}" />
+                                Source="{DynamicResource SnapToLineDrawingImage}" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -621,7 +606,7 @@
                                     Width="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Source="{StaticResource SnapToZeroDrawingImage}" />
+                                    Source="{DynamicResource SnapToZeroDrawingImage}" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -634,7 +619,7 @@
                                 Width="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Source="{StaticResource SnapToLastDownDrawingImage}" />
+                                Source="{DynamicResource SnapToLastDownDrawingImage}" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -647,7 +632,7 @@
                                 Width="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Source="{StaticResource SnapToGridDrawingImage}" />
+                                Source="{DynamicResource SnapToGridDrawingImage}" />
                         </ToggleButton>
                     </StackPanel>
                 </StackPanel>
@@ -674,11 +659,11 @@
 
                 <!--  Left panel  -->
                 <Border Grid.Column="0"
-                    BorderBrush="{StaticResource BoarderColor}"
-                    BorderThickness="0,0,0,1">
+                    BorderBrush="{DynamicResource BoarderColor}"
+                    BorderThickness="0,0,0,0">
                     <StackPanel
                         x:Name="LeftPanel"
-                        Background="{StaticResource BaseColor}">
+                        Background="{DynamicResource BaseColor}">
 
                         <StackPanel x:Name="SelectModePanel">
                             <Label
@@ -776,12 +761,12 @@
                     Width="{StaticResource SplitterSize}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Stretch"
-                    Background="{StaticResource BoarderColor}"
+                    Background="{DynamicResource BoarderColor}"
                     ShowsPreview="false" />
 
                 <!--  Plotter view and Command view  -->
                 <Grid x:Name="viewRoot" Grid.Column="2"
-                    Background="{StaticResource BGColor}">
+                    Background="{DynamicResource BaseColor}">
                     <Grid.RowDefinitions>
                         <!-- Main view -->
                         <RowDefinition Height="100*" />
@@ -795,17 +780,27 @@
                     </Grid.RowDefinitions>
 
                     <!-- Main view -->
-                    <WindowsFormsHost Grid.Row="0"
-                        x:Name="viewContainer"
-                        Background="#FF080808"
-                        Focusable="True"/>
+                    <Border
+                        Grid.Row="0"
+                        Name="viewContainerWrap"
+                        Background="{DynamicResource MainViewHostBGColor}"
+                        BorderThickness="0"
+                        >
+
+                        <WindowsFormsHost
+                            x:Name="viewContainer"
+                            Background="{DynamicResource MainViewHostBGColor}"
+                            Focusable="True"
+                            />
+                        
+                    </Border>
 
                     <!-- Bottom Splitter -->
                     <GridSplitter x:Name="viewBottom" Grid.Row="1"
                         Height="{StaticResource MainSplitterSize}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Background="{StaticResource BoarderColor}"
+                        Background="{DynamicResource BoarderColor}"
                         BorderThickness="0"
                         PreviewStyle="{StaticResource GridSplitterPreviewStyle}"
                         ResizeDirection="Rows"
@@ -827,7 +822,7 @@
                         </Grid.RowDefinitions>
 
                         <!-- Prompt -->
-                        <Border Background="{StaticResource MsgBGColor}" Grid.Row="0" BorderThickness="0,0,1,1">
+                        <Border Background="{DynamicResource PromptBGColor}" Grid.Row="0" BorderThickness="0,0,1,1">
                             <ScrollViewer
                                 Focusable="True"
                                 Style="{StaticResource CustomScrollViewerStyle}"
@@ -836,11 +831,11 @@
                                 <cc:CadConsoleView
                                     x:Name="MyConsole"
                                     VerticalAlignment="Top"
-                                    Background="{StaticResource MsgBGColor}"
+                                    Background="{StaticResource PromptBGColor}"
                                     Focusable="True"
                                     FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                     FontSize="14"
-                                    Foreground="#FFAAAAAA"
+                                    Foreground="{StaticResource PromptTextColor}"
                                     LineHeight="17"
                                     SnapsToDevicePixels="True"
                                     TextOptions.TextFormattingMode="Display" />
@@ -849,7 +844,7 @@
                         </Border>
 
                         <!-- Command -->
-                        <Grid x:Name="CommandBar" Grid.Row="1" Height="auto" Background="{StaticResource BaseColor}">
+                        <Grid x:Name="CommandBar" Grid.Row="1" Height="auto" Background="{DynamicResource BaseColor}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="32" />
                                 <ColumnDefinition Width="100*" />
@@ -857,8 +852,8 @@
 
                             <Border
                                 Grid.Column="0"
-                                Background="{StaticResource BaseColor}"
-                                BorderBrush="{StaticResource BaseColor}"
+                                Background="{DynamicResource BaseColor}"
+                                BorderBrush="{DynamicResource BaseColor}"
                                 BorderThickness="0,1,0,1">
                                 <Button
                                     x:Name="RunTextCommandButton"
@@ -869,21 +864,21 @@
                                     VerticalAlignment="Center"
                                     Command="{Binding SimpleCmd}" CommandParameter="enter_command"
                                     >
-                                    <Image Source="{StaticResource EnterDrawingImage}"/>
+                                    <Image Source="{DynamicResource EnterDrawingImage}"/>
                                 </Button>
                             </Border>
                             <Border
                                 Grid.Column="1"
                                 Padding="2"
                                 BorderThickness="2"
-                                BorderBrush="{StaticResource BaseColor}"
-                                Background="{StaticResource MsgBGColor}"
+                                BorderBrush="{DynamicResource BaseColor}"
+                                Background="{DynamicResource BaseColor}"
                                 >
 
                                 <cc:AutoCompleteTextBox
                                     x:Name="textCommand"
-                                    Background="{StaticResource MsgBGColor}"
-                                    BorderBrush="{StaticResource MsgBGColor}"
+                                    Background="{DynamicResource PromptBGColor}"
+                                    BorderBrush="{DynamicResource BaseColor}"
                                     BorderThickness="1,1,1,1"
                                     CandidateListBorderStyle="{StaticResource CandidateListBorderStyle}"
                                     CandidateListScrollViewerStyle="{StaticResource CandidateListScrollViewerStyle}"
@@ -894,7 +889,7 @@
                                     FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                     FontSize="16"
                                     FontWeight="Thin"
-                                    Foreground="{StaticResource TextColor}" />
+                                    Foreground="{DynamicResource TextColor}" />
                             </Border>
                         </Grid>
                     </Grid>
@@ -905,17 +900,17 @@
                     Width="{StaticResource SplitterSize}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Stretch"
-                    Background="{StaticResource BoarderColor}"
+                    Background="{DynamicResource BoarderColor}"
                     ShowsPreview="false" />
 
                 <!-- Right Panel -->
                 <Border Grid.Column="4"
-                    BorderBrush="{StaticResource BoarderColor}"
+                    BorderBrush="{DynamicResource BoarderColor}"
                     BorderThickness="0">
                     <Grid
                         x:Name="RightPanel"
                         Grid.Column="0"
-                        Background="{StaticResource BaseColor}">
+                        Background="{DynamicResource BaseColor}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="100*" />
@@ -924,7 +919,7 @@
                         <!--  Layer list tool  -->
                         <Border
                             Grid.Row="0"
-                            BorderBrush="{StaticResource BoarderColor}"
+                            BorderBrush="{DynamicResource BoarderColor}"
                             BorderThickness="0,0,1,1">
                             <Grid x:Name="LayerToolBar">
                                 <Grid.ColumnDefinitions>
@@ -935,9 +930,9 @@
 
                                 <Label
                                     Grid.Column="0"
-                                    Background="{StaticResource BaseColor}"
+                                    Background="{DynamicResource BaseColor}"
                                     Content="Layer"
-                                    Foreground="{StaticResource TextColor}" />
+                                    Foreground="{DynamicResource TextColor}" />
 
                                 <Button
                                     Name="AddLayerButton"
@@ -950,7 +945,7 @@
                                         Width="18"
                                         Height="18"
                                         VerticalAlignment="Top"
-                                        Source="{StaticResource addDrawingImage}" />
+                                        Source="{DynamicResource addDrawingImage}" />
                                 </Button>
 
                                 <Button
@@ -964,7 +959,7 @@
                                         Width="18"
                                         Height="18"
                                         VerticalAlignment="Top"
-                                        Source="{StaticResource deleteDrawingImage}" />
+                                        Source="{DynamicResource deleteDrawingImage}" />
                                 </Button>
                             </Grid>
                         </Border>
@@ -984,8 +979,8 @@
 
                                 <ListBox
                                     x:Name="LayerListView"
-                                    Background="{StaticResource BaseColor}"
-                                    BorderBrush="{StaticResource BoarderColor}"
+                                    Background="{DynamicResource ListBoxBGColor}"
+                                    BorderBrush="{DynamicResource BoarderColor}"
                                     BorderThickness="0,0,1,0"
                                     ItemContainerStyle="{StaticResource SimpleListBoxItem}"
                                     ItemsSource="{Binding LayerList}"
@@ -1007,14 +1002,12 @@
                                                     <CheckBox
                                                         Width="{StaticResource LayoutListIconSize}"
                                                         Height="{StaticResource LayoutListIconSize}"
-                                                        Foreground="White"
                                                         IsChecked="{Binding Path=Visible}"
                                                         Style="{StaticResource VisibleCheckBox}" />
 
                                                     <CheckBox
                                                         Width="{StaticResource LayoutListIconSize}"
                                                         Height="{StaticResource LayoutListIconSize}"
-                                                        Foreground="White"
                                                         IsChecked="{Binding Path=Locked}"
                                                         Style="{StaticResource LockedCheckBox}" />
                                                 </StackPanel>
@@ -1025,7 +1018,10 @@
                                                     VerticalContentAlignment="Center"
                                                     HorizontalContentAlignment="Left"
                                                     Content="{Binding Path=Name}"
-                                                    Foreground="White" />
+                                                    Foreground=
+                                                        "{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=Foreground}"
+                                                />
+                                                
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -1037,7 +1033,7 @@
                                 Height="{StaticResource SplitterSize}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                Background="{StaticResource BoarderColor}"
+                                Background="{DynamicResource BoarderColor}"
                                 ShowsPreview="False" />
 
                             <Grid Grid.Row="2">
@@ -1049,7 +1045,7 @@
                                 <Border
                                     Grid.Row="0"
                                     Height="24"
-                                    BorderBrush="{StaticResource BoarderColor}"
+                                    BorderBrush="{DynamicResource BoarderColor}"
                                     BorderThickness="0,1,0,1">
                                     <StackPanel x:Name="TreeViewToolBar" Orientation="Horizontal">
                                         <ToggleButton
@@ -1080,7 +1076,7 @@
                                                 Width="18"
                                                 Height="18"
                                                 VerticalAlignment="Top"
-                                                Source="{StaticResource downDrawingImage}" />
+                                                Source="{DynamicResource downDrawingImage}" />
                                         </Button>
                                         <Button
                                             Width="20"
@@ -1092,7 +1088,7 @@
                                                 Width="18"
                                                 Height="18"
                                                 VerticalAlignment="Top"
-                                                Source="{StaticResource upDrawingImage}" />
+                                                Source="{DynamicResource upDrawingImage}" />
                                         </Button>
                                         <Button
                                             Width="20"
@@ -1104,7 +1100,7 @@
                                                 Width="18"
                                                 Height="18"
                                                 VerticalAlignment="Top"
-                                                Source="{StaticResource bottomDrawingImage}" />
+                                                Source="{DynamicResource bottomDrawingImage}" />
                                         </Button>
                                         <Button
                                             Width="20"
@@ -1116,7 +1112,7 @@
                                                 Width="18"
                                                 Height="18"
                                                 VerticalAlignment="Top"
-                                                Source="{StaticResource topDrawingImage}" />
+                                                Source="{DynamicResource topDrawingImage}" />
                                         </Button>
 
                                     </StackPanel>
@@ -1125,11 +1121,10 @@
                                 <ScrollViewer
                                     Grid.Row="1"
                                     VerticalAlignment="Stretch"
-                                    BorderBrush="AliceBlue"
                                     HorizontalScrollBarVisibility="Hidden"
                                     Style="{StaticResource CustomScrollViewerStyle}"
                                     VerticalScrollBarVisibility="Visible"
-                                    BorderThickness="0,0,1,0">
+                                    BorderThickness="0,0,0,0">
 
                                     <cc:CadObjectTreeView
                                         x:Name="ObjTree"
@@ -1137,7 +1132,8 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         Background="{StaticResource BaseColor}"
-                                        Foreground="White"
+                                        NodeFG="{StaticResource TreeNodeTextColor}"
+                                        LeafFG="{StaticResource TreeLeafTextColor}"
                                         ItemHeight="15.0"
                                         TextSize="11.0" />
                                 </ScrollViewer>
@@ -1150,9 +1146,9 @@
             <!--  Status bar area  -->
             <Border Grid.Row="3"
                 Height="Auto"
-                Background="{StaticResource BoarderColor}"
-                BorderBrush="{StaticResource BoarderColor}"
-                BorderThickness="0,0,0,0">
+                Background="{DynamicResource StatusBarBGColor}"
+                BorderBrush="{DynamicResource BoarderColor}"
+                BorderThickness="0,2,0,0">
 
                 <Grid
                     Height="28"
@@ -1176,7 +1172,7 @@
                             Padding="0,4,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
-                            Foreground="White"
+                            Foreground="{DynamicResource StatusBarTextColor}"
                             Text="{Binding StrCursorPos}"
                             TextWrapping="Wrap" />
                         <TextBlock
@@ -1185,10 +1181,19 @@
                             Padding="0,4,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
-                            Foreground="White"
+                            Foreground="{DynamicResource StatusBarTextColor}"
                             Text="{Binding StrCursorPos2}"
                             TextWrapping="Wrap" />
 
+                        <TextBlock
+                            x:Name="textBlockXYZ3"
+                            Width="136"
+                            Padding="0,4,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Stretch"
+                            Foreground="{DynamicResource StatusBarTextColor}"
+                            Text="{Binding StrCursorPos3}"
+                            TextWrapping="Wrap" />
                     </StackPanel>
 
                     <StackPanel

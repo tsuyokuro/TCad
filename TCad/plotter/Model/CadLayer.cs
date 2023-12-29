@@ -191,7 +191,7 @@ public class CadLayer
 
     public void sdump()
     {
-        DOut.pl(
+        Log.pl(
             this.GetType().Name + 
             "(" + this.GetHashCode().ToString() + ")" +
             "ID=" + ID.ToString());
@@ -199,16 +199,16 @@ public class CadLayer
 
     public void dump()
     {
-        DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
-        DOut.Indent++;
-        DOut.pl("ID=" + ID.ToString());
+        Log.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
+        Log.Indent++;
+        Log.pl("ID=" + ID.ToString());
 
         foreach (CadFigure fig in FigureList)
         {
-            DOut.pl("FigID=" + fig.ID);
+            Log.pl("FigID=" + fig.ID);
         }
 
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 }

@@ -22,17 +22,17 @@ namespace Plotter;
 
 public class TriangleSplitter
 {
-    public static List<CadFigure> Split(CadFigure fig, int curveSplitNum = 32)
+    public static List<Vector3List> Split(CadFigure fig, int curveSplitNum = 32)
     {
-        CadVertex p0 = default(CadVertex);
+        CadVertex p0 = default;
 
-        var triangles = new List<CadFigure>();
+        var triangles = new List<Vector3List>();
 
         int i1 = -1;
 
         int state = 0;
 
-        CadFigure triangle;
+        Vector3List triangle;
 
         VertexList pointList = fig.GetPoints(curveSplitNum);
 
@@ -45,9 +45,9 @@ public class TriangleSplitter
 
         triangle = GetTriangleWithCenterPoint(pointList, i1);
 
-        vector3_t tp0 = triangle.PointList[0].vector;
-        vector3_t tp1 = triangle.PointList[1].vector;
-        vector3_t tp2 = triangle.PointList[2].vector;
+        vector3_t tp0 = triangle[0];
+        vector3_t tp1 = triangle[1];
+        vector3_t tp2 = triangle[2];
 
         vector3_t dir = CadMath.Normal(tp1, tp0, tp2);
         vector3_t currentDir = vector3_t.Zero;
@@ -65,9 +65,9 @@ public class TriangleSplitter
 
             triangle = GetTriangleWithCenterPoint(pointList, i1);
 
-            tp0 = triangle.PointList[0].vector;
-            tp1 = triangle.PointList[1].vector;
-            tp2 = triangle.PointList[2].vector;
+            tp0 = triangle[0];
+            tp1 = triangle[1];
+            tp2 = triangle[2];
 
             currentDir = CadMath.Normal(tp1, tp0, tp2);
 
@@ -100,10 +100,11 @@ public class TriangleSplitter
 
         if (pointList.Count == 3)
         {
-            triangle = CadFigure.Create(CadFigure.Types.POLY_LINES);
+            triangle = new Vector3List(3);
 
-            triangle.AddPoints(pointList,0,3);
-            triangle.IsLoop = true;
+            triangle.Add(pointList[0].vector);
+            triangle.Add(pointList[1].vector);
+            triangle.Add(pointList[2].vector);
 
             triangles.Add(triangle);
         }
@@ -111,7 +112,7 @@ public class TriangleSplitter
         return triangles;
     }
 
-    private static CadFigure GetTriangleWithCenterPoint(VertexList pointList, int cpIndex)
+    private static Vector3List GetTriangleWithCenterPoint(VertexList pointList, int cpIndex)
     {
         int i1 = cpIndex;
         int endi = pointList.Count - 1;
@@ -122,31 +123,29 @@ public class TriangleSplitter
         if (i0 < 0) { i0 = endi; }
         if (i2 > endi) { i2 = 0; }
 
-        var triangle = CadFigure.Create(CadFigure.Types.POLY_LINES);
+        var triangle = new Vector3List();
 
         CadVertex tp0 = pointList[i0];
         CadVertex tp1 = pointList[i1];
         CadVertex tp2 = pointList[i2];
 
-        triangle.AddPoint(tp0);
-        triangle.AddPoint(tp1);
-        triangle.AddPoint(tp2);
-
-        triangle.IsLoop = true;
+        triangle.Add(tp0.vector);
+        triangle.Add(tp1.vector);
+        triangle.Add(tp2.vector);
 
         return triangle;
     }
 
-    private static bool ListContainsPointInTriangle(VertexList check, CadFigure triangle)
+    private static bool ListContainsPointInTriangle(VertexList check, Vector3List triangle)
     {
-        var tps = triangle.PointList;
+        var tps = triangle;
 
         foreach (CadVertex cp in check)
         {
             if (
-                cp.Equals(tps[0]) ||
-                cp.Equals(tps[1]) ||
-                cp.Equals(tps[2])
+                cp.vector.Equals(tps[0]) ||
+                cp.vector.Equals(tps[1]) ||
+                cp.vector.Equals(tps[2])
                 )
             {
                 continue;
@@ -154,9 +153,9 @@ public class TriangleSplitter
 
             bool ret = CadMath.IsPointInTriangle(
                                             cp.vector,
-                                            tps[0].vector,
-                                            tps[1].vector,
-                                            tps[2].vector
+                                            tps[0],
+                                            tps[1],
+                                            tps[2]
                                             );
             if (ret)
             {

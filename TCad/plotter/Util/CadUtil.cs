@@ -49,27 +49,27 @@ public class CadUtil
     }
 
     // 三角形の面積 3D対応
-    public static vcompo_t TriangleArea(CadFigure fig)
+    public static vcompo_t TriangleArea(Vector3List triangle)
     {
         return CadMath.TriangleArea(
-            fig.GetPointAt(0).vector,
-            fig.GetPointAt(1).vector,
-            fig.GetPointAt(2).vector
+            triangle[0],
+            triangle[1],
+            triangle[2]
             );
     }
 
     // 三角形の重心を求める
-    public static vector3_t TriangleCentroid(CadFigure fig)
+    public static vector3_t TriangleCentroid(Vector3List triangle)
     {
         return CadMath.TriangleCentroid(
-            fig.GetPointAt(0).vector,
-            fig.GetPointAt(1).vector,
-            fig.GetPointAt(2).vector
+            triangle[0],
+            triangle[1],
+            triangle[2]
             );
     }
 
     // 三角形群の重心を求める
-    public static Centroid TriangleListCentroid(List<CadFigure> triangles)
+    public static Centroid TriangleListCentroid(List<Vector3List> triangles)
     {
         Centroid c0 = default;
         Centroid c1 = default;

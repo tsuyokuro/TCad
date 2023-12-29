@@ -62,8 +62,6 @@
     <None Remove="Resources\Cursors\dot.cur" />
     <None Remove="Resources\Cursors\mini_cross.cur" />
     <None Remove="Resources\Cursors\null.cur" />
-    <None Remove="Resources\Images\script_icon.png" />
-    <None Remove="Resources\Images\triangle2.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,21 +82,17 @@
     <Resource Include="Resources\Cursors\dot.cur" />
     <Resource Include="Resources\Cursors\mini_cross.cur" />
     <Resource Include="Resources\Cursors\null.cur" />
-    <Resource Include="Resources\Images\script_icon.png" />
-    <Resource Include="Resources\Images\triangle2.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="IronPython" Version="3.4.1" />
-    <PackageReference Include="MessagePack" Version="2.5.124" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.5.124">
+    <PackageReference Include="MessagePack" Version="2.5.129" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.129">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.8.0" />
+    <PackageReference Include="OpenTK" Version="4.8.1" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />

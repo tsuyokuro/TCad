@@ -1,12 +1,13 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using Path = System.IO.Path;
+using Plotter.Serializer;
+
 
 
 
@@ -25,7 +26,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigurePicture : CadFigure
+public partial class CadFigurePicture : CadFigure
 {
     //  3-------------------2
     //  |                   |
@@ -34,6 +35,8 @@ public class CadFigurePicture : CadFigure
     //  0-------------------1
 
     private Bitmap mBitmap;
+
+    private byte[] SrcData; 
 
     public string OrgFilePathName;
     public string FilePathName;
@@ -51,6 +54,21 @@ public class CadFigurePicture : CadFigure
     public void Setup(PaperPageSize pageSize, vector3_t pos, string path)
     {
         OrgFilePathName = path;
+
+        FileStream fs = new FileStream(
+            path,
+            FileMode.Open,
+            FileAccess.Read);
+
+        SrcData = new byte[fs.Length];
+
+        fs.Read(SrcData, 0, SrcData.Length);
+
+        fs.Close();
+
+        //mBitmap = new Bitmap(Image.FromFile(path));
+
+        Image image = ImageUtil.ByteArrayToImage(SrcData);
 
         mBitmap = new Bitmap(Image.FromFile(path));
 
@@ -188,11 +206,8 @@ public class CadFigurePicture : CadFigure
 
         if (cnt == 1)
         {
-            //DrawDim(DC, PointList[0], tp, tp, pen);
             return;
         }
-
-        //DrawDim(DC, PointList[0], PointList[1], tp, pen);
     }
 
     public override void StartCreate(DrawContext dc)
@@ -236,38 +251,97 @@ public class CadFigurePicture : CadFigure
 
         if (cnt == 1)
         {
-            if (PointList[0].Selected)
+            vector3_t d;
+
+            vector3_t normal = CadMath.Normal(StoreList[0].vector, StoreList[1].vector, StoreList[2].vector);
+
+            vector3_t vdir = dc.ViewDir;
+
+
+            vector3_t a = vector3_t.Zero;
+            vector3_t b = vdir;
+
+            vector3_t d0 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            a = delta;
+            b = delta + vdir;
+
+            vector3_t d1 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            if (d0.IsValid() && d1.IsValid())
             {
+                d = d1 - d0;
+            }
+            else
+            {
+                vector3_t nvNormal = CadMath.Normal(normal, vdir);
 
+                vcompo_t ip = CadMath.InnerProduct(nvNormal, delta);
 
-                return;
+                d = nvNormal * ip;
             }
 
-            if (PointList[1].Selected)
-            {
-                return;
-            }
+            AdjustPoints(GetTargetPointIndex(), d);
         }
-        else if (cnt == 2)
+
+        mChildList.ForEach(c =>
         {
-
-        }
+            c.MoveSelectedPointsFromStored(dc, moveInfo);
+        });
     }
+
+
+    void AdjustPoints(int mIdx, vector3_t d)
+    {
+        int aIdx = (mIdx + 2) % 4; // 対角のIndex
+        int bIdx = (mIdx + 1) % 4; // 次のIndex
+        int cIdx = (mIdx + 3) % 4; // 前のIndex
+
+        bool keepAspect = true;
+
+        CrossInfo ci;
+        if (keepAspect) { 
+            ci = CadMath.PerpCrossLine(
+                vector3_t.Zero,
+                mPointList[aIdx].vector - mPointList[mIdx].vector,
+                d
+                );
+            d = ci.CrossPoint;
+        }
+
+        mPointList[mIdx] = StoreList[mIdx] + d;
+
+        ci = CadMath.PerpCrossLine(
+            StoreList[aIdx].vector, StoreList[bIdx].vector,
+            mPointList[mIdx].vector
+            );
+        mPointList[bIdx].vector = ci.CrossPoint;
+
+        ci = CadMath.PerpCrossLine(
+            StoreList[cIdx].vector, StoreList[aIdx].vector,
+            mPointList[mIdx].vector
+            );
+        mPointList[cIdx].vector = ci.CrossPoint;
+    }
+
+
+
+    private int GetTargetPointIndex()
+    {
+        for (int i = 0; i < mPointList.Count; i++)
+        {
+            if (mPointList[i].Selected)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
 
     public override void InvertDir()
     {
-    }
-
-    // 高さが０の場合、移動方向が定まらないので
-    // 投影座標系でz=0とした座標から,List[0] - List[1]への垂線を計算して
-    // そこへ移動する
-    private void MoveSelectedPointWithHeight(DrawContext dc, vector3_t delta)
-    {
-        CadSegment seg = CadUtil.PerpSeg(PointList[0], PointList[1],
-            StoreList[2] + delta);
-
-        PointList[2] = PointList[2].SetVector(seg.P1.vector);
-        PointList[3] = PointList[3].SetVector(seg.P0.vector);
     }
 
     public override void EndEdit()
@@ -290,7 +364,7 @@ public class CadFigurePicture : CadFigure
     {
         Centroid ret = default;
 
-        List<CadFigure> triangles = TriangleSplitter.Split(this);
+        List<Vector3List> triangles = TriangleSplitter.Split(this);
 
         ret = CadUtil.TriangleListCentroid(triangles);
 
@@ -320,78 +394,4 @@ public class CadFigurePicture : CadFigure
 
         return ret;
     }
-
-    #region Serialize
-    public override void SaveExternalFiles(string fname)
-    {
-        if (OrgFilePathName == null)
-        {
-            return;
-        }
-
-        string name = Path.GetFileName(OrgFilePathName);
-
-        string dpath = FileUtil.GetExternalDataDir(fname);
-
-        Directory.CreateDirectory(dpath);
-
-        string dpathName = Path.Combine(dpath, name);
-
-        File.Copy(OrgFilePathName, dpathName, true);
-
-        FilePathName = name;
-
-        OrgFilePathName = null;
-    }
-
-    public override void LoadExternalFiles(string fname)
-    {
-        string basePath = FileUtil.GetExternalDataDir(fname);
-        string dfname = Path.Combine(basePath, FilePathName);
-
-        mBitmap = new Bitmap(Image.FromFile(dfname));
-
-        mBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-    }
-
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
-        geo.FilePathName = FilePathName;
-        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
-    {
-        if (!(geo is MpPictureGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpPictureGeometricData_v1003 g = (MpPictureGeometricData_v1003)geo;
-        FilePathName = g.FilePathName;
-        mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
-    }
-    #endregion
 }

@@ -127,13 +127,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     private MoveKeyHandler mMoveKeyHandler;
 
-    public string mCurrentFileName;
     public string CurrentFileName
     {
-        get => mCurrentFileName;
+        get => mController.CurrentFileName;
         set
         {
-            mCurrentFileName = value;
+            mController.CurrentFileName = value;
             CaptionFileName = value;
         }
     }
@@ -155,7 +154,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public PlotterViewModel(ICadMainWindow mainWindow)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         CurrentFigCmd = new(this);
         SimpleCmd = new(this);
@@ -183,7 +182,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
 
@@ -231,6 +230,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         if (type == Plotter.Controller.CursorType.TRACKING)
         {
             CursorPosVM.CursorPos = pt;
+            CursorPosVM.CursorPos3 = pt - Controller.LastDownPoint;
         }
         else if (type == Plotter.Controller.CursorType.LAST_DOWN)
         {
@@ -377,12 +377,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void Open()
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         Settings.Load();
         mViewManager.SetupViews();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
     public void Close()

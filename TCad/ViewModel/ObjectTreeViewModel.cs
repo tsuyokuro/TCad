@@ -33,7 +33,7 @@ public class ObjectTreeViewModel
         {
             if (mObjectTree != null)
             {
-                mObjectTree.CheckChanged -= CheckChanged;
+                mObjectTree.StateChanged -= StateChanged;
                 mObjectTree.ItemCommand -= ItemCommand;
             }
 
@@ -41,7 +41,7 @@ public class ObjectTreeViewModel
 
             if (mObjectTree != null)
             {
-                mObjectTree.CheckChanged += CheckChanged;
+                mObjectTree.StateChanged += StateChanged;
                 mObjectTree.ItemCommand += ItemCommand;
             }
         }
@@ -54,7 +54,7 @@ public class ObjectTreeViewModel
         mVMContext = context;
     }
 
-    private void CheckChanged(CadObjTreeItem item)
+    private void StateChanged(CadObjTreeItem item)
     {
         mVMContext.Controller.CurrentFigure =
             TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.CurrentFigure);
@@ -67,7 +67,7 @@ public class ObjectTreeViewModel
         ThreadUtil.RunOnMainThread(() =>
         {
             UpdateTreeViewProc(remakeTree);
-        }, true);
+        }, false);
     }
 
     private void UpdateTreeViewProc(bool remakeTree)

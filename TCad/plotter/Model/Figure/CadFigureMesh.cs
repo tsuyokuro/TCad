@@ -3,7 +3,6 @@ using CadDataTypes;
 using HalfEdgeNS;
 using MyCollections;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigureMesh : CadFigure
+public partial class CadFigureMesh : CadFigure
 {
     public HeModel mHeModel;
 
@@ -74,16 +73,26 @@ public class CadFigureMesh : CadFigure
             int idx = mHeModel.AddVertex(fig.PointList[i]);
         }
 
-        List<CadFigure> figList = TriangleSplitter.Split(fig, 16);
+        List<Vector3List> trList = TriangleSplitter.Split(fig, 16);
 
         HeModelBuilder mb = new HeModelBuilder();
 
         mb.Start(mHeModel);
 
-        for (int i = 0; i < figList.Count; i++)
+        CadVertex v0 = new();
+        CadVertex v1 = new();
+        CadVertex v2 = new();
+
+
+        for (int i = 0; i < trList.Count; i++)
         {
-            CadFigure t = figList[i];
-            mb.AddTriangle(t.PointList[0], t.PointList[1], t.PointList[2]);
+            Vector3List t = trList[i];
+            v0.vector = t[0];
+            v1.vector = t[1];
+            v2.vector = t[2];
+
+
+            mb.AddTriangle(v0, v1, v2);
         }
     }
 
@@ -342,52 +351,4 @@ public class CadFigureMesh : CadFigure
     public override void EndCreate(DrawContext dc)
     {
     }
-
-
-    #region Serialize
-
-    public override MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpMeshGeometricData_v1002 mpGeo = new MpMeshGeometricData_v1002();
-        mpGeo.HeModel = MpHeModel_v1002.Create(mHeModel);
-
-        return mpGeo;
-    }
-
-    public override void GeometricDataFromMp_v1002(MpGeometricData_v1002 mpGeo)
-    {
-        if (!(mpGeo is MpMeshGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpMeshGeometricData_v1002 meshGeo = (MpMeshGeometricData_v1002)mpGeo;
-
-        //mHeModel = meshGeo.HeModel.Restore();
-        //mPointList = mHeModel.VertexStore;
-        SetMesh(meshGeo.HeModel.Restore());
-    }
-
-    public override MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpMeshGeometricData_v1003 mpGeo = new MpMeshGeometricData_v1003();
-        mpGeo.HeModel = MpHeModel_v1003.Create(mHeModel);
-
-        return mpGeo;
-    }
-
-    public override void GeometricDataFromMp_v1003(MpGeometricData_v1003 mpGeo)
-    {
-        if (!(mpGeo is MpMeshGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpMeshGeometricData_v1003 meshGeo = (MpMeshGeometricData_v1003)mpGeo;
-
-        //mHeModel = meshGeo.HeModel.Restore();
-        //mPointList = mHeModel.VertexStore;
-        SetMesh(meshGeo.HeModel.Restore());
-    }
-    #endregion
 }

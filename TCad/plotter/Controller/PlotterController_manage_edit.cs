@@ -150,13 +150,6 @@ public partial class PlotterController
         return opeList;
     }
 
-    public void MoveSelectedPoints(MoveInfo moveInfo)
-    {
-        StartEdit();
-        MoveSelectedPoints(null, moveInfo);
-        EndEdit();
-    }
-
     public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
     {
         List<uint> figIDList = DB.GetSelectedFigIDList();

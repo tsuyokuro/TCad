@@ -97,7 +97,6 @@ public class CommandHandler
             { "clear_layer", ClearLayer },
             { "flip_with_vector", FlipWithVector },
             { "flip_and_copy_with_vector", FlipAndCopyWithVector },
-            { "flip_normal", FlipNormal },
             { "rotate_with_point", RotateWithPoint },
             { "grid_settings", GridSettings },
             { "add_layer", AddLayer },
@@ -376,11 +375,6 @@ public class CommandHandler
         Controller.RotateWithPoint();
     }
 
-    public void FlipNormal()
-    {
-        Controller.FlipNormal();
-        Redraw();
-    }
 
     public void ClearLayer()
     {

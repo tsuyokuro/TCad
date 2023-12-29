@@ -50,12 +50,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.5.124" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.5.124">
+    <PackageReference Include="MessagePack" Version="2.5.129" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.129">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.8.0" />
+    <PackageReference Include="OpenTK" Version="4.8.1" />
   </ItemGroup>
 
   <ItemGroup>

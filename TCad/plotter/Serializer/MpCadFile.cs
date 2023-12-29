@@ -1,6 +1,5 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using MessagePack;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System.IO;
 using System.Linq;
@@ -8,8 +7,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 using JObj = System.Text.Json.Nodes.JsonObject;
+using JNode = System.Text.Json.Nodes.JsonNode;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 using System;
+using System.Xml;
+using System.Runtime.Serialization.Json;
+
+
 
 
 
@@ -74,12 +78,56 @@ public class CadFileException : Exception
     }
 }
 
+public enum SerializeType
+{
+    MP_BIN,
+    JSON,
+}
+
+public class SerializeContext
+{
+    public static SerializeContext MpBin =
+        new SerializeContext(MpCadFile.CurrentVersion,SerializeType.MP_BIN);
+
+    public static SerializeContext Json =
+        new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+
+    public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
+
+    public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
+
+    public SerializeContext(VersionCode version, SerializeType serializeType)
+    {
+        Version = version;
+        SerializeType = serializeType;
+    }
+}
+
+public class DeserializeContext
+{
+    public static DeserializeContext MpBin =
+        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+
+    public static DeserializeContext Json =
+        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+
+    public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
+    public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
+
+    public DeserializeContext(VersionCode version, SerializeType serializeType)
+    {
+        Version = version;
+        SerializeType = serializeType;
+    }
+}
+
 public class MpCadFile
 {
+    public static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 3);
+
     private static byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
     private static byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
     private static string JsonSign = "TCAD_JSON";
-    private static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 3);
 
     static MpCadFile()
     {
@@ -109,19 +157,14 @@ public class MpCadFile
 
         fs.Close();
 
-        DOut.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
+        Log.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
         try
         {
-            if (VersionCode_v1002.Version.Equals(version))
-            {
-                MpCadData_v1002 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1002>(data);
-                return MpUtil_v1002.CreateCadData_v1002(mpdata);
-            }
-            else if (VersionCode_v1003.Version.Equals(version))
+            if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
-                return MpUtil_v1003.CreateCadData_v1003(mpdata);
+                return mpdata.Restore(DeserializeContext.MpBin);
             }
         }
         catch
@@ -174,29 +217,10 @@ public class MpCadFile
 
         try
         {
-            if (version == VersionCode_v1002.Version.Str)
-            {
-                MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
-            }
-            else if (version == VersionCode_v1003.Version.Str)
+            if (version == VersionCode_v1003.Version.Str)
             {
                 MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-
-                CadData cd = new CadData(
-                    mpcd.GetDB(),
-                    mpcd.ViewInfo.WorldScale,
-                    mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                    );
-
-                return cd;
+                return mpcd.Restore(DeserializeContext.Json);
             }
         }
         catch
@@ -257,63 +281,10 @@ public class MpCadFile
         return str;
     }
 
-    public static CadData? LoadJson_OLD(string fname)
-    {
-        StreamReader reader = new StreamReader(fname);
-
-        reader.ReadLine(); // skip "{\n"
-        string header = reader.ReadLine();
-        Regex headerPtn = new Regex(@"version=([0-9a-fA-F\.]+)");
-
-        Match m = headerPtn.Match(header);
-
-        string version = "";
-
-        if (m.Groups.Count >= 1)
-        {
-            version = m.Groups[1].Value;
-        }
-
-        string js = reader.ReadToEnd();
-        reader.Close();
-
-        js = js.Trim();
-        js = js.Substring(0, js.Length - 1);
-        js = "{" + js + "}";
-
-        byte[] bin = MessagePackSerializer.ConvertFromJson(js);
-
-        if (version == VersionCode_v1002.Version.Str)
-        {
-            MpCadData_v1002 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1002>(bin);
-
-            CadData cd = new CadData(
-                mpcd.GetDB(),
-                mpcd.ViewInfo.WorldScale,
-                mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                );
-
-            return cd;
-        }
-        else if (version == VersionCode_v1003.Version.Str)
-        {
-            MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-
-            CadData cd = new CadData(
-                mpcd.GetDB(),
-                mpcd.ViewInfo.WorldScale,
-                mpcd.ViewInfo.PaperSettings.GetPaperPageSize()
-                );
-
-            return cd;
-        }
-
-        return null;
-    }
 
     public static void Save(string fname, CadData cd)
     {
-        var mpcd = MpUtil_v1003.CreateMpCadData_v1003(cd);
+        var mpcd = MpCadData_v1003.Create(SerializeContext.MpBin, cd);
 
         mpcd.MpDB.GarbageCollect();
 
@@ -330,26 +301,23 @@ public class MpCadFile
 
     public static void SaveAsJson(string fname, CadData cd)
     {
-        JObj n = new JObj();
-        JObj header = new JObj();
+        JObj root = new();
+        JObj header = new();
 
         header.Add("type", MpCadFile.JsonSign);
         header.Add("version", MpCadFile.CurrentVersion.Str);
-        n.Add("header", header);
-
-        string headerJs = n.ToString();
-        headerJs = headerJs.Substring(1, headerJs.Length - 2);
+        root.Add("header", header);
 
 
-        var data = MpUtil_v1003.CreateMpCadData_v1003(cd);
+        var data = MpCadData_v1003.Create(SerializeContext.Json, cd);
+
         string dbJs = MessagePackSerializer.SerializeToJson(data);
-        dbJs = dbJs.Trim();
-        dbJs = dbJs.Substring(1, dbJs.Length - 2);
 
-        string ss = @"{" +
-                    headerJs + "," +
-                    @"""body"":" + "{" + dbJs + "}" +
-                    "}";
+
+        JObj body = (JObj)JObj.Parse(dbJs);
+        root.Add("body", body);
+
+        string ss = root.ToIndentedString();
 
         StreamWriter writer = new StreamWriter(fname);
 

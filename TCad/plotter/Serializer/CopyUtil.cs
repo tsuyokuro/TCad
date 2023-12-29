@@ -26,18 +26,15 @@ public class CopyUtil
 {
     private delegate T Deserialize_<T>(ReadOnlyMemory<byte> buffer, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default);
 
-    // List<MpFigure> func(List<CadFigure> figList, bool withChild = false)
-    private static Func<List<CadFigure>, bool, List<MpFigure_v1003>> FigListToMp = MpUtil_v1003.FigureListToMp_v1003;
-    
     private static Deserialize_<List<MpFigure_v1003>> Deserialize = MessagePackSerializer.Deserialize<List<MpFigure_v1003>>;
     
     private static Deserialize_<MpFigure_v1003> DeserializeFig = MessagePackSerializer.Deserialize<MpFigure_v1003>;
 
-    // MpFigure func(CadFigure fig, bool withChild = false)
-    private static Func<CadFigure, bool, MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
+    private static MpFigCreator<MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
 
-    // List<CadFigure> func(List<MpFigure> list)
-    private static Func<List<MpFigure_v1003>, List<CadFigure>> MpToFigList = MpUtil_v1003.FigureListFromMp_v1003;
+    private static SerializeContext SC = SerializeContext.MpBin;
+    private static DeserializeContext DSC = DeserializeContext.MpBin;
+
 
     private static MessagePackSerializerOptions lz4Options
     {
@@ -46,7 +43,7 @@ public class CopyUtil
 
     public static byte[] FigListToBin(List<CadFigure> figList)
     {
-        var mpfigList = FigListToMp(figList, true);
+        var mpfigList = MpUtil.FigureListToMp<MpFigure_v1003>(SC, figList, CreateMpFig, true);
 
         byte[] bin = MessagePackSerializer.Serialize(mpfigList);
 
@@ -57,21 +54,21 @@ public class CopyUtil
     {
         var mpfigList = Deserialize(bin);
 
-        var figList = MpToFigList(mpfigList);
+        var figList = MpUtil.FigureListFromMp<MpFigure_v1003>(DSC, mpfigList);
 
         return figList;
     }
 
     public static byte[] FigToBin(CadFigure fig, bool withChild)
     {
-        var mpf = CreateMpFig(fig, withChild);
+        var mpf = CreateMpFig(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf);
     }
 
     public static CadFigure BinToFig(byte[] bin, CadObjectDB db = null)
     {
         var mpfig = DeserializeFig(bin);
-        CadFigure fig = mpfig.Restore();
+        CadFigure fig = mpfig.Restore(DSC);
 
         if (db != null)
         {
@@ -85,7 +82,7 @@ public class CopyUtil
     #region LZ4
     public static byte[] FigToLz4Bin(CadFigure fig, bool withChild = false)
     {
-        var mpf = CreateMpFig(fig, withChild);
+        var mpf = CreateMpFig(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf, lz4Options);
     }
 
@@ -93,7 +90,7 @@ public class CopyUtil
     {
         var mpfig = DeserializeFig(bin, lz4Options);
 
-        CadFigure fig = mpfig.Restore();
+        CadFigure fig = mpfig.Restore(DSC);
 
         if (db != null)
         {
@@ -106,7 +103,7 @@ public class CopyUtil
     public static void Lz4BinRestoreFig(byte[] bin, CadFigure fig, CadObjectDB db = null)
     {
         var mpfig = DeserializeFig(bin, lz4Options);
-        mpfig.RestoreTo(fig);
+        mpfig.RestoreTo(DSC, fig);
 
         SetChildren(fig, mpfig.ChildIdList, db);
     }
@@ -122,7 +119,7 @@ public class CopyUtil
 
         CadFigure fig = db.GetFigure(mpfig.ID);
 
-        mpfig.RestoreTo(fig);
+        mpfig.RestoreTo(DSC, fig);
 
         SetChildren(fig, mpfig.ChildIdList, db);
     }
@@ -139,7 +136,7 @@ public class CopyUtil
 
     public static byte[] DBToLz4(CadObjectDB db)
     {
-        MpCadObjectDB_v1003 mpdb = MpCadObjectDB_v1003.Create(db);
+        MpCadObjectDB_v1003 mpdb = MpCadObjectDB_v1003.Create(SC, db);
         byte[] bin = MessagePackSerializer.Serialize(mpdb, lz4Options);
 
         return bin;
@@ -148,7 +145,7 @@ public class CopyUtil
     public static CadObjectDB Lz4BinRestoreDB(byte[] bin)
     {
         MpCadObjectDB_v1003 mpdb = MessagePackSerializer.Deserialize<MpCadObjectDB_v1003>(bin, lz4Options);
-        CadObjectDB db = mpdb.Restore();
+        CadObjectDB db = mpdb.Restore(DSC);
 
         return db;
     }

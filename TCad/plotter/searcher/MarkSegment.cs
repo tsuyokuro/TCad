@@ -105,11 +105,11 @@ public struct MarkSegment
 
     public void dump(string name= "MarkSeg")
     {
-        DOut.pl(name + " {");
-        DOut.Indent++;
+        Log.pl(name + " {");
+        Log.Indent++;
         FigSeg.dump("FSegment");
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     public bool Update()

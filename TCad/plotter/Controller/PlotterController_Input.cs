@@ -61,7 +61,7 @@ public partial class PlotterController
         set
         {
             mLastDownPoint = value;
-            ViewIF?.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+            ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
         }
     }
 
@@ -105,15 +105,15 @@ public partial class PlotterController
         set
         {
             mCursorLocked = value;
-            ViewIF.CursorLocked(mCursorLocked);
+            ViewModelIF.CursorLocked(mCursorLocked);
             if (!mCursorLocked)
             {
                 mSpPointList = null;
-                ViewIF.ClosePopupMessage();
+                ViewModelIF.ClosePopupMessage();
             }
             else
             {
-                ViewIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
+                ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
             }
         }
 
@@ -402,8 +402,8 @@ public partial class PlotterController
             CurrentState.MouseMove(pointer, dc, x, y);
         }
 
-        ViewIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        ViewModelIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -431,12 +431,14 @@ public partial class PlotterController
 
         CurrentState.LButtonDown(pointer, dc, x, y);
 
+        UpdateObjectTree(false);
+
         if (CursorLocked)
         {
             CursorLocked = false;
         }
 
-        ViewIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -459,7 +461,7 @@ public partial class PlotterController
 
         CrossCursor.Store();
 
-        ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+        ViewModelIF.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
     }
 
     private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -475,7 +477,7 @@ public partial class PlotterController
 
         CrossCursor.Pos = new vector3_t(x, y, 0);
 
-        ViewIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+        ViewModelIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)
@@ -854,7 +856,7 @@ public partial class PlotterController
         SnapPoint = v;
         CrossCursor.Pos = DC.WorldPointToDevPoint(SnapPoint);
 
-        ViewIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        ViewModelIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
     }
 
     public void AddExtendSnapPoint()

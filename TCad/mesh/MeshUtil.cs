@@ -249,9 +249,9 @@ public class MeshUtil
         vector3_t p1 = mesh.VertexStore[ triangle.VList[1] ].vector;
         vector3_t p2 = mesh.VertexStore[ triangle.VList[2] ].vector;
 
-        vector3_t c1 = CadMath.CrossProduct(p, p0, p1);
-        vector3_t c2 = CadMath.CrossProduct(p, p1, p2);
-        vector3_t c3 = CadMath.CrossProduct(p, p2, p0);
+        vector3_t c1 = CadMath.OuterProduct(p, p0, p1);
+        vector3_t c2 = CadMath.OuterProduct(p, p1, p2);
+        vector3_t c3 = CadMath.OuterProduct(p, p2, p0);
 
         vcompo_t ip12 = CadMath.InnerProduct(c1, c2);
         vcompo_t ip13 = CadMath.InnerProduct(c1, c3);
@@ -317,7 +317,7 @@ public class MeshUtil
         }
         catch (Exception e)
         {
-            DOut.pl(e.Message);
+            Log.pl(e.Message);
             return (null, null);
         }
 

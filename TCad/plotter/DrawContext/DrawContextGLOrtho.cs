@@ -48,7 +48,7 @@ class DrawContextGLOrtho : DrawContextGL
         mUnitPerMilli = 4;
     }
 
-    public override void Active()
+    public override void Activate()
     {
         CalcProjectionMatrix();
     }

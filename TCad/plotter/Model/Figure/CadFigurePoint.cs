@@ -19,7 +19,7 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigurePoint : CadFigure
+public partial class CadFigurePoint : CadFigure
 {
     public CadFigurePoint()
     {
@@ -81,10 +81,6 @@ public class CadFigurePoint : CadFigure
         // NOP
     }
 
-    public override void InvertDir()
-    {
-        // NOP
-    }
 
     private void drawPoint(DrawContext dc, DrawPen pen)
     {

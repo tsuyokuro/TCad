@@ -75,6 +75,12 @@ namespace TCad.ScriptEditor
 
             textEditor.Loaded += TextEditor_Loaded;
 
+
+            BtnCloseWindow.Click += (sender, e) => { Close(); };
+            BtnMinWindow.Click += (sender, e) => { WindowState = WindowState.Minimized; };
+            BtnMaxWindow.Click += (sender, e) => { WindowState = WindowState.Maximized; };
+            BtnRestWindow.Click += (sender, e) => { WindowState = WindowState.Normal; };
+
             ShowRowCol();
         }
 
@@ -149,7 +155,9 @@ namespace TCad.ScriptEditor
                 s += "Script Editor";
             }
 
-            this.Title = s;
+            //this.Title = s;
+
+            CurrentFileName.Text = s;
         }
 
         private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)

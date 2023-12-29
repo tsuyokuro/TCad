@@ -3,6 +3,11 @@ using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
+using Plotter.Serializer.v1003;
+using Plotter.Serializer;
+
+
+
 
 
 
@@ -21,9 +26,15 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter;
 
-public class CadFigurePolyLines : CadFigure
+public partial class CadFigurePolyLines : CadFigure
 {
-    protected bool RestrictionByNormal = false;
+    public bool IsLoop_ = false;
+
+    public override bool IsLoop
+    {
+        set => IsLoop_ = value;
+        get => IsLoop_;
+    }
 
     public CadFigurePolyLines()
     {
@@ -58,18 +69,34 @@ public class CadFigurePolyLines : CadFigure
 
         vector3_t delta = moveInfo.Delta;
 
-        if (!IsSelectedAll() && mPointList.Count > 2 && RestrictionByNormal)
+        bool restrictWithNormal = moveInfo.Restrict.IsOn(MoveRestriction.POLY_LINES_WITH_NORMAL);
+
+        if (!IsSelectedAll() && mPointList.Count > 2 && restrictWithNormal)
         {
+            // 同じ平面上に制限する
+
+            vector3_t normal = CadMath.Normal(StoreList[0].vector, StoreList[1].vector, StoreList[2].vector);
+
             vector3_t vdir = dc.ViewDir;
 
-            vector3_t a = delta;
-            vector3_t b = delta + vdir;
 
-            d = CadMath.CrossPlane(a, b, StoreList[0].vector, Normal);
+            vector3_t a = vector3_t.Zero;
+            vector3_t b = vdir;
 
-            if (!d.IsValid())
+            vector3_t d0 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            a = delta;
+            b = delta + vdir;
+
+            vector3_t d1 = CadMath.CrossPlane(a, b, StoreList[0].vector, normal);
+
+            if (d0.IsValid() && d1.IsValid())
             {
-                vector3_t nvNormal = CadMath.Normal(Normal, vdir);
+                d = d1 - d0;
+            }
+            else
+            {
+                vector3_t nvNormal = CadMath.Normal(normal, vdir);
 
                 vcompo_t ip = CadMath.InnerProduct(nvNormal, delta);
 
@@ -81,7 +108,12 @@ public class CadFigurePolyLines : CadFigure
             d = delta;
         }
 
-        FigUtil.MoveSelectedPointsFromStored(this, dc, moveInfo);
+        MoveInfo mvInfo = moveInfo;
+
+        mvInfo.Delta = d;
+
+
+        FigUtil.MoveSelectedPointsFromStored(this, dc, mvInfo);
 
         mChildList.ForEach(c =>
         {
@@ -135,14 +167,16 @@ public class CadFigurePolyLines : CadFigure
 
         DrawLines(dc, opt, mPointList);
 
-        if (SettingsHolder.Settings.DrawNormal && !Normal.IsZero())
+        if (SettingsHolder.Settings.DrawNormal && mPointList.Count > 2)
         {
             vcompo_t len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
             vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
             vcompo_t arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
 
+            vector3_t normal = CadMath.Normal(PointList[0].vector, PointList[1].vector, PointList[2].vector);
+
             vector3_t np0 = PointList[0].vector;
-            vector3_t np1 = np0 + (Normal * len);
+            vector3_t np1 = np0 + (normal * len);
             dc.Drawing.DrawArrow(dc.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW);
         }
     }
@@ -163,7 +197,6 @@ public class CadFigurePolyLines : CadFigure
     public override void InvertDir()
     {
         mPointList.Reverse();
-        Normal = -Normal;
     }
 
     protected void DrawLines(DrawContext dc, DrawOption opt, VertexList pl)
@@ -176,10 +209,6 @@ public class CadFigurePolyLines : CadFigure
             return;
         }
 
-        if (Normal.IsZero())
-        {
-            Normal = CadUtil.TypicalNormal(pl);
-        }
 
         CadVertex a;
 
@@ -286,9 +315,6 @@ public class CadFigurePolyLines : CadFigure
    public override void EndEdit()
     {
         base.EndEdit();
-        RecalcNormal();
-        //例外ハンドリングテスト用
-        //CadVector v = mPointList[100];
     }
 
     public override Centroid GetCentroid()
@@ -311,30 +337,11 @@ public class CadFigurePolyLines : CadFigure
         return GetPointListCentroid();
     }
 
-    public override void RecalcNormal()
-    {
-        if (PointList.Count == 0)
-        {
-            return;
-        }
-
-        vector3_t prevNormal = Normal;
-
-        vector3_t normal = CadUtil.TypicalNormal(PointList);
-
-        if (CadMath.InnerProduct(prevNormal, normal) < 0)
-        {
-            normal *= -1;
-        }
-
-        Normal = normal;
-    }
-
     private Centroid GetPointListCentroid()
     {
         Centroid ret = default;
 
-        List<CadFigure> triangles = TriangleSplitter.Split(this);
+        List<Vector3List> triangles = TriangleSplitter.Split(this);
 
         ret = CadUtil.TriangleListCentroid(triangles);
 

@@ -189,7 +189,7 @@ public class TestCommands
         }
 
         sw.Stop();
-        DOut.pl(sw.ElapsedMilliseconds.ToString() + " milli sec");
+        Log.pl(sw.ElapsedMilliseconds.ToString() + " milli sec");
     }
 
     private void test010()
@@ -222,9 +222,18 @@ public class TestCommands
             return;
         }
 
-        List<CadFigure> triangles = TriangleSplitter.Split(fig);
+        List<Vector3List> triangles = TriangleSplitter.Split(fig);
 
-        Controller.TempFigureList.AddRange(triangles);
+        foreach (Vector3List triangle in triangles)
+        {
+            CadFigure tfig = CadFigure.Create(CadFigure.Types.POLY_LINES);
+            foreach (vector3_t v in triangle)
+            {
+                tfig.AddPoint(new CadVertex(v));
+            }
+
+            Controller.TempFigureList.Add(tfig);
+        }
     }
 
     private void testMesh()
@@ -506,7 +515,7 @@ public class TestCommands
                     Controller.PageSize.Width,
                     Controller.PageSize.Height);
 
-        DOut.pl(doc.ToString());
+        Log.pl(doc.ToString());
         doc.Save(@"f:\work2\test.svg");
     }
 
@@ -532,16 +541,16 @@ public class TestCommands
         Pen pen2 = dpen2.GdiPen;
         Pen pen3 = dpen3.GdiPen;
 
-        DOut.pl("pen1==pen2: " + ReferenceEquals(pen1, pen2));
-        DOut.pl("pen1==pen3: " + ReferenceEquals(pen1, pen3));
+        Log.pl("pen1==pen2: " + ReferenceEquals(pen1, pen2));
+        Log.pl("pen1==pen3: " + ReferenceEquals(pen1, pen3));
 
 
         SolidBrush br1 = dbr1.GdiBrush;
         SolidBrush br2 = dbr2.GdiBrush;
         SolidBrush br3 = dbr3.GdiBrush;
 
-        DOut.pl("br1==br2: " + ReferenceEquals(pen1, pen2));
-        DOut.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
+        Log.pl("br1==br2: " + ReferenceEquals(pen1, pen2));
+        Log.pl("br1==br3: " + ReferenceEquals(pen1, pen3));
     }
 
     private void Test3()
@@ -590,18 +599,18 @@ public class TestCommands
     public void BeginCB(int mode)
     {
         BeginMode beginMode = (BeginMode)mode;
-        DOut.pl("MeshBegin mode:" + beginMode.ToString());
+        Log.pl("MeshBegin mode:" + beginMode.ToString());
     }
 
     public void EndCB()
     {
-        DOut.pl("MeshEnd");
+        Log.pl("MeshEnd");
     }
 
     public void VertexCB(IntPtr data)
     {
         int vIndex = (int)data;
-        DOut.pl("VertexCB vIndex:" + vIndex);
+        Log.pl("VertexCB vIndex:" + vIndex);
     }
 
     private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
@@ -609,13 +618,13 @@ public class TestCommands
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
                                 ref IntPtr dataOut)
     {
-        DOut.pl("MeshCombine");
+        Log.pl("MeshCombine");
         dataOut = IntPtr.Zero;
     }
 
     void ErrorCB(int err)
     {
-        DOut.pl("MeshError err:" + err);
+        Log.pl("MeshError err:" + err);
     }
 
     private void Test4()
@@ -719,38 +728,12 @@ public class TestCommands
 
     private void Test7()
     {
-        //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-
-        //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        GlyphSlot glyph = fw.GetGlyph('黒');
+        GlyphSlot glyph = fw.GetGlyph('い');
 
         List<vector3_t> cvl = new();
-
-        //--------------
-
-        //List<List<int>> conts;
-        //List<vector3_t> vl;
-
-        //Test7_sub(glyph.Outline, out conts, out vl);
-
-        //cvl.Clear();
-        //for (int i = 0; i < conts.Count; i++)
-        //{
-        //    List<int> cont = conts[i];
-
-        //    cvl.Clear();
-        //    for (int j = 0; j < cont.Count; j++)
-        //    {
-        //        cvl.Add(vl[cont[j]]);
-        //    }
-
-        //    CreatePolyLines(cvl, (vcompo_t)(400.0), true);
-        //}
-
-        //--------------
 
         Tessellator tesse = new();
 
@@ -758,7 +741,7 @@ public class TestCommands
 
         tesse?.Dispose();
 
-        FontPoly cpyFontpoly = new(fontPoly);
+        //FontPoly cpyFontpoly = new(fontPoly);
 
         cvl.Clear();
         for (int i = 0; i < fontPoly.ContourList.Count; i++)
@@ -787,35 +770,6 @@ public class TestCommands
             Controller.CurrentLayer.AddFigure(fig);
         }
 
-        //fontPoly = cpyFontpoly;
-
-        //cvl.Clear();
-        //for (int i = 0; i < fontPoly.ContourList.Count; i++)
-        //{
-        //    List<int> cont = fontPoly.ContourList[i];
-
-        //    cvl.Clear();
-        //    for (int j = 0; j < cont.Count; j++)
-        //    {
-        //        cvl.Add(fontPoly.VertexList[cont[j]]);
-        //    }
-
-        //    CreatePolyLines(cvl, (vcompo_t)(200.0), true);
-        //}
-
-        //if (fontPoly.Mesh != null)
-        //{
-        //    for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
-        //    {
-        //        fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(200.0);
-        //    }
-
-        //    HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
-        //    CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
-        //    fig.SetMesh(hem);
-        //    Controller.CurrentLayer.AddFigure(fig);
-        //}
-
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
@@ -823,41 +777,6 @@ public class TestCommands
         });
     }
 
-    private void Test7_sub(Outline outline,
-        out List<List<int>> cl, out List<vector3_t> vl)
-    {
-        FTVector[] points = outline.Points;
-
-        List<List<int>> contourList = new();
-        List<vector3_t> vertexList = new List<vector3_t>();
-
-        vector3_t cv = new();
-
-        int idx = 0;
-        for (int i = 0; i < outline.ContoursCount; i++)
-        {
-            List<int> contour = new();
-
-            int n = outline.Contours[i];
-            for (; idx <= n;)
-            {
-                FTVector fv = points[idx];
-                cv.X = (vcompo_t)fv.X;
-                cv.Y = (vcompo_t)fv.Y;
-                cv.Z = 0;
-
-                vertexList.Add(cv);
-                contour.Add(idx);
-
-                idx++;
-            }
-
-            contourList.Add(contour);
-        }
-
-        vl = vertexList;
-        cl = contourList;
-    }
 
     private void Test8()
     {
@@ -867,7 +786,7 @@ public class TestCommands
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        FontPoly fontPoly = fw.CreatePoly('の');
+        FontPoly fontPoly = fw.CreatePoly('お');
 
         if (fontPoly.Mesh != null)
         {
@@ -888,7 +807,6 @@ public class TestCommands
             Controller.Redraw();
         });
     }
-
 
     private void CreatePolyLines(List<vector3_t> vl, vcompo_t scale, bool isLoop)
     {
@@ -912,7 +830,7 @@ public class TestCommands
         {
             int name1 = TextureProvider.Instance.GetNew();
             int name2 = TextureProvider.Instance.GetNew();
-            DOut.pl("end");
+            Log.pl("end");
         });
     }
 
@@ -1046,7 +964,7 @@ public class TestCommands
         {
             Controller.Clear();
             Controller.DrawAll();
-            Controller.PushToView();
+            Controller.UpdateView();
         });
     }
 

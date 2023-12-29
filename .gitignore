@@ -3,6 +3,7 @@ filelist.txt
 *.user
 *.sln.docstates
 .vs/
+.vscode/
 *.TMP
 *.cd
 TestResults/

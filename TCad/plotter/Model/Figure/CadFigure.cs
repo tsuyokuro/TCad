@@ -3,10 +3,11 @@
 
 using CadDataTypes;
 using OpenTK.Mathematics;
-using Plotter.Serializer.v1002;
 using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
+using Plotter.Serializer;
+
 
 
 
@@ -94,9 +95,10 @@ public abstract partial class CadFigure
         set;
     }
 
-    public bool IsLoop { get; set; }
-
-    public vector3_t Normal;
+    public virtual bool IsLoop {
+        get => false;
+        set { /* Nop */ }
+    }
 
     public virtual VertexList PointList => mPointList;
 
@@ -225,17 +227,6 @@ public abstract partial class CadFigure
         return fig;
     }
 
-    public virtual void ClearPoints()
-    {
-        mPointList.Clear();
-    }
-
-    public virtual void CopyPoints(CadFigure fig)
-    {
-        if (Locked) return;
-        mPointList.Clear();
-        mPointList.AddRange(fig.mPointList);
-    }
 
     public virtual void AddPoints(VertexList points, int sp, int num)
     {
@@ -256,28 +247,6 @@ public abstract partial class CadFigure
         foreach (CadVertex p in points)
         {
             AddPoint(p);
-        }
-    }
-
-    public virtual void AddPointsReverse(VertexList points)
-    {
-        int cnt = points.Count;
-        int i = cnt - 1;
-
-        for (; i >= 0; i--)
-        {
-            AddPoint(points[i]);
-        }
-    }
-
-    public virtual void AddPointsReverse(VertexList points, int sp)
-    {
-        int cnt = points.Count;
-        int i = cnt - 1 - sp;
-
-        for (; i >= 0; i--)
-        {
-            AddPoint(points[i]);
         }
     }
 
@@ -521,8 +490,6 @@ public abstract partial class CadFigure
         Type = fig.Type;
         IsLoop = fig.IsLoop;
         Locked = fig.Locked;
-        Normal = fig.Normal;
-        //Thickness = fig.Thickness;
 
         mPointList.Clear();
         mPointList.AddRange(fig.mPointList);
@@ -541,7 +508,7 @@ public abstract partial class CadFigure
     #region "Dump" 
     public void SimpleDump(string prefix = nameof(CadFigure))
     {
-        DOut.pl(
+        Log.pl(
             prefix +
             "(" + this.GetHashCode().ToString() + ")" +
             "ID=" + ID.ToString());
@@ -549,41 +516,39 @@ public abstract partial class CadFigure
 
     public void Dump(string prefix = nameof(CadFigure))
     {
-        DOut.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
-        DOut.Indent++;
-        DOut.pl("ID=" + ID.ToString());
+        Log.pl(this.GetType().Name + "(" + this.GetHashCode().ToString() + ") {");
+        Log.Indent++;
+        Log.pl("ID=" + ID.ToString());
 
         string name = Name == null ? "null" : Name.ToString();
 
-        DOut.pl("Name=" + name);
-        DOut.pl("LayerID=" + LayerID.ToString());
-        DOut.pl("Type=" + Type.ToString());
+        Log.pl("Name=" + name);
+        Log.pl("LayerID=" + LayerID.ToString());
+        Log.pl("Type=" + Type.ToString());
 
-        Normal.dump("Normal=");
-
-        DOut.pl("PointList [");
-        DOut.Indent++;
+        Log.pl("PointList [");
+        Log.Indent++;
         foreach (CadVertex point in PointList)
         {
             point.dump("");
         }
-        DOut.Indent--;
-        DOut.pl("]");
+        Log.Indent--;
+        Log.pl("]");
 
 
-        DOut.pl("ParentID=" + (mParent != null ? mParent.ID : 0));
+        Log.pl("ParentID=" + (mParent != null ? mParent.ID : 0));
 
-        DOut.pl("Child [");
-        DOut.Indent++;
+        Log.pl("Child [");
+        Log.Indent++;
         foreach (CadFigure fig in mChildList)
         {
-            DOut.pl("" + fig.ID);
+            Log.pl("" + fig.ID);
         }
-        DOut.Indent--;
-        DOut.pl("]");
+        Log.Indent--;
+        Log.pl("]");
 
-        DOut.Indent--;
-        DOut.pl("}");
+        Log.Indent--;
+        Log.pl("}");
     }
 
     #endregion
@@ -687,11 +652,6 @@ public abstract partial class CadFigure
         return default(Centroid);
     }
 
-    public virtual void RecalcNormal()
-    {
-        Normal = CadUtil.TypicalNormal(PointList);
-    }
-
     public virtual CadSegment GetSegmentAt(int n)
     {
         return FigUtil.GetSegmentAt(this, n);
@@ -701,7 +661,6 @@ public abstract partial class CadFigure
     {
         return FigUtil.GetFigSegmentAt(this, n);
     }
-
 
     public virtual int SegmentCount
     {
@@ -792,7 +751,7 @@ public abstract partial class CadFigure
 
     public virtual void FlipWithPlane(vector3_t p0, vector3_t normal)
     {
-        DOut.plx("in");
+        Log.plx("in");
 
         VertexList vl = PointList;
 
@@ -812,57 +771,8 @@ public abstract partial class CadFigure
             vl[i] = v;
         }
 
-        RecalcNormal();
 
-        DOut.plx("out");
+        Log.plx("out");
     }
 
-    #region Serialize
-    public virtual void SaveExternalFiles(string fname)
-    {
-    }
-
-    public virtual void LoadExternalFiles(string fname)
-    {
-    }
-
-    public virtual MpGeometricData_v1002 GeometricDataToMp_v1002()
-    {
-        MpSimpleGeometricData_v1002 geo = new MpSimpleGeometricData_v1002();
-        geo.PointList = MpUtil_v1002.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public virtual void GeometricDataFromMp_v1002(MpGeometricData_v1002 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1002))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1002 g = (MpSimpleGeometricData_v1002)geo;
-
-        mPointList = MpUtil_v1002.VertexListFromMp(g.PointList);
-    }
-
-
-    public virtual MpGeometricData_v1003 GeometricDataToMp_v1003()
-    {
-        MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
-        geo.PointList = MpUtil_v1003.VertexListToMp(PointList);
-        return geo;
-    }
-
-    public virtual void GeometricDataFromMp_v1003(MpGeometricData_v1003 geo)
-    {
-        if (!(geo is MpSimpleGeometricData_v1003))
-        {
-            return;
-        }
-
-        MpSimpleGeometricData_v1003 g = (MpSimpleGeometricData_v1003)geo;
-
-        mPointList = MpUtil_v1003.VertexListFromMp(g.PointList);
-    }
-    #endregion
 } // End of class CadFigure
