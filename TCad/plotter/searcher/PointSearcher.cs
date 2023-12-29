@@ -292,15 +292,16 @@ public class PointSearcher
             {
                 MarkPoint t = GetMarkPoint(pt, ppt, dx, dy, layer, fig, ptIdx);
 
-                //t.dump();
-
-                XYMatch = t;
+                // 視点に近い方を採用する
+                if (t.PointScrn.Z < XYMatch.PointScrn.Z)
+                {
+                    XYMatch = t;
+                }
 
                 if (!XYMatchSet.Contains(t))
                 {
-                    XYMatchList.Add(XYMatch);
-                    XYMatchSet.Add(XYMatch);
-                    //DOut.pl($"PointSearcher XYMatchList cnt:{XYMatchList.Count}");
+                    XYMatchList.Add(t);
+                    XYMatchSet.Add(t);
                 }
             }
         }
