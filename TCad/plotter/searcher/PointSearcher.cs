@@ -29,9 +29,6 @@ public class PointSearcher
     private MarkPoint YMatch = default;
     private MarkPoint XYMatch = default;
 
-    private List<MarkPoint> XYMatchList = new List<MarkPoint>();
-    private HashSet<MarkPoint> XYMatchSet = new HashSet<MarkPoint>();
-
     public CadCursor Target;    // Cursor(スクリーン座標系)
 
     public vcompo_t Range;        // matchする範囲(スクリーン座標系)
@@ -90,9 +87,6 @@ public class PointSearcher
         YMatch.reset();
         XYMatch.reset();
 
-        XYMatchList.Clear();
-        XYMatchSet.Clear();
-
         IgnoreFigureIDSet.Clear();
     }
 
@@ -113,22 +107,7 @@ public class PointSearcher
 
     public MarkPoint GetXYMatch(int n = -1)
     {
-        if (n == -1)
-        {
-            return XYMatch;
-        }
-
-        if (XYMatchList.Count == 0)
-        {
-            return XYMatch;
-        }
-
-        return XYMatchList[n];
-    }
-
-    public List<MarkPoint> GetXYMatches()
-    {
-        return XYMatchList;
+        return XYMatch;
     }
 
     public vcompo_t Distance()
