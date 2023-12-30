@@ -195,10 +195,6 @@ public class PointSearcher
         }
     }
 
-    //public void Check(DrawContext DC, CadVertex pt)
-    //{
-    //    CheckFigPoint(DC, pt, null, null, 0);
-    //}
 
     public void Check(DrawContext dc, vector3_t pt)
     {
@@ -271,7 +267,7 @@ public class PointSearcher
         {
             if (nx < XMatch.DistanceX || (nx == XMatch.DistanceX && ny < XMatch.DistanceY))
             {
-                XMatch = GetMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
+                XMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
             }
         }
 
@@ -279,7 +275,7 @@ public class PointSearcher
         {
             if (ny < YMatch.DistanceY || (ny == YMatch.DistanceY && nx < YMatch.DistanceX))
             {
-                YMatch = GetMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
+                YMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
             }
         }
 
@@ -288,26 +284,39 @@ public class PointSearcher
             vcompo_t minDist = (XYMatch.DistanceX * XYMatch.DistanceX) + (XYMatch.DistanceY * XYMatch.DistanceY);
             vcompo_t curDist = (dx * dx) + (dy * dy);
 
-            if (curDist <= minDist)
-            {
-                MarkPoint t = GetMarkPoint(pt, ppt, dx, dy, layer, fig, ptIdx);
+            MarkPoint t = CreateMarkPoint(pt, ppt, dx, dy, layer, fig, ptIdx);
 
-                // 視点に近い方を採用する
-                if (t.PointScrn.Z < XYMatch.PointScrn.Z)
+            if (curDist < minDist)
+            {
+                XYMatch = t;
+            }
+            else if (curDist == minDist)
+            {
+                if (
+                       (!XYMatch.IsSelected() && !t.IsSelected()) ||
+                       (XYMatch.IsSelected() && t.IsSelected())
+                   )
+                {
+                    // 視点に近い方を採用する
+                    if (t.PointScrn.Z < XYMatch.PointScrn.Z)
+                    {
+                        XYMatch = t;
+                    }
+                }
+                else if (!XYMatch.IsSelected() && t.IsSelected())
                 {
                     XYMatch = t;
                 }
-
-                if (!XYMatchSet.Contains(t))
+                else if (XYMatch.IsSelected() && !t.IsSelected())
                 {
-                    XYMatchList.Add(t);
-                    XYMatchSet.Add(t);
+                    // 更新しない
                 }
+
             }
         }
     }
 
-    private MarkPoint GetMarkPoint(
+    private MarkPoint CreateMarkPoint(
         vector3_t pt, vector3_t ppt, vcompo_t distx, vcompo_t disty, CadLayer layer, CadFigure fig, int ptIdx)
     {
         MarkPoint mp = default;
