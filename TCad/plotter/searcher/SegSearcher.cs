@@ -29,7 +29,9 @@ public class SegSearcher
         PRIORITY_Y,
     }
 
-    private MarkSegment MarkSeg;
+    private MarkSegment mMatchSeg;
+    public MarkSegment MatchSegment { get => mMatchSeg; }
+
 
     private CadCursor Target;
 
@@ -41,7 +43,7 @@ public class SegSearcher
     {
         get
         {
-            return MarkSeg.FigureID != 0;
+            return mMatchSeg.FigureID != 0;
         }
     }
 
@@ -56,8 +58,8 @@ public class SegSearcher
 
     public void Clean()
     {
-        MarkSeg = default(MarkSegment);
-        MarkSeg.Clean();
+        mMatchSeg = default(MarkSegment);
+        mMatchSeg.Clean();
         CheckPriority = Priority.NONE;
     }
 
@@ -68,7 +70,7 @@ public class SegSearcher
 
     public MarkSegment GetMatch()
     {
-        return MarkSeg;
+        return mMatchSeg;
     }
 
     public void SearchAllLayer(DrawContext dc, CadObjectDB db)
@@ -222,11 +224,11 @@ public class SegSearcher
 
         if (mind < MinDist)
         {
-            MarkSeg.Layer = layer;
-            MarkSeg.FigSeg = fseg;
-            MarkSeg.CrossPoint = p;
-            MarkSeg.CrossPointScrn = dc.WorldPointToDevPoint(p);
-            MarkSeg.Distance = mind;
+            mMatchSeg.Layer = layer;
+            mMatchSeg.FigSeg = fseg;
+            mMatchSeg.CrossPoint = p;
+            mMatchSeg.CrossPointScrn = dc.WorldPointToDevPoint(p);
+            mMatchSeg.Distance = mind;
 
             MinDist = mind;
         }
@@ -288,11 +290,11 @@ public class SegSearcher
         {
             FigureSegment fseg = new FigureSegment(fig, 0, 0, 0);
 
-            MarkSeg.Layer = layer;
-            MarkSeg.FigSeg = fseg;
-            MarkSeg.CrossPoint = cirP;
-            MarkSeg.CrossPointScrn = dc.WorldPointToDevPoint(cirP);
-            MarkSeg.Distance = dist;
+            mMatchSeg.Layer = layer;
+            mMatchSeg.FigSeg = fseg;
+            mMatchSeg.CrossPoint = cirP;
+            mMatchSeg.CrossPointScrn = dc.WorldPointToDevPoint(cirP);
+            mMatchSeg.Distance = dist;
 
             MinDist = dist;
         }
@@ -300,7 +302,7 @@ public class SegSearcher
 
     private void CheckSegs(DrawContext dc, CadLayer layer, CadFigure fig)
     {
-        for (int i=0;i < fig.SegmentCount; i++)
+        for (int i=0; i < fig.SegmentCount; i++)
         {
             FigureSegment seg = fig.GetFigSegmentAt(i);
             CheckSeg(dc, layer, seg);
@@ -316,6 +318,7 @@ public class SegSearcher
             case CadFigure.Types.RECT:
             case CadFigure.Types.DIMENTION_LINE:
             case CadFigure.Types.MESH:
+            case CadFigure.Types.PICTURE:
                 CheckSegs(dc, layer, fig);
                 break;
             case CadFigure.Types.CIRCLE:

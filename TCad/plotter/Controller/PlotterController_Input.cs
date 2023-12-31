@@ -248,7 +248,7 @@ public partial class PlotterController
             mPointSearcher.CheckFigure(sc.DC, CurrentLayer, CurrentFigure);
         }
 
-        sc.MarkPt = mPointSearcher.GetXYMatch();
+        sc.MarkPt = mPointSearcher.XYMatch;
 
         //sc.MarkPt.dump();
 
@@ -309,7 +309,7 @@ public partial class PlotterController
 
         mSegSearcher.SearchAllLayer(sc.DC, mDB);
 
-        sc.MarkSeg = mSegSearcher.GetMatch();
+        sc.MarkSeg = mSegSearcher.MatchSegment;
 
         if (sc.MarkSeg.FigureID == 0)
         {
@@ -546,9 +546,9 @@ public partial class PlotterController
 
     private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si)
     {
-        MarkPoint mxy = mPointSearcher.GetXYMatch();
-        MarkPoint mx = mPointSearcher.GetXMatch();
-        MarkPoint my = mPointSearcher.GetYMatch();
+        MarkPoint mxy = mPointSearcher.XYMatch;
+        MarkPoint mx = mPointSearcher.XMatch;
+        MarkPoint my = mPointSearcher.YMatch;
 
         vector3_t cp = si.Cursor.Pos;
 
@@ -609,7 +609,7 @@ public partial class PlotterController
 
     private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si)
     {
-        MarkSegment markSeg = mSegSearcher.GetMatch();
+        MarkSegment markSeg = mSegSearcher.MatchSegment;
 
         if (mSegSearcher.IsMatch)
         {
@@ -672,13 +672,15 @@ public partial class PlotterController
     {
         if (mPointSearcher.IsXMatch)
         {
-            si.Cursor.Pos.X = mPointSearcher.GetXMatch().PointScrn.X;
+            si.Cursor.Pos.X = mPointSearcher.XMatch.PointScrn.X;
         }
 
         if (mPointSearcher.IsYMatch)
         {
-            si.Cursor.Pos.Y = mPointSearcher.GetYMatch().PointScrn.Y;
+            si.Cursor.Pos.Y = mPointSearcher.YMatch.PointScrn.Y;
         }
+
+        //Log.tpl("mSegSearcher.IsMatch: " + mSegSearcher.IsMatch);
 
         RulerInfo ri = RulerSet.Capture(dc, si.Cursor, SettingsHolder.Settings.LineSnapRange);
 
@@ -689,7 +691,7 @@ public partial class PlotterController
 
             if (mSegSearcher.IsMatch)
             {
-                MarkSegment ms = mSegSearcher.GetMatch();
+                MarkSegment ms = mSegSearcher.MatchSegment;
 
                 if (ms.FigureID != ri.Ruler.Fig.ID)
                 {
@@ -727,7 +729,7 @@ public partial class PlotterController
             new SnapInfo(
                 CrossCursor,
                 SnapPoint,
-                mPointSearcher.Distance()
+                mPointSearcher.Distance
                 );
 
         #region Point search

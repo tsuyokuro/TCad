@@ -157,6 +157,22 @@ public partial class CadFigurePicture : CadFigure
         }
     }
 
+    public override FigureSegment GetFigSegmentAt(int n)
+    {
+        int a = n;
+        int b = (n + 1) % 4;
+        return new FigureSegment(this, n, a, b);
+    }
+
+    public override int SegmentCount
+    {
+        get
+        {
+            return 4;
+        }
+    }
+
+
     public override void Draw(DrawContext dc, DrawOption dp)
     {
         DrawPicture(dc, dp.LinePen);
@@ -240,7 +256,7 @@ public partial class CadFigurePicture : CadFigure
 
         vector3_t delta = moveInfo.Delta;
 
-        if (cnt >= 3)
+        if (cnt >= 2)
         {
             PointList[0] = StoreList[0] + delta;
             PointList[1] = StoreList[1] + delta;

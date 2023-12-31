@@ -25,13 +25,21 @@ namespace Plotter;
 
 public class PointSearcher
 {
-    private MarkPoint XMatch = default;
-    private MarkPoint YMatch = default;
-    private MarkPoint XYMatch = default;
+    private MarkPoint mXMatch = default;
+    public MarkPoint XMatch { get => mXMatch; }
 
-    public CadCursor Target;    // Cursor(スクリーン座標系)
 
-    public vcompo_t Range;        // matchする範囲(スクリーン座標系)
+    private MarkPoint mYMatch = default;
+    public MarkPoint YMatch { get => mYMatch; }
+
+
+    private MarkPoint mXYMatch = default;
+    public MarkPoint XYMatch { get => mXYMatch; }
+
+
+    public CadCursor Target; // Cursor(スクリーン座標系)
+
+    public vcompo_t Range; // matchする範囲(スクリーン座標系)
 
     public bool CheckStorePoint = false;
 
@@ -44,7 +52,7 @@ public class PointSearcher
     {
         get
         {
-            return XMatch.IsValid;
+            return mXMatch.IsValid;
         }
     }
 
@@ -52,7 +60,7 @@ public class PointSearcher
     {
         get
         {
-            return YMatch.IsValid;
+            return mYMatch.IsValid;
         }
     }
 
@@ -60,7 +68,7 @@ public class PointSearcher
     {
         get
         {
-            return XYMatch.IsValid;
+            return mXYMatch.IsValid;
         }
     }
 
@@ -83,9 +91,9 @@ public class PointSearcher
 
     public void Clean()
     {
-        XMatch.reset();
-        YMatch.reset();
-        XYMatch.reset();
+        mXMatch.reset();
+        mYMatch.reset();
+        mXYMatch.reset();
 
         IgnoreFigureIDSet.Clear();
     }
@@ -95,44 +103,32 @@ public class PointSearcher
         Target = cursor;
     }
 
-    public MarkPoint GetXMatch()
+    public vcompo_t Distance 
     {
-        return XMatch;
-    }
-
-    public MarkPoint GetYMatch()
-    {
-        return YMatch;
-    }
-
-    public MarkPoint GetXYMatch(int n = -1)
-    {
-        return XYMatch;
-    }
-
-    public vcompo_t Distance()
-    {
-        vcompo_t ret = vcompo_t.MaxValue;
-        vcompo_t t;
-
-        if (IsXMatch)
+        get
         {
-            ret = (XMatch.PointScrn - Target.Pos).Norm();
-        }
+            vcompo_t ret = vcompo_t.MaxValue;
+            vcompo_t t;
 
-        if (IsYMatch)
-        {
-            t = (YMatch.PointScrn - Target.Pos).Norm();
-            ret = (vcompo_t)Math.Min(t, ret);
-        }
+            if (IsXMatch)
+            {
+                ret = (mXMatch.PointScrn - Target.Pos).Norm();
+            }
 
-        if (IsXYMatch)
-        {
-            t = (XYMatch.PointScrn - Target.Pos).Norm();
-            ret = (vcompo_t)Math.Min(t, ret);
-        }
+            if (IsYMatch)
+            {
+                t = (mYMatch.PointScrn - Target.Pos).Norm();
+                ret = (vcompo_t)Math.Min(t, ret);
+            }
 
-        return ret;
+            if (IsXYMatch)
+            {
+                t = (mXYMatch.PointScrn - Target.Pos).Norm();
+                ret = (vcompo_t)Math.Min(t, ret);
+            }
+
+            return ret;
+        }
     }
 
     public void SearchAllLayer(DrawContext dc, CadObjectDB db)
@@ -244,49 +240,49 @@ public class PointSearcher
 
         if (nx <= Range)
         {
-            if (nx < XMatch.DistanceX || (nx == XMatch.DistanceX && ny < XMatch.DistanceY))
+            if (nx < mXMatch.DistanceX || (nx == mXMatch.DistanceX && ny < mXMatch.DistanceY))
             {
-                XMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
+                mXMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
             }
         }
 
         if (ny <= Range)
         {
-            if (ny < YMatch.DistanceY || (ny == YMatch.DistanceY && nx < YMatch.DistanceX))
+            if (ny < mYMatch.DistanceY || (ny == mYMatch.DistanceY && nx < mYMatch.DistanceX))
             {
-                YMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
+                mYMatch = CreateMarkPoint(pt, ppt, nx, ny, layer, fig, ptIdx);
             }
         }
 
         if (dx <= Range && dy <= Range)
         {
-            vcompo_t minDist = (XYMatch.DistanceX * XYMatch.DistanceX) + (XYMatch.DistanceY * XYMatch.DistanceY);
+            vcompo_t minDist = (mXYMatch.DistanceX * mXYMatch.DistanceX) + (mXYMatch.DistanceY * mXYMatch.DistanceY);
             vcompo_t curDist = (dx * dx) + (dy * dy);
 
             MarkPoint t = CreateMarkPoint(pt, ppt, dx, dy, layer, fig, ptIdx);
 
             if (curDist < minDist)
             {
-                XYMatch = t;
+                mXYMatch = t;
             }
             else if (curDist == minDist)
             {
                 if (
-                       (!XYMatch.IsSelected() && !t.IsSelected()) ||
-                       (XYMatch.IsSelected() && t.IsSelected())
+                       (!mXYMatch.IsSelected() && !t.IsSelected()) ||
+                       (mXYMatch.IsSelected() && t.IsSelected())
                    )
                 {
                     // 視点に近い方を採用する
-                    if (t.PointScrn.Z < XYMatch.PointScrn.Z)
+                    if (t.PointScrn.Z < mXYMatch.PointScrn.Z)
                     {
-                        XYMatch = t;
+                        mXYMatch = t;
                     }
                 }
-                else if (!XYMatch.IsSelected() && t.IsSelected())
+                else if (!mXYMatch.IsSelected() && t.IsSelected())
                 {
-                    XYMatch = t;
+                    mXYMatch = t;
                 }
-                else if (XYMatch.IsSelected() && !t.IsSelected())
+                else if (mXYMatch.IsSelected() && !t.IsSelected())
                 {
                     // 更新しない
                 }
