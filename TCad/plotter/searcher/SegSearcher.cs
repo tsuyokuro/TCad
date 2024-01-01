@@ -49,7 +49,7 @@ public class SegSearcher
 
     public bool CheckStorePoint = false;
 
-    public Priority CheckPriority = Priority.NONE;
+    //public Priority CheckPriority = Priority.NONE;
 
     public void SetRangePixel(DrawContext dc, vcompo_t pixel)
     {
@@ -60,7 +60,7 @@ public class SegSearcher
     {
         mMatchSeg = default(MarkSegment);
         mMatchSeg.Clean();
-        CheckPriority = Priority.NONE;
+        //CheckPriority = Priority.NONE;
     }
 
     public void SetTargetPoint(CadCursor cursor)
@@ -111,27 +111,25 @@ public class SegSearcher
         }
     }
 
-    public void SetCheckPriorityWithSnapInfo(SnapInfo si)
-    {
-        if (si.PriorityMatch == SnapInfo.MatchType.X_MATCH)
-        {
-            CheckPriority = Priority.PRIORITY_X;
-        }
-        else if (si.PriorityMatch == SnapInfo.MatchType.Y_MATCH)
-        {
-            CheckPriority = Priority.PRIORITY_Y;
-        }
-        else
-        {
-            CheckPriority = Priority.NONE;
-        }
-    }
+    //public void SetCheckPriorityWithSnapInfo(SnapInfo si)
+    //{
+    //    if (si.PriorityMatch == SnapInfo.MatchType.X_MATCH)
+    //    {
+    //        CheckPriority = Priority.PRIORITY_X;
+    //    }
+    //    else if (si.PriorityMatch == SnapInfo.MatchType.Y_MATCH)
+    //    {
+    //        CheckPriority = Priority.PRIORITY_Y;
+    //    }
+    //    else
+    //    {
+    //        CheckPriority = Priority.NONE;
+    //    }
+    //}
 
     private void CheckSeg(DrawContext dc, CadLayer layer, FigureSegment fseg)
     {
         CadFigure fig = fseg.Figure;
-        int idxA = fseg.Index0;
-        int idxB = fseg.Index1;
         vector3_t a = fseg.Point0.vector;
         vector3_t b = fseg.Point1.vector;
 
@@ -165,51 +163,29 @@ public class SegSearcher
         vector3_t dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));
         vcompo_t centerDist = (dcenter - Target.Pos).Norm();
 
-        if (CheckPriority == Priority.NONE || centerDist < Range)
+        StackArray<vector3_t> vtbl = default;
+
+        vtbl[0] = cx;
+        vtbl[1] = cy;
+        vtbl.Length = 2;
+
+        for (int i = 0; i < vtbl.Length; i++)
         {
-            StackArray<vector3_t> vtbl = default;
+            vector3_t v = vtbl[i];
 
-            vtbl[0] = cx;
-            vtbl[1] = cy;
-            vtbl.Length = 2;
-
-            for (int i = 0; i < vtbl.Length; i++)
+            if (!v.IsValid())
             {
-                vector3_t v = vtbl[i];
-
-                if (!v.IsValid())
-                {
-                    continue;
-                }
-
-                vector3_t devv = dc.WorldPointToDevPoint(v);
-                vcompo_t td = (devv - Target.Pos).Norm();
-
-                if (td < mind)
-                {
-                    mind = td;
-                    p = v;
-                }
-            }
-        }
-        else
-        {
-            if (CheckPriority == Priority.PRIORITY_X)
-            {
-                p = cx;
-            }
-            else if (CheckPriority == Priority.PRIORITY_Y)
-            {
-                p = cy;
+                continue;
             }
 
-            if (p.IsInvalid())
-            {
-                return;
-            }
+            vector3_t devv = dc.WorldPointToDevPoint(v);
+            vcompo_t td = (devv - Target.Pos).Norm();
 
-            vector3_t devv = dc.WorldPointToDevPoint(p);
-            mind = (devv - Target.Pos).Norm();
+            if (td < mind)
+            {
+                mind = td;
+                p = v;
+            }
         }
 
         if (!p.IsValid())

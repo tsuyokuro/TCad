@@ -19,33 +19,28 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public struct SnapInfo
 {
-    public struct SnapInfo
+    public CadCursor Cursor;
+    public vector3_t SnapPoint;
+
+    public bool IsPointMatch {  get; set; }
+
+    public PointSearcher PointSearcher;
+
+    public SegSearcher SegSearcher;
+
+    public SnapInfo(
+        CadCursor cursor,
+        vector3_t snapPoint,
+        PointSearcher pointSearcher,
+        SegSearcher segSearcher
+        )
     {
-        public enum MatchType
-        {
-            NONE,
-            X_MATCH,
-            Y_MATCH,
-            POINT_MATCH,
-        }
-
-        public CadCursor Cursor;
-        public vector3_t SnapPoint;
-        public vcompo_t Distance;
-
-        public bool IsPointMatch;
-
-        public MatchType PriorityMatch;
-
-        public SnapInfo(CadCursor cursor, vector3_t snapPoint, vcompo_t dist = vcompo_t.MaxValue)
-        {
-            Cursor = cursor;
-            SnapPoint = snapPoint;
-            Distance = dist;
-            IsPointMatch = false;
-            PriorityMatch = MatchType.NONE;
-        }
+        Cursor = cursor;
+        SnapPoint = snapPoint;
+        IsPointMatch = false;
+        PointSearcher = pointSearcher;
+        SegSearcher = segSearcher;
     }
 }

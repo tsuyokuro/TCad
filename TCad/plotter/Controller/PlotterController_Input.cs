@@ -564,7 +564,6 @@ public partial class PlotterController
             cp += distanceX;
 
             si.SnapPoint = dc.DevPointToWorldPoint(cp);
-            si.PriorityMatch = SnapInfo.MatchType.X_MATCH;
         }
 
         if (my.IsValid)
@@ -579,11 +578,6 @@ public partial class PlotterController
             cp += distanceY;
 
             si.SnapPoint = dc.DevPointToWorldPoint(cp);
-
-            if (my.DistanceY < mx.DistanceX)
-            {
-                si.PriorityMatch = SnapInfo.MatchType.Y_MATCH;
-            }
         }
 
         if (mxy.IsValid)
@@ -592,7 +586,6 @@ public partial class PlotterController
             HighlightPointList.Add(new HighlightPointListItem(mxy.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT2)));
             si.SnapPoint = mxy.Point;
             si.IsPointMatch = true;
-            si.PriorityMatch = SnapInfo.MatchType.POINT_MATCH;
 
             cp = dc.WorldPointToDevPoint(mxy.Point);
         }
@@ -609,15 +602,15 @@ public partial class PlotterController
 
     private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si)
     {
-        MarkSegment markSeg = mSegSearcher.MatchSegment;
+        MarkSegment matchSeg = mSegSearcher.MatchSegment;
 
         if (mSegSearcher.IsMatch)
         {
-            if (markSeg.Distance < si.Distance)
+            if (matchSeg.Distance < si.PointSearcher.Distance)
             {
-                HighlightSegList.Add(markSeg);
+                HighlightSegList.Add(matchSeg);
 
-                vector3_t center = markSeg.CenterPoint;
+                vector3_t center = matchSeg.CenterPoint;
 
                 vector3_t t = dc.WorldPointToDevPoint(center);
 
@@ -634,10 +627,10 @@ public partial class PlotterController
                 }
                 else
                 {
-                    si.SnapPoint = markSeg.CrossPoint;
+                    si.SnapPoint = matchSeg.CrossPoint;
                     si.IsPointMatch = true;
 
-                    si.Cursor.Pos = markSeg.CrossPointScrn;
+                    si.Cursor.Pos = matchSeg.CrossPointScrn;
                     si.Cursor.Pos.Z = 0;
 
                     HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
@@ -729,7 +722,8 @@ public partial class PlotterController
             new SnapInfo(
                 CrossCursor,
                 SnapPoint,
-                mPointSearcher.Distance
+                mPointSearcher,
+                mSegSearcher
                 );
 
         #region Point search
@@ -776,7 +770,6 @@ public partial class PlotterController
         mSegSearcher.SetRangePixel(dc, SettingsHolder.Settings.LineSnapRange);
         mSegSearcher.SetTargetPoint(si.Cursor);
         mSegSearcher.CheckStorePoint = SettingsHolder.Settings.SnapToSelfPoint;
-        mSegSearcher.SetCheckPriorityWithSnapInfo(si);
 
         HighlightSegList.Clear();
 

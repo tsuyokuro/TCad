@@ -198,9 +198,12 @@ public partial class CadFigurePicture : CadFigure
         dc.Drawing.DrawLine(linePen, mPointList[3].vector, mPointList[0].vector);
     }
 
-
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
     {
+        CadVertex a = PointList[idxA];
+        CadVertex b = PointList[idxB];
+
+        dc.Drawing.DrawLine(pen, a.vector, b.vector);
     }
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
