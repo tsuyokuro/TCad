@@ -24,6 +24,9 @@ public partial class PlotterController
 {
     private CadOpeFigureSnapShotList mSnapShotList;
 
+    private List<CadFigure> mEditFigList = new List<CadFigure>();
+
+
     public void ClearSelection()
     {
         CurrentFigure = null;
@@ -39,11 +42,13 @@ public partial class PlotterController
 
     public List<CadFigure> StartEdit()
     {
-        EditFigList = DB.GetSelectedFigList();
-        return StartEdit(EditFigList);
+        mEditFigList = DB.GetSelectedFigList();
+        StartEdit(mEditFigList);
+
+        return mEditFigList;
     }
 
-    public List<CadFigure> StartEdit(List<CadFigure> targetList)
+    public void StartEdit(List<CadFigure> targetList)
     {
         mSnapShotList = new CadOpeFigureSnapShotList();
 
@@ -56,8 +61,6 @@ public partial class PlotterController
                 fig.StartEdit();
             }
         }
-
-        return targetList;
     }
 
     public void AbendEdit()
@@ -67,7 +70,7 @@ public partial class PlotterController
 
     public void EndEdit()
     {
-        EndEdit(EditFigList);
+        EndEdit(mEditFigList);
     }
 
     public void EndEdit(List<CadFigure> targetList)
@@ -105,7 +108,7 @@ public partial class PlotterController
 
     public void CancelEdit()
     {
-        foreach (CadFigure fig in EditFigList)
+        foreach (CadFigure fig in mEditFigList)
         {
             if (fig != null)
             {

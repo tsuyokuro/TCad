@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using TCad.Controls;
 
 using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
+using System.Text;
+
 
 
 
@@ -180,6 +182,10 @@ public class ControllerState
     public virtual void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
     public virtual void Cancel() { }
+
+    public virtual void MoveKeyDown(MoveInfo moveInfo, bool isStart) { }
+
+    public virtual void MoveKeyUp() { }
 }
 
 /// <summary>
@@ -320,6 +326,10 @@ public class CreateFigureState : ControllerState
 /// </summary>
 public class SelectingState : ControllerState
 {
+    private bool EditStarted = false;
+    private List<CadFigure> EditFigList = null;
+
+
     public override ControllerStates State
     {
         get => ControllerStates.SELECT;
@@ -373,6 +383,44 @@ public class SelectingState : ControllerState
 
     public override void Cancel()
     {
+    }
+
+    public override void MoveKeyDown(MoveInfo moveInfo, bool isStart)
+    {
+        if (isStart)
+        {
+            EditFigList = Ctrl.DB.GetSelectedFigList();
+            if (EditFigList != null && EditFigList.Count > 0)
+            {
+                EditStarted = true;
+                Ctrl.StartEdit(EditFigList);
+            }
+        }
+
+
+        if (EditStarted)
+        {
+            Ctrl.MovePointsFromStored(EditFigList, moveInfo);
+            Ctrl.Redraw();
+        }
+        else
+        {
+            vector3_t p = Ctrl.GetCursorPos();
+            Ctrl.SetCursorWoldPos(p + moveInfo.Delta);
+            Ctrl.Redraw();
+        }
+    }
+
+    public override void MoveKeyUp()
+    {
+        if (EditStarted)
+        {
+            Ctrl.EndEdit(EditFigList);
+
+            EditFigList = null;
+            EditStarted = false;
+        }
+        Ctrl.Redraw();
     }
 }
 

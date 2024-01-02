@@ -28,8 +28,6 @@ public class MoveKeyHandler
 
     public bool IsStarted;
 
-    private List<CadFigure> EditFigList;
-
     private vector3_t Delta = default;
 
     public MoveKeyHandler(PlotterController controller)
@@ -41,26 +39,24 @@ public class MoveKeyHandler
     {
         if (IsStarted)
         {
-            Controller.EndEdit();
+            Controller.CurrentState.MoveKeyUp();
         }
 
         IsStarted = false;
         Delta = vector3_t.Zero;
-        EditFigList = null;
     }
 
     public void MoveKeyDown()
     {
-        if (Controller.GetSelectedFigureList().Count == 0)
-        {
-            return;
-        }
+        MoveInfo moveInfo = new MoveInfo();
 
         if (!IsStarted)
         {
-            EditFigList = Controller.StartEdit();
             Delta = vector3_t.Zero;
             IsStarted = true;
+            moveInfo.Delta = Delta;
+
+            Controller.CurrentState.MoveKeyDown(moveInfo, true);
         }
 
         bool moveLittle = CadKeyboard.IsKeyPressed(System.Windows.Forms.Keys.ShiftKey);
@@ -97,23 +93,8 @@ public class MoveKeyHandler
             Delta += wy;
         }
 
-        MoveInfo moveInfo = new MoveInfo();
         moveInfo.Delta = Delta;
 
-
-        if (Controller.State == ControllerStates.SELECT)
-        {
-            if (EditFigList != null && EditFigList.Count > 0)
-            {
-                Controller.MovePointsFromStored(EditFigList, moveInfo);
-                Controller.Redraw();
-            }
-            else
-            {
-                vector3_t p = Controller.GetCursorPos();
-                Controller.SetCursorWoldPos(p + Delta);
-                Controller.Redraw();
-            }
-        }
+        Controller.CurrentState.MoveKeyDown(moveInfo, false);
     }
 }

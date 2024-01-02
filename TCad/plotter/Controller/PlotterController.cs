@@ -82,7 +82,6 @@ public partial class PlotterController
 
     public HistoryManager HistoryMan = null;
 
-    private List<CadFigure> EditFigList = new List<CadFigure>();
 
     public bool ContinueCreate { set; get; } = true;
 
@@ -127,7 +126,7 @@ public partial class PlotterController
         get => StateMachine.CurrentStateID;
     }
 
-    private ControllerState CurrentState
+    public ControllerState CurrentState
     {
         get => StateMachine.CurrentState;
     }
