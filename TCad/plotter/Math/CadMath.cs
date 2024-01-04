@@ -561,6 +561,15 @@ public partial class CadMath
         return v.Norm();
     }
 
+    public static vcompo_t SegNormNZ(vector3_t a, vector3_t b)
+    {
+        a.Z = 0;
+        b.Z = 0;
+
+        vector3_t v = b - a;
+        return v.Norm();
+    }
+
     /// <summary>
     /// 点aに最も近い平面上の点を求める
     /// </summary>

@@ -235,8 +235,8 @@ public class PointSearcher
         CrossInfo cix = CadMath.PerpCrossLine(Target.Pos, Target.Pos + Target.DirX, ppt);
         CrossInfo ciy = CadMath.PerpCrossLine(Target.Pos, Target.Pos + Target.DirY, ppt);
 
-        vcompo_t nx = (ppt - ciy.CrossPoint).Norm(); // Cursor Y軸からの距離
-        vcompo_t ny = (ppt - cix.CrossPoint).Norm(); // Cursor X軸からの距離
+        vcompo_t nx = CadMath.SegNormNZ(ppt, ciy.CrossPoint); // Cursor Y軸からの距離
+        vcompo_t ny = CadMath.SegNormNZ(ppt, cix.CrossPoint); // Cursor X軸からの距離
 
         if (nx <= Range)
         {

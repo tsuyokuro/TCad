@@ -111,22 +111,6 @@ public class SegSearcher
         }
     }
 
-    //public void SetCheckPriorityWithSnapInfo(SnapInfo si)
-    //{
-    //    if (si.PriorityMatch == SnapInfo.MatchType.X_MATCH)
-    //    {
-    //        CheckPriority = Priority.PRIORITY_X;
-    //    }
-    //    else if (si.PriorityMatch == SnapInfo.MatchType.Y_MATCH)
-    //    {
-    //        CheckPriority = Priority.PRIORITY_Y;
-    //    }
-    //    else
-    //    {
-    //        CheckPriority = Priority.NONE;
-    //    }
-    //}
-
     private void CheckSeg(DrawContext dc, CadLayer layer, FigureSegment fseg)
     {
         CadFigure fig = fseg.Figure;
@@ -160,32 +144,42 @@ public class SegSearcher
         vector3_t p = VectorExt.InvalidVector3;
         vcompo_t mind = vcompo_t.MaxValue;
 
-        vector3_t dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));
-        vcompo_t centerDist = (dcenter - Target.Pos).Norm();
+        vector3_t centerP = CadMath.CenterPoint(a, b);
+        vector3_t dcenter = dc.WorldPointToDevPoint(centerP);
+        vcompo_t centerDist = CadMath.SegNormNZ(dcenter, Target.Pos);
 
-        StackArray<vector3_t> vtbl = default;
-
-        vtbl[0] = cx;
-        vtbl[1] = cy;
-        vtbl.Length = 2;
-
-        for (int i = 0; i < vtbl.Length; i++)
+        if (centerDist >= Range)
         {
-            vector3_t v = vtbl[i];
+            StackArray<vector3_t> vtbl = default;
 
-            if (!v.IsValid())
+            vtbl[0] = cx;
+            vtbl[1] = cy;
+            vtbl.Length = 2;
+
+            for (int i = 0; i < vtbl.Length; i++)
             {
-                continue;
-            }
+                vector3_t v = vtbl[i];
 
-            vector3_t devv = dc.WorldPointToDevPoint(v);
-            vcompo_t td = (devv - Target.Pos).Norm();
+                if (!v.IsValid())
+                {
+                    continue;
+                }
 
-            if (td < mind)
-            {
-                mind = td;
-                p = v;
+                vector3_t devv = dc.WorldPointToDevPoint(v);
+
+                vcompo_t td = CadMath.SegNormNZ(devv, Target.Pos);
+
+                if (td < mind)
+                {
+                    mind = td;
+                    p = v;
+                }
             }
+        }
+        else
+        {
+            p = centerP;
+            mind = centerDist;
         }
 
         if (!p.IsValid())
@@ -198,7 +192,24 @@ public class SegSearcher
             return;
         }
 
-        if (mind < MinDist)
+        bool replace = false;
+
+        if (mind == MinDist)
+        {
+            vcompo_t newZ = dc.WorldPointToDevPoint(p).Z;
+            vcompo_t currentZ = mMatchSeg.CrossPointScrn.Z;
+
+            if (newZ < currentZ)
+            {
+                replace = true;
+            }
+        }
+        else if (mind < MinDist)
+        {
+            replace = true;
+        }
+
+        if (replace)
         {
             mMatchSeg.Layer = layer;
             mMatchSeg.FigSeg = fseg;
