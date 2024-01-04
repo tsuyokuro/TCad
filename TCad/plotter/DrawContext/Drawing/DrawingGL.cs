@@ -197,6 +197,7 @@ public class DrawingGL : IDrawing
 
         int stride = Marshal.SizeOf(typeof(VboVertex));
 
+
         int vCnt = vboVertices.Count;
         int vertexBufferId = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
@@ -206,8 +207,11 @@ public class DrawingGL : IDrawing
             {
                 GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
             }
+
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(vector3_t));
         }
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
 
         int idxCnt = indexes.Count;
         int idxBufferId = GL.GenBuffer();
@@ -219,21 +223,16 @@ public class DrawingGL : IDrawing
                 GL.BufferData(BufferTarget.ElementArrayBuffer, idxCnt * sizeof(int), (nint)ptr, BufferUsageHint.StaticDraw);
             }
         }
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
 
         GL.EnableClientState(ArrayCap.VertexArray);
         GL.EnableClientState(ArrayCap.NormalArray);
 
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
-        unsafe
-        {
-            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
-            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(vector3_t));
-        }
 
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId);
         GL.DrawElements(BeginMode.Triangles, indexes.Count, DrawElementsType.UnsignedInt, 0);
 
+
+        // 後処理
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 

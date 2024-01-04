@@ -200,6 +200,7 @@ public partial class MainWindow : Window, ICadMainWindow
         TextureProvider.Instance.RemoveAll();
         FontShader.GetInstance().Dispose();
         ImageShader.GetInstance().Dispose();
+        WireFrameShader.GetInstance().Dispose();
 
         Glu.Dispose();
     }
@@ -215,6 +216,8 @@ public partial class MainWindow : Window, ICadMainWindow
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         ImageRenderer.Provider.Get();
+
+        WireFrameShader.GetInstance();
 
         Log.plx("out");
     }
