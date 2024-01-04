@@ -62,7 +62,7 @@ class DrawContextGLOrtho : DrawContextGL
 
         #region ModelView
         GL.MatrixMode(MatrixMode.Modelview);
-        GL.LoadMatrix(ref mViewMatrix);
+        GL.LoadMatrix(ref mModelViewMatrix);
         #endregion
 
         #region Projection            

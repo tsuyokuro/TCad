@@ -76,9 +76,9 @@ public abstract class DrawContext : IDisposable
     public virtual vector3_t ViewDir => mViewDir;
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
-    protected matrix4_t mViewMatrix = default;
-    protected matrix4_t ViewMatrix => mViewMatrix;
-    protected ref matrix4_t ViewMatrixRef => ref mViewMatrix;
+    protected matrix4_t mModelViewMatrix = default;
+    protected matrix4_t ModelViewMatrix => mModelViewMatrix;
+    protected ref matrix4_t ModelViewMatrixRef => ref mModelViewMatrix;
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -250,7 +250,7 @@ public abstract class DrawContext : IDisposable
     {
         vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
 
-        vector4_t sv = wv * mViewMatrix;
+        vector4_t sv = wv * mModelViewMatrix;
         vector4_t pv = sv * mProjectionMatrix;
 
         vector4_t dv;
@@ -317,9 +317,9 @@ public abstract class DrawContext : IDisposable
     protected void CalcViewMatrix()
     {
         //mViewMatrix = matrix4_t.Scale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
-        mViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
+        mModelViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
         //mViewMatrixInv = mViewMatrix.Invert();
-        mViewMatrixInv = mViewMatrix.Inv();
+        mViewMatrixInv = mModelViewMatrix.Inv();
     }
 
     public void CopyProjectionMetrics(DrawContext dc)
@@ -344,7 +344,7 @@ public abstract class DrawContext : IDisposable
 
     public void CopyViewMatrix(DrawContext dc)
     {
-        mViewMatrix = dc.mViewMatrix;
+        mModelViewMatrix = dc.mModelViewMatrix;
         mViewMatrixInv = dc.mViewMatrixInv;
     }
 
@@ -384,7 +384,7 @@ public abstract class DrawContext : IDisposable
         t.dump("ViewDir");
 
         Log.pl("ViewMatrix");
-        mViewMatrix.dump();
+        mModelViewMatrix.dump();
 
         Log.pl("ProjectionMatrix");
         mProjectionMatrix.dump();

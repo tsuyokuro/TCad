@@ -50,7 +50,7 @@ class DrawContextGLPers : DrawContextGL
 
 
         GL.MatrixMode(MatrixMode.Modelview);
-        GL.LoadMatrix(ref mViewMatrix);
+        GL.LoadMatrix(ref mModelViewMatrix);
 
         GL.MatrixMode(MatrixMode.Projection);
         GL.LoadMatrix(ref mProjectionMatrix);
@@ -263,7 +263,7 @@ class DrawContextGLPers : DrawContextGL
     {
         vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
 
-        vector4_t sv = wv * mViewMatrix;
+        vector4_t sv = wv * mModelViewMatrix;
         vector4_t pv = sv * mProjectionMatrix;
 
         vector4_t dv;
