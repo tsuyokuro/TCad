@@ -338,6 +338,15 @@ public partial class CadFigureMesh : CadFigure
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
     {
+        Log.tpl($"idxA:{idxA} idxB:{idxB}");
+
+        CadVertex a = PointList[idxA];
+        CadVertex b = PointList[idxB];
+
+        vcompo_t shift = dc.DevSizeToWoldSize((vcompo_t)(0.11));
+        vector3_t sv = -dc.ViewDir * shift;
+
+        dc.Drawing.DrawLine(pen, a.vector + sv, b.vector + sv);
     }
 
     public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)

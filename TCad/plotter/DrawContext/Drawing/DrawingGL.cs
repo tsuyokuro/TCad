@@ -72,6 +72,7 @@ public class DrawingGL : IDrawing
     public void DrawLine(DrawPen pen, vector3_t a, vector3_t b)
     {
         GL.Color4(pen.Color4);
+        GL.LineWidth(pen.Width);
 
         GL.Begin(PrimitiveType.LineStrip);
 
@@ -1181,7 +1182,7 @@ public class DrawingGL : IDrawing
 
     private vector3_t GetShiftForOutLine()
     {
-        vcompo_t shift = DC.DevSizeToWoldSize((vcompo_t)(0.9));
+        vcompo_t shift = DC.DevSizeToWoldSize((vcompo_t)(0.1));
         vector3_t vv = -DC.ViewDir * shift;
 
         return vv;

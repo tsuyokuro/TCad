@@ -2,6 +2,8 @@
 using CadDataTypes;
 using OpenTK.Mathematics;
 using static Plotter.Controller.PlotterController;
+using System;
+
 
 
 
@@ -194,7 +196,7 @@ public class SegSearcher
 
         bool replace = false;
 
-        if (mind == MinDist)
+        if (Math.Abs(mind - MinDist) < (vcompo_t)0.1)
         {
             vcompo_t newZ = dc.WorldPointToDevPoint(p).Z;
             vcompo_t currentZ = mMatchSeg.CrossPointScrn.Z;

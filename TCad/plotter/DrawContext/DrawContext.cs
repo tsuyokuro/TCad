@@ -56,15 +56,15 @@ public abstract class DrawContext : IDisposable
     public vector3_t LookAt => mLookAt;
 
     // 投影面までの距離
-    protected vcompo_t mProjectionNear = (vcompo_t)(0.1);
+    protected vcompo_t mProjectionNear = (vcompo_t)0.1;
     protected vcompo_t ProjectionNear => mProjectionNear;
 
     // 視野空間の遠方側クリップ面までの距離
-    protected vcompo_t mProjectionFar = (vcompo_t)(2000.0);
+    protected vcompo_t mProjectionFar = (vcompo_t)2000.0;
     protected vcompo_t ProjectionFar => mProjectionFar;
 
     // 画角 大きければ広角レンズ、小さければ望遠レンズ
-    protected vcompo_t mFovY = (vcompo_t)Math.PI / 4;
+    protected vcompo_t mFovY = (vcompo_t)(Math.PI / 4.0);
     protected vcompo_t FovY => mFovY;
 
     // 上を示す Vector

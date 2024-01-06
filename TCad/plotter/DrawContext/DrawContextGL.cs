@@ -23,9 +23,9 @@ namespace Plotter;
 
 public abstract class DrawContextGL : DrawContext
 {
-    public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)(250.0);
-    public const vcompo_t DEFAULT_NEAR = (vcompo_t)(0.1);
-    public const vcompo_t DEFAULT_FAR = 2000;
+    public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)250.0;
+    public const vcompo_t DEFAULT_NEAR = (vcompo_t)0.1;
+    public const vcompo_t DEFAULT_FAR = (vcompo_t)2000.0;
 
     protected Control ViewCtrl;
 

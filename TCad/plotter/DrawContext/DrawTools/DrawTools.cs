@@ -133,6 +133,8 @@ public class DrawTools : IDisposable
             PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
         }
 
+        PenTbl[PEN_MATCH_SEG].Width = 2;
+
         for (int i = 0; i < BRUSH_TBL_SIZE; i++)
         {
             BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
