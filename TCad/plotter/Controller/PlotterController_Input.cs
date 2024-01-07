@@ -757,10 +757,9 @@ public partial class PlotterController
         if (SettingsHolder.Settings.SnapToPoint)
         {
             PointSnap(dc);
-            si = EvalPointSearcher(dc, si);
-
-            //DOut.tpl($"si.si.PriorityMatch: {si.PriorityMatch}");
         }
+
+        si = EvalPointSearcher(dc, si);
 
         #endregion
 

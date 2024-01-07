@@ -782,6 +782,7 @@ public class DrawingGL : IDrawing
         vector3_t p1;
 
         GL.LineWidth(1);
+        GL.Disable(EnableCap.DepthTest);
 
         GL.Begin(PrimitiveType.Lines);
 
