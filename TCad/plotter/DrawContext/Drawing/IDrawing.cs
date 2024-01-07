@@ -95,6 +95,8 @@ public interface IDrawing : IDisposable
 
     void DrawCrossCursorScrn(CadCursor pp, DrawPen pen);
 
+    void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize);
+
     void DrawRectScrn(DrawPen pen, vector3_t p0, vector3_t p1);
 
     void DrawCrossScrn(DrawPen pen, vector3_t p, vcompo_t size);

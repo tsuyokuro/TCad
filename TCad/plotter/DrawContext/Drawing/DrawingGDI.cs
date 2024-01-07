@@ -458,15 +458,29 @@ public class DrawingGDI : IDrawing
 
     public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
     {
-        vcompo_t size = (vcompo_t)Math.Max(DC.ViewWidth, DC.ViewHeight);
+        DrawCrossCursorScrn(pp, pen, -1, -1);
+    }
 
-        vector3_t p0 = pp.Pos - (pp.DirX * size);
-        vector3_t p1 = pp.Pos + (pp.DirX * size);
+    public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize)
+    {
+        if (xsize == -1)
+        {
+            xsize = DC.ViewWidth;
+        }
+
+        if (ysize == -1)
+        {
+            ysize = DC.ViewHeight;
+        }
+
+
+        vector3_t p0 = pp.Pos - (pp.DirX * xsize);
+        vector3_t p1 = pp.Pos + (pp.DirX * xsize);
 
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
 
-        p0 = pp.Pos - (pp.DirY * size);
-        p1 = pp.Pos + (pp.DirY * size);
+        p0 = pp.Pos - (pp.DirY * ysize);
+        p1 = pp.Pos + (pp.DirY * ysize);
 
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
     }

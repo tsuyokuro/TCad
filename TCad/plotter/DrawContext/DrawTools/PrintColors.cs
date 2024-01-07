@@ -31,6 +31,7 @@ public class PrintColors : ColorSet
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.Black;
         PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.Black;
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.Gray;
+        PenColorTbl[DrawTools.PEN_CROSS_CURSOR2] = Color.Gray;
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.Black;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.Black;
         PenColorTbl[DrawTools.PEN_POINT_HIGHLIGHT] = Color.Black;

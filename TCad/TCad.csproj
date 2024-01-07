@@ -59,7 +59,11 @@
     <None Remove="Fonts\mplus-1m-regular.ttf" />
     <None Remove="Fonts\mplus-1m-thin.ttf" />
     <None Remove="Resources\BaseScript.py" />
+    <None Remove="Resources\Cursors\cross_bk.cur" />
+    <None Remove="Resources\Cursors\cross_wt.cur" />
     <None Remove="Resources\Cursors\dot.cur" />
+    <None Remove="Resources\Cursors\dot_bk.cur" />
+    <None Remove="Resources\Cursors\dot_wt.cur" />
     <None Remove="Resources\Cursors\mini_cross.cur" />
     <None Remove="Resources\Cursors\null.cur" />
   </ItemGroup>
@@ -79,7 +83,11 @@
     <Resource Include="Fonts\mplus-1m-light.ttf" />
     <Resource Include="Fonts\mplus-1m-regular.ttf" />
     <Resource Include="Fonts\mplus-1m-thin.ttf" />
+    <Resource Include="Resources\Cursors\cross_bk.cur" />
+    <Resource Include="Resources\Cursors\cross_wt.cur" />
     <Resource Include="Resources\Cursors\dot.cur" />
+    <Resource Include="Resources\Cursors\dot_bk.cur" />
+    <Resource Include="Resources\Cursors\dot_wt.cur" />
     <Resource Include="Resources\Cursors\mini_cross.cur" />
     <Resource Include="Resources\Cursors\null.cur" />
   </ItemGroup>

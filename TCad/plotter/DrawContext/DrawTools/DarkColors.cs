@@ -31,6 +31,7 @@ public class DarkColors : ColorSet
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.White;
         PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.FromArgb(32, 64, 64);
+        PenColorTbl[DrawTools.PEN_CROSS_CURSOR2] = Color.FromArgb(48, 128, 96);
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.White;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.CadetBlue;
         PenColorTbl[DrawTools.PEN_POINT_HIGHLIGHT] = Color.Orange;

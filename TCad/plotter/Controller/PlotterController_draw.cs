@@ -79,6 +79,8 @@ public partial class PlotterController
         DrawAccordingState(dc);
 
         DrawTop(dc);
+
+        DrawCrossCursorShort(dc);
     }
 
     public void DrawFiguresRaw(DrawContext dc)
@@ -330,6 +332,11 @@ public partial class PlotterController
                 CrossCursor.Pos,
                 ControllerConst.CURSOR_LOCK_MARK_SIZE);
         }
+    }
+
+    private void DrawCrossCursorShort(DrawContext dc)
+    {
+        dc.Drawing.DrawCrossCursorScrn(CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
     }
 
     private void DrawAccordingState(DrawContext dc)

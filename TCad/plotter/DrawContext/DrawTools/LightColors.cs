@@ -31,6 +31,7 @@ public class LightColors : ColorSet
         PenColorTbl[DrawTools.PEN_DEFAULT] = Color.Black;
         PenColorTbl[DrawTools.PEN_SELECTED_POINT] = Color.FromArgb(128, 255, 0);
         PenColorTbl[DrawTools.PEN_CROSS_CURSOR] = Color.FromArgb(64, 192, 192);
+        PenColorTbl[DrawTools.PEN_CROSS_CURSOR2] = Color.FromArgb(51, 153, 153);
         PenColorTbl[DrawTools.PEN_DEFAULT_FIGURE] = Color.Black;
         PenColorTbl[DrawTools.PEN_TEMP_FIGURE] = Color.CadetBlue;
         PenColorTbl[DrawTools.PEN_POINT_HIGHLIGHT] = Color.Orange;

@@ -61,8 +61,9 @@ public class DrawTools : IDisposable
     public const int PEN_COMPASS_Z = 32;
     public const int PEN_MESH_EDGE_LINE = 33;
     public const int PEN_CURRENT_FIG_SELECTED_POINT = 34;
+    public const int PEN_CROSS_CURSOR2 = 35;
 
-    public const int PEN_TBL_SIZE = 35;
+    public const int PEN_TBL_SIZE = 36;
 
 
     public const int BRUSH_DEFAULT = 1;

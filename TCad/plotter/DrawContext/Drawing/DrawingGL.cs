@@ -1248,10 +1248,25 @@ public class DrawingGL : IDrawing
 
     public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
     {
+        DrawCrossCursorScrn(pp, pen, -1, -1);
+    }
+
+    public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize)
+    {
         vcompo_t size = (vcompo_t)Math.Max(DC.ViewWidth, DC.ViewHeight);
 
-        vector3_t p0 = pp.Pos - (pp.DirX * size);
-        vector3_t p1 = pp.Pos + (pp.DirX * size);
+        if (xsize == -1)
+        {
+            xsize = size;
+        }
+
+        if (ysize == -1)
+        {
+            ysize = size;
+        }
+
+        vector3_t p0 = pp.Pos - (pp.DirX * xsize);
+        vector3_t p1 = pp.Pos + (pp.DirX * xsize);
 
         p0 = DC.DevPointToWorldPoint(p0);
         p1 = DC.DevPointToWorldPoint(p1);
@@ -1260,18 +1275,16 @@ public class DrawingGL : IDrawing
 
         GL.Begin(PrimitiveType.Lines);
 
-        //DrawLine(pen, p0, p1);
         GL.Color4(pen.Color4);
         GL.Vertex3(p0);
         GL.Vertex3(p1);
 
-        p0 = pp.Pos - (pp.DirY * size);
-        p1 = pp.Pos + (pp.DirY * size);
+        p0 = pp.Pos - (pp.DirY * ysize);
+        p1 = pp.Pos + (pp.DirY * ysize);
 
         p0 = DC.DevPointToWorldPoint(p0);
         p1 = DC.DevPointToWorldPoint(p1);
 
-        //DrawLine(pen, p0, p1);
         GL.Vertex3(p0);
         GL.Vertex3(p1);
 
@@ -1279,6 +1292,8 @@ public class DrawingGL : IDrawing
 
         GL.Enable(EnableCap.DepthTest);
     }
+
+
 
     public void DrawMarkCursor(DrawPen pen, vector3_t p, vcompo_t pix_size)
     {

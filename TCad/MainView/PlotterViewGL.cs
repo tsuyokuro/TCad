@@ -49,7 +49,8 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private MyEventHandler mEventSequencer;
 
-    private Cursor PointCursor;
+    private Cursor PointCursorWhite;
+    private Cursor PointCursorBlack;
 
 
     public DrawContext DrawContext => mDrawContext;
@@ -130,12 +131,31 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     protected void SetupCursor()
     {
         StreamResourceInfo si = System.Windows.Application.GetResourceStream(
-            new Uri("/Resources/Cursors/mini_cross.cur", UriKind.Relative));
+            new Uri("/Resources/Cursors/dot_wt.cur", UriKind.Relative));
 
-        PointCursor = new Cursor(si.Stream);
+        PointCursorWhite = new Cursor(si.Stream);
 
-        base.Cursor = PointCursor;
+
+        si = System.Windows.Application.GetResourceStream(
+            new Uri("/Resources/Cursors/dot_bk.cur", UriKind.Relative));
+
+        PointCursorBlack = new Cursor(si.Stream);
+
+        SetPointCursor();
     }
+
+    private void SetPointCursor()
+    {
+        if (SettingsHolder.Settings.DrawMode == DrawModes.DARK)
+        {
+            base.Cursor = PointCursorWhite;
+        }
+        else
+        {
+            base.Cursor = PointCursorBlack;
+        }
+    }
+
 
     private void OnMouseUp(object sender, MouseEventArgs e)
     {
@@ -299,7 +319,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         }
         else
         {
-            base.Cursor = PointCursor;
+            SetPointCursor();
         }
     }
 
@@ -308,7 +328,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         switch (cursorType)
         {
             case UITypes.MouseCursorType.CROSS:
-                base.Cursor = PointCursor;
+                SetPointCursor();
                 break;
             case UITypes.MouseCursorType.NORMAL_ARROW:
                 base.Cursor = Cursors.Arrow;
@@ -331,7 +351,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             }
             else if (s == ContextMenuEx.State.CLOSED)
             {
-                base.Cursor = PointCursor;
+                SetPointCursor();
             }
         };
     }
@@ -567,6 +587,15 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         if (mDrawContextPers != null)
         {
             mDrawContextPers.SetupTools(mode);
+        }
+
+        if (SettingsHolder.Settings.DrawMode == DrawModes.DARK)
+        {
+            SetPointCursor();
+        }
+        else
+        {
+            base.Cursor = PointCursorBlack;
         }
     }
 
