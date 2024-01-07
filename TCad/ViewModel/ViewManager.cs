@@ -76,9 +76,10 @@ public class ViewManager : INotifyPropertyChanged
         PlotterViewGL1.SetWorldScale(scale);
     }
 
-    public void DrawModeUpdated(DrawModes mode)
+    public void DrawModeChanged(DrawModes mode)
     {
-        PlotterViewGL1.DrawModeUpdated(mode);
+        PlotterViewGL1.DrawModeChanged(mode);
+        mContext.MainWindow.DrawModeChanged(mode);
     }
 
     public void ResetCamera()

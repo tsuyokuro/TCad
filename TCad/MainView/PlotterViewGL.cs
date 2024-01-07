@@ -577,7 +577,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     }
 
 
-    public void DrawModeUpdated(DrawModes mode)
+    public void DrawModeChanged(DrawModes mode)
     {
         if (mDrawContextOrtho != null)
         {

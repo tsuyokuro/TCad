@@ -39,7 +39,7 @@ public interface IPlotterView
 
     void SetWorldScale(vcompo_t scale);
 
-    void DrawModeUpdated(DrawModes mode);
+    void DrawModeChanged(DrawModes mode);
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
 }

@@ -1,5 +1,7 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter;
+using Plotter.Controller;
+
 
 
 
@@ -23,4 +25,5 @@ public interface ICadMainWindow
     void OpenPopupMessage(string text, UITypes.MessageType messageType);
     void ClosePopupMessage();
     void SetPlotterView(IPlotterView view);
+    void DrawModeChanged(DrawModes drawMode);
 }

@@ -360,7 +360,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.DrawMode = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawMode)));
 
-            mContext.DrawModeUpdated(value);
+            mContext.DrawModeChanged(value);
             Redraw();
         }
 

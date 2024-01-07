@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
+using System;
+
 
 
 
@@ -148,9 +150,6 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public SimpleCommand SimpleCmd{ get; set; }
 
     private CommandHandler mCommandHandler;
-
-    public delegate void DrawModeChangeEventHandler(DrawModes mode);
-    public event DrawModeChangeEventHandler DrawModeChanged;
 
     public PlotterViewModel(ICadMainWindow mainWindow)
     {
@@ -400,10 +399,10 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         GDIToolManager.Instance.Dispose();
     }
 
-    public void DrawModeUpdated(DrawModes mode)
+    public void DrawModeChanged(DrawModes mode)
     {
-        mViewManager.DrawModeUpdated(mode);
-        DrawModeChanged?.Invoke(mode);
+        mViewManager.DrawModeChanged(mode);
+        //OnDrawModeChanged?.Invoke(mode);
     }
 
     public void Redraw()

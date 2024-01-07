@@ -34,7 +34,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ViewModel = new PlotterViewModel(this);
 
-        ViewModel.DrawModeChanged += DrawModeChanged;
+        //ViewModel.OnDrawModeChanged += DrawModeChanged;
 
         ViewModel.Open();
 
