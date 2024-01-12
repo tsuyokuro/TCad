@@ -512,7 +512,7 @@ public partial class PlotterController
     {
     }
 
-    private void PointSnap(DrawContext dc)
+    private void PointSnap(DrawContext dc, PointSearcher pointSearcher)
     {
         // 複数の点が必要な図形を作成中、最初の点が入力された状態では、
         // オブジェクトがまだ作成されていない。このため、別途チェックする
@@ -520,7 +520,7 @@ public partial class PlotterController
         {
             if (FigureCreator.Figure.PointCount == 1)
             {
-                mPointSearcher.Check(dc, FigureCreator.Figure.GetPointAt(0).vector);
+                pointSearcher.Check(dc, FigureCreator.Figure.GetPointAt(0).vector);
             }
         }
 
@@ -528,27 +528,27 @@ public partial class PlotterController
         {
             foreach (vector3_t v in InteractCtrl.PointList)
             {
-                mPointSearcher.Check(dc, v);
+                pointSearcher.Check(dc, v);
             }
         }
 
         // 計測用オブジェクトの点のチェック
         if (MeasureFigureCreator != null)
         {
-            mPointSearcher.Check(dc, MeasureFigureCreator.Figure.PointList);
+            pointSearcher.Check(dc, MeasureFigureCreator.Figure.PointList);
         }
 
         CheckExtendSnapPoints(dc);
 
         // Search point
-        mPointSearcher.SearchAllLayer(dc, mDB);
+        pointSearcher.SearchAllLayer(dc, mDB);
     }
 
-    private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si)
+    private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si, PointSearcher pointSearcher)
     {
-        MarkPoint mxy = mPointSearcher.XYMatch;
-        MarkPoint mx = mPointSearcher.XMatch;
-        MarkPoint my = mPointSearcher.YMatch;
+        MarkPoint mxy = pointSearcher.XYMatch;
+        MarkPoint mx = pointSearcher.XMatch;
+        MarkPoint my = pointSearcher.YMatch;
 
         vector3_t cp = si.Cursor.Pos;
 
@@ -595,16 +595,16 @@ public partial class PlotterController
         return si;
     }
 
-    private void SegSnap(DrawContext dc)
+    private void SegSnap(DrawContext dc, SegSearcher segSearcher)
     {
-        mSegSearcher.SearchAllLayer(dc, mDB);
+        segSearcher.SearchAllLayer(dc, mDB);
     }
 
-    private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si)
+    private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si, SegSearcher segSearcher)
     {
-        MarkSegment matchSeg = mSegSearcher.MatchSegment;
+        MarkSegment matchSeg = segSearcher.MatchSegment;
 
-        if (mSegSearcher.IsMatch)
+        if (segSearcher.IsMatch)
         {
             if (matchSeg.Distance < si.PointSearcher.Distance)
             {
@@ -638,7 +638,7 @@ public partial class PlotterController
             }
             else
             {
-                mSegSearcher.Clean();
+                segSearcher.Clean();
             }
         }
 
@@ -673,7 +673,6 @@ public partial class PlotterController
             si.Cursor.Pos.Y = mPointSearcher.YMatch.PointScrn.Y;
         }
 
-        //Log.tpl("mSegSearcher.IsMatch: " + mSegSearcher.IsMatch);
 
         RulerInfo ri = RulerSet.Capture(dc, si.Cursor, SettingsHolder.Settings.LineSnapRange);
 
@@ -756,10 +755,10 @@ public partial class PlotterController
 
         if (SettingsHolder.Settings.SnapToPoint)
         {
-            PointSnap(dc);
+            PointSnap(dc, mPointSearcher);
         }
 
-        si = EvalPointSearcher(dc, si);
+        si = EvalPointSearcher(dc, si, mPointSearcher);
 
         #endregion
 
@@ -776,10 +775,11 @@ public partial class PlotterController
         {
             if (!mPointSearcher.IsXYMatch)
             {
-                SegSnap(dc);
-                si = EvalSegSeracher(dc, si);
+                SegSnap(dc, mSegSearcher);
             }
         }
+
+        si = EvalSegSeracher(dc, si, mSegSearcher);
 
         #endregion
 
