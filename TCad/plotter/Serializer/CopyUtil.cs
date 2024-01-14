@@ -33,8 +33,6 @@ public class CopyUtil
     
     private static Deserialize_<MpFig> DeserializeFig = MessagePackSerializer.Deserialize<MpFig>;
 
-    private static MpFigCreator<MpFig> CreateMpFig = MpFig.Create;
-
     private static SerializeContext SC = SerializeContext.MpBin;
     private static DeserializeContext DSC = DeserializeContext.MpBin;
 
@@ -46,7 +44,7 @@ public class CopyUtil
 
     public static byte[] FigListToBin(List<CadFigure> figList)
     {
-        var mpfigList = MpUtil.FigureListToMp<MpFig>(SC, figList, CreateMpFig, true);
+        var mpfigList = MpUtil.FigureListToMp<MpFig>(SC, figList, true);
 
         byte[] bin = MessagePackSerializer.Serialize(mpfigList);
 
@@ -64,7 +62,7 @@ public class CopyUtil
 
     public static byte[] FigToBin(CadFigure fig, bool withChild)
     {
-        var mpf = CreateMpFig(SC, fig, withChild);
+        var mpf = MpFig.Create(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf);
     }
 
@@ -85,7 +83,7 @@ public class CopyUtil
     #region LZ4
     public static byte[] FigToLz4Bin(CadFigure fig, bool withChild = false)
     {
-        var mpf = CreateMpFig(SC, fig, withChild);
+        var mpf = MpFig.Create(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf, lz4Options);
     }
 

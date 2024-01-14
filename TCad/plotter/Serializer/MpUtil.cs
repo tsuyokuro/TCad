@@ -20,42 +20,46 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Serializer;
 
-public delegate T MpLayerCreator<T>(SerializeContext context, CadLayer layer);
 
-public delegate T MpFigCreator<T>(SerializeContext context, CadFigure fig, bool withChild);
-
-public delegate T MpVertexCreator<T>(CadVertex v);
-
-public delegate T MpVector3Creator<T>(vector3_t v);
-
-public delegate T MpHeFaceCreator<T>(HeFace heFace);
-
-public delegate T MpHalfEdgeCreator<T>(HalfEdge he);
-
-
-public abstract class MpLayer
+public interface MpLayer
 {
-    public abstract CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic);
+    public void Store(SerializeContext context, CadLayer layer);
+
+    public CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic);
 }
 
-public abstract class MpFigure
+public interface MpFigure
 {
-    public abstract CadFigure Restore(DeserializeContext dsc);
-}
+    public void Store(SerializeContext sc, CadFigure fig, bool withChild);
 
+    public CadFigure Restore(DeserializeContext dsc);
+}
 
 public interface MpVertex {
+    public void Store(CadVertex v);
+
     public CadVertex Restore();
 }
 
 public interface MpVector3
 {
-    public abstract vector3_t Restore();
+    public void Store(vector3_t v);
+
+    public vector3_t Restore();
 }
 
-public abstract class MpHeFace
+public interface MpHeFace
 {
-    public abstract HeFace Restore(Dictionary<uint, HalfEdge> dic);
+    public void Store(HeFace heFace);
+
+    public HeFace Restore(Dictionary<uint, HalfEdge> dic);
+}
+
+public interface MpHalfEdge
+{
+    public void Store(HalfEdge he);
+
+    public HalfEdge Restore();
 }
 
 public class MpUtil
@@ -67,14 +71,15 @@ public class MpUtil
 
     public static List<TMpLayer> LayerListToMp<TMpLayer>(
         SerializeContext sc,
-        List<CadLayer> src,
-        MpLayerCreator<TMpLayer> creator
-        )
+        List<CadLayer> src
+        ) where TMpLayer : MpLayer, new()
     {
         List<TMpLayer> ret = new();
         for (int i = 0; i < src.Count; i++)
         {
-            ret.Add(creator(sc, src[i]));
+            TMpLayer mp = new();
+            mp.Store(sc, src[i]);
+            ret.Add(mp);
         }
 
         return ret;
@@ -83,31 +88,34 @@ public class MpUtil
     public static List<TMpFig> FigureListToMp<TMpFig>(
         SerializeContext sc,
         List<CadFigure> figList,
-        MpFigCreator<TMpFig> creator,
         bool withChild = false
-        )
+        ) where TMpFig : MpFigure, new()
     {
         List<TMpFig> ret = new List<TMpFig>();
         for (int i = 0; i < figList.Count; i++)
         {
-            ret.Add(creator(sc, figList[i], withChild));
+            TMpFig mp = new();
+            mp.Store(sc, figList[i], withChild);
+
+            ret.Add(mp);
         }
 
         return ret;
     }
 
-
     public static List<TMpFig> FigureMapToMp<TMpFig> (
         SerializeContext sc,
         Dictionary<uint, CadFigure> figMap,
-        MpFigCreator<TMpFig> creator,
         bool withChild = false
-        )
+        ) where TMpFig : MpFigure, new()
     {
         List<TMpFig> ret = new List<TMpFig>();
         foreach (CadFigure fig in figMap.Values)
         {
-            ret.Add(creator(sc, fig, withChild));
+            TMpFig mp = new();
+            mp.Store(sc, fig, withChild);
+
+            ret.Add(mp);
         }
         return ret;
     }
@@ -127,54 +135,64 @@ public class MpUtil
 
 
     public static List<TMpVertex> VertexListToMp<TMpVertex>(
-        VertexList v,
-        MpVertexCreator<TMpVertex> creator
-        )
+        VertexList v
+        ) where TMpVertex : MpVertex, new ()
     {
         List<TMpVertex> ret = new List<TMpVertex>();
         for (int i = 0; i < v.Count; i++)
         {
-            ret.Add(creator(v[i]));
+            TMpVertex mp = new();
+            mp.Store(v[i]);
+
+            ret.Add(mp);
         }
 
         return ret;
     }
 
     public static List<TMpVector3> Vector3ListToMp<TMpVector3>(
-        Vector3List v,
-        MpVector3Creator<TMpVector3> creator
-        )
+        Vector3List v
+        ) where TMpVector3 : MpVector3, new()
     {
         List<TMpVector3> ret = new List<TMpVector3>();
         for (int i = 0; i < v.Count; i++)
         {
-            ret.Add(creator(v[i]));
+            TMpVector3 mp = new();
+            mp.Store(v[i]);
+
+            ret.Add(mp);
         }
 
         return ret;
     }
 
     public static List<TMpHeFace> HeFaceListToMp<TMpHeFace>(
-        FlexArray<HeFace> list,
-        MpHeFaceCreator<TMpHeFace> creator
-        )
+        FlexArray<HeFace> list
+        ) where TMpHeFace : MpHeFace, new()
     {
         List<TMpHeFace> ret = new();
         for (int i = 0; i < list.Count; i++)
         {
-            ret.Add(creator(list[i]));
+            TMpHeFace mp = new();
+            mp.Store(list[i]);
+
+            ret.Add(mp);
         }
 
         return ret;
     }
 
     public static List<TMpHalfEdge> HalfEdgeListToMp<TMpHalfEdge>(
-        List<HalfEdge> list, MpHalfEdgeCreator<TMpHalfEdge> creator)
+        List<HalfEdge> list
+        ) where TMpHalfEdge : MpHalfEdge, new()
     {
         List <TMpHalfEdge > ret = new();
         for (int i = 0; i < list.Count; i++)
         {
-            ret.Add(creator(list[i]));
+            TMpHalfEdge mp = new();
+            mp.Store(list[i]);
+
+            ret.Add(mp);
         }
 
         return ret;

@@ -29,7 +29,7 @@ public abstract partial class CadFigure
     public virtual MpGeometricData_v1003 GeometricDataToMp_v1003(SerializeContext sc)
     {
         MpSimpleGeometricData_v1003 geo = new MpSimpleGeometricData_v1003();
-        geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList, MpVertex_v1003.Create);
+        geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList);
         return geo;
     }
 
@@ -143,7 +143,7 @@ public partial class CadFigurePicture : CadFigure
     {
         MpPictureGeometricData_v1003 geo = new MpPictureGeometricData_v1003();
         geo.FilePathName = FilePathName;
-        geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
+        geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList);
         if (sc.SerializeType == SerializeType.JSON)
         {
             geo.Base64 = Convert.ToBase64String(SrcData, 0, SrcData.Length);
@@ -196,7 +196,7 @@ public partial class CadFigurePolyLines : CadFigure
     {
         MpPolyLinesGeometricData_v1003 geo = new();
         geo.IsLoop = IsLoop_;
-        geo.PointList = MpUtil.VertexListToMp(PointList, MpVertex_v1003.Create);
+        geo.PointList = MpUtil.VertexListToMp<MpVertex_v1003>(PointList);
         return geo;
     }
 

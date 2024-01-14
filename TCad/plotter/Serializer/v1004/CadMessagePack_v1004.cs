@@ -41,9 +41,6 @@ public class MpCadData_v1004
     [Key("ViewInfo")]
     public MpViewInfo_v1004 ViewInfo;
 
-    [IgnoreMember]
-    CadObjectDB DB = null;
-
     public static MpCadData_v1004 Create(SerializeContext sc, CadData cadData)
     {
         MpCadData_v1004 ret = new MpCadData_v1004();
@@ -175,9 +172,9 @@ public class MpCadObjectDB_v1004
         ret.FigureIdCount = db.FigIdProvider.Counter;
 
         //ret.FigureList = MpUtil_v1004.FigureMapToMp_v1004(db.FigureMap);
-        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1004>(sc, db.FigureMap, MpFigure_v1004.Create);
+        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1004>(sc, db.FigureMap);
 
-        ret.LayerList = MpUtil.LayerListToMp(sc, db.LayerList, MpLayer_v1004.Create);
+        ret.LayerList = MpUtil.LayerListToMp<MpLayer_v1004>(sc, db.LayerList);
 
         ret.CurrentLayerID = db.CurrentLayerID;
 
@@ -302,16 +299,22 @@ public class MpLayer_v1004 : MpLayer
     {
         MpLayer_v1004 ret = new MpLayer_v1004();
 
-        ret.ID = layer.ID;
-        ret.Visible = layer.Visible;
-        ret.Locked = layer.Locked;
-
-        ret.FigureIdList = MpUtil.FigureListToIdList(layer.FigureList);
+        ret.Store(sc, layer);
 
         return ret;
     }
 
-    public override CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic)
+    public void Store(SerializeContext sc, CadLayer layer)
+    {
+        ID = layer.ID;
+        Visible = layer.Visible;
+        Locked = layer.Locked;
+
+        FigureIdList = MpUtil.FigureListToIdList(layer.FigureList);
+    }
+
+
+    public CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic)
     {
         CadLayer ret = new CadLayer();
         ret.ID = ID;
@@ -369,18 +372,23 @@ public class MpFigure_v1004 : MpFigure
     public static MpFigure_v1004 Create(SerializeContext sc, CadFigure fig, bool withChild = false)
     {
         MpFigure_v1004 ret = new MpFigure_v1004();
+        ret.Store(sc, fig, withChild);
+        
+        return ret;
+    }
 
-        ret.StoreCommon(sc, fig);
+    public void Store(SerializeContext sc, CadFigure fig, bool withChild)
+    {
+        StoreCommon(sc, fig);
 
         if (withChild)
         {
-            ret.StoreChildList(sc, fig);
+            StoreChildList(sc, fig);
         }
         else
         {
-            ret.StoreChildIdList(fig);
+            StoreChildIdList(fig);
         }
-        return ret;
     }
 
     public virtual void ForEachFig(Action<MpFigure_v1004> d)
@@ -441,7 +449,7 @@ public class MpFigure_v1004 : MpFigure
 
     public void StoreChildList(SerializeContext sc, CadFigure fig)
     {
-        ChildList = MpUtil.FigureListToMp<MpFigure_v1004>(sc, fig.ChildList,Create);
+        ChildList = MpUtil.FigureListToMp<MpFigure_v1004>(sc, fig.ChildList);
     }
 
     public void RestoreTo(DeserializeContext dsc, CadFigure fig)
@@ -474,7 +482,7 @@ public class MpFigure_v1004 : MpFigure
         fig.FillBrush = FillBrush.Restore();
     }
 
-    public override CadFigure Restore(DeserializeContext dsc)
+    public CadFigure Restore(DeserializeContext dsc)
     {
         CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
 
@@ -498,13 +506,17 @@ public struct MpVector3_v1004 : MpVector3
 
     public static MpVector3_v1004 Create(vector3_t v)
     {
-        MpVector3_v1004 ret = new MpVector3_v1004();
-
-        ret.X = v.X;
-        ret.Y = v.Y;
-        ret.Z = v.Z;
+        MpVector3_v1004 ret = new();
+        ret.Store(v);
 
         return ret;
+    }
+
+    public void Store(vector3_t v)
+    {
+        X = v.X;
+        Y = v.Y;
+        Z = v.Z;
     }
 
     public vector3_t Restore()
@@ -641,15 +653,20 @@ public struct MpVertex_v1004 : MpVertex
     public static MpVertex_v1004 Create(CadVertex v)
     {
         MpVertex_v1004 ret = new MpVertex_v1004();
-
-        ret.Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
-
-        ret.P.X = v.X;
-        ret.P.Y = v.Y;
-        ret.P.Z = v.Z;
+        ret.Store(v);
 
         return ret;
     }
+
+    public void Store(CadVertex v)
+    {
+        Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
+
+        P.X = v.X;
+        P.Y = v.Y;
+        P.Z = v.Z;
+    }
+
 
     public CadVertex Restore()
     {
@@ -759,11 +776,11 @@ public class MpHeModel_v1004
     {
         MpHeModel_v1004 ret = new MpHeModel_v1004();
 
-        ret.VertexStore = MpUtil.VertexListToMp(model.VertexStore, MpVertex_v1004.Create);
+        ret.VertexStore = MpUtil.VertexListToMp<MpVertex_v1004>(model.VertexStore);
 
-        ret.NormalStore = MpUtil.Vector3ListToMp(model.NormalStore, MpVector3_v1004.Create);
+        ret.NormalStore = MpUtil.Vector3ListToMp<MpVector3_v1004>(model.NormalStore);
 
-        ret.FaceStore = MpUtil.HeFaceListToMp(model.FaceStore, MpHeFace_v1004.Create);
+        ret.FaceStore = MpUtil.HeFaceListToMp<MpHeFace_v1004>(model.FaceStore);
 
         ret.HeIdCount = model.HeIdProvider.Counter;
 
@@ -771,7 +788,7 @@ public class MpHeModel_v1004
 
         List<HalfEdge> heList = model.GetHalfEdgeList();
 
-        ret.HalfEdgeList = MpUtil.HalfEdgeListToMp(heList, MpHalfEdge_v1004.Create);
+        ret.HalfEdgeList = MpUtil.HalfEdgeListToMp<MpHalfEdge_v1004>(heList);
 
         return ret;
     }
@@ -831,14 +848,20 @@ public class MpHeFace_v1004 : MpHeFace
     public static MpHeFace_v1004 Create(HeFace face)
     {
         MpHeFace_v1004 ret = new MpHeFace_v1004();
-        ret.ID = face.ID;
-        ret.HeadID = face.Head.ID;
-        ret.Normal = face.Normal;
+        ret.Store(face);
 
         return ret;
     }
 
-    public override HeFace Restore(Dictionary<uint, HalfEdge> dic)
+    public void Store(HeFace face)
+    {
+        ID = face.ID;
+        HeadID = face.Head.ID;
+        Normal = face.Normal;
+    }
+
+
+    public HeFace Restore(Dictionary<uint, HalfEdge> dic)
     {
         HalfEdge he = dic[HeadID];
 
@@ -853,7 +876,7 @@ public class MpHeFace_v1004 : MpHeFace
 }
 
 [MessagePackObject]
-public class MpHalfEdge_v1004
+public class MpHalfEdge_v1004 : MpHalfEdge
 {
     [Key("ID")]
     public uint ID;
@@ -884,17 +907,21 @@ public class MpHalfEdge_v1004
     public static MpHalfEdge_v1004 Create(HalfEdge he)
     {
         MpHalfEdge_v1004 ret = new MpHalfEdge_v1004();
-
-        ret.ID = he.ID;
-        ret.PairID = he.Pair != null ? he.Pair.ID : 0;
-        ret.NextID = he.Next != null ? he.Next.ID : 0;
-        ret.PrevID = he.Prev != null ? he.Prev.ID : 0;
-
-        ret.Vertex = he.Vertex;
-        ret.Face = he.Face;
-        ret.Normal = he.Normal;
+        ret.Store(he);
 
         return ret;
+    }
+
+    public void Store(HalfEdge he)
+    {
+        ID = he.ID;
+        PairID = he.Pair != null ? he.Pair.ID : 0;
+        NextID = he.Next != null ? he.Next.ID : 0;
+        PrevID = he.Prev != null ? he.Prev.ID : 0;
+
+        Vertex = he.Vertex;
+        Face = he.Face;
+        Normal = he.Normal;
     }
 
     // リンク情報はRestoreされない
@@ -939,7 +966,7 @@ public class MpNurbsLine_v1004
         ret.CtrlCnt = src.CtrlCnt;
         ret.CtrlDataCnt = src.CtrlDataCnt;
         ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
-        ret.CtrlPoints = MpUtil.VertexListToMp(src.CtrlPoints, MpVertex_v1004.Create);
+        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
         ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
 
         ret.BSplineP = MpBSplineParam_v1004.Create(src.BSplineP);
@@ -1003,7 +1030,7 @@ public class MpNurbsSurface_v1004
         ret.UCtrlDataCnt = src.UCtrlDataCnt;
         ret.VCtrlDataCnt = src.VCtrlDataCnt;
 
-        ret.CtrlPoints = MpUtil.VertexListToMp(src.CtrlPoints, MpVertex_v1004.Create);
+        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
 
         ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
         ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
