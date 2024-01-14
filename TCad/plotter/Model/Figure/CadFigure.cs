@@ -2,13 +2,8 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
-using Plotter.Serializer;
-
-
 
 
 #if DEFAULT_DATA_TYPE_DOUBLE
@@ -765,7 +760,6 @@ public abstract partial class CadFigure
 
             v = cp - d;
 
-            v.Attr = vl[i].Attr;
             v.Flag = vl[i].Flag;
 
             vl[i] = v;

@@ -1,9 +1,6 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using SplineCurve;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
-
 
 
 #if DEFAULT_DATA_TYPE_DOUBLE

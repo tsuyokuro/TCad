@@ -29,7 +29,6 @@ public struct CadVertex : IEquatable<CadVertex>
 
     public byte Flag;
 
-    public CadVertexAttr Attr;
 
     public vcompo_t X
     {
@@ -143,8 +142,6 @@ public struct CadVertex : IEquatable<CadVertex>
         vector.Z = z;
 
         Flag = 0;
-
-        Attr = default;
     }
 
     public CadVertex(vector3_t pos)
@@ -152,16 +149,13 @@ public struct CadVertex : IEquatable<CadVertex>
         vector = pos;
 
         Flag = 0;
-
-        Attr = default;
     }
 
-    public CadVertex(vcompo_t x, vcompo_t y, vcompo_t z, byte flag, CadVertexAttr attr)
+    public CadVertex(vcompo_t x, vcompo_t y, vcompo_t z, byte flag)
     {
         vector = new vector3_t(x, y, z);
 
         Flag = flag;
-        Attr = attr;
     }
 
     private static CadVertex Create(vcompo_t v)
@@ -175,8 +169,6 @@ public struct CadVertex : IEquatable<CadVertex>
         v.Set(x, y, z);
 
         v.Flag = 0;
-
-        v.Attr = new CadVertexAttr();
 
         return v;
     }

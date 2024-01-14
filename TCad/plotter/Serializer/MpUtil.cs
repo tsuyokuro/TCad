@@ -1,16 +1,9 @@
 using CadDataTypes;
-using IronPython.Runtime;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HalfEdgeNS;
 
 using MyCollections;
-using System.Windows.Media;
-
 
 
 #if DEFAULT_DATA_TYPE_DOUBLE

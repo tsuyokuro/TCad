@@ -2007,21 +2007,6 @@ public class ScriptFunctions
 
     public void SetColor(float r, float g, float b)
     {
-        List<CadFigure> figs = GetSlectedFigList();
-
-        Color4 color = new Color4(r, g, b, 1.0f);
-
-        foreach (CadFigure fig in figs)
-        {
-            for (int i = 0; i < fig.PointList.Count; i++)
-            {
-                if (!fig.PointList[i].Selected) continue;
-                fig.PointList[i].Attr.Color1 = color;
-                fig.PointList[i].Attr.IsColor1Valid = true;
-                fig.PointList[i].Attr.Color2 = color;
-                fig.PointList[i].Attr.IsColor2Valid = true;
-            }
-        }
     }
 
     public void SetColor(uint figID, float r, float g, float b)

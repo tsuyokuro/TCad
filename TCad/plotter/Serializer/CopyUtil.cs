@@ -1,6 +1,5 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
 using MessagePack;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -22,15 +21,19 @@ using matrix4_t = OpenTK.Mathematics.Matrix4;
 
 namespace Plotter.Serializer;
 
+
+using MpFig = MpFigure_v1004;
+using MpCadObjectDB = MpCadObjectDB_v1004;
+
 public class CopyUtil
 {
     private delegate T Deserialize_<T>(ReadOnlyMemory<byte> buffer, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default);
 
-    private static Deserialize_<List<MpFigure_v1003>> Deserialize = MessagePackSerializer.Deserialize<List<MpFigure_v1003>>;
+    private static Deserialize_<List<MpFig>> Deserialize = MessagePackSerializer.Deserialize<List<MpFig>>;
     
-    private static Deserialize_<MpFigure_v1003> DeserializeFig = MessagePackSerializer.Deserialize<MpFigure_v1003>;
+    private static Deserialize_<MpFig> DeserializeFig = MessagePackSerializer.Deserialize<MpFig>;
 
-    private static MpFigCreator<MpFigure_v1003> CreateMpFig = MpFigure_v1003.Create;
+    private static MpFigCreator<MpFig> CreateMpFig = MpFig.Create;
 
     private static SerializeContext SC = SerializeContext.MpBin;
     private static DeserializeContext DSC = DeserializeContext.MpBin;
@@ -43,7 +46,7 @@ public class CopyUtil
 
     public static byte[] FigListToBin(List<CadFigure> figList)
     {
-        var mpfigList = MpUtil.FigureListToMp<MpFigure_v1003>(SC, figList, CreateMpFig, true);
+        var mpfigList = MpUtil.FigureListToMp<MpFig>(SC, figList, CreateMpFig, true);
 
         byte[] bin = MessagePackSerializer.Serialize(mpfigList);
 
@@ -54,7 +57,7 @@ public class CopyUtil
     {
         var mpfigList = Deserialize(bin);
 
-        var figList = MpUtil.FigureListFromMp<MpFigure_v1003>(DSC, mpfigList);
+        var figList = MpUtil.FigureListFromMp<MpFig>(DSC, mpfigList);
 
         return figList;
     }
@@ -136,7 +139,7 @@ public class CopyUtil
 
     public static byte[] DBToLz4(CadObjectDB db)
     {
-        MpCadObjectDB_v1003 mpdb = MpCadObjectDB_v1003.Create(SC, db);
+        MpCadObjectDB mpdb = MpCadObjectDB.Create(SC, db);
         byte[] bin = MessagePackSerializer.Serialize(mpdb, lz4Options);
 
         return bin;
@@ -144,7 +147,7 @@ public class CopyUtil
 
     public static CadObjectDB Lz4BinRestoreDB(byte[] bin)
     {
-        MpCadObjectDB_v1003 mpdb = MessagePackSerializer.Deserialize<MpCadObjectDB_v1003>(bin, lz4Options);
+        MpCadObjectDB mpdb = MessagePackSerializer.Deserialize<MpCadObjectDB>(bin, lz4Options);
         CadObjectDB db = mpdb.Restore(DSC);
 
         return db;

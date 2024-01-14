@@ -2,8 +2,6 @@
 using CadDataTypes;
 using HalfEdgeNS;
 using MyCollections;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
 
