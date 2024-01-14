@@ -30,12 +30,14 @@ public struct CadVertexAttr
         set;
     }
 
+    // 塗りつぶし用の色
     public Color4 Color1
     {
         get;
         set;
     }
 
+    // 境界色
     public Color4 Color2
     {
         get;

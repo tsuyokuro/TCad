@@ -672,7 +672,7 @@ public class ScriptFunctions
         return cm;
     }
 
-    public CadFigure MesthToFig(CadMesh cm)
+    public CadFigure MeshToFig(CadMesh cm)
     {
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -686,13 +686,13 @@ public class ScriptFunctions
     public CadFigure CreateMeshFig(List<vector3_t> plist, List<CadFace> flist)
     {
         var cm = CreateCadMesh(plist, flist);
-        return MesthToFig(cm);
+        return MeshToFig(cm);
     }
 
     public CadFigure CreateMeshFig(List<CadVertex> plist, List<CadFace> flist)
     {
         var cm = CreateCadMesh(plist, flist);
-        return MesthToFig(cm);
+        return MeshToFig(cm);
     }
 
     public CadFigure AddBox(vector3_t pos, vcompo_t x, vcompo_t y, vcompo_t z)
@@ -700,7 +700,7 @@ public class ScriptFunctions
         CadMesh cm =
             MeshMaker.CreateBox(pos, new vector3_t(x, y, z), MeshMaker.FaceType.TRIANGLE);
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
 
         if (!Session.StartWithSnapshotDB)
         {
@@ -720,7 +720,7 @@ public class ScriptFunctions
         CadMesh cm =
             MeshMaker.CreateTetrahedron(pos, new vector3_t(x, y, z));
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
 
         if (!Session.StartWithSnapshotDB)
         {
@@ -740,7 +740,7 @@ public class ScriptFunctions
         CadMesh cm =
             MeshMaker.CreateOctahedron(pos, new vector3_t(x, y, z));
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
         if (!Session.StartWithSnapshotDB)
         {
             CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
@@ -758,7 +758,7 @@ public class ScriptFunctions
     {
         CadMesh cm = MeshMaker.CreateCylinder(pos, circleDiv, slices, r, len);
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
         if (!Session.StartWithSnapshotDB)
         {
             CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
@@ -776,7 +776,7 @@ public class ScriptFunctions
     {
         CadMesh cm = MeshMaker.CreateSphere(pos, r, slices, slices);
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
 
         if (!Session.StartWithSnapshotDB)
         {
@@ -826,7 +826,7 @@ public class ScriptFunctions
 
         CadMesh cm = MeshMaker.CreateRotatingBody(32, org, axis, baseFig.PointList, topCap, btmCap, MeshMaker.FaceType.TRIANGLE);
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
 
         CadOpe ope;
         if (!Session.StartWithSnapshotDB)
@@ -2084,7 +2084,7 @@ public class ScriptFunctions
 
         CadMesh cm = MeshMaker.CreateRotatingBody(32, org, axis, baseFig.PointList, false, false, MeshMaker.FaceType.QUADRANGLE);
 
-        CadFigure fig = MesthToFig(cm);
+        CadFigure fig = MeshToFig(cm);
 
         if (!Session.StartWithSnapshotDB)
         {
