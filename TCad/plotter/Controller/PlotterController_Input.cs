@@ -725,6 +725,15 @@ public partial class PlotterController
                 mSegSearcher
                 );
 
+        if (SettingsHolder.Settings.SnapToGrid)
+        {
+            si = SnapGrid(dc, si);
+            if (si.IsPointMatch)
+            {
+                return;
+            }
+        }
+
         #region Point search
 
         mPointSearcher.Clean();
@@ -762,7 +771,6 @@ public partial class PlotterController
 
         #endregion
 
-        #region Segment search
 
         mSegSearcher.Clean();
         mSegSearcher.SetRangePixel(dc, SettingsHolder.Settings.LineSnapRange);
@@ -781,15 +789,6 @@ public partial class PlotterController
 
         si = EvalSegSeracher(dc, si, mSegSearcher);
 
-        #endregion
-
-        if (SettingsHolder.Settings.SnapToGrid)
-        {
-            if (!mPointSearcher.IsXYMatch && !mSegSearcher.IsMatch)
-            {
-                si = SnapGrid(dc, si);
-            }
-        }
 
         if (SettingsHolder.Settings.SnapToLine)
         {
@@ -829,6 +828,8 @@ public partial class PlotterController
 
         LockCursorScrn(sv);
 
+        LastDownPoint = res.WoldPoint.vector;
+
         Mouse.MouseMove(dc, sv.X, sv.Y);
     }
 
@@ -838,6 +839,14 @@ public partial class PlotterController
 
         SnapPoint = DC.DevPointToWorldPoint(p);
         CrossCursor.Pos = p;
+    }
+
+    public void LockCursorCurrentPos()
+    {
+        CursorLocked = true;
+
+        LastDownPoint = DC.DevPointToWorldPoint(CrossCursor.Pos);
+        SnapPoint = DC.DevPointToWorldPoint(LastDownPoint);
     }
 
     public vector3_t GetCursorPos()
