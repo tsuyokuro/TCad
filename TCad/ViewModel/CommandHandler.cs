@@ -875,7 +875,7 @@ public class CommandHandler
 
     public void CursorLock()
     {
-        Controller.LockCursorCurrentPos();
+        Controller.LockCursor();
     }
 
     public void MoveKeyDown()

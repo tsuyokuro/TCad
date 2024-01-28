@@ -99,25 +99,10 @@ public partial class PlotterController
         }
     }
 
-    private bool mCursorLocked = false;
     public bool CursorLocked
     {
-        set
-        {
-            mCursorLocked = value;
-            ViewModelIF.CursorLocked(mCursorLocked);
-            if (!mCursorLocked)
-            {
-                mSpPointList = null;
-                ViewModelIF.ClosePopupMessage();
-            }
-            else
-            {
-                ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
-            }
-        }
-
-        get => mCursorLocked;
+        private set;
+        get;
     }
 
     private List<HighlightPointListItem> HighlightPointList = new List<HighlightPointListItem>();
@@ -433,10 +418,7 @@ public partial class PlotterController
 
         UpdateObjectTree(false);
 
-        if (CursorLocked)
-        {
-            CursorLocked = false;
-        }
+        UnlockCursor();
 
         ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
@@ -457,7 +439,8 @@ public partial class PlotterController
         StateMachine.PushState(ControllerStates.DRAGING_VIEW_ORG);
 
         StoreViewOrg = dc.ViewOrg;
-        CursorLocked = false;
+
+        UnlockCursor();
 
         CrossCursor.Store();
 
@@ -484,7 +467,7 @@ public partial class PlotterController
     {
         if (CadKeyboard.IsCtrlKeyDown())
         {
-            CursorLocked = false;
+            UnlockCursor();
 
             vcompo_t f;
 
@@ -826,27 +809,62 @@ public partial class PlotterController
 
         vector3_t sv = DC.WorldPointToDevPoint(res.WoldPoint.vector);
 
-        LockCursorScrn(sv);
+        LockCursor(sv);
 
         LastDownPoint = res.WoldPoint.vector;
 
         Mouse.MouseMove(dc, sv.X, sv.Y);
     }
 
-    public void LockCursorScrn(vector3_t p)
+    public void LockCursor(vector3_t devP)
     {
+        bool prevSate = CursorLocked;
         CursorLocked = true;
 
-        SnapPoint = DC.DevPointToWorldPoint(p);
-        CrossCursor.Pos = p;
+        SnapPoint = DC.DevPointToWorldPoint(devP);
+        CrossCursor.Pos = devP;
+
+        if (prevSate != CursorLocked)
+        {
+            NotifyCursorLock(CursorLocked);
+        }
     }
 
-    public void LockCursorCurrentPos()
+    public void LockCursor()
     {
+        bool prevSate = CursorLocked;
         CursorLocked = true;
 
         LastDownPoint = DC.DevPointToWorldPoint(CrossCursor.Pos);
         SnapPoint = DC.DevPointToWorldPoint(LastDownPoint);
+
+        if (prevSate != CursorLocked)
+        {
+            NotifyCursorLock(CursorLocked);
+        }
+    }
+
+    public void UnlockCursor()
+    {
+        if (CursorLocked)
+        {
+            CursorLocked = false;
+            NotifyCursorLock(false);
+        }
+    }
+
+    private void NotifyCursorLock(bool locked)
+    {
+        ViewModelIF.CursorLocked(locked);
+        if (!locked)
+        {
+            mSpPointList = null;
+            ViewModelIF.ClosePopupMessage();
+        }
+        else
+        {
+            ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
+        }
     }
 
     public vector3_t GetCursorPos()

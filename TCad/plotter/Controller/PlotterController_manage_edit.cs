@@ -171,10 +171,7 @@ public partial class PlotterController
 
     public void Cancel()
     {
-        if (CursorLocked)
-        {
-            CursorLocked = false;
-        }
+        UnlockCursor();
 
         if (InteractCtrl.IsActive)
         {
