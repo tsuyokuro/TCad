@@ -25,11 +25,7 @@ namespace Plotter.Controller;
 // User interface handling
 public partial class PlotterController
 {
-    public InteractCtrl InteractCtrl
-    {
-        get;
-        private set;
-    } = new InteractCtrl();
+    public InteractCtrl InteractCtrl { get; } = new InteractCtrl();
 
     public CadMouse Mouse { get; } = new CadMouse();
 
@@ -51,7 +47,10 @@ public partial class PlotterController
     public SnapInfo CurrentSnapInfo;
 
     // 生のL button down point (デバイス座標系)
-    public vector3_t RawDownPoint = default;
+    public vector3_t RawDownPoint {
+        get;
+        set;
+    } = default;
 
     // Snap等で補正された L button down point (World座標系)
     private vector3_t mLastDownPoint = default;

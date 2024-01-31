@@ -20,7 +20,7 @@ namespace Plotter;
 
 public struct CadCursor
 {
-    public vector3_t Pos;
+    public vector3_t Pos; // Device座標系
     public vector3_t DirX;
     public vector3_t DirY;
 
@@ -28,7 +28,7 @@ public struct CadCursor
 
     public static CadCursor Create()
     {
-        CadCursor cc = default(CadCursor);
+        CadCursor cc = default;
 
         cc.DirX = vector3_t.UnitX;
         cc.DirY = vector3_t.UnitY;
@@ -38,7 +38,7 @@ public struct CadCursor
 
     public static CadCursor Create(vector3_t pixp)
     {
-        CadCursor cc = default(CadCursor);
+        CadCursor cc = default;
 
         cc.Pos = pixp;
         cc.DirX = vector3_t.UnitX;
