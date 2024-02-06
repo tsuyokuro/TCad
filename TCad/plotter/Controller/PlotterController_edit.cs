@@ -52,7 +52,7 @@ public partial class PlotterController
             return false;
         }
 
-        CadFigure fig = mDB.GetFigure(seg.FigureID);
+        CadFigure fig = DB.GetFigure(seg.FigureID);
 
         int num = CadUtil.InsertBezierHandle(fig, seg.PtIndexA, seg.PtIndexB);
 
@@ -82,7 +82,7 @@ public partial class PlotterController
 
     public void SeparateFigures(CadFigure fig, int pointIdx)
     {
-        var res = CadFigureCutter.Cut(mDB, fig, pointIdx);
+        var res = CadFigureCutter.Cut(DB, fig, pointIdx);
 
         if (!res.isValid())
         {
@@ -94,7 +94,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -104,7 +104,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -123,7 +123,7 @@ public partial class PlotterController
 
     public void BondFigures(CadFigure fig)
     {
-        var res = CadFigureBonder.Bond(mDB, fig);
+        var res = CadFigureBonder.Bond(DB, fig);
 
         if (!res.isValid())
         {
@@ -135,7 +135,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -145,7 +145,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -180,7 +180,7 @@ public partial class PlotterController
             return;
         }
 
-        var res = CadSegmentCutter.CutSegment(mDB, ms, ms.CrossPoint);
+        var res = CadSegmentCutter.CutSegment(DB, ms, ms.CrossPoint);
 
         if (!res.isValid())
         {
@@ -192,7 +192,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -202,7 +202,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -251,7 +251,7 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.FlipWithInteractive(target);
+        PlotterTaskRunner.FlipWithInteractive(target);
     }
 
     public void FlipAndCopyWithVector()
@@ -264,7 +264,7 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.FlipAndCopyWithInteractive(target);
+        PlotterTaskRunner.FlipAndCopyWithInteractive(target);
     }
 
     public void CutMeshWithVector()
@@ -276,7 +276,7 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.CutMeshWithInteractive(target);
+        PlotterTaskRunner.CutMeshWithInteractive(target);
     }
 
     public void RotateWithPoint()
@@ -288,7 +288,7 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.RotateWithInteractive(target);
+        PlotterTaskRunner.RotateWithInteractive(target);
     }
 
     private void RemoveSelectedPoints()
@@ -372,7 +372,7 @@ public partial class PlotterController
             return;
         }
 
-        CadFigure pointFig = mDB.NewFigure(CadFigure.Types.POINT);
+        CadFigure pointFig = DB.NewFigure(CadFigure.Types.POINT);
         pointFig.AddPoint((CadVertex)cent.Point);
 
         pointFig.EndCreate(DC);

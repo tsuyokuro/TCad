@@ -88,7 +88,7 @@ public partial class PlotterController
         dc.OptionSet.Update();
         DrawOption normal_dp = dc.OptionSet.Normal;
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             if (!layer.Visible) continue;
 
@@ -148,7 +148,7 @@ public partial class PlotterController
 
         lock (DB)
         {
-            foreach (CadLayer layer in mDB.LayerList)
+            foreach (CadLayer layer in DB.LayerList)
             {
                 if (!layer.Visible) continue;
 
@@ -276,7 +276,7 @@ public partial class PlotterController
 
         dc.DisableLight();
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             foreach (CadFigure fig in layer.FigureList)
             {
@@ -312,7 +312,7 @@ public partial class PlotterController
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (State != ControllerStates.DRAGING_POINTS)
+        if (StateID != ControllerStates.DRAGING_POINTS)
         {
             return;
         }
@@ -358,7 +358,7 @@ public partial class PlotterController
     {
         foreach (MarkSegment markSeg in HighlightSegList)
         {
-            CadFigure fig = mDB.GetFigure(markSeg.FigureID);
+            CadFigure fig = DB.GetFigure(markSeg.FigureID);
             fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_MATCH_SEG), markSeg.PtIndexA, markSeg.PtIndexB);
         }
     }

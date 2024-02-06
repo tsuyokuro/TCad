@@ -225,7 +225,7 @@ public partial class PlotterController
 
         mPointSearcher.SetTargetPoint(sc.Cursor);
 
-        mPointSearcher.SearchAllLayer(sc.DC, mDB);
+        mPointSearcher.SearchAllLayer(sc.DC, DB);
 
         if (CurrentFigure != null)
         {
@@ -243,9 +243,9 @@ public partial class PlotterController
 
         ObjDownPoint = sc.MarkPt.Point;
 
-        CadFigure fig = mDB.GetFigure(sc.MarkPt.FigureID);
+        CadFigure fig = DB.GetFigure(sc.MarkPt.FigureID);
 
-        CadLayer layer = mDB.GetLayer(sc.MarkPt.LayerID);
+        CadLayer layer = DB.GetLayer(sc.MarkPt.LayerID);
 
         if (layer.Locked)
         {
@@ -291,7 +291,7 @@ public partial class PlotterController
         mSegSearcher.SetTargetPoint(sc.Cursor);
         mSegSearcher.CheckStorePoint = SettingsHolder.Settings.SnapToSelfPoint;
 
-        mSegSearcher.SearchAllLayer(sc.DC, mDB);
+        mSegSearcher.SearchAllLayer(sc.DC, DB);
 
         sc.MarkSeg = mSegSearcher.MatchSegment;
 
@@ -300,7 +300,7 @@ public partial class PlotterController
             return sc;
         }
 
-        CadLayer layer = mDB.GetLayer(sc.MarkSeg.LayerID);
+        CadLayer layer = DB.GetLayer(sc.MarkSeg.LayerID);
 
         if (layer.Locked)
         {
@@ -321,7 +321,7 @@ public partial class PlotterController
             ObjDownPoint = sc.MarkSeg.CrossPoint;
         }
 
-        CadFigure fig = mDB.GetFigure(sc.MarkSeg.FigureID);
+        CadFigure fig = DB.GetFigure(sc.MarkSeg.FigureID);
 
         ClearSelectionConditional(sc.MarkSeg);
 
@@ -357,7 +357,7 @@ public partial class PlotterController
 
     private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        if (State == ControllerStates.DRAGING_VIEW_ORG)
+        if (StateID == ControllerStates.DRAGING_VIEW_ORG)
         {
             //ViewOrgDrag(pointer, DC, x, y);
             CurrentState.MouseMove(pointer, dc, x, y);
@@ -381,7 +381,7 @@ public partial class PlotterController
             SnapCursor(dc);
         }
 
-        if (CurrentState.State == ControllerStates.DRAGING_POINTS || CurrentState.State == ControllerStates.RUBBER_BAND_SELECT)
+        if (CurrentState.ID == ControllerStates.DRAGING_POINTS || CurrentState.ID == ControllerStates.RUBBER_BAND_SELECT)
         {
             CurrentState.MouseMove(pointer, dc, x, y);
         }
@@ -487,7 +487,7 @@ public partial class PlotterController
     {
         LastDownPoint = SnapPoint;
 
-        mContextMenuMan.RequestContextMenu(x, y);
+        ContextMenuMan.RequestContextMenu(x, y);
     }
 
     private void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -523,7 +523,7 @@ public partial class PlotterController
         CheckExtendSnapPoints(dc);
 
         // Search point
-        pointSearcher.SearchAllLayer(dc, mDB);
+        pointSearcher.SearchAllLayer(dc, DB);
     }
 
     private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si, PointSearcher pointSearcher)
@@ -579,7 +579,7 @@ public partial class PlotterController
 
     private void SegSnap(DrawContext dc, SegSearcher segSearcher)
     {
-        segSearcher.SearchAllLayer(dc, mDB);
+        segSearcher.SearchAllLayer(dc, DB);
     }
 
     private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si, SegSearcher segSearcher)

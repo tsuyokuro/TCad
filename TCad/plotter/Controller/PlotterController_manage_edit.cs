@@ -34,7 +34,7 @@ public partial class PlotterController
         LastSelPoint = null;
         LastSelSegment = null;
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             layer.ClearSelectedFlags();
         }
@@ -123,7 +123,7 @@ public partial class PlotterController
 
         int removeCnt = 0;
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             IReadOnlyList<CadFigure> list = layer.FigureList;
 
@@ -161,7 +161,7 @@ public partial class PlotterController
 
         foreach (uint id in figIDList)
         {
-            CadFigure fig = mDB.GetFigure(id);
+            CadFigure fig = DB.GetFigure(id);
             if (fig != null)
             {
                 fig.MoveSelectedPointsFromStored(dc, moveInfo);

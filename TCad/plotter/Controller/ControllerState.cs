@@ -77,7 +77,7 @@ public class ControllerStateMachine
                 return ControllerStates.NONE;
             }
 
-            return mCurrentState.State;
+            return mCurrentState.ID;
         }
     }
 
@@ -146,7 +146,7 @@ public class ControllerStateMachine
 /// </summary>
 public class ControllerState
 {
-    public virtual ControllerStates State
+    public virtual ControllerStates ID
     {
         get => ControllerStates.NONE;
     }
@@ -194,7 +194,7 @@ public class ControllerState
 /// </summary>
 public class CreateFigureState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.CREATING;
     }
@@ -330,7 +330,7 @@ public class SelectingState : ControllerState
     private List<CadFigure> EditFigList = null;
 
 
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.SELECT;
     }
@@ -433,7 +433,7 @@ public class RubberBandSelectState : ControllerState
     private vector3_t RubberBandScrnPoint0 = VectorExt.InvalidVector3;
     private vector3_t RubberBandScrnPoint1 = default;
 
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.RUBBER_BAND_SELECT;
     }
@@ -543,7 +543,7 @@ public class DragingPointsState : ControllerState
 {
     vector3_t StartPos;
 
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.DRAGING_POINTS;
     }
@@ -628,7 +628,7 @@ public class DragingPointsState : ControllerState
 /// </summary>
 public class MeasuringState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.MEASURING;
     }
@@ -751,7 +751,7 @@ public class MeasuringState : ControllerState
 /// </summary>
 public class DragingViewOrgState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.DRAGING_VIEW_ORG;
     }
