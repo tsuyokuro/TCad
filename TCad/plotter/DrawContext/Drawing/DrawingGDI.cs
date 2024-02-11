@@ -53,7 +53,7 @@ public class DrawingGDI : IDrawing
         vector3_t p0 = default;
         vector3_t p1 = default;
 
-        vcompo_t len = DrawingConst.AxisLength;
+        vcompo_t len = DrawSizes.AxisLength;
 
         // X軸
         p0.X = -len;

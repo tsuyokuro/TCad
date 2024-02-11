@@ -1,4 +1,6 @@
 //#define DEFAULT_DATA_TYPE_DOUBLE
+#define ENABLE_LOG
+
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
@@ -24,13 +26,8 @@ using vector4_t = OpenTK.Mathematics.Vector4;
 using matrix4_t = OpenTK.Mathematics.Matrix4;
 #endif
 
-
 namespace Plotter.Controller;
 
-/// <summary>
-/// ControllerStateMachine
-/// 
-/// </summary>
 public class ControllerStateMachine
 {
     public class StateContext
@@ -59,25 +56,20 @@ public class ControllerStateMachine
 
     private ControllerState[] StateList = new ControllerState[(int)ControllerStates.MEASURING + 1];
 
-    private ControllerState mCurrentState = null;
 
     private Stack<ControllerState> StateStack = new(10);
 
     public ControllerState CurrentState
     {
-        get => mCurrentState;
+        get;
+        private set;
     }
 
     public ControllerStates CurrentStateID
     {
         get
         {
-            if (mCurrentState == null)
-            {
-                return ControllerStates.NONE;
-            }
-
-            return mCurrentState.ID;
+            return CurrentState.ID;
         }
     }
 
@@ -90,29 +82,32 @@ public class ControllerStateMachine
         Controller = controller;
         Context = new StateContext(this);
 
+        StateList[(int)ControllerStates.NONE] = new NoneState(Context);
         StateList[(int)ControllerStates.SELECT] = new SelectingState(Context);
         StateList[(int)ControllerStates.RUBBER_BAND_SELECT] = new RubberBandSelectState(Context);
         StateList[(int)ControllerStates.DRAGING_POINTS] = new DragingPointsState(Context);
         StateList[(int)ControllerStates.DRAGING_VIEW_ORG] = new DragingViewOrgState(Context);
-        StateList[(int)ControllerStates.CREATING] = new CreateFigureState(Context);
+        StateList[(int)ControllerStates.CREATE_FIGURE] = new CreateFigureState(Context);
         StateList[(int)ControllerStates.MEASURING] = new MeasuringState(Context);
+
+        CurrentState = StateList[(int)ControllerStates.NONE];
     }
 
     public void ChangeState(ControllerStates state)
     {
-        if (mCurrentState != null)
-        {
-            Log.pl(mCurrentState.GetType().Name + " Exit");
-            mCurrentState.Exit();
-        }
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Exit");
+#endif
 
-        mCurrentState = StateList[(int)state];
+        CurrentState.Exit();
 
-        if (mCurrentState != null)
-        {
-            Log.pl(mCurrentState.GetType().Name + " Enter");
-            mCurrentState.Enter();
-        }
+        CurrentState = StateList[(int)state];
+
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Enter");
+#endif
+
+        CurrentState.Enter();
 
         if (Controller.InteractCtrl.IsActive)
         {
@@ -122,12 +117,19 @@ public class ControllerStateMachine
 
     public void PushState(ControllerStates state)
     {
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Push");
+#endif
+
         StateStack.Push(CurrentState);
-        mCurrentState = StateList[(int)state];
-        if (mCurrentState != null)
-        {
-            mCurrentState.Enter();
-        }
+
+        CurrentState = StateList[(int)state];
+
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Enter");
+#endif
+
+        CurrentState.Enter();
     }
 
     public void PopState()
@@ -135,15 +137,16 @@ public class ControllerStateMachine
         ControllerState backState;
         if (StateStack.TryPop(out backState))
         {
-            mCurrentState = backState;
+            CurrentState = backState;
+
+#if ENABLE_LOG
+            Log.pl(CurrentState.GetType().Name + " is Poped");
+#endif
+
         }
     }
 }
 
-/// <summary>
-/// CreateFigureState
-/// 
-/// </summary>
 public class ControllerState
 {
     public virtual ControllerStates ID
@@ -188,15 +191,24 @@ public class ControllerState
     public virtual void MoveKeyUp() { }
 }
 
-/// <summary>
-/// CreateFigureState
-/// 
-/// </summary>
+public class NoneState : ControllerState
+{
+    public override ControllerStates ID
+    {
+        get => ControllerStates.NONE;
+    }
+
+    public NoneState(StateContext context) : base(context)
+    {
+    }
+}
+
+
 public class CreateFigureState : ControllerState
 {
     public override ControllerStates ID
     {
-        get => ControllerStates.CREATING;
+        get => ControllerStates.CREATE_FIGURE;
     }
 
     public CreateFigureState(StateContext context) : base(context)
@@ -320,10 +332,6 @@ public class CreateFigureState : ControllerState
     }
 }
 
-/// <summary>
-/// SelectingState
-/// 
-/// </summary>
 public class SelectingState : ControllerState
 {
     private bool EditStarted = false;
@@ -424,10 +432,6 @@ public class SelectingState : ControllerState
     }
 }
 
-/// <summary>
-/// RubberBandSelectState
-/// 
-/// </summary>
 public class RubberBandSelectState : ControllerState
 {
     private vector3_t RubberBandScrnPoint0 = VectorExt.InvalidVector3;
@@ -463,22 +467,6 @@ public class RubberBandSelectState : ControllerState
 
         RubberBandScrnPoint0 = pixp;
         RubberBandScrnPoint1 = pixp;
-
-        if (Ctrl.SelectNearest(dc, (vector3_t)Ctrl.CrossCursor.Pos))
-        {
-            if (!Ctrl.CursorLocked)
-            {
-                Context.ChangeState(ControllerStates.DRAGING_POINTS);
-            }
-
-            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
-
-            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
-        }
-        else
-        {
-            Context.ChangeState(ControllerStates.RUBBER_BAND_SELECT);
-        }
     }
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -535,10 +523,6 @@ public class RubberBandSelectState : ControllerState
     }
 }
 
-/// <summary>
-/// DragingPointsState
-/// 
-/// </summary>
 public class DragingPointsState : ControllerState
 {
     vector3_t StartPos;
@@ -623,9 +607,6 @@ public class DragingPointsState : ControllerState
     }
 }
 
-/// <summary>
-/// MeasuringState
-/// </summary>
 public class MeasuringState : ControllerState
 {
     public override ControllerStates ID
@@ -745,10 +726,6 @@ public class MeasuringState : ControllerState
     }
 }
 
-/// <summary>
-/// DragingViewOrgState
-/// 
-/// </summary>
 public class DragingViewOrgState : ControllerState
 {
     public override ControllerStates ID

@@ -249,9 +249,9 @@ public class DrawingGL : IDrawing
     {
         DisableLight();
 
-        vcompo_t len = DC.DevSizeToWoldSize(DrawingConst.NormalLen);
-        vcompo_t arrowLen = DC.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
-        vcompo_t arrowW = DC.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+        vcompo_t len = DC.DevSizeToWoldSize(DrawSizes.NormalLen);
+        vcompo_t arrowLen = DC.DevSizeToWoldSize(DrawSizes.NormalArrowLen);
+        vcompo_t arrowW = DC.DevSizeToWoldSize(DrawSizes.NormalArrowWidth);
 
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
@@ -978,12 +978,13 @@ public class DrawingGL : IDrawing
         PopMatrixes();
     }
 
+
     public void DrawSelectedPoint(vector3_t pt, DrawPen pen)
     {
         vector3_t p = DC.WorldPointToDevPoint(pt);
         Start2D();
         GL.Color4(pen.Color4);
-        GL.PointSize(3);
+        GL.PointSize(DrawSizes.SelectedPointSize);
 
         GL.Begin(PrimitiveType.Points);
 
@@ -1091,7 +1092,7 @@ public class DrawingGL : IDrawing
 
         GL.Disable(EnableCap.DepthTest);
         GL.Color4(pen.Color4);
-        GL.PointSize(3);
+        GL.PointSize(DrawSizes.SelectedPointSize);
 
         GL.EnableClientState(ArrayCap.VertexArray);
 
@@ -1345,13 +1346,13 @@ public class DrawingGL : IDrawing
     // Snap時にハイライトされるポイントを描画する
     public void DrawHighlightPoint(vector3_t pt, DrawPen pen)
     {
-        GL.LineWidth(DrawingConst.HighlightPointLineWidth);
+        GL.LineWidth(DrawSizes.HighlightPointLineWidth);
 
         Start2D();
 
         GL.Color4(pen.Color4);
         //DrawCross2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
-        DrawX2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
+        DrawX2D(DC.WorldPointToDevPoint(pt), DrawSizes.HighlightPointLineLength);
 
         End2D();
 
@@ -1366,13 +1367,13 @@ public class DrawingGL : IDrawing
 
         Start2D();
 
-        GL.LineWidth(DrawingConst.HighlightPointLineWidth);
+        GL.LineWidth(DrawSizes.HighlightPointLineWidth);
 
         list.ForEach(item =>
         {
             GL.Color4(item.Pen.Color4);
             //DrawCross2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
-            DrawX2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
+            DrawX2D(DC.WorldPointToDevPoint(item.Point), DrawSizes.HighlightPointLineLength);
         });
 
         GL.LineWidth(1);
@@ -1755,12 +1756,12 @@ public class DrawingGL : IDrawing
 
         Start2D();
 
-        GL.LineWidth(DrawingConst.ExtSnapPointLineWidth);
+        GL.LineWidth(DrawSizes.ExtSnapPointLineWidth);
         GL.Color4(pen.Color4);
 
         pointList.ForEach(v =>
         {
-            DrawCross2D(DC.WorldPointToDevPoint(v), DrawingConst.ExtSnapPointLineLength);
+            DrawCross2D(DC.WorldPointToDevPoint(v), DrawSizes.ExtSnapPointLineLength);
         });
 
         GL.LineWidth(1);

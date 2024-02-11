@@ -225,7 +225,7 @@ public partial class PlotterController
     #region Start and End creating figure
     public void StartCreateFigure(CadFigure.Types type)
     {
-        ChangeState(ControllerStates.CREATING);
+        ChangeState(ControllerStates.CREATE_FIGURE);
         CreatingFigType = type;
     }
 
@@ -257,7 +257,7 @@ public partial class PlotterController
 
     public void NextState()
     {
-        if (StateID == ControllerStates.CREATING)
+        if (StateID == ControllerStates.CREATE_FIGURE)
         {
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
@@ -297,7 +297,6 @@ public partial class PlotterController
     }
     #endregion Start and End creating figure
 
-    #region UnDo ReDo
     public void Undo()
     {
         ClearSelection();
@@ -313,7 +312,6 @@ public partial class PlotterController
         UpdateObjectTree(true);
         UpdateLayerList();
     }
-    #endregion UnDo ReDo
 
     #region Getting selection
     public bool HasSelect()

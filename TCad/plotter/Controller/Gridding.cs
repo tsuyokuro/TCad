@@ -21,19 +21,10 @@ namespace Plotter;
 
 public class Gridding
 {
-    private vector3_t mGridSize;
-
     public vector3_t GridSize
     {
-        set
-        {
-            mGridSize = value;
-        }
-
-        get
-        {
-            return mGridSize;
-        }
+        set;
+        get;
     }
 
     public vcompo_t Range = 8;
@@ -53,7 +44,7 @@ public class Gridding
 
     public void CopyFrom(Gridding g)
     {
-        mGridSize = g.mGridSize;
+        GridSize = g.GridSize;
         Range = g.Range;
     }
 

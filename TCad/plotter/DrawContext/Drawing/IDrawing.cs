@@ -34,22 +34,24 @@ public struct DrawTextOption
     }
 }
 
-public class DrawingConst
+public class DrawSizes
 {
-    public const float HighlightPointLineWidth = 2;
-    public const float HighlightPointLineLength = 6;
+    public static float HighlightPointLineWidth = 1;
+    public static float HighlightPointLineLength = 6;
 
-    public const float ExtSnapPointLineWidth = 1;
-    public const float ExtSnapPointLineLength = 6;
+    public static float ExtSnapPointLineWidth = 1;
+    public static float ExtSnapPointLineLength = 6;
 
-    public const vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
+    public static vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
 
-    public const vcompo_t NormalLen = 20;
-    public const vcompo_t NormalArrowLen = 10;
-    public const vcompo_t NormalArrowWidth = 5;
+    public static vcompo_t NormalLen = 20;
+    public static vcompo_t NormalArrowLen = 10;
+    public static vcompo_t NormalArrowWidth = 5;
 
-    public const vcompo_t AxisArrowLen = 16;
-    public const vcompo_t AxisArrowWidth = 8;
+    public static vcompo_t AxisArrowLen = 16;
+    public static vcompo_t AxisArrowWidth = 8;
+
+    public static float SelectedPointSize = 4;
 }
 
 public interface IDrawing : IDisposable

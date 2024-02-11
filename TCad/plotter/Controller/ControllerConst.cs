@@ -61,7 +61,7 @@ public enum ControllerStates
     RUBBER_BAND_SELECT,
     DRAGING_POINTS,
     DRAGING_VIEW_ORG,
-    CREATING,
+    CREATE_FIGURE,
     MEASURING,
 }
 

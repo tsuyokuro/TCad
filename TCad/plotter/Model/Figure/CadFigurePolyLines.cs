@@ -162,9 +162,9 @@ public partial class CadFigurePolyLines : CadFigure
 
         if (SettingsHolder.Settings.DrawNormal && mPointList.Count > 2)
         {
-            vcompo_t len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
-            vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
-            vcompo_t arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+            vcompo_t len = dc.DevSizeToWoldSize(DrawSizes.NormalLen);
+            vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawSizes.NormalArrowLen);
+            vcompo_t arrowW = dc.DevSizeToWoldSize(DrawSizes.NormalArrowWidth);
 
             vector3_t normal = CadMath.Normal(PointList[0].vector, PointList[1].vector, PointList[2].vector);
 
