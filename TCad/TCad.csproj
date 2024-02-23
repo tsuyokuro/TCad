@@ -95,15 +95,15 @@
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="IronPython" Version="3.4.1" />
-    <PackageReference Include="MessagePack" Version="2.5.129" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.5.129">
+    <PackageReference Include="MessagePack" Version="2.5.140" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.140">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.8.1" />
+    <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
