@@ -572,11 +572,6 @@ public class HeConnector
         return ((uint)he.Vertex) << 16 | (uint)he.Next.Vertex;
     }
 
-    public static uint GetHeKey(int next_v, int v)
-    {
-        return ((uint)next_v) << 16 | (uint)v;
-    }
-
     public static void SetHalfEdgePair(HalfEdge he, Dictionary<uint, HalfEdge> map)
     {
         uint pair_key = GetPairHeKey(he);

@@ -381,6 +381,6 @@ public class PlotterTaskRunner
 
     private void RunOnMainThread(Action action)
     {
-        ThreadUtil.RunOnMainThread(action, true);
+        ThreadUtil.RunOnMainThread(action: action, wait: true);
     }
 }

@@ -385,7 +385,7 @@ public class TestCommands
     {
         CadDxfLoader loader = new CadDxfLoader();
 
-        CadMesh cm = loader.Load(@"F:\work\恐竜.DXF", (vcompo_t)(20.0));
+        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)(20.0));
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
