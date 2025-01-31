@@ -1,2 +1,7 @@
+
+file一覧
+git ls-files "TCad/*.cs"
+find TCad -type f -name "*.cs"
+
 cat list.txt | xargs -L1 python sedpy.py
 
