@@ -126,7 +126,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         PointCursorBlack = new Cursor(si.Stream);
 
-        SetPointCursor();
+        ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     private void SetPointCursor()
@@ -300,11 +300,11 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (locked)
         {
-            base.Cursor = Cursors.Arrow;
+            ChangeMouseCursor(UITypes.MouseCursorType.NORMAL_ARROW);
         }
         else
         {
-            SetPointCursor();
+            ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
         }
     }
 
@@ -332,11 +332,11 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         {
             if (s == ContextMenuEx.State.OPENED)
             {
-                base.Cursor = Cursors.Arrow;
+                ChangeMouseCursor(UITypes.MouseCursorType.NORMAL_ARROW);
             }
             else if (s == ContextMenuEx.State.CLOSED)
             {
-                SetPointCursor();
+                ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
             }
         };
     }
@@ -574,14 +574,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             mDrawContextPers.SetupTools(mode);
         }
 
-        if (SettingsHolder.Settings.DrawMode == DrawModes.DARK)
-        {
-            SetPointCursor();
-        }
-        else
-        {
-            base.Cursor = PointCursorBlack;
-        }
+        ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     public void GLMakeCurrent()

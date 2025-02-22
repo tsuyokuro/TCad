@@ -1,6 +1,7 @@
 #define MOUSE_THREAD
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Plotter;
@@ -15,14 +16,11 @@ public class ContextMenuEx : ContextMenuStrip
 
     private Action<State> mStateChanged = (a) => { };
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Action<State> StateChanged
     {
         get => mStateChanged;
-
-        set
-        {
-            mStateChanged = value == null ? (a) => { } : value;
-        }
+        set => mStateChanged = value == null ? (a) => { } : value;
     }
 
     public ContextMenuEx()
