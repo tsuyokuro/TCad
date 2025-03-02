@@ -126,7 +126,7 @@ public class DrawTools : IDisposable
         }
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
-        FontFamily fontFamily = new FontFamily("MS UI Gothic");
+        FontFamily fontFamily = new("MS UI Gothic");
         //FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
 
         GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
@@ -154,7 +154,7 @@ public class DrawTools : IDisposable
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         //FontFamily fontFamily = new FontFamily("MS UI Gothic");
-        FontFamily fontFamily = new FontFamily("MS Gothic");
+        FontFamily fontFamily = new("MS Gothic");
 
         GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
         GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
@@ -176,14 +176,13 @@ public class DrawTools : IDisposable
         {
             foreach (Font font in GDIFontTbl)
             {
-                if (font != null)
-                {
-                    font.Dispose();
-                }
+                font?.Dispose();
             }
 
             GDIFontTbl = null;
         }
+
+        GC.SuppressFinalize(this);
     }
 
     public DrawTools()
@@ -209,13 +208,13 @@ public class DrawTools : IDisposable
     {
         var buffer = new byte[stream.Length];
 
-        stream.Read(buffer, 0, buffer.Length);
+        stream.ReadExactly(buffer, 0, buffer.Length);
 
         return LoadFontFamily(buffer);
     }
 
 
-    static PrivateFontCollection PrivateFonts = new PrivateFontCollection();
+    static readonly PrivateFontCollection PrivateFonts = new();
 
     // load font family from byte array
     public static FontFamily LoadFontFamily(byte[] buffer)
