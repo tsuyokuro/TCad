@@ -5,7 +5,7 @@ using System.Windows.Interop;
 
 namespace TCad;
 
-class WinAPI
+partial class WinAPI
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
@@ -16,6 +16,24 @@ class WinAPI
         public int Bottom;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MINMAXINFO
+    {
+        public POINT Reserved;
+        public POINT MaxSize;
+        public POINT MaxPosition;
+        public POINT MinTrackSize;
+        public POINT MaxTrackSize;
+    }
+
+
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
@@ -24,6 +42,41 @@ class WinAPI
     public static extern bool SetWindowPos(
         IntPtr hWnd, IntPtr hWndInsertAfter, int X,
         int Y, int cx, int cy, uint uFlags);
+
+
+    public static partial class Monitor
+    {
+        [StructLayout(LayoutKind.Sequential)]
+        public unsafe struct MONITORINFO
+        {
+            public int Size;
+            public RECT MonitorRect;
+            public RECT WorkRect;
+            public uint Flags;
+        };
+
+        public const UInt32 MONITOR_DEFAULTTONULL = 0x00000000;
+        public const UInt32 MONITOR_DEFAULTTOPRIMARY = 0x00000001;
+        public const UInt32 MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+
+        // HMONITOR MonitorFromWindow(
+        //  [in] HWND hwnd,
+        //  [in] DWORD dwFlags
+        // );
+        [DllImport("user32.dll")]
+        public static extern IntPtr MonitorFromWindow(
+            IntPtr hWnd, UInt32 flags);
+
+
+        // BOOL GetMonitorInfoW(
+        //   [in]  HMONITOR      hMonitor,
+        //   [out] LPMONITORINFO lpmi
+        // );
+        [LibraryImport("User32.dll", EntryPoint = "GetMonitorInfoW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpMonitorInfo);
+    }
 
     public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
     public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
@@ -46,11 +99,13 @@ class WinAPI
     public const UInt32 TOPMOST_FLAGS =
       SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSENDCHANGING;
 
-
+    // Window Messages
     public const int WM_SIZE = 0x0005;
     public const int WM_MOVE = 0x0003;
     public const int WM_ENTERSIZEMOVE = 0x0231;
     public const int WM_EXITSIZEMOVE = 0x0232;
+    public const int WM_GETMINMAXINFO = 0x0024;
+
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);

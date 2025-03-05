@@ -1,9 +1,11 @@
 using GLFont;
 using GLUtil;
+using IronPython.Runtime;
 using OpenGL.GLU;
 using Plotter;
 using Plotter.Controller;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +17,7 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
+using static Plotter.NearPointSearcher;
 
 namespace TCad;
 
@@ -181,7 +184,8 @@ public partial class MainWindow : Window, ICadMainWindow
                     Thread.Sleep(10);
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        LayoutRoot.Margin = new Thickness(9);
+                        LayoutRoot.Margin = new Thickness(-1);
+
                     });
                 });
 
@@ -209,8 +213,8 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        var hsrc = HwndSource.FromVisual(this) as HwndSource;
-        hsrc.AddHook(WndProc);
+        //var hsrc = HwndSource.FromVisual(this) as HwndSource;
+        //hsrc.AddHook(WndProc);
 
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
@@ -247,6 +251,18 @@ public partial class MainWindow : Window, ICadMainWindow
     }
     #endregion
 
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == IntPtr.Zero)
+        {
+            return;
+        }
+        HwndSource.FromHwnd(handle).AddHook(this.WndProc);
+    }
+
     IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
@@ -282,7 +298,43 @@ public partial class MainWindow : Window, ICadMainWindow
 
             case WinAPI.WM_SIZE:
                 break;
+            case WinAPI.WM_GETMINMAXINFO:
+                {
+                    var result = OnGetMinMaxInfo(hwnd, wParam, lParam);
+                    if (result != null)
+                    {
+                        handled = true;
+                        return result.Value;
+                    }
+                }
+                break;
         }
+        return IntPtr.Zero;
+    }
+
+    private IntPtr? OnGetMinMaxInfo(IntPtr hwnd, IntPtr wParam, IntPtr lParam)
+    {
+        var monitor = WinAPI.Monitor.MonitorFromWindow(hwnd, WinAPI.Monitor.MONITOR_DEFAULTTONEAREST);
+        if (monitor == IntPtr.Zero)
+        {
+            return null;
+        }
+
+        var monitorInfo = new WinAPI.Monitor.MONITORINFO();
+        monitorInfo.Size = Marshal.SizeOf(monitorInfo);
+        if (WinAPI.Monitor.GetMonitorInfo(monitor, ref monitorInfo) != true)
+        {
+            return null;
+        }
+
+        var workingRectangle = monitorInfo.WorkRect;
+        var monitorRectangle = monitorInfo.MonitorRect;
+        var minmax = (WinAPI.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(WinAPI.MINMAXINFO));
+        minmax.MaxPosition.X = Math.Abs(workingRectangle.Left - monitorRectangle.Left);
+        minmax.MaxPosition.Y = Math.Abs(workingRectangle.Top - monitorRectangle.Top);
+        minmax.MaxSize.X = Math.Abs(workingRectangle.Right - monitorRectangle.Left);
+        minmax.MaxSize.Y = Math.Abs(workingRectangle.Bottom - monitorRectangle.Top);
+        Marshal.StructureToPtr(minmax, lParam, true);
         return IntPtr.Zero;
     }
 
