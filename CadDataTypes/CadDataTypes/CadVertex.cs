@@ -10,8 +10,6 @@ public struct CadVertex : IEquatable<CadVertex>
     public static byte SELECTED = 0x01;
     public static byte HANDLE = 0x02;
 
-    private static byte TYPE_MASK = (byte)(INVALID | HANDLE);
-
     public byte Flag;
 
 
@@ -234,10 +232,6 @@ public struct CadVertex : IEquatable<CadVertex>
     }
 
     #region 同値判定
-    public bool DataEquals(CadVertex p)
-    {
-        return Equals(p) && ((Flag & TYPE_MASK) == (p.Flag & TYPE_MASK));
-    }
 
     public bool EqualsThreshold(CadVertex p, vcompo_t m = (vcompo_t)0.000001)
     {

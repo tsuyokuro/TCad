@@ -41,7 +41,7 @@ public partial class CadFigurePicture : CadFigure
 
         SrcData = new byte[fs.Length];
 
-        fs.Read(SrcData, 0, SrcData.Length);
+        fs.ReadExactly(SrcData);
 
         fs.Close();
 

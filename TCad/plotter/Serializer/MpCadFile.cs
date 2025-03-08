@@ -121,7 +121,7 @@ public class MpCadFile
 
         byte[] sign = new byte[Sign.Length];
 
-        fs.Read(sign, 0, Sign.Length);
+        fs.ReadExactly(sign, 0, Sign.Length);
 
         if (!Sign.SequenceEqual<byte>(sign) && !SignOld.SequenceEqual<byte>(sign))
         {
@@ -131,11 +131,11 @@ public class MpCadFile
 
         byte[] version = new byte[VersionCode.CodeLength];
 
-        fs.Read(version, 0, VersionCode.CodeLength);
+        fs.ReadExactly(version, 0, VersionCode.CodeLength);
 
         byte[] data = new byte[fs.Length - Sign.Length - VersionCode.CodeLength];
 
-        fs.Read(data, 0, data.Length);
+        fs.ReadExactly(data);
 
         fs.Close();
 
@@ -173,7 +173,7 @@ public class MpCadFile
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
         byte[] data = new byte[fs.Length];
-        fs.Read(data, 0, data.Length);
+        fs.ReadExactly(data);
         fs.Close();
 
 
