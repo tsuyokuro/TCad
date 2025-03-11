@@ -53,6 +53,12 @@ public struct VersionCode
         }
     }
 
+    public VersionCode(byte[] b)
+    {
+        C_0 = b[0]; C_1 = b[1]; C_2 = b[2]; C_3 = b[3];
+    }
+
+
     public VersionCode(byte f0, byte f1, byte f2, byte f3)
     {
         C_0 = f0; C_1 = f1; C_2 = f2; C_3 = f3;
@@ -88,5 +94,9 @@ public struct VersionCode
     public bool Equals(byte[] bytes)
     {
         return bytes[0] == C_0 && bytes[1] == C_1 && bytes[2] == C_2 && bytes[3] == C_3;
+    }
+    public bool Equals(VersionCode r)
+    {
+        return r.C_0 == C_0 && r.C_1 == C_1 && r.C_2 == C_2 && r.C_3 == C_3;
     }
 }

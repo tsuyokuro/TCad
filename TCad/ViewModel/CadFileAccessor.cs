@@ -17,12 +17,14 @@ public class CadFileAccessor
 
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            SaveExternalData(SerializeContext.Json, vm.Controller.DB, fname);
+            SerializeContext sc = new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+            SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackJsonFile(fname, vm);
         }
         else
         {
-            SaveExternalData(SerializeContext.MpBin, vm.Controller.DB, fname);
+            SerializeContext sc = new SerializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+            SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackFile(fname, vm);
         }
     }
@@ -31,13 +33,15 @@ public class CadFileAccessor
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
+            DeserializeContext dsc = new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
             LoadFromMsgPackJsonFile(fname, vm);
-            LoadExternalData(DeserializeContext.Json, vm.Controller.DB, fname);
+            LoadExternalData(dsc, vm.Controller.DB, fname);
         }
         else
         {
+            DeserializeContext dsc = new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             LoadFromMsgPackFile(fname, vm);
-            LoadExternalData(DeserializeContext.MpBin, vm.Controller.DB, fname);
+            LoadExternalData(dsc, vm.Controller.DB, fname);
         }
 
         vm.Controller.Redraw();

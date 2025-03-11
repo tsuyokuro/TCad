@@ -17,8 +17,8 @@ public class CopyUtil
     
     private static Deserialize_<MpFig> DeserializeFig = MessagePackSerializer.Deserialize<MpFig>;
 
-    private static SerializeContext SC = SerializeContext.MpBin;
-    private static DeserializeContext DSC = DeserializeContext.MpBin;
+    private static SerializeContext SC = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+    private static DeserializeContext DSC = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
 
 
     private static MessagePackSerializerOptions lz4Options

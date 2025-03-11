@@ -378,23 +378,6 @@ public class MpFigure_v1004 : MpFigure
         }
     }
 
-    public virtual void ForEachFig(Action<MpFigure_v1004> d)
-    {
-        d(this);
-
-        if (ChildList == null)
-        {
-            return;
-        }
-
-        int i;
-        for (i = 0; i < ChildList.Count; i++)
-        {
-            MpFigure_v1004 c = ChildList[i];
-            c.ForEachFig(d);
-        }
-    }
-
     public virtual void ForEachFigID(Dictionary<uint, MpFigure_v1004> allMap, Action<uint> d)
     {
         d(ID);
