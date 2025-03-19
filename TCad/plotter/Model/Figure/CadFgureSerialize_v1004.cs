@@ -40,7 +40,8 @@ public partial class CadFigureMesh : CadFigure
     public override MpGeometricData_v1004 GeometricDataToMp_v1004(SerializeContext sc)
     {
         MpMeshGeometricData_v1004 mpGeo = new MpMeshGeometricData_v1004();
-        mpGeo.HeModel = MpHeModel_v1004.Create(mHeModel);
+        mpGeo.HeModel = new MpHeModel_v1004();
+        mpGeo.HeModel.Store(mHeModel);
 
         return mpGeo;
     }
@@ -68,7 +69,8 @@ public partial class CadFigureNurbsLine : CadFigure
     public override MpGeometricData_v1004 GeometricDataToMp_v1004(SerializeContext sc)
     {
         MpNurbsLineGeometricData_v1004 geo = new MpNurbsLineGeometricData_v1004();
-        geo.Nurbs = MpNurbsLine_v1004.Create(Nurbs);
+        geo.Nurbs = new MpNurbsLine_v1004();
+        geo.Nurbs.Store(Nurbs);
         return geo;
     }
 
@@ -97,7 +99,8 @@ public partial class CadFigureNurbsSurface : CadFigure
     public override MpGeometricData_v1004 GeometricDataToMp_v1004(SerializeContext sc)
     {
         MpNurbsSurfaceGeometricData_v1004 geo = new MpNurbsSurfaceGeometricData_v1004();
-        geo.Nurbs = MpNurbsSurface_v1004.Create(Nurbs);
+        geo.Nurbs = new MpNurbsSurface_v1004();
+        geo.Nurbs.Store(Nurbs);
         return geo;
     }
 

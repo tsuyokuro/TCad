@@ -28,54 +28,24 @@ public class MpCadData_v1004
     [Key("ViewInfo")]
     public MpViewInfo_v1004 ViewInfo;
 
-    public static MpCadData_v1004 Create(SerializeContext sc, CadData cadData)
+
+    public void Store(SerializeContext sc, CadData cadData)
     {
-        MpCadData_v1004 ret = new MpCadData_v1004();
+        MpDB = new MpCadObjectDB_v1004();
+        MpDB.Store(sc, cadData.DB);
 
-        ret.MpDB = MpCadObjectDB_v1004.Create(sc, cadData.DB);
-
-        ret.ViewInfo = new MpViewInfo_v1004();
-
-        ret.ViewInfo.WorldScale = cadData.WorldScale;
-
-        ret.ViewInfo.PaperSettings.Set(cadData.PageSize);
-
-        return ret;
+        ViewInfo = new MpViewInfo_v1004();
+        ViewInfo.Store(sc, cadData.WorldScale, cadData.PageSize);
     }
 
     public CadData Restore(DeserializeContext dsc)
     {
         CadData cd = new CadData();
 
-        vcompo_t worldScale = 0;
+        var viewInfo = ViewInfo.Restore(dsc);
 
-        PaperPageSize pps = null;
-
-        if (ViewInfo != null)
-        {
-            worldScale = ViewInfo.WorldScale;
-
-            if (ViewInfo.PaperSettings != null)
-            {
-                pps = ViewInfo.PaperSettings.GetPaperPageSize();
-            }
-        }
-
-
-        if (worldScale == 0)
-        {
-            worldScale = (vcompo_t)(1.0);
-        }
-
-        cd.WorldScale = worldScale;
-
-
-        if (pps == null)
-        {
-            pps = new PaperPageSize();
-        }
-
-        cd.PageSize = pps;
+        cd.WorldScale = viewInfo.worldScale;
+        cd.PageSize = viewInfo.paperPageSize;
 
         cd.DB = MpDB.Restore(dsc);
 
@@ -91,6 +61,24 @@ public class MpViewInfo_v1004
 
     [Key("Paper")]
     public MpPaperSettings_v1004 PaperSettings = new MpPaperSettings_v1004();
+
+    public void Store(SerializeContext sc, vcompo_t worldScale, PaperPageSize pp)
+    {
+        WorldScale = worldScale;
+        PaperSettings.Store(pp);
+    }
+
+    public (vcompo_t worldScale, PaperPageSize paperPageSize) Restore(DeserializeContext dsc)
+    {
+        if (WorldScale == 0)
+        {
+            WorldScale = (vcompo_t)(1.0);
+        }
+
+        var pps = PaperSettings.Restore();
+
+        return (WorldScale, pps);
+    }
 }
 
 [MessagePackObject]
@@ -108,7 +96,7 @@ public class MpPaperSettings_v1004
     [Key("Kind")]
     public PaperKind Kind = PaperKind.A4;
 
-    public void Set(PaperPageSize pp)
+    public void Store(PaperPageSize pp)
     {
         Width = pp.Width;
         Height = pp.Height;
@@ -118,7 +106,7 @@ public class MpPaperSettings_v1004
         Kind = pp.mPaperKind;
     }
 
-    public PaperPageSize GetPaperPageSize()
+    public PaperPageSize Restore()
     {
         PaperPageSize pp = new PaperPageSize();
 
@@ -151,21 +139,16 @@ public class MpCadObjectDB_v1004
     [Key("CurrentLayerID")]
     public uint CurrentLayerID;
 
-    public static MpCadObjectDB_v1004 Create(SerializeContext sc, CadObjectDB db)
+    public void Store(SerializeContext sc, CadObjectDB db)
     {
-        MpCadObjectDB_v1004 ret = new MpCadObjectDB_v1004();
+        LayerIdCount = db.LayerIdProvider.Counter;
+        FigureIdCount = db.FigIdProvider.Counter;
 
-        ret.LayerIdCount = db.LayerIdProvider.Counter;
-        ret.FigureIdCount = db.FigIdProvider.Counter;
+        FigureList = MpUtil.FigureMapToMp<MpFigure_v1004>(sc, db.FigureMap);
 
-        //ret.FigureList = MpUtil_v1004.FigureMapToMp_v1004(db.FigureMap);
-        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1004>(sc, db.FigureMap);
+        LayerList = MpUtil.LayerListToMp<MpLayer_v1004>(sc, db.LayerList);
 
-        ret.LayerList = MpUtil.LayerListToMp<MpLayer_v1004>(sc, db.LayerList);
-
-        ret.CurrentLayerID = db.CurrentLayerID;
-
-        return ret;
+        CurrentLayerID = db.CurrentLayerID;
     }
 
     public void GarbageCollect()
@@ -282,15 +265,6 @@ public class MpLayer_v1004 : MpLayer
     [Key("FigIdList")]
     public List<uint> FigureIdList;
 
-    public static MpLayer_v1004 Create(SerializeContext sc, CadLayer layer)
-    {
-        MpLayer_v1004 ret = new MpLayer_v1004();
-
-        ret.Store(sc, layer);
-
-        return ret;
-    }
-
     public void Store(SerializeContext sc, CadLayer layer)
     {
         ID = layer.ID;
@@ -356,14 +330,6 @@ public class MpFigure_v1004 : MpFigure
     [IgnoreMember]
     public CadFigure TempFigure = null;
 
-    public static MpFigure_v1004 Create(SerializeContext sc, CadFigure fig, bool withChild = false)
-    {
-        MpFigure_v1004 ret = new MpFigure_v1004();
-        ret.Store(sc, fig, withChild);
-        
-        return ret;
-    }
-
     public void Store(SerializeContext sc, CadFigure fig, bool withChild)
     {
         StoreCommon(sc, fig);
@@ -408,8 +374,11 @@ public class MpFigure_v1004 : MpFigure
 
         Name = fig.Name;
 
-        LinePen = MpDrawPen_v1004.Create(fig.LinePen);
-        FillBrush = MpDrawBrush_v1004.Create(fig.FillBrush);
+        LinePen = new MpDrawPen_v1004();
+        LinePen.Store(fig.LinePen);
+
+        FillBrush = new MpDrawBrush_v1004();
+        FillBrush.Store(fig.FillBrush);
     }
 
     public void StoreChildIdList(CadFigure fig)
@@ -474,13 +443,6 @@ public struct MpVector3_v1004 : MpVector3
     [Key(2)]
     public vcompo_t Z;
 
-    public static MpVector3_v1004 Create(vector3_t v)
-    {
-        MpVector3_v1004 ret = new();
-        ret.Store(v);
-
-        return ret;
-    }
 
     public void Store(vector3_t v)
     {
@@ -510,15 +472,13 @@ public struct MpColor4_v1004
     [Key(3)]
     public float A;
 
-    public static MpColor4_v1004 Create(Color4 c)
-    {
-        MpColor4_v1004 ret = new MpColor4_v1004();
-        ret.R = c.R;
-        ret.G = c.G;
-        ret.B = c.B;
-        ret.A = c.A;
 
-        return ret;
+    public void Store(Color4 c)
+    {
+        R = c.R;
+        G = c.G;
+        B = c.B;
+        A = c.A;
     }
 
     public Color4 Restore()
@@ -536,13 +496,10 @@ public struct MpDrawPen_v1004
     [Key("W")]
     public float Width;
 
-    public static MpDrawPen_v1004 Create(DrawPen v)
+    public void Store(DrawPen v)
     {
-        return new MpDrawPen_v1004
-        {
-            Color4 = MpColor4_v1004.Create(v.Color4),
-            Width = v.Width,
-        };
+        Color4.Store(v.Color4);
+        Width = v.Width;
     }
 
     public DrawPen Restore()
@@ -561,12 +518,10 @@ public struct MpDrawBrush_v1004
     [Key("color")]
     public MpColor4_v1004 Color4;
 
-    public static MpDrawBrush_v1004 Create(DrawBrush v)
+
+    public void Store(DrawBrush v)
     {
-        return new MpDrawBrush_v1004
-        {
-            Color4 = MpColor4_v1004.Create(v.Color4),
-        };
+        Color4.Store(v.Color4);
     }
 
     public DrawBrush Restore()
@@ -587,13 +542,13 @@ public struct MpVertexAttr_v1004
     [Key("N")]
     public MpVector3_v1004 Normal;
 
-    public static MpVertexAttr_v1004 Create(CadVertexAttr attr)
+    public void Store(CadVertexAttr attr)
     {
-        MpVertexAttr_v1004 ret = new MpVertexAttr_v1004();
+        Color = new MpColor4_v1004();
+        Color.Store(attr.Color);
 
-        ret.Color = MpColor4_v1004.Create(attr.Color);
-        ret.Normal =MpVector3_v1004.Create(attr.Normal);
-        return ret;
+        Normal = new MpVector3_v1004();
+        Normal.Store(attr.Normal);
     }
 
     public CadVertexAttr Restore()
@@ -618,14 +573,6 @@ public struct MpVertex_v1004 : MpVertex
 
     public MpVertex_v1004()
     {
-    }
-
-    public static MpVertex_v1004 Create(CadVertex v)
-    {
-        MpVertex_v1004 ret = new MpVertex_v1004();
-        ret.Store(v);
-
-        return ret;
     }
 
     public void Store(CadVertex v)
@@ -742,25 +689,21 @@ public class MpHeModel_v1004
     public uint FaceIdCount;
 
 
-    public static MpHeModel_v1004 Create(HeModel model)
+    public void Store(HeModel model)
     {
-        MpHeModel_v1004 ret = new MpHeModel_v1004();
+        VertexStore = MpUtil.VertexListToMp<MpVertex_v1004>(model.VertexStore);
 
-        ret.VertexStore = MpUtil.VertexListToMp<MpVertex_v1004>(model.VertexStore);
+        NormalStore = MpUtil.Vector3ListToMp<MpVector3_v1004>(model.NormalStore);
 
-        ret.NormalStore = MpUtil.Vector3ListToMp<MpVector3_v1004>(model.NormalStore);
+        FaceStore = MpUtil.HeFaceListToMp<MpHeFace_v1004>(model.FaceStore);
 
-        ret.FaceStore = MpUtil.HeFaceListToMp<MpHeFace_v1004>(model.FaceStore);
+        HeIdCount = model.HeIdProvider.Counter;
 
-        ret.HeIdCount = model.HeIdProvider.Counter;
-
-        ret.FaceIdCount = model.FaceIdProvider.Counter;
+        FaceIdCount = model.FaceIdProvider.Counter;
 
         List<HalfEdge> heList = model.GetHalfEdgeList();
 
-        ret.HalfEdgeList = MpUtil.HalfEdgeListToMp<MpHalfEdge_v1004>(heList);
-
-        return ret;
+        HalfEdgeList = MpUtil.HalfEdgeListToMp<MpHalfEdge_v1004>(heList);
     }
 
     public HeModel Restore()
@@ -815,13 +758,6 @@ public class MpHeFace_v1004 : MpHeFace
     [Key("Normal")]
     public int Normal = HeModel.INVALID_INDEX;
 
-    public static MpHeFace_v1004 Create(HeFace face)
-    {
-        MpHeFace_v1004 ret = new MpHeFace_v1004();
-        ret.Store(face);
-
-        return ret;
-    }
 
     public void Store(HeFace face)
     {
@@ -874,14 +810,6 @@ public class MpHalfEdge_v1004 : MpHalfEdge
     public HalfEdge TempHalfEdge = null;
 
 
-    public static MpHalfEdge_v1004 Create(HalfEdge he)
-    {
-        MpHalfEdge_v1004 ret = new MpHalfEdge_v1004();
-        ret.Store(he);
-
-        return ret;
-    }
-
     public void Store(HalfEdge he)
     {
         ID = he.ID;
@@ -929,19 +857,17 @@ public class MpNurbsLine_v1004
     [Key("BSplineParam")]
     public MpBSplineParam_v1004 BSplineP;
 
-    public static MpNurbsLine_v1004 Create(NurbsLine src)
+
+    public void Store(NurbsLine src)
     {
-        MpNurbsLine_v1004 ret = new MpNurbsLine_v1004();
+        CtrlCnt = src.CtrlCnt;
+        CtrlDataCnt = src.CtrlDataCnt;
+        Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
+        CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
+        CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
 
-        ret.CtrlCnt = src.CtrlCnt;
-        ret.CtrlDataCnt = src.CtrlDataCnt;
-        ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
-        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
-        ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
-
-        ret.BSplineP = MpBSplineParam_v1004.Create(src.BSplineP);
-
-        return ret;
+        BSplineP = new MpBSplineParam_v1004();
+        BSplineP.Store(src.BSplineP);
     }
 
     public NurbsLine Restore()
@@ -990,25 +916,25 @@ public class MpNurbsSurface_v1004
     [Key("VBSpline")]
     public MpBSplineParam_v1004 VBSpline;
 
-    public static MpNurbsSurface_v1004 Create(NurbsSurface src)
+
+    public void Store(NurbsSurface src)
     {
-        MpNurbsSurface_v1004 ret = new MpNurbsSurface_v1004();
+        UCtrlCnt = src.UCtrlCnt;
+        VCtrlCnt = src.VCtrlCnt;
 
-        ret.UCtrlCnt = src.UCtrlCnt;
-        ret.VCtrlCnt = src.VCtrlCnt;
+        UCtrlDataCnt = src.UCtrlDataCnt;
+        VCtrlDataCnt = src.VCtrlDataCnt;
 
-        ret.UCtrlDataCnt = src.UCtrlDataCnt;
-        ret.VCtrlDataCnt = src.VCtrlDataCnt;
+        CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
 
-        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1004>(src.CtrlPoints);
+        Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
+        CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
 
-        ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
-        ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
+        UBSpline = new MpBSplineParam_v1004();
+        UBSpline.Store(src.UBSpline);
 
-        ret.UBSpline = MpBSplineParam_v1004.Create(src.UBSpline);
-        ret.VBSpline = MpBSplineParam_v1004.Create(src.VBSpline);
-
-        return ret;
+        VBSpline = new MpBSplineParam_v1004();
+        VBSpline.Store(src.VBSpline);
     }
 
     public NurbsSurface Restore()
@@ -1064,20 +990,17 @@ public class MpBSplineParam_v1004
     [Key("Step")]
     public vcompo_t Step = 0;
 
-    public static MpBSplineParam_v1004 Create(BSplineParam src)
+
+    public void Store(BSplineParam src)
     {
-        MpBSplineParam_v1004 ret = new MpBSplineParam_v1004();
-
-        ret.Degree = src.Degree;
-        ret.DivCnt = src.DivCnt;
-        ret.OutputCnt = src.OutputCnt;
-        ret.KnotCnt = src.KnotCnt;
-        ret.Knots = MpUtil.ArrayClone<vcompo_t>(src.Knots);
-        ret.LowKnot = src.LowKnot;
-        ret.HighKnot = src.HighKnot;
-        ret.Step = src.Step;
-
-        return ret;
+        Degree = src.Degree;
+        DivCnt = src.DivCnt;
+        OutputCnt = src.OutputCnt;
+        KnotCnt = src.KnotCnt;
+        Knots = MpUtil.ArrayClone<vcompo_t>(src.Knots);
+        LowKnot = src.LowKnot;
+        HighKnot = src.HighKnot;
+        Step = src.Step;
     }
 
     public BSplineParam Restore()

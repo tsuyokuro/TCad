@@ -46,7 +46,8 @@ public class CopyUtil
 
     public static byte[] FigToBin(CadFigure fig, bool withChild)
     {
-        var mpf = MpFig.Create(SC, fig, withChild);
+        var mpf = new MpFig();
+        mpf.Store(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf);
     }
 
@@ -67,7 +68,8 @@ public class CopyUtil
     #region LZ4
     public static byte[] FigToLz4Bin(CadFigure fig, bool withChild = false)
     {
-        var mpf = MpFig.Create(SC, fig, withChild);
+        var mpf = new MpFig();
+        mpf.Store(SC, fig, withChild);
         return MessagePackSerializer.Serialize(mpf, lz4Options);
     }
 
@@ -121,7 +123,8 @@ public class CopyUtil
 
     public static byte[] DBToLz4(CadObjectDB db)
     {
-        MpCadObjectDB mpdb = MpCadObjectDB.Create(SC, db);
+        MpCadObjectDB mpdb = new MpCadObjectDB();
+        mpdb.Store(SC, db);
         byte[] bin = MessagePackSerializer.Serialize(mpdb, lz4Options);
 
         return bin;

@@ -272,7 +272,8 @@ public class MpCadFile
     {
         SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.MP_BIN);
 
-        var mpcd = MpCadData_v1004.Create(sc, cd);
+        var mpcd = new MpCadData_v1004();
+        mpcd.Store(sc, cd);
 
         mpcd.MpDB.GarbageCollect();
 
@@ -298,7 +299,8 @@ public class MpCadFile
 
         SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.JSON);
 
-        var data = MpCadData_v1004.Create(sc, cd);
+        var data = new MpCadData_v1004();
+        data.Store(sc, cd);
 
         string dbJs = MessagePackSerializer.SerializeToJson(data);
 
