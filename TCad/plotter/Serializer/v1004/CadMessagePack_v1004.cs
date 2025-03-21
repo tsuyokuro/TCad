@@ -251,7 +251,7 @@ public class MpCadObjectDB_v1004
 
 
 [MessagePackObject]
-public class MpLayer_v1004 : MpLayer
+public class MpLayer_v1004 : IMpLayer
 {
     [Key("ID")]
     public uint ID;
@@ -293,7 +293,7 @@ public class MpLayer_v1004 : MpLayer
 }
 
 [MessagePackObject]
-public class MpFigure_v1004 : MpFigure
+public class MpFigure_v1004 : IMpFigure
 {
     public const uint VERSION = 0x00001000;
 
@@ -432,7 +432,7 @@ public class MpFigure_v1004 : MpFigure
 }
 
 [MessagePackObject]
-public struct MpVector3_v1004 : MpVector3
+public struct MpVector3_v1004 : IMpVector3
 {
     [Key(0)]
     public vcompo_t X;
@@ -562,7 +562,7 @@ public struct MpVertexAttr_v1004
 }
 
 [MessagePackObject]
-public struct MpVertex_v1004 : MpVertex
+public struct MpVertex_v1004 : IMpVertex
 {
     [Key("flag")]
     public byte Flag;
@@ -747,7 +747,7 @@ public class MpHeModel_v1004
 }
 
 [MessagePackObject]
-public class MpHeFace_v1004 : MpHeFace
+public class MpHeFace_v1004 : IMpHeFace
 {
     [Key("ID")]
     public uint ID;
@@ -782,7 +782,7 @@ public class MpHeFace_v1004 : MpHeFace
 }
 
 [MessagePackObject]
-public class MpHalfEdge_v1004 : MpHalfEdge
+public class MpHalfEdge_v1004 : IMpHalfEdge
 {
     [Key("ID")]
     public uint ID;
