@@ -96,25 +96,6 @@ public struct MarkSegment
         Log.pl("}");
     }
 
-    public bool Update()
-    {
-        if (FigSeg.Figure == null)
-        {
-            return true;
-        }
-
-        if (PtIndexA >= FigSeg.Figure.PointList.Count)
-        {
-            return false;
-        }
-
-        if (PtIndexB >= FigSeg.Figure.PointList.Count)
-        {
-            return false;
-        }
-
-        return true;
-    }
 
     public void Clean()
     {
