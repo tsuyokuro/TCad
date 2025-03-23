@@ -46,8 +46,8 @@ public class LightColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_X] = Color.FromArgb(192, 60, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(60, 128, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(60, 60, 192);
-
         PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.HotPink;
+        PenColorTbl[DrawTools.PEN_LAST_SEL_SEG] = Color.FromArgb(0, 0, 192);
 
 
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.FromArgb(128, 128, 128);

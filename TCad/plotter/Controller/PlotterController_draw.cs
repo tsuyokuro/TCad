@@ -58,6 +58,8 @@ public partial class PlotterController
 
         DrawHighlightSeg(dc);
 
+        DrawLastSelSeg(dc);
+
         DrawExtendSnapPoint(dc);
 
         DrawAccordingState(dc);
@@ -345,6 +347,17 @@ public partial class PlotterController
             CadFigure fig = DB.GetFigure(markSeg.FigureID);
             fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_MATCH_SEG), markSeg.PtIndexA, markSeg.PtIndexB);
         }
+    }
+
+    private void DrawLastSelSeg(DrawContext dc)
+    {
+        if (LastSelSegment == null)
+        {
+            return;
+        }
+
+        CadFigure fig = DB.GetFigure(LastSelSegment.Value.FigureID);
+        fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG), LastSelSegment.Value.PtIndexA, LastSelSegment.Value.PtIndexB);
     }
 
 

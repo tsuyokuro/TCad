@@ -49,8 +49,8 @@ public class DarkColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_X] = Color.FromArgb(192, 92, 92);
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(92, 192, 92);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(92, 92, 255);
-
         PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.FromArgb(255, 92, 192);
+        PenColorTbl[DrawTools.PEN_LAST_SEL_SEG] = Color.FromArgb(255, 192, 255);
 
 
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.FromArgb(255, 255, 255);

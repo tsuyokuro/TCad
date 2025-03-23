@@ -47,9 +47,8 @@ public class PrintColors : ColorSet
         PenColorTbl[DrawTools.PEN_COMPASS_X] = Color.FromArgb(192, 60, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Y] = Color.FromArgb(60, 128, 60);
         PenColorTbl[DrawTools.PEN_COMPASS_Z] = Color.FromArgb(60, 60, 192);
-
         PenColorTbl[DrawTools.PEN_CURRENT_FIG_SELECTED_POINT] = Color.Transparent;
-
+        PenColorTbl[DrawTools.PEN_LAST_SEL_SEG] = Color.Black;
 
         BrushColorTbl[DrawTools.BRUSH_DEFAULT] = Color.Gray;
         BrushColorTbl[DrawTools.BRUSH_BACKGROUND] = Color.Transparent;
