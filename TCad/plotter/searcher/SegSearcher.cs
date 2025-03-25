@@ -45,7 +45,6 @@ public class SegSearcher
     {
         mMatchSeg = default(MarkSegment);
         mMatchSeg.Clean();
-        //CheckPriority = Priority.NONE;
     }
 
     public void SetTargetPoint(CadCursor cursor)
@@ -182,7 +181,12 @@ public class SegSearcher
         if (Math.Abs(mind - MinDist) < (vcompo_t)0.1)
         {
             vcompo_t newZ = dc.WorldPointToDevPoint(p).Z;
-            vcompo_t currentZ = mMatchSeg.CrossPointScrn.Z;
+
+
+            vector3_t crossp = dc.WorldPointToDevPoint(mMatchSeg.CrossPoint);
+
+            vcompo_t currentZ = crossp.Z;
+
 
             if (newZ < currentZ)
             {
@@ -199,7 +203,6 @@ public class SegSearcher
             mMatchSeg.Layer = layer;
             mMatchSeg.FigSeg = fseg;
             mMatchSeg.CrossPoint = p;
-            mMatchSeg.CrossPointScrn = dc.WorldPointToDevPoint(p);
             mMatchSeg.Distance = mind;
 
             MinDist = mind;
@@ -265,7 +268,6 @@ public class SegSearcher
             mMatchSeg.Layer = layer;
             mMatchSeg.FigSeg = fseg;
             mMatchSeg.CrossPoint = cirP;
-            mMatchSeg.CrossPointScrn = dc.WorldPointToDevPoint(cirP);
             mMatchSeg.Distance = dist;
 
             MinDist = dist;

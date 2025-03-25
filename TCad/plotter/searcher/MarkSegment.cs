@@ -73,7 +73,6 @@ public struct MarkSegment
 
     public vector3_t CrossPoint;
 
-    public vector3_t CrossPointScrn;
 
     public vector3_t CenterPoint
     {
@@ -100,7 +99,6 @@ public struct MarkSegment
     public void Clean()
     {
         CrossPoint = VectorExt.InvalidVector3;
-        CrossPointScrn = VectorExt.InvalidVector3;
     }
 
     public bool IsSelected()

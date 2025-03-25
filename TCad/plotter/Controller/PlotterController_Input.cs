@@ -54,31 +54,50 @@ public partial class PlotterController
     // 実際のMouse座標からCross cursorへのOffset
     public vector3_t CrossCursorOffset = default;
 
-    public MarkSegment? LastSelSegment = null;
 
-    public MarkPoint? LastSelPoint = null;
+    public MarkSegment? LastSelSegment_ = null;
 
-    private CadFigure mCurrentFigure = null;
+    public MarkSegment? LastSelSegment {
+        set {
+            LastSelSegment_ = value;
+        }
+
+        get => LastSelSegment_;
+    }
+
+    public MarkPoint? LastSelPoint_ = null;
+    public MarkPoint? LastSelPoint
+    {
+        set
+        {
+            LastSelPoint_ = value;
+        }
+        get => LastSelPoint_;
+    }
+
+
+    private CadFigure CurrentFigure_ = null;
+
     public CadFigure CurrentFigure
     {
         set
         {
-            if (mCurrentFigure != null)
+            if (CurrentFigure_ != null)
             {
-                mCurrentFigure.GetGroupRoot().Current = false;
+                CurrentFigure_.GetGroupRoot().Current = false;
             }
 
-            mCurrentFigure = value;
+            CurrentFigure_ = value;
 
-            if (mCurrentFigure != null)
+            if (CurrentFigure_ != null)
             {
-                mCurrentFigure.GetGroupRoot().Current = true;
+                CurrentFigure_.GetGroupRoot().Current = true;
             }
         }
 
         get
         {
-            return mCurrentFigure;
+            return CurrentFigure_;
         }
     }
 
@@ -596,7 +615,7 @@ public partial class PlotterController
                     si.SnapPoint = matchSeg.CrossPoint;
                     si.IsPointMatch = true;
 
-                    si.Cursor.Pos = matchSeg.CrossPointScrn;
+                    si.Cursor.Pos = dc.WorldPointToDevPoint(matchSeg.CrossPoint);
                     si.Cursor.Pos.Z = 0;
 
                     HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));

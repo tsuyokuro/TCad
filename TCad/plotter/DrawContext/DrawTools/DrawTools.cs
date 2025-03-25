@@ -75,9 +75,6 @@ public class DrawTools : IDisposable
     public const int FONT_SIZE_DEFAULT = 11;
     public const int FONT_SIZE_SMALL = 11;
 
-    public Color[] PenColorTbl;
-    public Color[] BrushColorTbl;
-
     FlexArray<DrawPen> PenTbl = null;
     FlexArray<DrawBrush> BrushTbl = null;
     FlexArray<Font> GDIFontTbl = null; // GDI Modeでしか使わない
@@ -111,8 +108,8 @@ public class DrawTools : IDisposable
     {
         AllocTbl();
 
-        PenColorTbl = colorSet.PenColorTbl;
-        BrushColorTbl = colorSet.BrushColorTbl;
+        var PenColorTbl = colorSet.PenColorTbl;
+        var BrushColorTbl = colorSet.BrushColorTbl;
 
         for (int i = 0; i < PEN_TBL_SIZE; i++)
         {
@@ -140,8 +137,8 @@ public class DrawTools : IDisposable
 
         ColorSet colorSet = PrintColors.Instance;
 
-        PenColorTbl = colorSet.PenColorTbl;
-        BrushColorTbl = colorSet.BrushColorTbl;
+        var PenColorTbl = colorSet.PenColorTbl;
+        var BrushColorTbl = colorSet.BrushColorTbl;
 
         for (int i = 0; i < PEN_TBL_SIZE; i++)
         {

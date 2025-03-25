@@ -127,10 +127,6 @@ public class DrawContextGDI : DrawContext
         return pen.GdiPen;
     }
 
-    public Color PenColor(int id)
-    {
-        return Tools.PenColorTbl[id];
-    }
 
     public Font Font(int id)
     {
@@ -141,11 +137,6 @@ public class DrawContextGDI : DrawContext
     {
         DrawBrush brush = Tools.Brush(id);
         return brush.GdiBrush;
-    }
-
-    public Color BrushColor(int id)
-    {
-        return Tools.BrushColorTbl[id];
     }
 
     public void Render()
