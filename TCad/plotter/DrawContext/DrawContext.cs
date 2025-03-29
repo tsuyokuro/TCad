@@ -157,9 +157,9 @@ public abstract class DrawContext : IDisposable
         mViewOrg = org;
     }
 
-    public void SetupTools(DrawModes type, int penW = 0)
+    public void SetupTools(DrawModes type)
     {
-        Tools.Setup(type, penW);
+        Tools.Setup(type);
         OptionSet.Initialize();
     }
 

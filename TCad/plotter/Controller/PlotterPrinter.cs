@@ -11,8 +11,6 @@ namespace Plotter.Controller;
 
 public class PlotterPrinter
 {
-    public int PenWidth = 1;
-
     public void PrintPage(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
         Log.pl($"Dev Width:{deviceSize.Width} Height:{deviceSize.Height}");
@@ -36,7 +34,7 @@ public class PlotterPrinter
         else
         {
             DrawContextPrinter dc = new DrawContextPrinter(pc.DC, printerGraphics, pageSize, deviceSize);
-            dc.SetupTools(DrawModes.PRINTER, PenWidth);
+            dc.SetupTools(DrawModes.PRINTER);
 
             pc.DrawFiguresRaw(dc);
         }
@@ -54,7 +52,7 @@ public class PlotterPrinter
         deviceSize *= upRes;
 
         DrawContext dc = pc.DC.CreatePrinterContext(pageSize, deviceSize);
-        dc.SetupTools(DrawModes.PRINTER, 2);
+        dc.SetupTools(DrawModes.PRINTER);
 
         // Bitmapを印刷すると大きさが変わるので、補正
         vcompo_t mag = SettingsHolder.Settings.MagnificationBitmapPrinting;

@@ -4,7 +4,10 @@ using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Windows.Resources;
 
 namespace Plotter;
@@ -86,42 +89,32 @@ public class DrawTools : IDisposable
         GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
     }
 
-    public void Setup(DrawModes t, int penW = 0)
+    public void Setup(DrawModes t)
     {
         Dispose();
 
         if (t == DrawModes.DARK)
         {
-            SetupScreenSet(DarkColors.Instance, penW);
+            SetupScreenSet("dark.json", new ColorPack(255, 192, 192, 192));
         }
         else if (t == DrawModes.LIGHT)
         {
-            SetupScreenSet(LightColors.Instance, penW);
+            SetupScreenSet("light.json", new ColorPack(255, 92, 92, 92));
         }
         else if (t == DrawModes.PRINTER)
         {
-            SetupPrinterSet(penW);
+            SetupPrinterSet();
         }
     }
 
-    private void SetupScreenSet(ColorSet colorSet, int penW)
+    private void SetupScreenSet(String fname, ColorPack defColor)
     {
         AllocTbl();
 
-        var PenColorTbl = colorSet.PenColorTbl;
-        var BrushColorTbl = colorSet.BrushColorTbl;
+        var pathName = PathName(fname);
 
-        for (int i = 0; i < PEN_TBL_SIZE; i++)
-        {
-            PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
-        }
+        LoadTheme(pathName, defColor);
 
-        PenTbl[PEN_MATCH_SEG].Width = 1;
-
-        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
-        {
-            BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
-        }
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         FontFamily fontFamily = new("MS UI Gothic");
@@ -131,24 +124,13 @@ public class DrawTools : IDisposable
         GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
     }
 
-    private void SetupPrinterSet(int penW)
+    private void SetupPrinterSet()
     {
         AllocTbl();
 
-        ColorSet colorSet = PrintColors.Instance;
 
-        var PenColorTbl = colorSet.PenColorTbl;
-        var BrushColorTbl = colorSet.BrushColorTbl;
+        LoadTheme(PathName("printer.json"), new ColorPack(255, 0, 0, 0));
 
-        for (int i = 0; i < PEN_TBL_SIZE; i++)
-        {
-            PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
-        }
-
-        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
-        {
-            BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
-        }
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         //FontFamily fontFamily = new FontFamily("MS UI Gothic");
@@ -243,5 +225,132 @@ public class DrawTools : IDisposable
     public Font font(int id)
     {
         return GDIFontTbl[id];
+    }
+
+
+    private void LoadTheme(string fname, ColorPack defColor)
+    {
+        for (int i = 0; i < PEN_TBL_SIZE; i++)
+        {
+            PenTbl[i] = new DrawPen(defColor.Argb, 1);
+        }
+
+        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
+        {
+            BrushTbl[i] = new DrawBrush(defColor.Argb);
+        }
+
+        string json = File.ReadAllText(fname);
+        JsonDocument jdoc = JsonDocument.Parse(json);
+
+        // Pens
+        jdoc.RootElement.TryGetProperty("pens", out JsonElement jPens);
+        var jpenList = jPens.EnumerateArray().ToList();
+
+        foreach (var jpen in jpenList)
+        {
+            string? name = jpen.GetProperty("name").GetString();
+
+            if (name == null) continue;
+
+            var c = jpen.GetProperty("color");
+
+            ColorPack color = GetColorFromJson(c, defColor);
+
+            int width = jpen.GetProperty("width").GetInt32();
+            if (width == 0) width = 1;
+
+            DrawPen pen = new DrawPen(color.Argb, width);
+
+            SetPenTbl(name, pen);
+        }
+
+        // Brushes
+        jdoc.RootElement.TryGetProperty("brushes", out JsonElement jBrushes);
+        var jbrushList = jBrushes.EnumerateArray().ToList();
+
+        foreach (var jbrush in jbrushList)
+        {
+            string? name = jbrush.GetProperty("name").GetString();
+
+            if (name == null) continue;
+
+            var c = jbrush.GetProperty("color");
+            ColorPack color = GetColorFromJson(c, defColor);
+
+            DrawBrush brush = new DrawBrush(color.Argb);
+
+            SetBrushTbl(name, brush);
+        }
+    }
+
+    private ColorPack GetColorFromJson(JsonElement jColor, ColorPack defaultColor)
+    {
+        var c = jColor.EnumerateArray().ToList();
+        if (c == null) return defaultColor;
+
+        if (c.Count < 3) return defaultColor;
+
+        if (c.Count == 3)
+        {
+            return new ColorPack(
+                255,
+                c[0].GetByte(),
+                c[1].GetByte(),
+                c[2].GetByte()
+                );
+        }
+
+        return new ColorPack(
+            c[0].GetByte(),
+            c[1].GetByte(),
+            c[2].GetByte(),
+            c[3].GetByte()
+            );
+    }
+
+    private bool SetPenTbl(string name, DrawPen pen)
+    {
+        if (name == "") return false;
+
+        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        if (fi == null) return false;
+        if (fi.FieldType != typeof(int)) return false;
+
+        int? penId = (int?)fi.GetValue(this);
+
+        if (penId == null) return false;
+
+        PenTbl[penId.Value] = pen;
+
+        return true;
+    }
+
+    private bool SetBrushTbl(string name, DrawBrush brush)
+    {
+        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        if (fi == null) return false;
+
+        int? brushId = (int?)fi.GetValue(this);
+
+        if (brushId == null) return false;
+
+        BrushTbl[brushId.Value] = brush;
+
+        return true;
+    }
+
+
+    private string PathName(string fname)
+    {
+        Assembly? asm = Assembly.GetEntryAssembly();
+
+        string exePath = asm!.Location;
+
+        string? dir = Path.GetDirectoryName(exePath);
+
+        string fileName = dir + @"\Resources\DrawTheme\" + fname;
+
+        return fileName;
     }
 }

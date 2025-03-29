@@ -1,0 +1,243 @@
+﻿{
+    "pens" : [
+        {
+            "name" : "PEN_DEFAULT",
+            "color" : [255, 0,0,0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_SELECTED_POINT",
+            "color" : [255, 128, 255, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_CROSS_CURSOR",
+            "color" : [255, 64, 192, 192],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_CROSS_CURSOR2",
+            "color" : [255, 51, 153, 153],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_DEFAULT_FIGURE",
+            "color" : [255, 0, 0, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_TEMP_FIGURE",
+            "color" : [255, 95, 158, 160],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_POINT_HIGHLIGHT",
+            "color" : [255, 255, 165, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_MATCH_SEG",
+            "color" : [255, 0, 128, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_LAST_POINT_MARKER",
+            "color" : [255, 220, 20, 60],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_LAST_POINT_MARKER2",
+            "color" : [255, 154, 205, 50],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_AXIS",
+            "color" : [255, 60, 60, 92],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_PAGE_FRAME",
+            "color" : [255, 92, 92, 92],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_TEST_FIGURE",
+            "color" : [255, 255, 255, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_GRID",
+            "color" : [255, 192, 128, 92],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_POINT_HIGHLIGHT2",
+            "color" : [255, 64, 255, 255],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_FIGURE_HIGHLIGHT",
+            "color" : [255, 255, 105, 180],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_PALE_FIGURE",
+            "color" : [255, 126, 126, 126],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_MEASURE_FIGURE",
+            "color" : [255, 255, 69, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_DIMENTION",
+            "color" : [255, 128, 192, 255],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_MESH_LINE",
+            "color" : [255, 112, 112, 112],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_MESH_EDGE_LINE",
+            "color" : [255, 0, 0, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_TEST",
+            "color" : [255, 187, 204, 221],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_NURBS_CTRL_LINE",
+            "color" : [255, 96, 192, 96],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_DRAG_LINE",
+            "color" : [255, 96, 96, 128],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_NORMAL",
+            "color" : [255, 0, 255, 127],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_EXT_SNAP",
+            "color" : [255, 255, 0, 0],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_HANDLE_LINE",
+            "color" : [255, 154, 205, 50],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_AXIS_X",
+            "color" : [255, 192, 60, 60],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_AXIS_Y",
+            "color" : [255, 60, 128, 60],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_AXIS_Z",
+            "color" : [255, 60, 60, 192],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_OLD_FIGURE",
+            "color" : [255, 92, 92, 92],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_COMPASS_X",
+            "color" : [255, 192, 60, 60],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_COMPASS_Y",
+            "color" : [255, 60, 128, 60],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_COMPASS_Z",
+            "color" : [255, 60, 60, 192],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_CURRENT_FIG_SELECTED_POINT",
+            "color" : [255, 255, 105, 180],
+            "width" : 1
+        },
+        {
+            "name" : "PEN_LAST_SEL_SEG",
+            "color" : [255, 0, 0, 192],
+            "width" : 1
+        }
+    ],
+    
+    "brushes" : [
+        {
+            "name" : "BRUSH_DEFAULT",
+            "color" : [255, 128, 128, 128]
+        },
+        {
+            "name" : "BRUSH_BACKGROUND",
+            "color" : [255, 245, 245, 255]
+        },
+        {
+            "name" : "BRUSH_TEXT",
+            "color" :[255, 0, 0, 0]
+        },
+        {
+            "name" : "BRUSH_DEFAULT_MESH_FILL",
+            "color" : [255, 192, 192, 192]
+        },
+        {
+            "name" : "BRUSH_TRANSPARENT",
+            "color" : [0, 0, 0, 0]
+        },
+        {
+            "name" : "BRUSH_PALE_TEXT",
+            "color" : [255, 126, 126, 126]
+        },
+        {
+            "name" : "BRUSH_AXIS_LABEL_Y",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_AXIS_LABEL_Z",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_COMPASS_LABEL_X",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_AXIS_LABEL_X",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_COMPASS_LABEL_Y",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_COMPASS_LABEL_Z",
+            "color" : [255, 48, 48, 48]
+        },
+        {
+            "name" : "BRUSH_SELECTED_POINT",
+            "color" : [128, 255, 0]
+        },
+        {
+            "name" : "BRUSH_CURRENT_FIG_SELECTED_POINT",
+            "color" : [255, 105, 180]
+        }
+   ]
+}
