@@ -158,4 +158,6 @@
     <Exec Command="echo PlatformName=$(PlatformName)" />
   </Target>
 
+  <ProjectExtensions><VisualStudio><UserProperties resources_4drawtheme_4dark_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" resources_4drawtheme_4light_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" resources_4drawtheme_4printer_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

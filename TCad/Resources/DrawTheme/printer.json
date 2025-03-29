@@ -1,4 +1,4 @@
-﻿{
+{
     "pens" : [
         {
             "name" : "PEN_DEFAULT",
@@ -230,14 +230,6 @@
         {
             "name" : "BRUSH_COMPASS_LABEL_Z",
             "color" : [255, 0, 0, 0]
-        },
-        {
-            "name" : "BRUSH_SELECTED_POINT",
-            "color" : [0, 0, 0, 0]
-        },
-        {
-            "name" : "BRUSH_CURRENT_FIG_SELECTED_POINT",
-            "color" : [0, 0, 0, 0]
         }
     ]
 }

@@ -66,8 +66,6 @@ public class DrawTools : IDisposable
     public const int BRUSH_COMPASS_LABEL_X = 9;
     public const int BRUSH_COMPASS_LABEL_Y = 10;
     public const int BRUSH_COMPASS_LABEL_Z = 11;
-    public const int BRUSH_SELECTED_POINT = 12;
-    public const int BRUSH_CURRENT_FIG_SELECTED_POINT = 13;
 
     public const int BRUSH_TBL_SIZE = 14;
 

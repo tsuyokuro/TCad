@@ -230,14 +230,6 @@
         {
             "name" : "BRUSH_COMPASS_LABEL_Z",
             "color" : [255, 144, 144, 144]
-        },
-        {
-            "name" : "BRUSH_SELECTED_POINT",
-            "color" : [255, 128, 255, 0]
-        },
-        {
-            "name" : "BRUSH_CURRENT_FIG_SELECTED_POINT",
-            "color" : [255, 255, 92, 192]
         }
     ]
 }
