@@ -239,6 +239,19 @@ public class DrawingGDI : IDrawing
             );
     }
 
+    public void DrawLastSelectedPoint(vector3_t pt, DrawPen pen)
+    {
+        vector3_t pp = DC.WorldPointToDevPoint(pt);
+
+        int size = 3;
+
+        DrawRectangleScrn(
+            pen,
+            (int)pp.X - size, (int)pp.Y - size,
+            (int)pp.X + size, (int)pp.Y + size
+            );
+    }
+
     public void DrawSelectedPoints(VertexList pointList, DrawPen pen)
     {
         foreach (CadVertex p in pointList)

@@ -50,8 +50,9 @@ public class DrawTools : IDisposable
     public const int PEN_CURRENT_FIG_SELECTED_POINT = 34;
     public const int PEN_CROSS_CURSOR2 = 35;
     public const int PEN_LAST_SEL_SEG = 36;
+    public const int PEN_LAST_SEL_POINT = 37;
 
-    public const int PEN_TBL_SIZE = 37;
+    public const int PEN_TBL_SIZE = 40;
 
 
     public const int BRUSH_DEFAULT = 1;

@@ -2,6 +2,7 @@ using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
+using System.Windows.Documents;
 using TCad.ViewModel;
 
 namespace Plotter.Controller;
@@ -71,6 +72,14 @@ public partial class PlotterController
         set
         {
             LastSelPoint_ = value;
+            if (LastSelPoint_ != null)
+            {
+                Log.pl($"==== LastSelPoint FigID:{LastSelPoint_.Value.FigureID} Idx:{LastSelPoint_.Value.PointIndex}");
+            }
+            else
+            {
+                Log.pl("==== LastSelPoint set null");
+            }
         }
         get => LastSelPoint_;
     }
@@ -330,22 +339,22 @@ public partial class PlotterController
 
         if (SelectMode == SelectModes.POINT)
         {
-            LastSelPoint = null;
             LastSelSegment = sc.MarkSeg;
 
             sc.SegmentSelected = true;
 
             fig.SelectPointAt(sc.MarkSeg.PtIndexA, true);
             fig.SelectPointAt(sc.MarkSeg.PtIndexB, true);
+            UpdateLastSelPointWithSelSegment(sc, LastSelSegment.Value);
         }
         else if (SelectMode == SelectModes.OBJECT)
         {
             sc.SegmentSelected = true;
 
-            LastSelPoint = null;
             LastSelSegment = sc.MarkSeg;
 
             fig.SelectWithGroup();
+            UpdateLastSelPointWithSelSegment(sc, LastSelSegment.Value);
         }
 
         if (sc.SegmentSelected)
@@ -356,6 +365,36 @@ public partial class PlotterController
         CurrentFigure = fig;
 
         return sc;
+    }
+
+    private void UpdateLastSelPointWithSelSegment(SelectContext sc, MarkSegment selSeg)
+    {
+        if (!selSeg.Valid) return;
+
+        var fig = LastSelSegment.Value.Figure;
+
+        var pa = DC.WorldPointToDevPoint(selSeg.pA);
+        var pb = DC.WorldPointToDevPoint(selSeg.pB);
+
+        int idx = -1;
+
+        if ((pa - sc.CursorScrPt).Norm() <= (pb - sc.CursorScrPt).Norm())
+        {
+            idx = selSeg.PtIndexA;
+        }
+        else
+        {
+            idx = selSeg.PtIndexB;
+        }
+
+        MarkPoint markPoint = default;
+
+        markPoint.Figure = fig;
+        markPoint.Point = fig.PointList[idx].vector;
+        markPoint.PointIndex = idx;
+        markPoint.PointScrn = DC.WorldPointToDevPoint(markPoint.Point);
+
+        LastSelPoint = markPoint;
     }
 
     private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)

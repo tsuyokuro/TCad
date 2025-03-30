@@ -288,6 +288,7 @@ public partial class PlotterController
             fig.RemoveGarbageChildren();
         }
 
+        ClearSelection();
         UpdateObjectTree(true);
     }
 

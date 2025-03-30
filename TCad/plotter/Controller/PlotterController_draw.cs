@@ -60,6 +60,8 @@ public partial class PlotterController
 
         DrawLastSelSeg(dc);
 
+        DrawLastSelPoint(dc);
+
         DrawExtendSnapPoint(dc);
 
         DrawAccordingState(dc);
@@ -360,6 +362,20 @@ public partial class PlotterController
         fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG), LastSelSegment.Value.PtIndexA, LastSelSegment.Value.PtIndexB);
     }
 
+    private void DrawLastSelPoint(DrawContext dc)
+    {
+        if (LastSelPoint == null)
+        {
+            return;
+        }
+
+        CadFigure fig = DB.GetFigure(LastSelPoint.Value.FigureID);
+        int idx = LastSelPoint.Value.PointIndex;
+        var point = fig.PointList[idx];
+
+
+        dc.Drawing.DrawLastSelectedPoint(point.vector, dc.GetPen(DrawTools.PEN_LAST_SEL_POINT));
+    }
 
     private void DrawExtendSnapPoint(DrawContext dc)
     {

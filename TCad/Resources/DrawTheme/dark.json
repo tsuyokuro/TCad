@@ -176,9 +176,14 @@
             "width" : 1
         },
         {
-            "name" : "PEN_LAST_SEL_SEG",
-            "color" : [255, 255, 192, 255],
-            "width" : 1
+            "name": "PEN_LAST_SEL_SEG",
+            "color": [ 255, 255, 192, 255 ],
+            "width": 1
+        },
+        {
+            "name": "PEN_LAST_SEL_POINT",
+            "color": [ 255, 255, 255, 92 ],
+            "width": 1
         }
     ],
     

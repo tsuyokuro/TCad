@@ -977,6 +977,19 @@ public class DrawingGL : IDrawing
         GL.End();
         End2D();
     }
+    public void DrawLastSelectedPoint(vector3_t pt, DrawPen pen)
+    {
+        vector3_t p = DC.WorldPointToDevPoint(pt);
+        GL.Color4(pen.Color4);
+
+        Start2D();
+        GL.Color4(pen.Color4);
+
+        DrawX2D(p, 3);
+
+        GL.End();
+        End2D();
+    }
 
     public void DrawSelectedPoints_(VertexList pointList, DrawPen pen)
     {
@@ -1401,7 +1414,7 @@ public class DrawingGL : IDrawing
         //GL.End();
     }
 
-    // Point sizeをそのまま使って十字を描画
+    // Point sizeをそのまま使ってXを描画
     private void DrawX2D(vector3_t p, vcompo_t size)
     {
         vcompo_t hs = size;

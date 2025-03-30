@@ -189,8 +189,8 @@ public class CadRulerSet
 
     public RulerInfo Capture(DrawContext dc, CadCursor cursor, vcompo_t rangePixel)
     {
-        RulerInfo match = default(RulerInfo);
-        RulerInfo ri = default(RulerInfo);
+        RulerInfo match = default;
+        RulerInfo ri = default;
 
         vcompo_t min = rangePixel;
 

@@ -58,6 +58,8 @@ public interface IDrawing : IDisposable
 
     void DrawSelectedPoint(vector3_t pt, DrawPen pen);
 
+    void DrawLastSelectedPoint(vector3_t pt, DrawPen pen);
+
     void DrawSelectedPoints(VertexList pointList, DrawPen pen);
 
     void DrawExtSnapPoints(Vector3List pointList, DrawPen pen);
