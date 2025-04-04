@@ -17,13 +17,12 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
-using static Plotter.NearPointSearcher;
 
 namespace TCad;
 
 public partial class MainWindow : Window, ICadMainWindow
 {
-    public PlotterViewModel ViewModel;
+    public IPlotterViewModel ViewModel;
 
     private ImageSource[] PopupMessageIcons = new ImageSource[3];
 
@@ -37,13 +36,11 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ViewModel = new PlotterViewModel(this);
 
-        //ViewModel.OnDrawModeChanged += DrawModeChanged;
-
         ViewModel.Open();
 
-        ViewModel.ObjTreeVM.ObjectTree = ObjTree;
+        ViewModel.ObjectTree = ObjTree;
 
-        ViewModel.SetupTextCommandView(textCommand);
+        ViewModel.AttachCommandView(textCommand);
 
         SetupInteractionConsole();
 
@@ -113,7 +110,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         FileName.DataContext = ViewModel;
 
-        ViewModePanel.DataContext = ViewModel.mViewManager;
+        ViewModePanel.DataContext = ViewModel.ViewManager;
         ResetCameraButton.DataContext = ViewModel;
 
         SnapToolBar.DataContext = ViewModel.Settings;

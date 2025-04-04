@@ -74,7 +74,7 @@ public partial class PlotterController
     {
         get;
         private set;
-    } = IPlotterViewModel.Dummy;
+    }
 
     public List<CadFigure> TempFigureList
     {
