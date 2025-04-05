@@ -533,7 +533,7 @@ public class CommandHandler
 
     public void SetLineColor()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null)
         {
@@ -570,7 +570,7 @@ public class CommandHandler
 
     public void SetFillColor()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null)
         {
@@ -592,11 +592,11 @@ public class CommandHandler
 
             if (dlg.InvalidColor)
             {
-                Controller.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
+                Controller.Input.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
             }
             else
             {
-                Controller.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
+                Controller.Input.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
             }
 
             newBrush = fig.FillBrush;
@@ -853,13 +853,13 @@ public class CommandHandler
 
     public void SearchNearPoint()
     {
-        Controller.MoveCursorToNearPoint(ViewModel.ViewManager.DrawContext);
+        Controller.Input.MoveCursorToNearPoint(ViewModel.ViewManager.DrawContext);
         Redraw();
     }
 
     public void CursorLock()
     {
-        Controller.LockCursor();
+        Controller.Input.LockCursor();
     }
 
     public void MoveKeyDown()
@@ -875,13 +875,13 @@ public class CommandHandler
 
     public void AddMark()
     {
-        Controller.AddExtendSnapPoint();
+        Controller.Input.AddExtendSnapPoint();
         Redraw();
     }
 
     public void CleanMark()
     {
-        Controller.ClearExtendSnapPointList();
+        Controller.Input.ClearExtendSnapPointList();
         Redraw();
     }
 

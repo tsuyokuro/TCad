@@ -14,13 +14,13 @@ public class CurrentFigCommand : ICommand
 
         if (cmd == "set_line_color")
         {
-            return mViewModel.Controller.CurrentFigure != null;
+            return mViewModel.Controller.Input.CurrentFigure != null;
         }
         else if (cmd == "set_fill_color")
         {
-            if (mViewModel.Controller.CurrentFigure == null) return false;
+            if (mViewModel.Controller.Input.CurrentFigure == null) return false;
 
-            return mViewModel.Controller.CurrentFigure.Type == CadFigure.Types.MESH;
+            return mViewModel.Controller.Input.CurrentFigure.Type == CadFigure.Types.MESH;
         }
 
         return true;

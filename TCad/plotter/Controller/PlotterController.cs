@@ -100,10 +100,10 @@ public partial class PlotterController
         set;
     }
 
-    private Vector3List ExtendSnapPointList
-    {
-        get; set;
-    } = new Vector3List(20);
+    //private Vector3List ExtendSnapPointList
+    //{
+    //    get; set;
+    //} = new Vector3List(20);
 
     public ContextMenuManager ContextMenuMan
     {
@@ -117,7 +117,7 @@ public partial class PlotterController
         set;
     } = null;
 
-    private ControllerStateMachine StateMachine;
+    public ControllerStateMachine StateMachine;
 
     public ControllerStates StateID
     {
@@ -127,6 +127,12 @@ public partial class PlotterController
     public ControllerState CurrentState
     {
         get => StateMachine.CurrentState;
+    }
+
+    public InputController Input
+    {
+        get;
+        private set;
     }
 
     public PlotterController(IPlotterViewModel vm)
@@ -139,6 +145,8 @@ public partial class PlotterController
         }
 
         ViewModelIF = vm;
+
+        Input = new InputController(this);
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);
@@ -155,9 +163,6 @@ public partial class PlotterController
 
         PlotterTaskRunner = new PlotterTaskRunner(this);
 
-        ObjDownPoint = VectorExt.InvalidVector3;
-
-        InitHid();
 
         Log.plx("out");
     }
@@ -283,7 +288,7 @@ public partial class PlotterController
 
     public void Undo()
     {
-        ClearSelection();
+        Input.ClearSelection();
         HistoryMan.undo();
         UpdateObjectTree(true);
         UpdateLayerList();
@@ -291,7 +296,7 @@ public partial class PlotterController
 
     public void Redo()
     {
-        ClearSelection();
+        Input.ClearSelection();
         HistoryMan.redo();
         UpdateObjectTree(true);
         UpdateLayerList();

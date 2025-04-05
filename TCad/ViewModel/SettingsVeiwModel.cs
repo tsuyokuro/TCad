@@ -282,7 +282,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         set
         {
             SettingsHolder.Settings.GridSize = value;
-            mContext.Controller.Grid.GridSize = value;
+            mContext.Controller.Input.Grid.GridSize = value;
         }
 
         get => SettingsHolder.Settings.GridSize;
@@ -417,14 +417,14 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             }
         }
 
-        mContext.Controller.Grid.GridSize = SettingsHolder.Settings.GridSize;
+        mContext.Controller.Input.Grid.GridSize = SettingsHolder.Settings.GridSize;
     }
 
     public void Save()
     {
         PlotterSettings settings = SettingsHolder.Settings;
 
-        settings.GridSize = mContext.Controller.Grid.GridSize;
+        settings.GridSize = mContext.Controller.Input.Grid.GridSize;
 
         settings.Save();
     }

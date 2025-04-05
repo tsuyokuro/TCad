@@ -98,9 +98,9 @@ public class DirectCommands
             }
             else if (ss[1] == "fig")
             {
-                if (Controller.CurrentFigure != null)
+                if (Controller.Input.CurrentFigure != null)
                 {
-                    Controller.CurrentFigure.Dump();
+                    Controller.Input.CurrentFigure.Dump();
                 }
             }
             else if (ss[1] == "layer")

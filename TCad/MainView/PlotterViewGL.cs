@@ -250,7 +250,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
             mDrawContext.SetViewOrg(org);
 
-            mController.SetCursorWoldPos(vector3_t.Zero);
+            mController.Input.SetCursorWoldPos(vector3_t.Zero);
         }
 
         sizeChangeCnt++;
@@ -387,7 +387,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     private void HandleMouseUp(MouseEventArgs e)
     {
         DownButton = MouseButtons.None;
-        mController.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
+        mController.Input.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
 
         Redraw();
     }
@@ -405,7 +405,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+            mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
         }
         else
         {
@@ -414,7 +414,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
             //if (DownButton != MouseButtons.Middle)
             {
-                mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+                mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
             }
         }
 
@@ -425,7 +425,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
+            mController.Input.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
             Redraw();
         }
         else
@@ -452,7 +452,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+            mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
             Redraw();
         }
         else
@@ -489,7 +489,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             }
             else
             {
-                mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+                mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
                 Redraw();
             }
         }

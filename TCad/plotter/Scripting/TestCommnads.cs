@@ -445,7 +445,7 @@ public class TestCommands
 
     private void GetPointsTest()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null) return;
 
@@ -505,7 +505,7 @@ public class TestCommands
 
     private void Test()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         fig.LinePen = new DrawPen(new Color4(0.5f, 0.5f, 1.0f, 1f), 1.0f);
         fig.FillBrush = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1f));
@@ -696,7 +696,7 @@ public class TestCommands
 
     private void Test6()
     {
-        CadFigure cfig = Controller.CurrentFigure;
+        CadFigure cfig = Controller.Input.CurrentFigure;
         List<vector3_t> vl = CadUtil.Getvector3_tListFrom(cfig);
 
         vector3_t startv = vl[0];

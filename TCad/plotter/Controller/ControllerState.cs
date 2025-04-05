@@ -93,9 +93,9 @@ public class ControllerStateMachine
 
         CurrentState.Enter();
 
-        if (Controller.InteractCtrl.IsActive)
+        if (Controller.Input.InteractCtrl.IsActive)
         {
-            Controller.InteractCtrl.Cancel();
+            Controller.Input.InteractCtrl.Cancel();
         }
     }
 
@@ -219,7 +219,7 @@ public class CreateFigureState : ControllerState
 
         if (creator != null)
         {
-            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p = dc.DevPointToWorldPoint(Ctrl.Input.CrossCursor.Pos);
             creator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
@@ -228,7 +228,7 @@ public class CreateFigureState : ControllerState
     {
         if (isStart)
         {
-            Ctrl.LastDownPoint = Ctrl.SnapPoint;
+            Ctrl.Input.LastDownPoint = Ctrl.Input.SnapPoint;
 
             CadFigure fig = Ctrl.DB.NewFigure(Ctrl.CreatingFigType);
 
@@ -241,13 +241,13 @@ public class CreateFigureState : ControllerState
 
             Ctrl.FigureCreator.StartCreate(dc);
 
-            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Ctrl.Input.SnapPoint);
         }
         else
         {
-            Ctrl.LastDownPoint = Ctrl.SnapPoint;
+            Ctrl.Input.LastDownPoint = Ctrl.Input.SnapPoint;
 
-            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Ctrl.Input.SnapPoint);
         }
     }
 
@@ -348,17 +348,17 @@ public class SelectingState : ControllerState
         vector3_t pixp = new(x, y, 0);
 
 
-        if (Ctrl.SelectNearest(dc, Ctrl.CrossCursor.Pos))
+        if (Ctrl.Input.SelectNearest(dc, Ctrl.Input.CrossCursor.Pos))
         {
-            if (!Ctrl.CursorLocked)
+            if (!Ctrl.Input.CursorLocked)
             {
                 Context.ChangeState(ControllerStates.DRAGING_POINTS);
                 Context.CurrentState.LButtonDown(pointer, dc, x, y);
             }
 
-            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
+            Ctrl.Input.CrossCursorOffset = pixp - Ctrl.Input.CrossCursor.Pos;
 
-            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
+            Context.StoredObjDownPoint = Ctrl.Input.ObjDownPoint;
         }
         else
         {
@@ -397,8 +397,8 @@ public class SelectingState : ControllerState
         }
         else
         {
-            vector3_t p = Ctrl.GetCursorPos();
-            Ctrl.SetCursorWoldPos(p + moveInfo.Delta);
+            vector3_t p = Ctrl.Input.GetCursorPos();
+            Ctrl.Input.SetCursorWoldPos(p + moveInfo.Delta);
             Ctrl.Redraw();
         }
     }
@@ -480,8 +480,8 @@ public class RubberBandSelectState : ControllerState
 
     private void RubberBandSelect(DrawContext dc, vector3_t p0, vector3_t p1)
     {
-        Ctrl.LastSelPoint = null;
-        Ctrl.LastSelSegment = null;
+        Ctrl.Input.LastSelPoint = null;
+        Ctrl.Input.LastSelSegment = null;
 
         vector3_t minp = VectorExt.Min(p0, p1);
         vector3_t maxp = VectorExt.Max(p0, p1);
@@ -523,7 +523,7 @@ public class DragingPointsState : ControllerState
     public override void Enter()
     {
         isStart = true;
-        StartPos = Ctrl.CrossCursor.Pos;
+        StartPos = Ctrl.Input.CrossCursor.Pos;
     }
 
     public override void Exit()
@@ -562,7 +562,7 @@ public class DragingPointsState : ControllerState
             // 最初だけある程度ずらさないと移動しないようにする
             //
             CadVertex v = CadVertex.Create(x, y, 0);
-            vcompo_t d = (Ctrl.RawDownPoint - v).Norm();
+            vcompo_t d = (Ctrl.Input.RawDownPoint - v).Norm();
 
             if (d > SettingsHolder.Settings.InitialMoveLimit)
             {
@@ -573,13 +573,13 @@ public class DragingPointsState : ControllerState
         else
         {
             vector3_t p0 = dc.DevPointToWorldPoint(StartPos);
-            vector3_t p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p1 = dc.DevPointToWorldPoint(Ctrl.Input.CrossCursor.Pos);
 
             vector3_t delta = p1 - p0;
 
-            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.CrossCursor.Pos));
+            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.Input.CrossCursor.Pos));
 
-            Ctrl.ObjDownPoint = Context.StoredObjDownPoint + delta;
+            Ctrl.Input.ObjDownPoint = Context.StoredObjDownPoint + delta;
         }
     }
 
@@ -587,7 +587,7 @@ public class DragingPointsState : ControllerState
     {
         Ctrl.CancelEdit();
         Context.ChangeState(ControllerStates.SELECT);
-        Ctrl.ClearSelection();
+        Ctrl.Input.ClearSelection();
     }
 }
 
@@ -614,24 +614,24 @@ public class MeasuringState : ControllerState
     {
         if (Ctrl.MeasureFigureCreator != null)
         {
-            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p = dc.DevPointToWorldPoint(Ctrl.Input.CrossCursor.Pos);
             Ctrl.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 
     public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Ctrl.LastDownPoint = Ctrl.SnapPoint;
+        Ctrl.Input.LastDownPoint = Ctrl.Input.SnapPoint;
 
         CadVertex p;
 
-        if (Ctrl.CurrentSnapInfo.IsPointMatch)
+        if (Ctrl.Input.CurrentSnapInfo.IsPointMatch)
         {
-            p = new CadVertex(Ctrl.SnapPoint);
+            p = new CadVertex(Ctrl.Input.SnapPoint);
         }
         else
         {
-            p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.Input.CrossCursor.Pos);
         }
 
         SetPointInMeasuring(dc, p);
@@ -756,11 +756,11 @@ public class DragingViewOrgState : ControllerState
 
         vector3_t d = cp - pointer.MDownPoint;
 
-        vector3_t op = Ctrl.StoreViewOrg + d;
+        vector3_t op = Ctrl.Input.StoreViewOrg + d;
 
         ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
 
-        Ctrl.CrossCursor.Pos = Ctrl.CrossCursor.StorePos + d;
+        Ctrl.Input.CrossCursor.Pos = Ctrl.Input.CrossCursor.StorePos + d;
     }
 }
 

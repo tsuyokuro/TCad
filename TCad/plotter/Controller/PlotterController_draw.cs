@@ -1,6 +1,7 @@
 using MyCollections;
 using OpenTK.Mathematics;
 using Plotter.Settings;
+using System.Windows.Controls;
 
 namespace Plotter.Controller;
 
@@ -253,7 +254,7 @@ public partial class PlotterController
     {
         if (SettingsHolder.Settings.SnapToGrid)
         {
-            dc.Drawing.DrawGrid(mGridding);
+            dc.Drawing.DrawGrid(Input.Grid);
         }
     }
 
@@ -286,14 +287,14 @@ public partial class PlotterController
     {
         dc.Drawing.DrawMarkCursor(
             dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER),
-            LastDownPoint,
+            Input.LastDownPoint,
             ControllerConst.MARK_CURSOR_SIZE);
 
-        if (ObjDownPoint.IsValid())
+        if (Input.ObjDownPoint.IsValid())
         {
             dc.Drawing.DrawMarkCursor(
                 dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER2),
-                ObjDownPoint,
+                Input.ObjDownPoint,
                 ControllerConst.MARK_CURSOR_SIZE);
         }
     }
@@ -306,45 +307,45 @@ public partial class PlotterController
         }
 
         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_DRAG_LINE),
-            LastDownPoint, dc.DevPointToWorldPoint(CrossCursor.Pos));
+            Input.LastDownPoint, dc.DevPointToWorldPoint(Input.CrossCursor.Pos));
     }
 
     private void DrawCrossCursor(DrawContext dc)
     {
-        dc.Drawing.DrawCrossCursorScrn(CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
+        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
 
-        if (CursorLocked)
+        if (Input.CursorLocked)
         {
             dc.Drawing.DrawCrossScrn(
                 dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT),
-                CrossCursor.Pos,
+                Input.CrossCursor.Pos,
                 ControllerConst.CURSOR_LOCK_MARK_SIZE);
         }
     }
 
     private void DrawCrossCursorShort(DrawContext dc)
     {
-        dc.Drawing.DrawCrossCursorScrn(CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
+        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
     }
 
     private void DrawAccordingState(DrawContext dc)
     {
         CurrentState.Draw(dc);
 
-        if (InteractCtrl.IsActive)
+        if (Input.InteractCtrl.IsActive)
         {
-            InteractCtrl.Draw(dc, SnapPoint);
+            Input.InteractCtrl.Draw(dc, Input.SnapPoint);
         }
     }
 
     private void DrawHighlightPoint(DrawContext dc)
     {
-        dc.Drawing.DrawHighlightPoints(HighlightPointList);
+        dc.Drawing.DrawHighlightPoints(Input.HighlightPointList);
     }
 
     private void DrawHighlightSeg(DrawContext dc)
     {
-        foreach (MarkSegment markSeg in HighlightSegList)
+        foreach (MarkSegment markSeg in Input.HighlightSegList)
         {
             CadFigure fig = DB.GetFigure(markSeg.FigureID);
             fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_MATCH_SEG), markSeg.PtIndexA, markSeg.PtIndexB);
@@ -353,24 +354,27 @@ public partial class PlotterController
 
     private void DrawLastSelSeg(DrawContext dc)
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return;
         }
 
-        CadFigure fig = DB.GetFigure(LastSelSegment.Value.FigureID);
-        fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG), LastSelSegment.Value.PtIndexA, LastSelSegment.Value.PtIndexB);
+        CadFigure fig = DB.GetFigure(Input.LastSelSegment.Value.FigureID);
+        fig.DrawSeg(
+                dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG),
+                Input.LastSelSegment.Value.PtIndexA,
+                Input.LastSelSegment.Value.PtIndexB);
     }
 
     private void DrawLastSelPoint(DrawContext dc)
     {
-        if (LastSelPoint == null)
+        if (Input.LastSelPoint == null)
         {
             return;
         }
 
-        CadFigure fig = DB.GetFigure(LastSelPoint.Value.FigureID);
-        int idx = LastSelPoint.Value.PointIndex;
+        CadFigure fig = DB.GetFigure(Input.LastSelPoint.Value.FigureID);
+        int idx = Input.LastSelPoint.Value.PointIndex;
         var point = fig.PointList[idx];
 
 
@@ -379,9 +383,9 @@ public partial class PlotterController
 
     private void DrawExtendSnapPoint(DrawContext dc)
     {
-        if (ExtendSnapPointList.Count > 0)
+        if (Input.ExtendSnapPointList.Count > 0)
         {
-            dc.Drawing.DrawExtSnapPoints(ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
+            dc.Drawing.DrawExtSnapPoints(Input.ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
         }
     }
     #endregion

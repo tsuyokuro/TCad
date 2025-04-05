@@ -38,7 +38,7 @@ public class PlotterClipboard
         List<CadFigure> figList = BinToFigList(bin);
 
         // Pase figures in fig list
-        vector3_t pp = controller.LastDownPoint;
+        vector3_t pp = controller.Input.LastDownPoint;
 
         MinMax3D mm3d = CadUtil.GetFigureMinMaxIncludeChild(figList);
 

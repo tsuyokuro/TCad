@@ -145,7 +145,7 @@ public partial class PlotterController
     public void AddPointToCursorPos()
     {
         CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
-        fig.AddPoint((CadVertex)GetCursorPos());
+        fig.AddPoint((CadVertex)Input.GetCursorPos());
 
         fig.EndCreate(DC);
 
@@ -163,7 +163,7 @@ public partial class PlotterController
 
     public void Paste()
     {
-        ClearSelection();
+        Input.ClearSelection();
 
         PlotterClipboard.PasteFiguresAsBin(this);
         UpdateObjectTree(true);

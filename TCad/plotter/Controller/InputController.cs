@@ -1,18 +1,83 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
-using System.Windows.Documents;
 using TCad.ViewModel;
 
 namespace Plotter.Controller;
 
 // User interface handling
-public partial class PlotterController
+public class InputController
 {
-    public InteractCtrl InteractCtrl { get; } = new InteractCtrl();
+    PlotterController Controller;
 
-    public CadMouse Mouse { get; } = new CadMouse();
+    public DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public IPlotterViewModel ViewModelIF
+    {
+        get => Controller.ViewModelIF;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public SelectModes SelectMode
+    {
+        get => Controller.SelectMode;
+    }
+
+    public ControllerStates StateID
+    {
+        get => Controller.StateID;
+    }
+
+    public ControllerState CurrentState
+    {
+        get => Controller.CurrentState;
+    }
+
+    public FigCreator FigureCreator
+    {
+        get => Controller.FigureCreator;
+    }
+
+    public FigCreator MeasureFigureCreator
+    {
+        get => Controller.MeasureFigureCreator;
+    }
+
+    public ControllerStateMachine StateMachine
+    {
+        get => Controller.StateMachine;
+    }
+
+    public Vector3List ExtendSnapPointList
+    {
+        get;
+        private set;
+    } = new Vector3List(20);
+
+
+    public InteractCtrl InteractCtrl
+    {
+        get;
+        private set;
+    } = new InteractCtrl();
+
+    public CadMouse Mouse
+    {
+        get;
+        private set;
+    } = new CadMouse();
 
     public CadCursor CrossCursor = CadCursor.Create();
 
@@ -116,9 +181,9 @@ public partial class PlotterController
         get;
     }
 
-    private List<HighlightPointListItem> HighlightPointList = new List<HighlightPointListItem>();
+    public List<HighlightPointListItem> HighlightPointList = new List<HighlightPointListItem>();
 
-    private List<MarkSegment> HighlightSegList = new List<MarkSegment>();
+    public List<MarkSegment> HighlightSegList = new List<MarkSegment>();
 
     private Gridding mGridding = new Gridding();
 
@@ -130,6 +195,14 @@ public partial class PlotterController
         }
     }
 
+    public InputController(PlotterController controller)
+    {
+        Controller = controller;
+
+        ObjDownPoint = VectorExt.InvalidVector3;
+
+        InitHid();
+    }
 
     private void InitHid()
     {
@@ -457,7 +530,7 @@ public partial class PlotterController
 
         CurrentState.LButtonDown(pointer, dc, x, y);
 
-        UpdateObjectTree(false);
+        Controller.UpdateObjectTree(false);
 
         UnlockCursor();
 
@@ -468,7 +541,7 @@ public partial class PlotterController
     {
         CurrentState.LButtonUp(pointer, dc, x, y);
 
-        UpdateObjectTree(false);
+        Controller.UpdateObjectTree(false);
 
         CrossCursorOffset = default;
     }
@@ -529,7 +602,7 @@ public partial class PlotterController
     {
         LastDownPoint = SnapPoint;
 
-        ContextMenuMan.RequestContextMenu(x, y);
+        Controller.ContextMenuMan.RequestContextMenu(x, y);
     }
 
     private void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -832,7 +905,7 @@ public partial class PlotterController
     {
         if (mSpPointList == null)
         {
-            NearPointSearcher searcher = new NearPointSearcher(this);
+            NearPointSearcher searcher = new NearPointSearcher(Controller);
 
             var resList = searcher.Search((CadVertex)CrossCursor.Pos, 64);
 
@@ -935,5 +1008,18 @@ public partial class PlotterController
     private void CheckExtendSnapPoints(DrawContext dc)
     {
         ExtendSnapPointList.ForEach(v => mPointSearcher.Check(dc, v));
+    }
+
+    public void ClearSelection()
+    {
+        CurrentFigure = null;
+
+        LastSelPoint = null;
+        LastSelSegment = null;
+
+        foreach (CadLayer layer in DB.LayerList)
+        {
+            layer.ClearSelectedFlags();
+        }
     }
 }

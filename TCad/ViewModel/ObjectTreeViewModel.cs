@@ -40,8 +40,8 @@ public class ObjectTreeViewModel
 
     private void StateChanged(CadObjTreeItem item)
     {
-        mVMContext.Controller.CurrentFigure =
-            TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.CurrentFigure);
+        mVMContext.Controller.Input.CurrentFigure =
+            TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.Input.CurrentFigure);
 
         mVMContext.Redraw();
     }

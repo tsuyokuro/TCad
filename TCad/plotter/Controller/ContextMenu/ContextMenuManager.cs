@@ -73,12 +73,12 @@ public class ContextMenuManager
 
     private bool SegSelected()
     {
-        if (mController.LastSelSegment == null)
+        if (mController.Input.LastSelSegment == null)
         {
             return false;
         }
 
-        MarkSegment seg = mController.LastSelSegment.Value;
+        MarkSegment seg = mController.Input.LastSelSegment.Value;
 
         CadFigure fig = mController.DB.GetFigure(seg.FigureID);
 

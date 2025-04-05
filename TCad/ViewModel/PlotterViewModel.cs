@@ -226,7 +226,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         if (type == Plotter.Controller.CursorType.TRACKING)
         {
             CursorPosVM.CursorPos = pt;
-            CursorPosVM.CursorPos3 = pt - Controller.LastDownPoint;
+            CursorPosVM.CursorPos3 = pt - Controller.Input.LastDownPoint;
         }
         else if (type == Plotter.Controller.CursorType.LAST_DOWN)
         {

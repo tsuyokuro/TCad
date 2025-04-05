@@ -12,19 +12,6 @@ public partial class PlotterController
     private List<CadFigure> mEditFigList = new List<CadFigure>();
 
 
-    public void ClearSelection()
-    {
-        CurrentFigure = null;
-
-        LastSelPoint = null;
-        LastSelSegment = null;
-
-        foreach (CadLayer layer in DB.LayerList)
-        {
-            layer.ClearSelectedFlags();
-        }
-    }
-
     public List<CadFigure> StartEdit()
     {
         mEditFigList = DB.GetSelectedFigList();
@@ -156,11 +143,11 @@ public partial class PlotterController
 
     public void Cancel()
     {
-        UnlockCursor();
+        Input.UnlockCursor();
 
-        if (InteractCtrl.IsActive)
+        if (Input.InteractCtrl.IsActive)
         {
-            InteractCtrl.Cancel();
+            Input.InteractCtrl.Cancel();
         }
 
         CurrentState.Cancel();

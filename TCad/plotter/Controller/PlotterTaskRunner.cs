@@ -159,7 +159,7 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.ClearSelection();
+                Controller.Input.ClearSelection();
                 Controller.Redraw();
             });
         });
@@ -272,7 +272,7 @@ public class PlotterTaskRunner
 
     public (vector3_t p0, InteractCtrl.States state) InputPoint()
     {
-        InteractCtrl ctrl = Controller.InteractCtrl;
+        InteractCtrl ctrl = Controller.Input.InteractCtrl;
 
         ctrl.Start();
 
@@ -304,7 +304,7 @@ public class PlotterTaskRunner
 
     public (vector3_t p0, vector3_t p1, InteractCtrl.States state) InputLine(string message)
     {
-        InteractCtrl ctrl = Controller.InteractCtrl;
+        InteractCtrl ctrl = Controller.Input.InteractCtrl;
 
         ctrl.Start();
 

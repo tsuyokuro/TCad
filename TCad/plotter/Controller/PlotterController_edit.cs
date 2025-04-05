@@ -13,16 +13,16 @@ public partial class PlotterController
 {
     public bool ToBezier()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return false;
         }
 
-        bool ret = ToBezier(LastSelSegment.Value);
+        bool ret = ToBezier(Input.LastSelSegment.Value);
 
         if (ret)
         {
-            ClearSelection();
+            Input.ClearSelection();
             UpdateObjectTree(true);
         }
 
@@ -55,13 +55,13 @@ public partial class PlotterController
 
     public void SeparateFigures()
     {
-        if (LastSelPoint == null)
+        if (Input.LastSelPoint == null)
         {
             return;
         }
 
-        SeparateFigures(LastSelPoint.Value.Figure, LastSelPoint.Value.PointIndex);
-        ClearSelection();
+        SeparateFigures(Input.LastSelPoint.Value.Figure, Input.LastSelPoint.Value.PointIndex);
+        Input.ClearSelection();
     }
 
     public void SeparateFigures(CadFigure fig, int pointIdx)
@@ -101,8 +101,8 @@ public partial class PlotterController
 
     public void BondFigures()
     {
-        BondFigures(CurrentFigure);
-        ClearSelection();
+        BondFigures(Input.CurrentFigure);
+        Input.ClearSelection();
     }
 
     public void BondFigures(CadFigure fig)
@@ -142,14 +142,14 @@ public partial class PlotterController
 
     public void CutSegment()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return;
         }
 
-        MarkSegment ms = LastSelSegment.Value;
+        MarkSegment ms = Input.LastSelSegment.Value;
         CutSegment(ms);
-        ClearSelection();
+        Input.ClearSelection();
     }
 
     public void CutSegment(MarkSegment ms)
@@ -253,7 +253,7 @@ public partial class PlotterController
 
     public void CutMeshWithVector()
     {
-        CadFigure target = CurrentFigure;
+        CadFigure target = Input.CurrentFigure;
         if (target == null)
         {
             ItConsole.printFaile("No Figure selected.");
@@ -288,19 +288,19 @@ public partial class PlotterController
             fig.RemoveGarbageChildren();
         }
 
-        ClearSelection();
+        Input.ClearSelection();
         UpdateObjectTree(true);
     }
 
 
     public bool InsPointToLastSelectedSeg()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return false;
         }
 
-        MarkSegment seg = LastSelSegment.Value;
+        MarkSegment seg = Input.LastSelSegment.Value;
 
         CadFigure fig = DB.GetFigure(seg.FigureID);
 
@@ -339,9 +339,9 @@ public partial class PlotterController
 
         Log.pl($"ins={ins} pcnt={fig.PointCount}");
 
-        fig.InsertPointAt(ins, (CadVertex)LastDownPoint);
+        fig.InsertPointAt(ins, (CadVertex)Input.LastDownPoint);
 
-        ClearSelection();
+        Input.ClearSelection();
 
         fig.SelectPointAt(ins, true);
 
