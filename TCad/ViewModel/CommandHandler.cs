@@ -35,7 +35,7 @@ public class CommandHandler
         }
     }
 
-    PlotterController Controller;
+    IPlotterController Controller;
     IPlotterViewModel ViewModel;
 
     private Dictionary<string, Action> CommandMap;

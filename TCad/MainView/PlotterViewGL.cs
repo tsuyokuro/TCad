@@ -21,7 +21,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 {
     private DrawContextGL mDrawContext = null;
 
-    private PlotterController mController = null;
+    private IPlotterController mController = null;
 
     private IPlotterViewModel mVM;
 

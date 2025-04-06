@@ -1,6 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
-using static Plotter.Controller.PlotterController;
 using System;
 
 namespace Plotter;

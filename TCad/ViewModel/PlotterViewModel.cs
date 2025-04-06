@@ -14,8 +14,8 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected PlotterController Controller_;
-    public PlotterController Controller
+    protected IPlotterController Controller_;
+    public IPlotterController Controller
     {
         get => Controller_;
     }

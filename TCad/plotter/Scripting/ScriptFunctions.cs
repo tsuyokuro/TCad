@@ -25,7 +25,7 @@ namespace Plotter.Scripting;
 
 public class ScriptFunctions
 {
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
     private ScriptEnvironment Env;
 

@@ -7,7 +7,7 @@ namespace Plotter.Controller;
 
 public class PlotterCommandProcessor
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
     public CadObjectDB DB
     {
@@ -30,7 +30,7 @@ public class PlotterCommandProcessor
         get => Controller.DC;
     }
 
-    public PlotterCommandProcessor(PlotterController controller)
+    public PlotterCommandProcessor(IPlotterController controller)
     {
         Controller = controller;
     }

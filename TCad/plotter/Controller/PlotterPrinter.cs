@@ -11,7 +11,7 @@ namespace Plotter.Controller;
 
 public class PlotterPrinter
 {
-    public void PrintPage(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
+    public void PrintPage(IPlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
         Log.pl($"Dev Width:{deviceSize.Width} Height:{deviceSize.Height}");
 #if PRINT_WITH_GL_ONLY
@@ -24,7 +24,7 @@ public class PlotterPrinter
 #endif
     }
 
-    private void PrintPageSwitch(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
+    private void PrintPageSwitch(IPlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
         if (pc.DC.GetType() == typeof(DrawContextGLPers) || SettingsHolder.Settings.PrintWithBitmap)
         {
@@ -40,7 +40,7 @@ public class PlotterPrinter
         }
     }
 
-    private static Bitmap GetPrintableBmp(PlotterController pc, CadSize2D pageSize, CadSize2D deviceSize)
+    private static Bitmap GetPrintableBmp(IPlotterController pc, CadSize2D pageSize, CadSize2D deviceSize)
     {
         if (!(pc.DC is DrawContextGL))
         {

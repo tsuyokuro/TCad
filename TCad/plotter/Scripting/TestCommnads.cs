@@ -28,9 +28,9 @@ namespace Plotter.Scripting;
 
 public class TestCommands
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
-    public TestCommands(PlotterController controller)
+    public TestCommands(IPlotterController controller)
     {
         Controller = controller;
     }

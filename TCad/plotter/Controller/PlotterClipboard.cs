@@ -12,7 +12,7 @@ public class PlotterClipboard
         return Clipboard.ContainsData(CadClipBoard.TypeNameBin);
     }
 
-    public static void CopyFiguresAsBin(PlotterController controller)
+    public static void CopyFiguresAsBin(IPlotterController controller)
     {
         var figList = controller.GetSelectedRootFigureList();
 
@@ -26,7 +26,7 @@ public class PlotterClipboard
         Clipboard.SetData(CadClipBoard.TypeNameBin, bin);
     }
 
-    public static void PasteFiguresAsBin(PlotterController controller)
+    public static void PasteFiguresAsBin(IPlotterController controller)
     {
         if (!Clipboard.ContainsData(CadClipBoard.TypeNameBin))
         {
@@ -58,7 +58,7 @@ public class PlotterClipboard
         controller.HistoryMan.foward(opeRoot);
     }
 
-    private static void PasteFigure(PlotterController controller, CadFigure fig, vector3_t delta)
+    private static void PasteFigure(IPlotterController controller, CadFigure fig, vector3_t delta)
     {
         fig.MoveAllPoints(delta);
 

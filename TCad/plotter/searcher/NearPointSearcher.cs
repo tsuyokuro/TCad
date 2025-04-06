@@ -31,9 +31,12 @@ public class NearPointSearcher
         public CadSegment ScrSegment;
     }
 
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
-    private DrawContext DC;
+    private DrawContext DC
+    {
+        get => Controller.DC;
+    }
 
     List<SegmentItem> SegList = new List<SegmentItem>();
 
@@ -41,10 +44,9 @@ public class NearPointSearcher
 
     public vcompo_t Range = 128;
 
-    public NearPointSearcher(PlotterController controller)
+    public NearPointSearcher(IPlotterController controller)
     {
         Controller = controller;
-        DC = Controller.DC;
     }
 
     public List<Result> Search(CadVertex p, vcompo_t range)

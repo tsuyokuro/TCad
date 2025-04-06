@@ -13,9 +13,9 @@ namespace Plotter.Controller.TaskRunner;
 
 public class PlotterTaskRunner
 {
-    public PlotterController Controller;
+    public IPlotterController Controller;
 
-    public PlotterTaskRunner(PlotterController controller)
+    public PlotterTaskRunner(IPlotterController controller)
     {
         Controller = controller;
     }

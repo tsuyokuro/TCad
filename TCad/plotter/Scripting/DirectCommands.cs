@@ -10,9 +10,9 @@ namespace Plotter.Scripting;
 
 public class DirectCommands
 {
-    private readonly PlotterController Controller;
+    private readonly IPlotterController Controller;
 
-    public DirectCommands(PlotterController controller)
+    public DirectCommands(IPlotterController controller)
     {
         Controller = controller;
     }

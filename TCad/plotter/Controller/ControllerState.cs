@@ -17,7 +17,7 @@ public class ControllerStateMachine
     public class StateContext
     {
         public vector3_t StoredObjDownPoint = default;
-        public PlotterController Controller;
+        public IPlotterController Controller;
 
         public ControllerState CurrentState
         {
@@ -59,9 +59,9 @@ public class ControllerStateMachine
 
     private StateContext Context;
 
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
-    public ControllerStateMachine(PlotterController controller)
+    public ControllerStateMachine(IPlotterController controller)
     {
         Controller = controller;
         Context = new StateContext(this);
@@ -138,7 +138,7 @@ public class ControllerState
         get => ControllerStates.NONE;
     }
 
-    protected PlotterController Ctrl
+    protected IPlotterController Ctrl
     {
         get => Context.Controller;
     }

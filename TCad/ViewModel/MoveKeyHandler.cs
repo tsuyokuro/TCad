@@ -8,13 +8,13 @@ namespace TCad.ViewModel;
 
 public class MoveKeyHandler
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
     public bool IsStarted;
 
     private vector3_t Delta = default;
 
-    public MoveKeyHandler(PlotterController controller)
+    public MoveKeyHandler(IPlotterController controller)
     {
         Controller = controller;
     }

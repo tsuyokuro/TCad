@@ -105,7 +105,7 @@ public class CadFileAccessor
 
     private static void SaveToMsgPackFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         CadData cd = new CadData(
                             pc.DB,
@@ -118,7 +118,7 @@ public class CadFileAccessor
 
     private static void LoadFromMsgPackFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         CadData? cd = MpCadFile.Load(fname);
 
@@ -140,7 +140,7 @@ public class CadFileAccessor
 
     private static void SaveToMsgPackJsonFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         CadData cd = new CadData(
             pc.DB,
@@ -161,7 +161,7 @@ public class CadFileAccessor
 
         vm.SetWorldScale(rcd.WorldScale);
 
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         pc.PageSize = rcd.PageSize;
 

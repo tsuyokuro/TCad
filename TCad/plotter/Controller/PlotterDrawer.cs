@@ -9,7 +9,7 @@ namespace Plotter.Controller;
 
 public class PlotterDrawer
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
     DrawContext DC {
         get => Controller.DC;
@@ -45,13 +45,7 @@ public class PlotterDrawer
         get => Controller.Input;
     }
 
-    ControllerStateMachine StateMachine
-    {
-        get => Controller.StateMachine;
-    }
-
-
-    public PlotterDrawer(PlotterController controller)
+    public PlotterDrawer(IPlotterController controller)
     {
         Controller = controller;
     }
@@ -354,7 +348,7 @@ public class PlotterDrawer
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (StateMachine.CurrentStateID != ControllerStates.DRAGING_POINTS)
+        if (Controller.StateID != ControllerStates.DRAGING_POINTS)
         {
             return;
         }
@@ -383,7 +377,7 @@ public class PlotterDrawer
 
     private void DrawAccordingState(DrawContext dc)
     {
-        StateMachine.CurrentState.Draw(dc);
+        Controller.CurrentState.Draw(dc);
 
         if (Input.InteractCtrl.IsActive)
         {

@@ -5,10 +5,9 @@ using TCad.ViewModel;
 
 namespace Plotter.Controller;
 
-// User interface handling
 public class PlotterInput
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
     public DrawContext DC
     {
@@ -195,7 +194,7 @@ public class PlotterInput
         }
     }
 
-    public PlotterInput(PlotterController controller)
+    public PlotterInput(IPlotterController controller)
     {
         Controller = controller;
 

@@ -1,4 +1,3 @@
-using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using Plotter.Scripting;
 using Plotter.Settings;
@@ -6,12 +5,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
 using TCad.ViewModel;
-using Windows.Networking.NetworkOperators;
-using static IronPython.Modules._ast;
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterController : IPlotterController
 {
     public CadObjectDB DB
     {
@@ -101,11 +98,6 @@ public partial class PlotterController
         get;
         set;
     }
-
-    //private Vector3List ExtendSnapPointList
-    //{
-    //    get; set;
-    //} = new Vector3List(20);
 
     public ContextMenuManager ContextMenuMan
     {
@@ -228,7 +220,6 @@ public partial class PlotterController
     #endregion ObjectTree handling
 
 
-    #region Notify
     public void UpdateLayerList()
     {
         ViewModelIF.LayerListChanged(GetLayerListInfo());
@@ -247,9 +238,7 @@ public partial class PlotterController
     {
         ViewModelIF.StateChanged(param);
     }
-    #endregion Notify
 
-    #region Start and End creating figure
     public void StartCreateFigure(CadFigure.Types type)
     {
         ChangeState(ControllerStates.CREATE_FIGURE);
@@ -322,7 +311,6 @@ public partial class PlotterController
         MeasureMode = MeasureModes.NONE;
         MeasureFigureCreator = null;
     }
-    #endregion Start and End creating figure
 
     public void Undo()
     {
@@ -340,12 +328,11 @@ public partial class PlotterController
         UpdateLayerList();
     }
 
-    #region Getting selection
     public bool HasSelect()
     {
         foreach (CadLayer layer in DB.LayerList)
         {
-            foreach (CadFigure fig in layer.FigureList )
+            foreach (CadFigure fig in layer.FigureList)
             {
                 if (fig.HasSelectedPointInclueChild())
                 {
@@ -392,7 +379,6 @@ public partial class PlotterController
 
         return figList;
     }
-    #endregion Getting selection
 
     public void SetDB(CadObjectDB db, bool clearHistory)
     {
@@ -406,8 +392,6 @@ public partial class PlotterController
         UpdateLayerList();
 
         UpdateObjectTree(true);
-
-        //Redraw();
     }
 
     public void SetDB(CadObjectDB db)

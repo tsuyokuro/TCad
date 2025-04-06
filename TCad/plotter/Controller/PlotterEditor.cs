@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using CadDataTypes;
 using TCad.Properties;
-using OpenTK;
-using OpenTK.Mathematics;
 using Plotter.Controller.TaskRunner;
 
 namespace Plotter.Controller;
@@ -12,7 +10,7 @@ namespace Plotter.Controller;
 
 public class PlotterEditor
 {
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
     PlotterInput Input
     {
@@ -44,7 +42,7 @@ public class PlotterEditor
         get => Controller.DC;
     }
 
-    public PlotterEditor(PlotterController controller)
+    public PlotterEditor(IPlotterController controller)
     {
         Controller = controller;
     }

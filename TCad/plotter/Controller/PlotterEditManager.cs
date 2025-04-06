@@ -1,5 +1,3 @@
-using OpenTK;
-using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 
@@ -7,7 +5,7 @@ namespace Plotter.Controller;
 
 public class PlotterEditManager
 {
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
     private CadOpeFigureSnapShotList mSnapShotList;
 
@@ -24,7 +22,7 @@ public class PlotterEditManager
     }
 
 
-    public PlotterEditManager(PlotterController controller)
+    public PlotterEditManager(IPlotterController controller)
     {
         Controller = controller;
     }

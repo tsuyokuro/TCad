@@ -18,10 +18,10 @@ public abstract class CadOpe
     {
     }
 
-    public abstract void Undo(PlotterController pc);
-    public abstract void Redo(PlotterController pc);
+    public abstract void Undo(IPlotterController pc);
+    public abstract void Redo(IPlotterController pc);
 
-    public virtual void Dispose(PlotterController pc)
+    public virtual void Dispose(IPlotterController pc)
     {
     }
 }
@@ -45,13 +45,13 @@ public class CadOpeDBSnapShot : CadOpe
         Log.pl(nameof(CadOpeDBSnapShot) + " StoreAfter data size:" + After.Length);
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadObjectDB db = CopyUtil.Lz4BinRestoreDB(Before);
         pc.SetDB(db, false);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadObjectDB db = CopyUtil.Lz4BinRestoreDB(After);
         pc.SetDB(db, false);
@@ -78,12 +78,12 @@ public class CadOpeFigureSnapShot : CadOpe
         After = CopyUtil.FigToLz4Bin(fig);
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CopyUtil.Lz4BinRestoreFig(Before, pc.DB);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CopyUtil.Lz4BinRestoreFig(After, pc.DB);
     }
@@ -124,7 +124,7 @@ public class CadOpeFigureSnapShotList : CadOpe
         }
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         for (int i=0; i< SnapShotList.Count; i++)
         {
@@ -132,7 +132,7 @@ public class CadOpeFigureSnapShotList : CadOpe
         }
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         for (int i = 0; i < SnapShotList.Count; i++)
         {
@@ -171,7 +171,7 @@ public class CadOpeList : CadOpe
         OpeList.Add(ope);
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         foreach (CadOpe ope in OpeList.Reverse<CadOpe>())
         {
@@ -179,7 +179,7 @@ public class CadOpeList : CadOpe
         }
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         foreach (CadOpe ope in OpeList)
         {
@@ -220,13 +220,13 @@ public class CadOpeAddPoint : CadOpePointBase
         Point = pt;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.RemovePointAt(PointIndex);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.AddPoint(Point);
@@ -250,7 +250,7 @@ public class CadOpeInsertPoints : CadOpePointBase
         InsertNum = insertNum;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         CadFigure fig = pc.DB.GetFigure(FigureID);
@@ -278,7 +278,7 @@ public class CadOpeInsertPoints : CadOpePointBase
         fig.RemovePointsRange(idx, InsertNum);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         CadFigure fig = pc.DB.GetFigure(FigureID);
@@ -314,13 +314,13 @@ public class CadOpeSetClose : CadOpeFigureBase
         Close = on;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.IsLoop = !Close;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.IsLoop = Close;
@@ -334,20 +334,20 @@ public class CadOpeAddFigure : CadOpeFigureBase
     {
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         layer.RemoveFigureByID(pc.DB, FigureID);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         CadFigure fig = pc.DB.GetFigure(FigureID);
         layer.AddFigure(fig);
     }
 
-    public override void Dispose(PlotterController pc)
+    public override void Dispose(IPlotterController pc)
     {
         pc.DB.RelaseFigure(FigureID);
     }
@@ -364,14 +364,14 @@ public class CadOpeRemoveFigure : CadOpeFigureBase
         mFigureIndex = figIndex;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         CadFigure fig = pc.DB.GetFigure(FigureID);
         layer.InsertFigure(mFigureIndex, fig);
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadLayer layer = pc.DB.GetLayer(LayerID);
         layer.RemoveFigureByID(pc.DB, FigureID);
@@ -394,7 +394,7 @@ public class CadOpeAddChildlen : CadOpe
         });
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
 
@@ -406,7 +406,7 @@ public class CadOpeAddChildlen : CadOpe
         }
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
 
@@ -433,7 +433,7 @@ public class CadOpeRemoveChildlen : CadOpe
         });
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
 
@@ -444,7 +444,7 @@ public class CadOpeRemoveChildlen : CadOpe
         }
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
 
@@ -470,7 +470,7 @@ public class CadOpeAddChild : CadOpe
         Index = index;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
         CadFigure child = pc.DB.GetFigure(ChildID);
@@ -478,7 +478,7 @@ public class CadOpeAddChild : CadOpe
         child.Parent = null;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
         CadFigure child = pc.DB.GetFigure(ChildID);
@@ -500,7 +500,7 @@ public class CadOpeRemoveChild : CadOpe
         Index = index;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
         CadFigure child = pc.DB.GetFigure(ChildID);
@@ -508,7 +508,7 @@ public class CadOpeRemoveChild : CadOpe
         child.Parent = parent;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure parent = pc.DB.GetFigure(ParentID);
         CadFigure child = pc.DB.GetFigure(ChildID);
@@ -530,11 +530,11 @@ public class CadOpeChangeNormal : CadOpe
         NewNormal = newNormal;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
     }
 }
@@ -548,13 +548,13 @@ public class CadOpeInvertDir : CadOpe
         FigureID = figID;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.InvertDir();
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.InvertDir();
@@ -572,12 +572,12 @@ public class CadOpeRemoveLayer : CadOpe
         Index = index;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         pc.DB.RemoveLayer(Layer.ID);
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         pc.DB.InserLayer(Layer, Index);
     }
@@ -596,12 +596,12 @@ public class CadOpeChangeFigureList : CadOpe
         NewList = newList;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         Layer.FigureList = NewList;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         Layer.FigureList = OldList;
     }
@@ -620,13 +620,13 @@ public class CadChangeFilgLinePen : CadOpe
         NewPen = newPen;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.LinePen = NewPen;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.LinePen = OldPen;
@@ -646,13 +646,13 @@ public class CadChangeFilgFillBrush : CadOpe
         NewBrush = newBrush;
     }
 
-    public override void Redo(PlotterController pc)
+    public override void Redo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.FillBrush = NewBrush;
     }
 
-    public override void Undo(PlotterController pc)
+    public override void Undo(IPlotterController pc)
     {
         CadFigure fig = pc.DB.GetFigure(FigureID);
         fig.FillBrush = OldBrush;

@@ -23,7 +23,7 @@ namespace Plotter.Scripting;
 
 public partial class ScriptEnvironment
 {
-    public PlotterController Controller;
+    public IPlotterController Controller;
 
     private ScriptEngine Engine;
 
@@ -47,7 +47,7 @@ public partial class ScriptEnvironment
 
     private readonly TestCommands mTestCommands;
 
-    public ScriptEnvironment(PlotterController controller)
+    public ScriptEnvironment(IPlotterController controller)
     {
         Log.plx("in");
 

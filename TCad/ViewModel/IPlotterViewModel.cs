@@ -37,7 +37,7 @@ public interface IPlotterViewModel
         set;
     }
 
-    PlotterController Controller
+    IPlotterController Controller
     {
         get;
     }

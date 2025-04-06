@@ -6,7 +6,7 @@ public class ContextMenuManager
 {
     MenuInfo mContextMenuInfo = new MenuInfo();
 
-    PlotterController mController;
+    IPlotterController mController;
 
     public static MenuInfo.Item CreatingFigureQuit = new MenuInfo.Item(Resources.menu_quit_create, "quit_create");
     public static MenuInfo.Item CreatingFigureEnd = new MenuInfo.Item(Resources.menu_end_create, "end_create");
@@ -15,7 +15,7 @@ public class ContextMenuManager
     public static MenuInfo.Item Paste = new MenuInfo.Item(Resources.menu_paste, "paste");
     public static MenuInfo.Item InsertPoint = new MenuInfo.Item(Resources.menu_insert_point, "insert_point");
 
-    public ContextMenuManager(PlotterController controller)
+    public ContextMenuManager(IPlotterController controller)
     {
         mController = controller;
     }

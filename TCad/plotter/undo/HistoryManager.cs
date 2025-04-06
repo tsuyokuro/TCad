@@ -5,12 +5,12 @@ namespace Plotter;
 
 public class HistoryManager
 {
-    private PlotterController mPC;
+    private IPlotterController mPC;
 
     public Stack<CadOpe> mUndoStack = new Stack<CadOpe>();
     public Stack<CadOpe> mRedoStack = new Stack<CadOpe>();
 
-    public HistoryManager(PlotterController pc)
+    public HistoryManager(IPlotterController pc)
     {
         mPC = pc;
     }
