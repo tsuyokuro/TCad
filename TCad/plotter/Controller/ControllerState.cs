@@ -392,7 +392,7 @@ public class SelectingState : ControllerState
 
         if (EditStarted)
         {
-            Ctrl.MovePointsFromStored(EditFigList, moveInfo);
+            Ctrl.CommandProc.MovePointsFromStored(EditFigList, moveInfo);
             Ctrl.Drawer.Redraw();
         }
         else

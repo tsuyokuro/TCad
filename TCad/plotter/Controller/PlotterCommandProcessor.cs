@@ -5,17 +5,39 @@ namespace Plotter.Controller;
 
 // Actions for DB
 
-public partial class PlotterController
+public class PlotterCommandProcessor
 {
+    PlotterController Controller;
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+        set => Controller.CurrentLayer = value;
+    }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+    DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public PlotterCommandProcessor(PlotterController controller)
+    {
+        Controller = controller;
+    }
+
     public void ClearAll()
     {
-        PageSize = new PaperPageSize();
-
-        DB.ClearAll();
-        HistoryMan.Clear();
-
-        UpdateLayerList();
-        UpdateObjectTree(true);
+        Controller.ClearAll();
     }
 
     #region Layer
@@ -53,7 +75,7 @@ public partial class PlotterController
 
         DB.LayerList.Add(layer);
 
-        UpdateLayerList();
+        Controller.UpdateLayerList();
 
         ItConsole.println("Layer added.  Name:" + layer.Name + " ID:" + layer.ID);
     }
@@ -96,7 +118,7 @@ public partial class PlotterController
             CurrentLayer = DB.LayerList[nextCurrentIdx];
         }
 
-        UpdateLayerList();
+        Controller.UpdateLayerList();
         ItConsole.println("Layer removed.  Name:" + layer.Name + " ID:" + layer.ID);
     }
     #endregion
@@ -122,30 +144,30 @@ public partial class PlotterController
 
     public void Remove()
     {
-        StartEdit();
+        Controller.StartEdit();
 
-        RemoveSelectedPoints();
+        Controller.RemoveSelectedPoints();
 
-        EndEdit();
+        Controller.EndEdit();
     }
 
     public void InsPoint()
     {
-        StartEdit();
-        if (InsPointToLastSelectedSeg())
+        Controller.StartEdit();
+        if (Controller.InsPointToLastSelectedSeg())
         {
-            EndEdit();
+            Controller.EndEdit();
         }
         else
         {
-            AbendEdit();
+            Controller.AbendEdit();
         }
     }
 
     public void AddPointToCursorPos()
     {
         CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
-        fig.AddPoint((CadVertex)Input.GetCursorPos());
+        fig.AddPoint((CadVertex)Controller.Input.GetCursorPos());
 
         fig.EndCreate(DC);
 
@@ -158,15 +180,15 @@ public partial class PlotterController
 
     public void Copy()
     {
-        PlotterClipboard.CopyFiguresAsBin(this);
+        PlotterClipboard.CopyFiguresAsBin(Controller);
     }
 
     public void Paste()
     {
-        Input.ClearSelection();
+        Controller.Input.ClearSelection();
 
-        PlotterClipboard.PasteFiguresAsBin(this);
-        UpdateObjectTree(true);
+        PlotterClipboard.PasteFiguresAsBin(Controller);
+        Controller.UpdateObjectTree(true);
     }
 
     private struct ClusterInfo
@@ -299,7 +321,7 @@ public partial class PlotterController
 
         layer.FigureList = newFigList;
 
-        ViewModelIF.UpdateTreeView(true);
+        Controller.ViewModelIF.UpdateTreeView(true);
     }
 
     #endregion

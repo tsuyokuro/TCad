@@ -145,6 +145,11 @@ public partial class PlotterController
         private set;
     }
 
+    public PlotterCommandProcessor CommandProc
+    {
+        get;
+        private set;
+    }
 
     public PlotterController(IPlotterViewModel vm)
     {
@@ -161,6 +166,7 @@ public partial class PlotterController
 
         Input = new PlotterInput(this);
 
+        CommandProc = new PlotterCommandProcessor(this);
 
 
         StateMachine = new ControllerStateMachine(this);
@@ -408,5 +414,16 @@ public partial class PlotterController
     {
         PlotterPrinter printer = new PlotterPrinter();
         printer.PrintPage(this, printerGraphics, pageSize, deviceSize);
+    }
+
+    public void ClearAll()
+    {
+        PageSize = new PaperPageSize();
+
+        DB.ClearAll();
+        HistoryMan.Clear();
+
+        UpdateLayerList();
+        UpdateObjectTree(true);
     }
 }

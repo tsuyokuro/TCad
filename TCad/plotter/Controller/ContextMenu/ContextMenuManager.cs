@@ -125,15 +125,15 @@ public class ContextMenuManager
                 break;
 
             case "copy":
-                mController.Copy();
+                mController.CommandProc.Copy();
                 break;
 
             case "paste":
-                mController.Paste();
+                mController.CommandProc.Paste();
                 break;
 
             case "insert_point":
-                mController.InsPoint();
+                mController.CommandProc.InsPoint();
                 break;
         }
     }

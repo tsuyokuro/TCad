@@ -275,7 +275,7 @@ public partial class PlotterController
         PlotterTaskRunner.RotateWithInteractive(target);
     }
 
-    private void RemoveSelectedPoints()
+    public void RemoveSelectedPoints()
     {
         List<CadFigure> figList = DB.GetSelectedFigList();
         foreach (CadFigure fig in figList)
