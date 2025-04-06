@@ -4,13 +4,51 @@ using CadDataTypes;
 using TCad.Properties;
 using OpenTK;
 using OpenTK.Mathematics;
+using Plotter.Controller.TaskRunner;
 
 namespace Plotter.Controller;
 
 // Edit figure functions
 
-public partial class PlotterController
+public class PlotterEditor
 {
+    private PlotterController Controller;
+
+    PlotterInput Input
+    {
+        get => Controller.Input;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public PlotterTaskRunner PlotterTaskRunner
+    {
+        get => Controller.PlotterTaskRunner;
+    }
+
+    DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public PlotterEditor(PlotterController controller)
+    {
+        Controller = controller;
+    }
+
     public bool ToBezier()
     {
         if (Input.LastSelSegment == null)
@@ -23,7 +61,7 @@ public partial class PlotterController
         if (ret)
         {
             Input.ClearSelection();
-            UpdateObjectTree(true);
+            Controller.UpdateObjectTree(true);
         }
 
         return ret;
@@ -227,7 +265,7 @@ public partial class PlotterController
 
     public void FlipWithVector()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile(
@@ -240,7 +278,7 @@ public partial class PlotterController
 
     public void FlipAndCopyWithVector()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile(
@@ -265,7 +303,7 @@ public partial class PlotterController
 
     public void RotateWithPoint()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile("No target figure.");
@@ -289,7 +327,7 @@ public partial class PlotterController
         }
 
         Input.ClearSelection();
-        UpdateObjectTree(true);
+        Controller.UpdateObjectTree(true);
     }
 
 

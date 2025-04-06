@@ -946,7 +946,7 @@ public class ScriptFunctions
     {
         StartEdit();
 
-        if (!Controller.InsPointToLastSelectedSeg())
+        if (!Controller.Editor.InsPointToLastSelectedSeg())
         {
             AbendEdit();
 

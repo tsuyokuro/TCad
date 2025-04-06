@@ -577,7 +577,7 @@ public class DragingPointsState : ControllerState
 
             vector3_t delta = p1 - p0;
 
-            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.Input.CrossCursor.Pos));
+            Ctrl.Editor.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.Input.CrossCursor.Pos));
 
             Ctrl.Input.ObjDownPoint = Context.StoredObjDownPoint + delta;
         }

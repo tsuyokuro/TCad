@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using TCad.ViewModel;
 using Windows.Networking.NetworkOperators;
+using static IronPython.Modules._ast;
 
 namespace Plotter.Controller;
 
@@ -95,7 +96,7 @@ public partial class PlotterController
         private set;
     }
 
-    private PlotterTaskRunner PlotterTaskRunner
+    public PlotterTaskRunner PlotterTaskRunner
     {
         get;
         set;
@@ -158,6 +159,12 @@ public partial class PlotterController
         private set;
     }
 
+    public PlotterEditor Editor
+    {
+        get;
+        private set;
+    }
+
     public PlotterController(IPlotterViewModel vm)
     {
         Log.plx("in");
@@ -176,6 +183,8 @@ public partial class PlotterController
         CommandProc = new PlotterCommandProcessor(this);
 
         EditManager = new PlotterEditManager(this);
+
+        Editor = new PlotterEditor(this);
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);

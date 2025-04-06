@@ -293,25 +293,25 @@ public class CommandHandler
 
     public void SeparateFigure()
     {
-        Controller.SeparateFigures();
+        Controller.Editor.SeparateFigures();
         Redraw();
     }
 
     public void BondFigure()
     {
-        Controller.BondFigures();
+        Controller.Editor.BondFigures();
         Redraw();
     }
 
     public void ToBezier()
     {
-        Controller.ToBezier();
+        Controller.Editor.ToBezier();
         Redraw();
     }
 
     public void CutSegment()
     {
-        Controller.CutSegment();
+        Controller.Editor.CutSegment();
         Redraw();
     }
 
@@ -329,34 +329,34 @@ public class CommandHandler
 
     public void ToLoop()
     {
-        Controller.SetLoop(true);
+        Controller.Editor.SetLoop(true);
         Redraw();
     }
 
     public void ToUnloop()
     {
-        Controller.SetLoop(false);
+        Controller.Editor.SetLoop(false);
         Redraw();
     }
 
     public void FlipWithVector()
     {
-        Controller.FlipWithVector();
+        Controller.Editor.FlipWithVector();
     }
 
     public void FlipAndCopyWithVector()
     {
-        Controller.FlipAndCopyWithVector();
+        Controller.Editor.FlipAndCopyWithVector();
     }
 
     public void CutMeshWithVector()
     {
-        Controller.CutMeshWithVector();
+        Controller.Editor.CutMeshWithVector();
     }
 
     public void RotateWithPoint()
     {
-        Controller.RotateWithPoint();
+        Controller.Editor.RotateWithPoint();
     }
 
 
@@ -835,7 +835,7 @@ public class CommandHandler
 
     public void AddCentroid()
     {
-        Controller.AddCentroid();
+        Controller.Editor.AddCentroid();
         Redraw();
     }
 
