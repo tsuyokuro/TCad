@@ -394,7 +394,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 
     private void Redraw()
     {
-        mContext.Controller.Redraw();
+        mContext.Controller.Drawer.Redraw();
     }
 
     public void Load()

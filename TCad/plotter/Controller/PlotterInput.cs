@@ -6,7 +6,7 @@ using TCad.ViewModel;
 namespace Plotter.Controller;
 
 // User interface handling
-public class InputController
+public class PlotterInput
 {
     PlotterController Controller;
 
@@ -195,7 +195,7 @@ public class InputController
         }
     }
 
-    public InputController(PlotterController controller)
+    public PlotterInput(PlotterController controller)
     {
         Controller = controller;
 

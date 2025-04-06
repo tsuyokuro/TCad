@@ -1,12 +1,65 @@
 using MyCollections;
 using OpenTK.Mathematics;
 using Plotter.Settings;
+using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Windows.Controls;
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterDrawer
 {
+    PlotterController Controller;
+
+    DrawContext DC {
+        get => Controller.DC;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public PaperPageSize PageSize
+    {
+        get => Controller.PageSize;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public List<CadFigure> TempFigureList
+    {
+        get => Controller.TempFigureList;
+    }
+
+    public FigCreator MeasureFigureCreator
+    {
+        get => Controller.MeasureFigureCreator;
+    }
+
+    PlotterInput Input
+    {
+        get => Controller.Input;
+    }
+
+    ControllerStateMachine StateMachine
+    {
+        get => Controller.StateMachine;
+    }
+
+
+    public PlotterDrawer(PlotterController controller)
+    {
+        Controller = controller;
+    }
+
+    public void UpdateView(DrawContext dc)
+    {
+        dc.UpdateView();
+    }
     public void UpdateView()
     {
         DC.UpdateView();
@@ -301,7 +354,7 @@ public partial class PlotterController
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (StateID != ControllerStates.DRAGING_POINTS)
+        if (StateMachine.CurrentStateID != ControllerStates.DRAGING_POINTS)
         {
             return;
         }
@@ -330,7 +383,7 @@ public partial class PlotterController
 
     private void DrawAccordingState(DrawContext dc)
     {
-        CurrentState.Draw(dc);
+        StateMachine.CurrentState.Draw(dc);
 
         if (Input.InteractCtrl.IsActive)
         {

@@ -222,7 +222,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         //        mController.Redraw(mController.DC);
         //#endif
 
-        mController.Redraw(mController.DC);
+        mController.Drawer.Redraw(mController.DC);
     }
 
     private void OnPaint(object sender, PaintEventArgs e)

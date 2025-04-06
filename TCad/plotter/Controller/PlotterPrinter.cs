@@ -36,7 +36,7 @@ public class PlotterPrinter
             DrawContextPrinter dc = new DrawContextPrinter(pc.DC, printerGraphics, pageSize, deviceSize);
             dc.SetupTools(DrawModes.PRINTER);
 
-            pc.DrawFiguresRaw(dc);
+            pc.Drawer.DrawFiguresRaw(dc);
         }
     }
 
@@ -85,7 +85,7 @@ public class PlotterPrinter
 
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 
-        pc.DrawFiguresRaw(dc);
+        pc.Drawer.DrawFiguresRaw(dc);
 
         // EnableCap.LineSmoothがONだと線が太くなる(謎)
         GL.Disable(EnableCap.LineSmooth);

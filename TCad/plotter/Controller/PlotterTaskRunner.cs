@@ -48,7 +48,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.EndEdit();
-                Controller.Redraw();
+                Controller.Drawer.Redraw();
             });
         });
     }
@@ -119,7 +119,7 @@ public class PlotterTaskRunner
 
         RunOnMainThread(() =>
         {
-            Controller.Redraw();
+            Controller.Drawer.Redraw();
             Controller.UpdateObjectTree(remakeTree : true);
         });
     }
@@ -160,7 +160,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.Input.ClearSelection();
-                Controller.Redraw();
+                Controller.Drawer.Redraw();
             });
         });
     }
@@ -253,7 +253,7 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.Redraw();
+                Controller.Drawer.Redraw();
                 Controller.UpdateObjectTree(remakeTree : false);
             });
         });

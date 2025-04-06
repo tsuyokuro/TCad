@@ -42,8 +42,8 @@ public class DirectCommands
         Action draw = () =>
         {
             Controller.DC.StartDraw();
-            Controller.Clear();
-            Controller.DrawAll();
+            Controller.Drawer.Clear();
+            Controller.Drawer.DrawAll();
             Controller.DC.EndDraw();
         };
 

@@ -393,13 +393,13 @@ public class SelectingState : ControllerState
         if (EditStarted)
         {
             Ctrl.MovePointsFromStored(EditFigList, moveInfo);
-            Ctrl.Redraw();
+            Ctrl.Drawer.Redraw();
         }
         else
         {
             vector3_t p = Ctrl.Input.GetCursorPos();
             Ctrl.Input.SetCursorWoldPos(p + moveInfo.Delta);
-            Ctrl.Redraw();
+            Ctrl.Drawer.Redraw();
         }
     }
 
@@ -412,7 +412,7 @@ public class SelectingState : ControllerState
             EditFigList = null;
             EditStarted = false;
         }
-        Ctrl.Redraw();
+        Ctrl.Drawer.Redraw();
     }
 }
 

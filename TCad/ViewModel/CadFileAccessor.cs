@@ -44,7 +44,7 @@ public class CadFileAccessor
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
 
-        vm.Controller.Redraw();
+        vm.Controller.Drawer.Redraw();
     }
 
     private static void SaveExternalData(SerializeContext sc, CadObjectDB db, string fname)

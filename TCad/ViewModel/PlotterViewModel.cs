@@ -395,7 +395,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void Redraw()
     {
-        ThreadUtil.RunOnMainThread(Controller_.Redraw, true);
+        ThreadUtil.RunOnMainThread(Controller_.Drawer.Redraw, true);
     }
 
     public void AttachCommandView(IAutoCompleteTextBox textBox)

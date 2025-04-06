@@ -117,7 +117,11 @@ public partial class PlotterController
         set;
     } = null;
 
-    public ControllerStateMachine StateMachine;
+    public ControllerStateMachine StateMachine
+    {
+        get;
+        private set;
+    }
 
     public ControllerStates StateID
     {
@@ -129,11 +133,18 @@ public partial class PlotterController
         get => StateMachine.CurrentState;
     }
 
-    public InputController Input
+    public PlotterInput Input
     {
         get;
         private set;
     }
+
+    public PlotterDrawer Drawer
+    {
+        get;
+        private set;
+    }
+
 
     public PlotterController(IPlotterViewModel vm)
     {
@@ -146,7 +157,11 @@ public partial class PlotterController
 
         ViewModelIF = vm;
 
-        Input = new InputController(this);
+        Drawer = new PlotterDrawer(this);
+
+        Input = new PlotterInput(this);
+
+
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);

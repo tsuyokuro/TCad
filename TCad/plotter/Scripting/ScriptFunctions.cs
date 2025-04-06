@@ -1962,9 +1962,9 @@ public class ScriptFunctions
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            Controller.Clear();
-            Controller.DrawAll();
-            Controller.UpdateView();
+            Controller.Drawer.Clear();
+            Controller.Drawer.DrawAll();
+            Controller.Drawer.UpdateView();
         }, true);
     }
 
@@ -2082,7 +2082,7 @@ public class ScriptFunctions
 
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 
-        Controller.DrawFiguresRaw(dc);
+        Controller.Drawer.DrawFiguresRaw(dc);
 
         dc.EndDraw();
 

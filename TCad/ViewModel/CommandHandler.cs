@@ -968,6 +968,6 @@ public class CommandHandler
 
     public void Redraw()
     {
-        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
+        ThreadUtil.RunOnMainThread(Controller.Drawer.Redraw, true);
     }
 }
