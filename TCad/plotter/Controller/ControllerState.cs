@@ -385,7 +385,7 @@ public class SelectingState : ControllerState
             if (EditFigList != null && EditFigList.Count > 0)
             {
                 EditStarted = true;
-                Ctrl.StartEdit(EditFigList);
+                Ctrl.EditManager.StartEdit(EditFigList);
             }
         }
 
@@ -407,7 +407,7 @@ public class SelectingState : ControllerState
     {
         if (EditStarted)
         {
-            Ctrl.EndEdit(EditFigList);
+            Ctrl.EditManager.EndEdit(EditFigList);
 
             EditFigList = null;
             EditStarted = false;
@@ -547,7 +547,7 @@ public class DragingPointsState : ControllerState
         //DOut.pl("LButtonUp isStart:" + isStart);
         if (!isStart)
         {
-            Ctrl.EndEdit();
+            Ctrl.EditManager.EndEdit();
         }
 
         Context.ChangeState(ControllerStates.SELECT);
@@ -567,7 +567,7 @@ public class DragingPointsState : ControllerState
             if (d > SettingsHolder.Settings.InitialMoveLimit)
             {
                 isStart = false;
-                Ctrl.StartEdit();
+                Ctrl.EditManager.StartEdit();
             }
         }
         else
@@ -585,7 +585,7 @@ public class DragingPointsState : ControllerState
 
     public override void Cancel()
     {
-        Ctrl.CancelEdit();
+        Ctrl.EditManager.CancelEdit();
         Context.ChangeState(ControllerStates.SELECT);
         Ctrl.Input.ClearSelection();
     }

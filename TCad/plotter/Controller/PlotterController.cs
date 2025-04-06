@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
 using TCad.ViewModel;
+using Windows.Networking.NetworkOperators;
 
 namespace Plotter.Controller;
 
@@ -151,6 +152,12 @@ public partial class PlotterController
         private set;
     }
 
+    public PlotterEditManager EditManager
+    {
+        get;
+        private set;
+    }
+
     public PlotterController(IPlotterViewModel vm)
     {
         Log.plx("in");
@@ -168,6 +175,7 @@ public partial class PlotterController
 
         CommandProc = new PlotterCommandProcessor(this);
 
+        EditManager = new PlotterEditManager(this);
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);

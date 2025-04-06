@@ -24,18 +24,18 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            Controller.StartEdit();
+            Controller.EditManager.StartEdit();
             var res = InputLine("Input flip axis");
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
             if ((res.p1 - res.p0).IsZero())
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Same point");
                 return;
             }
@@ -47,7 +47,7 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.EndEdit();
+                Controller.EditManager.EndEdit();
                 Controller.Drawer.Redraw();
             });
         });
@@ -132,13 +132,13 @@ public class PlotterTaskRunner
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
             if ((res.p1 - res.p0).IsZero())
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Same point");
                 return;
             }
@@ -147,7 +147,7 @@ public class PlotterTaskRunner
             
             if (mesh == null)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Target is not mesh");
                 return;
             }
@@ -207,12 +207,12 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            Controller.StartEdit();
+            Controller.EditManager.StartEdit();
             var res = InputPoint();
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
@@ -239,7 +239,7 @@ public class PlotterTaskRunner
             {
                 ItConsole.println("Cancel!");
 
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
@@ -249,7 +249,7 @@ public class PlotterTaskRunner
                 Controller.DC.ViewDir,
                 CadMath.Deg2Rad(angle));
 
-            Controller.EndEdit();
+            Controller.EditManager.EndEdit();
 
             RunOnMainThread(() =>
             {

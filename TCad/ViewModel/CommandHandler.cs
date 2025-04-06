@@ -847,7 +847,7 @@ public class CommandHandler
 
     public void Cancel()
     {
-        Controller.Cancel();
+        Controller.EditManager.Cancel();
         Redraw();
     }
 

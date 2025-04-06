@@ -5,11 +5,29 @@ using System.Collections.Generic;
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterEditManager
 {
+    private PlotterController Controller;
+
     private CadOpeFigureSnapShotList mSnapShotList;
 
     private List<CadFigure> mEditFigList = new List<CadFigure>();
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+
+    public PlotterEditManager(PlotterController controller)
+    {
+        Controller = controller;
+    }
 
 
     public List<CadFigure> StartEdit()
@@ -119,37 +137,22 @@ public partial class PlotterController
 
         if (removeCnt > 0)
         {
-            UpdateObjectTree(true);
+            Controller.UpdateObjectTree(true);
         }
 
         return opeList;
     }
 
-    public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
-    {
-        List<uint> figIDList = DB.GetSelectedFigIDList();
-
-        //delta.z = 0;
-
-        foreach (uint id in figIDList)
-        {
-            CadFigure fig = DB.GetFigure(id);
-            if (fig != null)
-            {
-                fig.MoveSelectedPointsFromStored(dc, moveInfo);
-            }
-        }
-    }
 
     public void Cancel()
     {
-        Input.UnlockCursor();
+        Controller.Input.UnlockCursor();
 
-        if (Input.InteractCtrl.IsActive)
+        if (Controller.Input.InteractCtrl.IsActive)
         {
-            Input.InteractCtrl.Cancel();
+            Controller.Input.InteractCtrl.Cancel();
         }
 
-        CurrentState.Cancel();
+        Controller.CurrentState.Cancel();
     }
 }

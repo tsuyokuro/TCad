@@ -144,23 +144,23 @@ public class PlotterCommandProcessor
 
     public void Remove()
     {
-        Controller.StartEdit();
+        Controller.EditManager.StartEdit();
 
         Controller.RemoveSelectedPoints();
 
-        Controller.EndEdit();
+        Controller.EditManager.EndEdit();
     }
 
     public void InsPoint()
     {
-        Controller.StartEdit();
+        Controller.EditManager.StartEdit();
         if (Controller.InsPointToLastSelectedSeg())
         {
-            Controller.EndEdit();
+            Controller.EditManager.EndEdit();
         }
         else
         {
-            Controller.AbendEdit();
+            Controller.EditManager.AbendEdit();
         }
     }
 

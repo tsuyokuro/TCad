@@ -312,7 +312,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
             // 現在のタイプを再度選択したら解除する
             if (CurrentFigureType_ != CadFigure.Types.NONE)
             {
-                Controller_.Cancel();
+                Controller_.EditManager.Cancel();
                 Redraw();
                 return true;
             }

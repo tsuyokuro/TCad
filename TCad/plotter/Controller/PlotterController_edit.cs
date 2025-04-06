@@ -372,4 +372,20 @@ public partial class PlotterController
         ItConsole.println("Centroid:" + s);
         ItConsole.println("Area:" + (cent.Area / 100).ToString() + "(㎠)");
     }
+
+    public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
+    {
+        List<uint> figIDList = DB.GetSelectedFigIDList();
+
+        //delta.z = 0;
+
+        foreach (uint id in figIDList)
+        {
+            CadFigure fig = DB.GetFigure(id);
+            if (fig != null)
+            {
+                fig.MoveSelectedPointsFromStored(dc, moveInfo);
+            }
+        }
+    }
 }

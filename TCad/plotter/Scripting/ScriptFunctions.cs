@@ -2110,7 +2110,7 @@ public class ScriptFunctions
     {
         if (!Session.StartWithSnapshotDB)
         {
-            Controller.StartEdit();
+            Controller.EditManager.StartEdit();
         }
     }
 
@@ -2118,7 +2118,7 @@ public class ScriptFunctions
     {
         if (!Session.StartWithSnapshotDB)
         {
-            Controller.StartEdit(figList);
+            Controller.EditManager.StartEdit(figList);
         }
     }
 
@@ -2126,7 +2126,7 @@ public class ScriptFunctions
     {
         if (!Session.StartWithSnapshotDB)
         {
-            Controller.EndEdit();
+            Controller.EditManager.EndEdit();
         }
     }
 
@@ -2134,7 +2134,7 @@ public class ScriptFunctions
     {
         if (!Session.StartWithSnapshotDB)
         {
-            Controller.EndEdit(figList);
+            Controller.EditManager.EndEdit(figList);
         }
     }
 
@@ -2142,7 +2142,7 @@ public class ScriptFunctions
     {
         if (!Session.StartWithSnapshotDB)
         {
-            Controller.AbendEdit();
+            Controller.EditManager.AbendEdit();
         }
     }
 }
