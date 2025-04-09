@@ -364,14 +364,23 @@ public class PlotterEditor
         int ins0 = Math.Min(seg.PtIndexA, seg.PtIndexB);
         int ins1 = Math.Max(seg.PtIndexA, seg.PtIndexB);
 
-        if (ins0 == 0 && ins1==fig.PointCount-1)
+
+        if (fig.IsLoop)
         {
-            ins = ins1 + 1;
+            if (ins0 == 0 && ins1 == fig.PointCount - 1)
+            {
+                ins = ins1 + 1;
+            }
+            else
+            {
+                ins = ins1;
+            }
         }
         else
         {
             ins = ins1;
         }
+
 
         Log.pl($"ins={ins} pcnt={fig.PointCount}");
 
