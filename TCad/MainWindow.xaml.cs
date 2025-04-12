@@ -32,17 +32,32 @@ public partial class MainWindow : Window, ICadMainWindow
 
         InitializeComponent();
 
+        Log.plx("1");
+
         Glu.Initialize();
+
+        Log.plx("2");
 
         ViewModel = new PlotterViewModel(this);
 
+        Log.plx("3");
+
         ViewModel.Open();
+
+        Log.plx("4");
 
         ViewModel.ObjectTree = ObjTree;
 
+        Log.plx("5");
+
         ViewModel.AttachCommandView(textCommand);
 
+        Log.plx("6");
+
         SetupInteractionConsole();
+
+        Log.plx("7");
+
 
         KeyDown += OnKeyDown;
         KeyUp += OnKeyUp;

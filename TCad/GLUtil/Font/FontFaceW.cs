@@ -56,6 +56,8 @@ public class FontFaceW
 
         int read = stream.Read(data, 0, (int)len);
 
+        stream.Close();
+
         SetFont(data, face_index);
     }
 

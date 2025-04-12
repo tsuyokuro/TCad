@@ -119,12 +119,14 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             new Uri("/Resources/Cursors/dot_wt.cur", UriKind.Relative));
 
         PointCursorWhite = new Cursor(si.Stream);
+        si.Stream.Close();
 
 
         si = System.Windows.Application.GetResourceStream(
             new Uri("/Resources/Cursors/dot_bk.cur", UriKind.Relative));
 
         PointCursorBlack = new Cursor(si.Stream);
+        si.Stream.Close();
 
         ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }

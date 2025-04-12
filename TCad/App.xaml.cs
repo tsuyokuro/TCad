@@ -1,13 +1,7 @@
-
-//#define USE_CONSOLE
-#define USE_DEBUG_SERVER
-
-
 // 強制的にリソース文字列をUSにする
 // ForceLinePen resource string to US
 //#define FORCE_US
 
-using TCad.Util;
 using Plotter;
 using Plotter.Serializer;
 using System;
@@ -24,24 +18,12 @@ namespace TCad;
 
 public partial class App : Application
 {
-    enum DebugOutTarget
-    {
-        None,
-        Console,
-        DebugServer,
-    }
-
-    //DebugOutTarget DOutTarget = DebugOutTarget.Console;
-    DebugOutTarget DOutTarget = DebugOutTarget.DebugServer;
-    //DebugOutTarget DOutTarget = DebugOutTarget.None;
-
     private MySplashWindow SplashWindow = null;
 
     private TaskScheduler mMainThreadScheduler;
 
-#if USE_DEBUG_SERVER
-    private DebugServer DServer;
-#endif
+    Stopwatch StartUpSW = new Stopwatch();
+
 
     public static App GetCurrent()
     {
@@ -60,11 +42,17 @@ public partial class App : Application
 
     public App()
     {
+        StartUpSW.Start();
+        //Log.LogOutput = new LogVisualStudioDebug();
+        //Log.LogOutput = new LogConsole();
+        Log.LogOutput = new LogDebugServer();
+
 #if FORCE_US
         CultureInfo ci = new CultureInfo("en-US");
         Thread.CurrentThread.CurrentCulture = ci;
         Thread.CurrentThread.CurrentUICulture = ci;
 #endif
+
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         DispatcherUnhandledException += App_DispatcherUnhandledException;
@@ -75,7 +63,7 @@ public partial class App : Application
 
         System.Windows.Forms.Application.ThreadException += Application_ThreadException;
     }
-
+         
     private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
     {
         HandleException(e.Exception);
@@ -153,22 +141,13 @@ public partial class App : Application
         Stopwatch sw = new Stopwatch();
         sw.Start();
 
-#if USE_CONSOLE
-        WinAPI.AllocConsole();
-#endif
-#if USE_DEBUG_SERVER
-        DServer = new DebugServer();
-        DServer.Start();
-#endif
-        mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-        //OpenTK.Toolkit.Init();
+        mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
         // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
         // 紛れさせる
         MpInitializer.Init();
 
-        SetupDebugConsole();
 
         MainWindow = new MainWindow();
 
@@ -182,50 +161,9 @@ public partial class App : Application
         SplashWindow = null;
     }
 
-    private void SetupDebugConsole()
-    {
-        if (DOutTarget == DebugOutTarget.Console)
-        {
-            Log.Print = Console.Write;
-            Log.PrintLn = Console.WriteLine;
-
-            Log.pl("DOut's output setting is Console");
-        }
-        else if (DOutTarget == DebugOutTarget.DebugServer)
-        {
-            Log.Print = DServer.Print;
-            Log.PrintLn = DServer.PrintLn;
-
-            Log.pl("DOut's output setting is DebugServer");
-        }
-    }
-
-    // e.g. ReadResourceText("/Shader/font_fragment.shader")
-    public static string ReadResourceText(string path)
-    {
-        Uri fileUri = new Uri(path, UriKind.Relative);
-        StreamResourceInfo info = Application.GetResourceStream(fileUri);
-        StreamReader sr = new StreamReader(info.Stream);
-
-        string s = sr.ReadToEnd();
-        sr.Close();
-
-        return s;
-    }
-
     protected override void OnExit(ExitEventArgs e)
     {
-#if USE_CONSOLE
-        WinAPI.FreeConsole();
-#endif
-
-#if USE_DEBUG_SERVER
-        if (DServer != null)
-        {
-            DServer.Stop();
-        }
-#endif
-
+        Log.Stop();
         base.OnExit(e);
     }
 }

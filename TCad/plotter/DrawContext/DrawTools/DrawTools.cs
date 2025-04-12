@@ -179,7 +179,11 @@ public class DrawTools : IDisposable
         StreamResourceInfo si = System.Windows.Application.GetResourceStream(
             new Uri(fname, UriKind.Relative));
 
-        return LoadFontFamily(si.Stream);
+        FontFamily fontFamily = LoadFontFamily(si.Stream);
+
+        si.Stream.Close();
+
+        return fontFamily;
     }
 
     // Load font family from stream

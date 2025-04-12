@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using Plotter;
 using Plotter.Controller;
 using System.Collections.Generic;
@@ -6,7 +5,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
-using System;
 
 namespace TCad.ViewModel;
 
@@ -390,7 +388,6 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     public void DrawModeChanged(DrawModes mode)
     {
         ViewManager_.DrawModeChanged(mode);
-        //OnDrawModeChanged?.Invoke(mode);
     }
 
     public void Redraw()

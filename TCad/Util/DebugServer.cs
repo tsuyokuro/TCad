@@ -42,7 +42,7 @@ internal class DebugServer
 
     public void Stop()
     {
-        mlistener.Stop();
+        mlistener?.Stop();
     }
 
     public void Print(string s)
