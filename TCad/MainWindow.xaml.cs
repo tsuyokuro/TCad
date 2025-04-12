@@ -1,6 +1,5 @@
 using GLFont;
 using GLUtil;
-using IronPython.Runtime;
 using OpenGL.GLU;
 using Plotter;
 using Plotter.Controller;
@@ -13,7 +12,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using TCad.Controls;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
@@ -32,32 +30,17 @@ public partial class MainWindow : Window, ICadMainWindow
 
         InitializeComponent();
 
-        Log.plx("1");
-
         Glu.Initialize();
-
-        Log.plx("2");
 
         ViewModel = new PlotterViewModel(this);
 
-        Log.plx("3");
-
         ViewModel.Open();
-
-        Log.plx("4");
 
         ViewModel.ObjectTree = ObjTree;
 
-        Log.plx("5");
-
         ViewModel.AttachCommandView(textCommand);
 
-        Log.plx("6");
-
         SetupInteractionConsole();
-
-        Log.plx("7");
-
 
         KeyDown += OnKeyDown;
         KeyUp += OnKeyUp;
@@ -72,11 +55,6 @@ public partial class MainWindow : Window, ICadMainWindow
         InitPopup();
 
         Log.plx("out");
-    }
-
-    public CadConsoleView GetBuiltinConsole()
-    {
-        return MyConsole;
     }
 
     private void SetupInteractionConsole()
