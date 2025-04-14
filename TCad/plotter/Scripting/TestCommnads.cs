@@ -540,7 +540,7 @@ public class TestCommands
     private void Test3()
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
@@ -613,7 +613,7 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
@@ -665,7 +665,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
@@ -713,7 +713,7 @@ public class TestCommands
     private void Test7()
     {
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
 
         GlyphSlot glyph = fw.GetGlyph('い');
 
@@ -764,7 +764,7 @@ public class TestCommands
 
     private void Test8()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");

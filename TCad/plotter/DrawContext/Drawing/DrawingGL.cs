@@ -34,7 +34,7 @@ public class DrawingGL : IDrawing
         mFontFaceW.SetSize(24);
         */
 
-        mFontFaceW = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
+        mFontFaceW = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
 
         mFontRenderer = FontRenderer.Instance;
 
