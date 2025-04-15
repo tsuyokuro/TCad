@@ -106,7 +106,7 @@ public abstract class DrawContext : IDisposable
     }
 
     // 縮尺
-    public vcompo_t WorldScale_ = (vcompo_t)(1.0);
+    private vcompo_t WorldScale_ = (vcompo_t)(1.0);
 
     public vcompo_t WorldScale
     {

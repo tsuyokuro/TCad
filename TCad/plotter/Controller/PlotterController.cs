@@ -69,7 +69,7 @@ public class PlotterController : IPlotterController
     } = null;
 
 
-    public IPlotterViewModel ViewModelIF
+    public IPlotterViewModel ViewModel
     {
         get;
         private set;
@@ -166,7 +166,7 @@ public class PlotterController : IPlotterController
             throw new System.ArgumentNullException(nameof(vm));
         }
 
-        ViewModelIF = vm;
+        ViewModel = vm;
 
         Drawer = new PlotterDrawer(this);
 
@@ -205,24 +205,24 @@ public class PlotterController : IPlotterController
     #region ObjectTree handling
     public void UpdateObjectTree(bool remakeTree)
     {
-        ViewModelIF.UpdateTreeView(remakeTree);
+        ViewModel.UpdateTreeView(remakeTree);
     }
 
     public void SetObjectTreePos(int index)
     {
-        ViewModelIF.SetTreeViewPos(index);
+        ViewModel.SetTreeViewPos(index);
     }
 
     public int FindObjectTreeItem(uint id)
     {
-        return ViewModelIF.FindTreeViewItemIndex(id);
+        return ViewModel.FindTreeViewItemIndex(id);
     }
     #endregion ObjectTree handling
 
 
     public void UpdateLayerList()
     {
-        ViewModelIF.LayerListChanged(GetLayerListInfo());
+        ViewModel.LayerListChanged(GetLayerListInfo());
     }
 
     private LayerListInfo GetLayerListInfo()
@@ -236,7 +236,7 @@ public class PlotterController : IPlotterController
 
     public void NotifyStateChange(StateChangedParam param)
     {
-        ViewModelIF.StateChanged(param);
+        ViewModel.StateChanged(param);
     }
 
     public void StartCreateFigure(CadFigure.Types type)
@@ -426,5 +426,15 @@ public class PlotterController : IPlotterController
 
         UpdateLayerList();
         UpdateObjectTree(true);
+    }
+
+    public void Redraw()
+    {
+        Drawer.Redraw();
+    }
+
+    public void RedrawOnUiThread()
+    {
+        ThreadUtil.RunOnMainThread(Drawer.Redraw, true);
     }
 }

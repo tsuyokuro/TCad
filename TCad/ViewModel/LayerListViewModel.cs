@@ -33,7 +33,7 @@ public class LayerListViewModel : INotifyPropertyChanged
     {
         get
         {
-            int idx = GetLayerListIndex(mContext.Controller.CurrentLayer.ID);
+            int idx = GetLayerListIndex(Controller.CurrentLayer.ID);
             if (idx < 0)
             {
                 return null;
@@ -43,34 +43,34 @@ public class LayerListViewModel : INotifyPropertyChanged
 
         set
         {
-            LayerHolder lh = value;
-            if (lh == null)
+            LayerHolder layerHolder = value;
+            if (layerHolder == null)
             {
                 return;
             }
 
-            if (mContext.Controller.CurrentLayer.ID != lh.ID)
+            if (Controller.CurrentLayer.ID != layerHolder.ID)
             {
-                mContext.Controller.SetCurrentLayer(lh.ID);
+                Controller.SetCurrentLayer(layerHolder.ID);
 
-                mContext.Redraw();
+                Controller.Drawer.Redraw();
             }
 
             NotifyPropertyChanged("SelectedItem");
         }
     }
 
-    private IPlotterViewModel mContext;
+    protected IPlotterController Controller;
 
-    public LayerListViewModel(IPlotterViewModel context)
+    public LayerListViewModel(IPlotterController controller)
     {
-        mContext = context;
+        Controller = controller;
     }
 
     public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         LayerHolder lh = (LayerHolder)sender;
-        mContext.Redraw();
+        Controller.Drawer.Redraw();
     }
 
     public void LayerListChanged(LayerListInfo layerListInfo)

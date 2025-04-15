@@ -153,19 +153,23 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         CurrentFigCmd = new(this);
         SimpleCmd = new(this);
 
+        mMainWindow = mainWindow;
+
         Controller_ = new PlotterController(this);
-
-        SettingsVM = new SettingsVeiwModel(this);
-
-        ObjTreeVM = new ObjectTreeViewModel(this);
-
-        LayerListVM = new LayerListViewModel(this);
-
-        ViewManager_ = new ViewManager(this);
 
         mCommandHandler = new CommandHandler(this);
 
-        mMainWindow = mainWindow;
+
+        ObjTreeVM = new ObjectTreeViewModel(Controller_);
+
+        LayerListVM = new LayerListViewModel(Controller_);
+
+        ViewManager_ = new ViewManager(mainWindow, Controller_);
+
+        SettingsVM = new SettingsVeiwModel(ViewManager_, Controller_);
+
+        mMoveKeyHandler = new MoveKeyHandler(Controller);
+
 
         CurrentFileName = null;
 
@@ -174,14 +178,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         Controller_.UpdateLayerList();
 
-        mMoveKeyHandler = new MoveKeyHandler(Controller);
-
         Log.plx("out");
     }
-
-
-    #region handling IMainWindow
-
+        
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
         mMainWindow.OpenPopupMessage(text, messageType);
@@ -191,7 +190,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         mMainWindow.ClosePopupMessage();
     }
-    #endregion handling IMainWindow
+
 
     public void ExecCommand(string cmd)
     {
@@ -236,7 +235,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            ViewManager_.PlotterView.CursorLocked(locked);
+            ViewManager_.View.CursorLocked(locked);
         }, true);
     }
 
@@ -244,7 +243,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            ViewManager_.PlotterView.ChangeMouseCursor(cursorType);
+            ViewManager_.View.ChangeMouseCursor(cursorType);
         }, true);
     }
 
@@ -275,7 +274,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
     {
-        ViewManager_.PlotterView.ShowContextMenu(menuInfo, x, y);
+        ViewManager_.View.ShowContextMenu(menuInfo, x, y);
     }
     #endregion Event From PlotterController
 
@@ -385,14 +384,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         GDIToolManager.Instance.Dispose();
     }
 
-    public void DrawModeChanged(DrawModes mode)
-    {
-        ViewManager_.DrawModeChanged(mode);
-    }
-
     public void Redraw()
     {
-        ThreadUtil.RunOnMainThread(Controller_.Drawer.Redraw, true);
+        Controller_.RedrawOnUiThread();
     }
 
     public void AttachCommandView(IAutoCompleteTextBox textBox)

@@ -21,7 +21,7 @@ public class PlotterInput
 
     public IPlotterViewModel ViewModelIF
     {
-        get => Controller.ViewModelIF;
+        get => Controller.ViewModel;
     }
 
     public CadLayer CurrentLayer

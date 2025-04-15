@@ -321,7 +321,7 @@ public class PlotterCommandProcessor
 
         layer.FigureList = newFigList;
 
-        Controller.ViewModelIF.UpdateTreeView(true);
+        Controller.ViewModel.UpdateTreeView(true);
     }
 
     #endregion

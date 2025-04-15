@@ -355,12 +355,12 @@ public class PlotterTaskRunner
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModelIF.OpenPopupMessage(text, type);
+        Controller.ViewModel.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModelIF.ClosePopupMessage();
+        Controller.ViewModel.ClosePopupMessage();
     }
 
     private void RunOnMainThread(Action action)

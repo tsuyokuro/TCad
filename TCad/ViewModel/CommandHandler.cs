@@ -853,7 +853,7 @@ public class CommandHandler
 
     public void SearchNearPoint()
     {
-        Controller.Input.MoveCursorToNearPoint(ViewModel.ViewManager.DrawContext);
+        Controller.Input.MoveCursorToNearPoint(ViewModel.ViewManager.View.DrawContext);
         Redraw();
     }
 
@@ -955,7 +955,7 @@ public class CommandHandler
 
         dlg.Owner = Application.Current.MainWindow;
 
-        dlg.WorldScale = ViewModel.ViewManager.DrawContext.WorldScale_;
+        dlg.WorldScale = ViewModel.ViewManager.View.DrawContext.WorldScale;
 
         bool? result = dlg.ShowDialog();
 

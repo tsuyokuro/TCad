@@ -14,7 +14,10 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public IPlotterViewModel mContext;
+    public IPlotterController Controller;
+
+    private readonly ViewManager ViewMgr;
+
 
     [UserSettingData]
     public bool ContinueCreateFigure
@@ -28,7 +31,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 
                 if (!value)
                 {
-                    mContext.Controller.EndCreateFigure();
+                    Controller.EndCreateFigure();
                 }
             }
         }
@@ -97,9 +100,9 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.FilterObjectTree = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilterObjectTree)));
 
-            if (mContext.Controller != null)
+            if (Controller != null)
             {
-                mContext.Controller.UpdateObjectTree(true);
+                Controller.UpdateObjectTree(true);
             }
         }
 
@@ -282,7 +285,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         set
         {
             SettingsHolder.Settings.GridSize = value;
-            mContext.Controller.Input.Grid.GridSize = value;
+            Controller.Input.Grid.GridSize = value;
         }
 
         get => SettingsHolder.Settings.GridSize;
@@ -344,7 +347,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.DrawMode = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawMode)));
 
-            mContext.DrawModeChanged(value);
+            ViewMgr.DrawModeChanged(value);
             Redraw();
         }
 
@@ -387,14 +390,15 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         get => SettingsHolder.Settings.PrintLineSmooth;
     }
 
-    public SettingsVeiwModel(IPlotterViewModel context)
+    public SettingsVeiwModel(ViewManager viewManager, IPlotterController controller)
     {
-        mContext = context;
+        Controller = controller;
+        ViewMgr = viewManager;
     }
 
     private void Redraw()
     {
-        mContext.Controller.Drawer.Redraw();
+        Controller.RedrawOnUiThread();
     }
 
     public void Load()
@@ -417,14 +421,14 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             }
         }
 
-        mContext.Controller.Input.Grid.GridSize = SettingsHolder.Settings.GridSize;
+        Controller.Input.Grid.GridSize = SettingsHolder.Settings.GridSize;
     }
 
     public void Save()
     {
         PlotterSettings settings = SettingsHolder.Settings;
 
-        settings.GridSize = mContext.Controller.Input.Grid.GridSize;
+        settings.GridSize = Controller.Input.Grid.GridSize;
 
         settings.Save();
     }

@@ -75,8 +75,6 @@ public interface IPlotterViewModel
 
     void Redraw();
 
-    void DrawModeChanged(DrawModes mode);
-
 
     void StateChanged(StateChangedParam si);
 

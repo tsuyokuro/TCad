@@ -23,8 +23,6 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private IPlotterController mController = null;
 
-    private IPlotterViewModel mVM;
-
     private vector3_t PrevMousePos = default;
 
     private MouseButtons DownButton = MouseButtons.None;
@@ -48,19 +46,18 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     private DrawContextGLPers mDrawContextPers;
 
 
-    public static PlotterViewGL Create(IPlotterViewModel vm)
+    public static PlotterViewGL Create(IPlotterController controller)
     {
         Log.plx("in");
-        PlotterViewGL v = new PlotterViewGL(vm);
+        PlotterViewGL v = new PlotterViewGL(controller);
         v.MakeCurrent();
         Log.plx("out");
         return v;
     }
 
-    private PlotterViewGL(IPlotterViewModel vm)
+    private PlotterViewGL(IPlotterController controller)
     {
-        mVM = vm;
-        mController = mVM.Controller;
+        mController = controller;
 
         SetupContextMenu();
 

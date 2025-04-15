@@ -31,7 +31,7 @@ public interface IPlotterController
     ControllerStates StateID { get; }
     ControllerStateMachine StateMachine { get; }
     List<CadFigure> TempFigureList { get; }
-    IPlotterViewModel ViewModelIF { get; }
+    IPlotterViewModel ViewModel { get; }
 
     void ChangeState(ControllerStates state);
     void ClearAll();
@@ -56,4 +56,6 @@ public interface IPlotterController
     void Undo();
     void UpdateLayerList();
     void UpdateObjectTree(bool remakeTree);
+    void Redraw();
+    void RedrawOnUiThread();
 }

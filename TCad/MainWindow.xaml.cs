@@ -355,7 +355,7 @@ public partial class MainWindow : Window, ICadMainWindow
     }
     #endregion
 
-    #region PlotterViewModel Event
+    #region ViewManager Event
     public void DrawModeChanged(DrawModes drawMode)
     {
         Log.plx("in");

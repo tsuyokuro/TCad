@@ -139,7 +139,7 @@ public class DirectCommands
 
     private void HelpOfKey(string keyword)
     {
-        List<string> res = Controller.ViewModelIF.HelpOfKey(keyword);
+        List<string> res = Controller.ViewModel.HelpOfKey(keyword);
 
         res.ForEach((s) =>
         {
