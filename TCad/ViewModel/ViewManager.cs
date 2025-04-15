@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using Plotter;
 using Plotter.Controller;
 using System.ComponentModel;

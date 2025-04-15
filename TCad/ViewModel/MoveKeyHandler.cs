@@ -1,8 +1,6 @@
-using OpenTK.Mathematics;
 using Plotter;
 using Plotter.Controller;
 using Plotter.Settings;
-using System.Collections.Generic;
 
 namespace TCad.ViewModel;
 

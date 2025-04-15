@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using Plotter.Controller;
 using Plotter.Settings;
 using System.ComponentModel;
@@ -10,13 +9,18 @@ public class UserSettingDataAttribute : System.Attribute
 {
 }
 
-public class SettingsVeiwModel : INotifyPropertyChanged
+public class SettingsVeiwModel(
+        ViewManager viewManager,
+        IPlotterController controller
+
+    ): INotifyPropertyChanged
 {
+
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public IPlotterController Controller;
+    public IPlotterController Controller = controller;
 
-    private readonly ViewManager ViewMgr;
+    private readonly ViewManager ViewMgr = viewManager;
 
 
     [UserSettingData]
@@ -100,10 +104,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.FilterObjectTree = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilterObjectTree)));
 
-            if (Controller != null)
-            {
-                Controller.UpdateObjectTree(true);
-            }
+            Controller?.UpdateObjectTree(true);
         }
 
         get => SettingsHolder.Settings.FilterObjectTree;
@@ -390,12 +391,6 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         get => SettingsHolder.Settings.PrintLineSmooth;
     }
 
-    public SettingsVeiwModel(ViewManager viewManager, IPlotterController controller)
-    {
-        Controller = controller;
-        ViewMgr = viewManager;
-    }
-
     private void Redraw()
     {
         Controller.RedrawOnUiThread();
@@ -412,7 +407,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             if (member.MemberType == MemberTypes.Property)
             {
                 UserSettingDataAttribute userSetting =
-                    (UserSettingDataAttribute)member.GetCustomAttribute(typeof(UserSettingDataAttribute));
+                    member.GetCustomAttribute<UserSettingDataAttribute>();
 
                 if (userSetting != null)
                 {

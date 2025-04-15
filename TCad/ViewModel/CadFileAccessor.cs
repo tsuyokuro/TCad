@@ -17,13 +17,13 @@ public class CadFileAccessor
 
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            SerializeContext sc = new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackJsonFile(fname, vm);
         }
         else
         {
-            SerializeContext sc = new SerializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackFile(fname, vm);
         }
@@ -33,13 +33,13 @@ public class CadFileAccessor
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            DeserializeContext dsc = new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
+            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             LoadFromMsgPackJsonFile(fname, vm);
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
         else
         {
-            DeserializeContext dsc = new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             LoadFromMsgPackFile(fname, vm);
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
@@ -107,7 +107,7 @@ public class CadFileAccessor
     {
         IPlotterController pc = vm.Controller;
 
-        CadData cd = new CadData(
+        CadData cd = new(
                             pc.DB,
                             pc.DC.WorldScale,
                             pc.PageSize
@@ -142,7 +142,7 @@ public class CadFileAccessor
     {
         IPlotterController pc = vm.Controller;
 
-        CadData cd = new CadData(
+        CadData cd = new(
             pc.DB,
             pc.DC.WorldScale,
             pc.PageSize);

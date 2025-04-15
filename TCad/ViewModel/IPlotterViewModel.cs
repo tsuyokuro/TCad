@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using System.Collections.Generic;
 using Plotter.Controller;
 using TCad.Controls;

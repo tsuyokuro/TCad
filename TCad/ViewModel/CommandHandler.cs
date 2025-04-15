@@ -21,29 +21,22 @@ namespace TCad.ViewModel;
 
 public class CommandHandler
 {
-    public class KeyAction
+    public class KeyAction(Action down, Action up, string description = null)
     {
-        public Action Down;
-        public Action Up;
-        public string Description;
-
-        public KeyAction(Action down, Action up, string description = null)
-        {
-            Down = down;
-            Up = up;
-            Description = description;
-        }
+        public Action Down = down;
+        public Action Up = up;
+        public string Description = description;
     }
 
-    IPlotterController Controller;
-    IPlotterViewModel ViewModel;
+    readonly IPlotterController Controller;
+    readonly IPlotterViewModel ViewModel;
 
     private Dictionary<string, Action> CommandMap;
     private Dictionary<string, KeyAction> KeyMap;
 
     private Window mEditorWindow;
 
-    private MoveKeyHandler mMoveKeyHandler;
+    private readonly MoveKeyHandler mMoveKeyHandler;
 
     public CommandHandler(IPlotterViewModel vm)
     {
@@ -141,8 +134,7 @@ public class CommandHandler
 
     public void ExecCommand(string cmd)
     {
-        Action action;
-        if (CommandMap.TryGetValue(cmd, out action))
+        if (CommandMap.TryGetValue(cmd, out Action action))
         {
             action.Invoke();
         }
@@ -154,8 +146,7 @@ public class CommandHandler
 
     public bool ExecShortcutKey(string keyCmd, bool down)
     {
-        KeyAction ka;
-        if (KeyMap.TryGetValue(keyCmd, out ka))
+        if (KeyMap.TryGetValue(keyCmd, out KeyAction ka))
         {
             if (down)
             {
@@ -182,7 +173,7 @@ public class CommandHandler
         return ExecShortcutKey(ks, false);
     }
 
-    private string GetModifyerKeysString()
+    private static string GetModifyerKeysString()
     {
         ModifierKeys modifierKeys = Keyboard.Modifiers;
 
@@ -206,7 +197,7 @@ public class CommandHandler
         return s;
     }
 
-    private string KeyString(KeyEventArgs e)
+    private static string KeyString(KeyEventArgs e)
     {
         string ks = GetModifyerKeysString();
 
@@ -215,7 +206,7 @@ public class CommandHandler
         return ks;
     }
 
-    private string GetDisplayKeyString(string s)
+    private static string GetDisplayKeyString(string s)
     {
         string[] ss = s.Split('+');
 
@@ -236,7 +227,7 @@ public class CommandHandler
 
     public List<string> HelpOfKey(string keyword)
     {
-        List<string> ret = new();
+        List<string> ret = [];
 
         if (keyword == null)
         {
@@ -388,7 +379,7 @@ public class CommandHandler
         Redraw();
     }
 
-    private bool IsVaridDir(string path)
+    private static bool IsVaridDir(string path)
     {
         if (path == null)
         {
@@ -459,10 +450,11 @@ public class CommandHandler
 
     public void GridSettings()
     {
-        GridSettingsDialog dlg = new();
-
-        dlg.GridSize = ViewModel.Settings.GridSize;
-        dlg.Owner = Application.Current.MainWindow;
+        GridSettingsDialog dlg = new()
+        {
+            GridSize = ViewModel.Settings.GridSize,
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -475,12 +467,13 @@ public class CommandHandler
 
     public void SnapSettings()
     {
-        SnapSettingsDialog dlg = new();
+        SnapSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.PointSnapRange = ViewModel.Settings.PointSnapRange;
-        dlg.LineSnapRange = ViewModel.Settings.LineSnapRange;
+            PointSnapRange = ViewModel.Settings.PointSnapRange,
+            LineSnapRange = ViewModel.Settings.LineSnapRange
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -495,13 +488,14 @@ public class CommandHandler
 
     public void PrintSettings()
     {
-        PrintSettingsDialog dlg = new();
+        PrintSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.PrintWithBitmap = ViewModel.Settings.PrintWithBitmap;
-        dlg.MagnificationBitmapPrinting = ViewModel.Settings.MagnificationBitmapPrinting;
-        dlg.PrintLineSmooth = ViewModel.Settings.PrintLineSmooth;
+            PrintWithBitmap = ViewModel.Settings.PrintWithBitmap,
+            MagnificationBitmapPrinting = ViewModel.Settings.MagnificationBitmapPrinting,
+            PrintLineSmooth = ViewModel.Settings.PrintLineSmooth
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -515,12 +509,13 @@ public class CommandHandler
 
     public void MoveKeySettings()
     {
-        MoveKeySettingsDialog dlg = new();
+        MoveKeySettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.MoveX = ViewModel.Settings.MoveKeyUnitX;
-        dlg.MoveY = ViewModel.Settings.MoveKeyUnitY;
+            MoveX = ViewModel.Settings.MoveKeyUnitX,
+            MoveY = ViewModel.Settings.MoveKeyUnitY
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -540,11 +535,12 @@ public class CommandHandler
             return;
         }
 
-        ColorPickerDialog dlg = new();
+        ColorPickerDialog dlg = new()
+        {
+            SelectedColor = fig.LinePen.Color4,
 
-        dlg.SelectedColor = fig.LinePen.Color4;
-
-        dlg.Owner = Application.Current.MainWindow;
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -577,11 +573,12 @@ public class CommandHandler
             return;
         }
 
-        ColorPickerDialog dlg = new();
+        ColorPickerDialog dlg = new()
+        {
+            SelectedColor = fig.FillBrush.Color4,
 
-        dlg.SelectedColor = fig.FillBrush.Color4;
-
-        dlg.Owner = Application.Current.MainWindow;
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -710,7 +707,7 @@ public class CommandHandler
 
     public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
     {
-        HashSet<CadFigure> set = new HashSet<CadFigure>();
+        HashSet<CadFigure> set = [];
 
         foreach (CadFigure fig in srcList)
         {
@@ -732,9 +729,10 @@ public class CommandHandler
 
     public void Test()
     {
-        ColorPickerDialog dlg = new();
-
-        dlg.Owner = Application.Current.MainWindow;
+        ColorPickerDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -747,8 +745,11 @@ public class CommandHandler
     {
         if (mEditorWindow == null)
         {
-            mEditorWindow = new EditorWindow(Controller.ScriptEnv);
-            mEditorWindow.Owner = Application.Current.MainWindow;
+            mEditorWindow = new EditorWindow(Controller.ScriptEnv)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
             mEditorWindow.Show();
 
             mEditorWindow.Closed += (_, _) =>
@@ -902,9 +903,10 @@ public class CommandHandler
 
         pd.PrintPage += PrintPage;
 
-        System.Windows.Forms.PrintDialog pdlg = new();
-
-        pdlg.Document = pd;
+        System.Windows.Forms.PrintDialog pdlg = new()
+        {
+            Document = pd
+        };
 
         if (pdlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
@@ -930,11 +932,12 @@ public class CommandHandler
     {
         System.Windows.Forms.PageSetupDialog pageDlg = new();
 
-        PageSettings pageSettings = new();
-
-        pageSettings.PaperSize = Controller.PageSize.GetPaperSize();
-        pageSettings.Landscape = Controller.PageSize.mLandscape;
-        pageSettings.Margins = new Margins(0, 0, 0, 0);
+        PageSettings pageSettings = new()
+        {
+            PaperSize = Controller.PageSize.GetPaperSize(),
+            Landscape = Controller.PageSize.mLandscape,
+            Margins = new Margins(0, 0, 0, 0)
+        };
 
         pageDlg.EnableMetric = true;
         pageDlg.PageSettings = pageSettings;
@@ -951,11 +954,12 @@ public class CommandHandler
 
     public void DocSetting()
     {
-        DocumentSettingsDialog dlg = new();
+        DocumentSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.WorldScale = ViewModel.ViewManager.View.DrawContext.WorldScale;
+            WorldScale = ViewModel.ViewManager.View.DrawContext.WorldScale
+        };
 
         bool? result = dlg.ShowDialog();
 
