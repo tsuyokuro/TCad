@@ -1,49 +1,42 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
-using OpenTK;
-using OpenTK.Mathematics;
 using System.Collections.Generic;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
 
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterEditManager
 {
+    private IPlotterController Controller;
+
     private CadOpeFigureSnapShotList mSnapShotList;
 
-    public void ClearSelection()
+    private List<CadFigure> mEditFigList = new List<CadFigure>();
+
+    public CadObjectDB DB
     {
-        CurrentFigure = null;
-
-        LastSelPoint = null;
-        LastSelSegment = null;
-
-        foreach (CadLayer layer in mDB.LayerList)
-        {
-            layer.ClearSelectedFlags();
-        }
+        get => Controller.DB;
     }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+
+    public PlotterEditManager(IPlotterController controller)
+    {
+        Controller = controller;
+    }
+
 
     public List<CadFigure> StartEdit()
     {
-        EditFigList = DB.GetSelectedFigList();
-        return StartEdit(EditFigList);
+        mEditFigList = DB.GetSelectedFigList();
+        StartEdit(mEditFigList);
+
+        return mEditFigList;
     }
 
-    public List<CadFigure> StartEdit(List<CadFigure> targetList)
+    public void StartEdit(List<CadFigure> targetList)
     {
         mSnapShotList = new CadOpeFigureSnapShotList();
 
@@ -56,8 +49,6 @@ public partial class PlotterController
                 fig.StartEdit();
             }
         }
-
-        return targetList;
     }
 
     public void AbendEdit()
@@ -67,7 +58,7 @@ public partial class PlotterController
 
     public void EndEdit()
     {
-        EndEdit(EditFigList);
+        EndEdit(mEditFigList);
     }
 
     public void EndEdit(List<CadFigure> targetList)
@@ -105,7 +96,7 @@ public partial class PlotterController
 
     public void CancelEdit()
     {
-        foreach (CadFigure fig in EditFigList)
+        foreach (CadFigure fig in mEditFigList)
         {
             if (fig != null)
             {
@@ -120,7 +111,7 @@ public partial class PlotterController
 
         int removeCnt = 0;
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             IReadOnlyList<CadFigure> list = layer.FigureList;
 
@@ -144,40 +135,22 @@ public partial class PlotterController
 
         if (removeCnt > 0)
         {
-            UpdateObjectTree(true);
+            Controller.UpdateObjectTree(true);
         }
 
         return opeList;
     }
 
-    public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
-    {
-        List<uint> figIDList = DB.GetSelectedFigIDList();
-
-        //delta.z = 0;
-
-        foreach (uint id in figIDList)
-        {
-            CadFigure fig = mDB.GetFigure(id);
-            if (fig != null)
-            {
-                fig.MoveSelectedPointsFromStored(dc, moveInfo);
-            }
-        }
-    }
 
     public void Cancel()
     {
-        if (CursorLocked)
+        Controller.Input.UnlockCursor();
+
+        if (Controller.Input.InteractCtrl.IsActive)
         {
-            CursorLocked = false;
+            Controller.Input.InteractCtrl.Cancel();
         }
 
-        if (InteractCtrl.IsActive)
-        {
-            InteractCtrl.Cancel();
-        }
-
-        CurrentState.Cancel();
+        Controller.CurrentState.Cancel();
     }
 }

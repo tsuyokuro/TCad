@@ -1,24 +1,8 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using HalfEdgeNS;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -34,22 +18,24 @@ public struct DrawTextOption
     }
 }
 
-public class DrawingConst
+public class DrawSizes
 {
-    public const float HighlightPointLineWidth = 2;
-    public const float HighlightPointLineLength = 6;
+    public static float HighlightPointLineWidth = 1;
+    public static float HighlightPointLineLength = 6;
 
-    public const float ExtSnapPointLineWidth = 1;
-    public const float ExtSnapPointLineLength = 6;
+    public static float ExtSnapPointLineWidth = 1;
+    public static float ExtSnapPointLineLength = 6;
 
-    public const vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
+    public static vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
 
-    public const vcompo_t NormalLen = 20;
-    public const vcompo_t NormalArrowLen = 10;
-    public const vcompo_t NormalArrowWidth = 5;
+    public static vcompo_t NormalLen = 20;
+    public static vcompo_t NormalArrowLen = 10;
+    public static vcompo_t NormalArrowWidth = 5;
 
-    public const vcompo_t AxisArrowLen = 16;
-    public const vcompo_t AxisArrowWidth = 8;
+    public static vcompo_t AxisArrowLen = 16;
+    public static vcompo_t AxisArrowWidth = 8;
+
+    public static float SelectedPointSize = 4;
 }
 
 public interface IDrawing : IDisposable
@@ -71,6 +57,8 @@ public interface IDrawing : IDisposable
     void DrawHighlightPoints(List<HighlightPointListItem> list);
 
     void DrawSelectedPoint(vector3_t pt, DrawPen pen);
+
+    void DrawLastSelectedPoint(vector3_t pt, DrawPen pen);
 
     void DrawSelectedPoints(VertexList pointList, DrawPen pen);
 
@@ -94,6 +82,8 @@ public interface IDrawing : IDisposable
     void DrawArrow(DrawPen pen, vector3_t pt0, vector3_t pt1, ArrowTypes type, ArrowPos pos, vcompo_t len, vcompo_t width);
 
     void DrawCrossCursorScrn(CadCursor pp, DrawPen pen);
+
+    void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize);
 
     void DrawRectScrn(DrawPen pen, vector3_t p0, vector3_t p1);
 

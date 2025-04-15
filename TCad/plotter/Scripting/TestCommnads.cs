@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,28 +24,13 @@ using GLUtil;
 using SharpFont;
 using Plotter.Controller;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Scripting;
 
 public class TestCommands
 {
-    PlotterController Controller;
+    IPlotterController Controller;
 
-    public TestCommands(PlotterController controller)
+    public TestCommands(IPlotterController controller)
     {
         Controller = controller;
     }
@@ -385,7 +369,7 @@ public class TestCommands
     {
         CadDxfLoader loader = new CadDxfLoader();
 
-        CadMesh cm = loader.Load(@"F:\work\恐竜.DXF", (vcompo_t)(20.0));
+        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)(20.0));
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -461,7 +445,7 @@ public class TestCommands
 
     private void GetPointsTest()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null) return;
 
@@ -521,7 +505,7 @@ public class TestCommands
 
     private void Test()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         fig.LinePen = new DrawPen(new Color4(0.5f, 0.5f, 1.0f, 1f), 1.0f);
         fig.FillBrush = new DrawBrush(new Color4(0.5f, 0.5f, 0.5f, 1f));
@@ -556,7 +540,7 @@ public class TestCommands
     private void Test3()
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
@@ -629,7 +613,7 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
@@ -681,7 +665,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
@@ -706,13 +690,13 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Redraw();
+            Controller.Drawer.Redraw();
         });
     }
 
     private void Test6()
     {
-        CadFigure cfig = Controller.CurrentFigure;
+        CadFigure cfig = Controller.Input.CurrentFigure;
         List<vector3_t> vl = CadUtil.Getvector3_tListFrom(cfig);
 
         vector3_t startv = vl[0];
@@ -729,7 +713,7 @@ public class TestCommands
     private void Test7()
     {
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
 
         GlyphSlot glyph = fw.GetGlyph('い');
 
@@ -773,14 +757,14 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Redraw();
+            Controller.Drawer.Redraw();
         });
     }
 
 
     private void Test8()
     {
-        FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
@@ -804,7 +788,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Redraw();
+            Controller.Drawer.Redraw();
         });
     }
 
@@ -962,9 +946,9 @@ public class TestCommands
     {
         RunOnMainThread(() =>
         {
-            Controller.Clear();
-            Controller.DrawAll();
-            Controller.UpdateView();
+            Controller.Drawer.Clear();
+            Controller.Drawer.DrawAll();
+            Controller.Drawer.UpdateView();
         });
     }
 

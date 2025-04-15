@@ -1,28 +1,8 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 //#define LOG_DEBUG
 
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
-using Plotter.Serializer;
-
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -765,7 +745,6 @@ public abstract partial class CadFigure
 
             v = cp - d;
 
-            v.Attr = vl[i].Attr;
             v.Flag = vl[i].Flag;
 
             vl[i] = v;

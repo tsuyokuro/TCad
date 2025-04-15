@@ -1,22 +1,6 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System.Drawing;
 using System.Windows.Forms;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -143,10 +127,6 @@ public class DrawContextGDI : DrawContext
         return pen.GdiPen;
     }
 
-    public Color PenColor(int id)
-    {
-        return Tools.PenColorTbl[id];
-    }
 
     public Font Font(int id)
     {
@@ -157,11 +137,6 @@ public class DrawContextGDI : DrawContext
     {
         DrawBrush brush = Tools.Brush(id);
         return brush.GdiBrush;
-    }
-
-    public Color BrushColor(int id)
-    {
-        return Tools.BrushColorTbl[id];
     }
 
     public void Render()

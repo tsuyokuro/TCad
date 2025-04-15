@@ -1,21 +1,5 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -89,7 +73,6 @@ public struct MarkSegment
 
     public vector3_t CrossPoint;
 
-    public vector3_t CrossPointScrn;
 
     public vector3_t CenterPoint
     {
@@ -112,30 +95,10 @@ public struct MarkSegment
         Log.pl("}");
     }
 
-    public bool Update()
-    {
-        if (FigSeg.Figure == null)
-        {
-            return true;
-        }
-
-        if (PtIndexA >= FigSeg.Figure.PointList.Count)
-        {
-            return false;
-        }
-
-        if (PtIndexB >= FigSeg.Figure.PointList.Count)
-        {
-            return false;
-        }
-
-        return true;
-    }
 
     public void Clean()
     {
         CrossPoint = VectorExt.InvalidVector3;
-        CrossPointScrn = VectorExt.InvalidVector3;
     }
 
     public bool IsSelected()

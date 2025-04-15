@@ -1,24 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
-using OpenTK.Mathematics;
 using Plotter.Controller;
 using Plotter.Settings;
 using System.ComponentModel;
 using System.Reflection;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace TCad.ViewModel;
 
@@ -26,11 +9,19 @@ public class UserSettingDataAttribute : System.Attribute
 {
 }
 
-public class SettingsVeiwModel : INotifyPropertyChanged
+public class SettingsVeiwModel(
+        ViewManager viewManager,
+        IPlotterController controller
+
+    ): INotifyPropertyChanged
 {
+
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public IPlotterViewModel mContext;
+    public IPlotterController Controller = controller;
+
+    private readonly ViewManager ViewMgr = viewManager;
+
 
     [UserSettingData]
     public bool ContinueCreateFigure
@@ -44,7 +35,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 
                 if (!value)
                 {
-                    mContext.Controller.EndCreateFigure();
+                    Controller.EndCreateFigure();
                 }
             }
         }
@@ -113,10 +104,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.FilterObjectTree = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilterObjectTree)));
 
-            if (mContext.Controller != null)
-            {
-                mContext.Controller.UpdateObjectTree(true);
-            }
+            Controller?.UpdateObjectTree(true);
         }
 
         get => SettingsHolder.Settings.FilterObjectTree;
@@ -298,7 +286,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         set
         {
             SettingsHolder.Settings.GridSize = value;
-            mContext.Controller.Grid.GridSize = value;
+            Controller.Input.Grid.GridSize = value;
         }
 
         get => SettingsHolder.Settings.GridSize;
@@ -360,7 +348,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             SettingsHolder.Settings.DrawMode = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawMode)));
 
-            mContext.DrawModeUpdated(value);
+            ViewMgr.DrawModeChanged(value);
             Redraw();
         }
 
@@ -403,14 +391,9 @@ public class SettingsVeiwModel : INotifyPropertyChanged
         get => SettingsHolder.Settings.PrintLineSmooth;
     }
 
-    public SettingsVeiwModel(IPlotterViewModel context)
-    {
-        mContext = context;
-    }
-
     private void Redraw()
     {
-        mContext.Controller.Redraw();
+        Controller.RedrawOnUiThread();
     }
 
     public void Load()
@@ -424,7 +407,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             if (member.MemberType == MemberTypes.Property)
             {
                 UserSettingDataAttribute userSetting =
-                    (UserSettingDataAttribute)member.GetCustomAttribute(typeof(UserSettingDataAttribute));
+                    member.GetCustomAttribute<UserSettingDataAttribute>();
 
                 if (userSetting != null)
                 {
@@ -433,14 +416,14 @@ public class SettingsVeiwModel : INotifyPropertyChanged
             }
         }
 
-        mContext.Controller.Grid.GridSize = SettingsHolder.Settings.GridSize;
+        Controller.Input.Grid.GridSize = SettingsHolder.Settings.GridSize;
     }
 
     public void Save()
     {
         PlotterSettings settings = SettingsHolder.Settings;
 
-        settings.GridSize = mContext.Controller.Grid.GridSize;
+        settings.GridSize = Controller.Input.Grid.GridSize;
 
         settings.Save();
     }

@@ -1,27 +1,59 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using MyCollections;
 using OpenTK.Mathematics;
 using Plotter.Settings;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Windows.Controls;
 
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterDrawer
 {
+    IPlotterController Controller;
+
+    DrawContext DC {
+        get => Controller.DC;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public PaperPageSize PageSize
+    {
+        get => Controller.PageSize;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public List<CadFigure> TempFigureList
+    {
+        get => Controller.TempFigureList;
+    }
+
+    public FigCreator MeasureFigureCreator
+    {
+        get => Controller.MeasureFigureCreator;
+    }
+
+    PlotterInput Input
+    {
+        get => Controller.Input;
+    }
+
+    public PlotterDrawer(IPlotterController controller)
+    {
+        Controller = controller;
+    }
+
+    public void UpdateView(DrawContext dc)
+    {
+        dc.UpdateView();
+    }
     public void UpdateView()
     {
         DC.UpdateView();
@@ -74,11 +106,17 @@ public partial class PlotterController
 
         DrawHighlightSeg(dc);
 
+        DrawLastSelSeg(dc);
+
+        DrawLastSelPoint(dc);
+
         DrawExtendSnapPoint(dc);
 
         DrawAccordingState(dc);
 
         DrawTop(dc);
+
+        DrawCrossCursorShort(dc);
     }
 
     public void DrawFiguresRaw(DrawContext dc)
@@ -86,7 +124,7 @@ public partial class PlotterController
         dc.OptionSet.Update();
         DrawOption normal_dp = dc.OptionSet.Normal;
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             if (!layer.Visible) continue;
 
@@ -146,7 +184,7 @@ public partial class PlotterController
 
         lock (DB)
         {
-            foreach (CadLayer layer in mDB.LayerList)
+            foreach (CadLayer layer in DB.LayerList)
             {
                 if (!layer.Visible) continue;
 
@@ -263,7 +301,7 @@ public partial class PlotterController
     {
         if (SettingsHolder.Settings.SnapToGrid)
         {
-            dc.Drawing.DrawGrid(mGridding);
+            dc.Drawing.DrawGrid(Input.Grid);
         }
     }
 
@@ -274,7 +312,7 @@ public partial class PlotterController
 
         dc.DisableLight();
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             foreach (CadFigure fig in layer.FigureList)
             {
@@ -296,72 +334,105 @@ public partial class PlotterController
     {
         dc.Drawing.DrawMarkCursor(
             dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER),
-            LastDownPoint,
+            Input.LastDownPoint,
             ControllerConst.MARK_CURSOR_SIZE);
 
-        if (ObjDownPoint.IsValid())
+        if (Input.ObjDownPoint.IsValid())
         {
             dc.Drawing.DrawMarkCursor(
                 dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER2),
-                ObjDownPoint,
+                Input.ObjDownPoint,
                 ControllerConst.MARK_CURSOR_SIZE);
         }
     }
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (State != ControllerStates.DRAGING_POINTS)
+        if (Controller.StateID != ControllerStates.DRAGING_POINTS)
         {
             return;
         }
 
         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_DRAG_LINE),
-            LastDownPoint, dc.DevPointToWorldPoint(CrossCursor.Pos));
+            Input.LastDownPoint, dc.DevPointToWorldPoint(Input.CrossCursor.Pos));
     }
 
     private void DrawCrossCursor(DrawContext dc)
     {
-        dc.Drawing.DrawCrossCursorScrn(CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
+        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
 
-        if (CursorLocked)
+        if (Input.CursorLocked)
         {
             dc.Drawing.DrawCrossScrn(
                 dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT),
-                CrossCursor.Pos,
+                Input.CrossCursor.Pos,
                 ControllerConst.CURSOR_LOCK_MARK_SIZE);
         }
     }
 
+    private void DrawCrossCursorShort(DrawContext dc)
+    {
+        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
+    }
+
     private void DrawAccordingState(DrawContext dc)
     {
-        CurrentState.Draw(dc);
+        Controller.CurrentState.Draw(dc);
 
-        if (InteractCtrl.IsActive)
+        if (Input.InteractCtrl.IsActive)
         {
-            InteractCtrl.Draw(dc, SnapPoint);
+            Input.InteractCtrl.Draw(dc, Input.SnapPoint);
         }
     }
 
     private void DrawHighlightPoint(DrawContext dc)
     {
-        dc.Drawing.DrawHighlightPoints(HighlightPointList);
+        dc.Drawing.DrawHighlightPoints(Input.HighlightPointList);
     }
 
     private void DrawHighlightSeg(DrawContext dc)
     {
-        foreach (MarkSegment markSeg in HighlightSegList)
+        foreach (MarkSegment markSeg in Input.HighlightSegList)
         {
-            CadFigure fig = mDB.GetFigure(markSeg.FigureID);
+            CadFigure fig = DB.GetFigure(markSeg.FigureID);
             fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_MATCH_SEG), markSeg.PtIndexA, markSeg.PtIndexB);
         }
     }
 
+    private void DrawLastSelSeg(DrawContext dc)
+    {
+        if (Input.LastSelSegment == null)
+        {
+            return;
+        }
+
+        CadFigure fig = DB.GetFigure(Input.LastSelSegment.Value.FigureID);
+        fig.DrawSeg(
+                dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG),
+                Input.LastSelSegment.Value.PtIndexA,
+                Input.LastSelSegment.Value.PtIndexB);
+    }
+
+    private void DrawLastSelPoint(DrawContext dc)
+    {
+        if (Input.LastSelPoint == null)
+        {
+            return;
+        }
+
+        CadFigure fig = DB.GetFigure(Input.LastSelPoint.Value.FigureID);
+        int idx = Input.LastSelPoint.Value.PointIndex;
+        var point = fig.PointList[idx];
+
+
+        dc.Drawing.DrawLastSelectedPoint(point.vector, dc.GetPen(DrawTools.PEN_LAST_SEL_POINT));
+    }
 
     private void DrawExtendSnapPoint(DrawContext dc)
     {
-        if (ExtendSnapPointList.Count > 0)
+        if (Input.ExtendSnapPointList.Count > 0)
         {
-            dc.Drawing.DrawExtSnapPoints(ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
+            dc.Drawing.DrawExtSnapPoints(Input.ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
         }
     }
     #endregion

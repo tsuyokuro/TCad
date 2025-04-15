@@ -1,22 +1,5 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK.Mathematics;
-using static Plotter.Controller.PlotterController;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using System;
 
 namespace Plotter;
 
@@ -29,7 +12,9 @@ public class SegSearcher
         PRIORITY_Y,
     }
 
-    private MarkSegment MarkSeg;
+    private MarkSegment mMatchSeg;
+    public MarkSegment MatchSegment { get => mMatchSeg; }
+
 
     private CadCursor Target;
 
@@ -41,13 +26,13 @@ public class SegSearcher
     {
         get
         {
-            return MarkSeg.FigureID != 0;
+            return mMatchSeg.FigureID != 0;
         }
     }
 
     public bool CheckStorePoint = false;
 
-    public Priority CheckPriority = Priority.NONE;
+    //public Priority CheckPriority = Priority.NONE;
 
     public void SetRangePixel(DrawContext dc, vcompo_t pixel)
     {
@@ -56,9 +41,8 @@ public class SegSearcher
 
     public void Clean()
     {
-        MarkSeg = default(MarkSegment);
-        MarkSeg.Clean();
-        CheckPriority = Priority.NONE;
+        mMatchSeg = default(MarkSegment);
+        mMatchSeg.Clean();
     }
 
     public void SetTargetPoint(CadCursor cursor)
@@ -68,7 +52,7 @@ public class SegSearcher
 
     public MarkSegment GetMatch()
     {
-        return MarkSeg;
+        return mMatchSeg;
     }
 
     public void SearchAllLayer(DrawContext dc, CadObjectDB db)
@@ -109,27 +93,9 @@ public class SegSearcher
         }
     }
 
-    public void SetCheckPriorityWithSnapInfo(SnapInfo si)
-    {
-        if (si.PriorityMatch == SnapInfo.MatchType.X_MATCH)
-        {
-            CheckPriority = Priority.PRIORITY_X;
-        }
-        else if (si.PriorityMatch == SnapInfo.MatchType.Y_MATCH)
-        {
-            CheckPriority = Priority.PRIORITY_Y;
-        }
-        else
-        {
-            CheckPriority = Priority.NONE;
-        }
-    }
-
     private void CheckSeg(DrawContext dc, CadLayer layer, FigureSegment fseg)
     {
         CadFigure fig = fseg.Figure;
-        int idxA = fseg.Index0;
-        int idxB = fseg.Index1;
         vector3_t a = fseg.Point0.vector;
         vector3_t b = fseg.Point1.vector;
 
@@ -160,10 +126,11 @@ public class SegSearcher
         vector3_t p = VectorExt.InvalidVector3;
         vcompo_t mind = vcompo_t.MaxValue;
 
-        vector3_t dcenter = dc.WorldPointToDevPoint(CadMath.CenterPoint(a, b));
-        vcompo_t centerDist = (dcenter - Target.Pos).Norm();
+        vector3_t centerP = CadMath.CenterPoint(a, b);
+        vector3_t dcenter = dc.WorldPointToDevPoint(centerP);
+        vcompo_t centerDist = CadMath.SegNormNZ(dcenter, Target.Pos);
 
-        if (CheckPriority == Priority.NONE || centerDist < Range)
+        if (centerDist >= Range)
         {
             StackArray<vector3_t> vtbl = default;
 
@@ -181,7 +148,8 @@ public class SegSearcher
                 }
 
                 vector3_t devv = dc.WorldPointToDevPoint(v);
-                vcompo_t td = (devv - Target.Pos).Norm();
+
+                vcompo_t td = CadMath.SegNormNZ(devv, Target.Pos);
 
                 if (td < mind)
                 {
@@ -192,22 +160,8 @@ public class SegSearcher
         }
         else
         {
-            if (CheckPriority == Priority.PRIORITY_X)
-            {
-                p = cx;
-            }
-            else if (CheckPriority == Priority.PRIORITY_Y)
-            {
-                p = cy;
-            }
-
-            if (p.IsInvalid())
-            {
-                return;
-            }
-
-            vector3_t devv = dc.WorldPointToDevPoint(p);
-            mind = (devv - Target.Pos).Norm();
+            p = centerP;
+            mind = centerDist;
         }
 
         if (!p.IsValid())
@@ -220,13 +174,34 @@ public class SegSearcher
             return;
         }
 
-        if (mind < MinDist)
+        bool replace = false;
+
+        if (Math.Abs(mind - MinDist) < (vcompo_t)0.1)
         {
-            MarkSeg.Layer = layer;
-            MarkSeg.FigSeg = fseg;
-            MarkSeg.CrossPoint = p;
-            MarkSeg.CrossPointScrn = dc.WorldPointToDevPoint(p);
-            MarkSeg.Distance = mind;
+            vcompo_t newZ = dc.WorldPointToDevPoint(p).Z;
+
+
+            vector3_t crossp = dc.WorldPointToDevPoint(mMatchSeg.CrossPoint);
+
+            vcompo_t currentZ = crossp.Z;
+
+
+            if (newZ < currentZ)
+            {
+                replace = true;
+            }
+        }
+        else if (mind < MinDist)
+        {
+            replace = true;
+        }
+
+        if (replace)
+        {
+            mMatchSeg.Layer = layer;
+            mMatchSeg.FigSeg = fseg;
+            mMatchSeg.CrossPoint = p;
+            mMatchSeg.Distance = mind;
 
             MinDist = mind;
         }
@@ -288,11 +263,10 @@ public class SegSearcher
         {
             FigureSegment fseg = new FigureSegment(fig, 0, 0, 0);
 
-            MarkSeg.Layer = layer;
-            MarkSeg.FigSeg = fseg;
-            MarkSeg.CrossPoint = cirP;
-            MarkSeg.CrossPointScrn = dc.WorldPointToDevPoint(cirP);
-            MarkSeg.Distance = dist;
+            mMatchSeg.Layer = layer;
+            mMatchSeg.FigSeg = fseg;
+            mMatchSeg.CrossPoint = cirP;
+            mMatchSeg.Distance = dist;
 
             MinDist = dist;
         }
@@ -300,7 +274,7 @@ public class SegSearcher
 
     private void CheckSegs(DrawContext dc, CadLayer layer, CadFigure fig)
     {
-        for (int i=0;i < fig.SegmentCount; i++)
+        for (int i=0; i < fig.SegmentCount; i++)
         {
             FigureSegment seg = fig.GetFigSegmentAt(i);
             CheckSeg(dc, layer, seg);
@@ -316,6 +290,7 @@ public class SegSearcher
             case CadFigure.Types.RECT:
             case CadFigure.Types.DIMENTION_LINE:
             case CadFigure.Types.MESH:
+            case CadFigure.Types.PICTURE:
                 CheckSegs(dc, layer, fig);
                 break;
             case CadFigure.Types.CIRCLE:

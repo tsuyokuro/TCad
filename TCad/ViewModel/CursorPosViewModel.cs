@@ -1,27 +1,16 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
-using OpenTK.Mathematics;
 using System.ComponentModel;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using System.Text;
 
 namespace TCad.ViewModel;
 
 public class CursorPosViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private StringBuilder sb1 = new StringBuilder();
+    private StringBuilder sb2 = new StringBuilder();
+    private StringBuilder sb3 = new StringBuilder();
+
 
     private string mStrCursorPos = "";
 
@@ -75,10 +64,11 @@ public class CursorPosViewModel : INotifyPropertyChanged
 
             mCursorPos = value;
 
-            string s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+            sb1.Clear();
+            sb1.AppendFormat("({0:0.00}, {1:0.00}, {2:0.00})",
                 mCursorPos.X, mCursorPos.Y, mCursorPos.Z);
 
-            StrCursorPos = s;
+            StrCursorPos = sb1.ToString();
         }
 
         get => mCursorPos;
@@ -97,10 +87,12 @@ public class CursorPosViewModel : INotifyPropertyChanged
 
             mCursorPos2 = value;
 
-            string s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+            sb2.Clear();
+            sb2.AppendFormat("({0:0.00}, {1:0.00}, {2:0.00})",
                 mCursorPos2.X, mCursorPos2.Y, mCursorPos2.Z);
 
-            StrCursorPos2 = s;
+
+            StrCursorPos2 = sb2.ToString();
         }
 
         get => mCursorPos2;
@@ -119,10 +111,11 @@ public class CursorPosViewModel : INotifyPropertyChanged
 
             mCursorPos3 = value;
 
-            string s = string.Format("({0:0.00}, {1:0.00}, {2:0.00})",
+            sb3.Clear();
+            sb3.AppendFormat("({0:0.00}, {1:0.00}, {2:0.00})",
                 mCursorPos3.X, mCursorPos3.Y, mCursorPos3.Z);
 
-            StrCursorPos3 = s;
+            StrCursorPos3 = sb3.ToString();
         }
 
         get => mCursorPos3;

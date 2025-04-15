@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Controller;
 using System;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -56,15 +40,15 @@ public abstract class DrawContext : IDisposable
     public vector3_t LookAt => mLookAt;
 
     // 投影面までの距離
-    protected vcompo_t mProjectionNear = (vcompo_t)(0.1);
+    protected vcompo_t mProjectionNear = (vcompo_t)0.1;
     protected vcompo_t ProjectionNear => mProjectionNear;
 
     // 視野空間の遠方側クリップ面までの距離
-    protected vcompo_t mProjectionFar = (vcompo_t)(2000.0);
+    protected vcompo_t mProjectionFar = (vcompo_t)2000.0;
     protected vcompo_t ProjectionFar => mProjectionFar;
 
     // 画角 大きければ広角レンズ、小さければ望遠レンズ
-    protected vcompo_t mFovY = (vcompo_t)Math.PI / 4;
+    protected vcompo_t mFovY = (vcompo_t)(Math.PI / 4.0);
     protected vcompo_t FovY => mFovY;
 
     // 上を示す Vector
@@ -76,9 +60,9 @@ public abstract class DrawContext : IDisposable
     public virtual vector3_t ViewDir => mViewDir;
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
-    protected matrix4_t mViewMatrix = default;
-    protected matrix4_t ViewMatrix => mViewMatrix;
-    protected ref matrix4_t ViewMatrixRef => ref mViewMatrix;
+    protected matrix4_t mModelViewMatrix = default;
+    protected matrix4_t ModelViewMatrix => mModelViewMatrix;
+    protected ref matrix4_t ModelViewMatrixRef => ref mModelViewMatrix;
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -122,7 +106,7 @@ public abstract class DrawContext : IDisposable
     }
 
     // 縮尺
-    public vcompo_t WorldScale_ = (vcompo_t)(1.0);
+    private vcompo_t WorldScale_ = (vcompo_t)(1.0);
 
     public vcompo_t WorldScale
     {
@@ -173,9 +157,9 @@ public abstract class DrawContext : IDisposable
         mViewOrg = org;
     }
 
-    public void SetupTools(DrawModes type, int penW = 0)
+    public void SetupTools(DrawModes type)
     {
-        Tools.Setup(type, penW);
+        Tools.Setup(type);
         OptionSet.Initialize();
     }
 
@@ -250,7 +234,7 @@ public abstract class DrawContext : IDisposable
     {
         vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
 
-        vector4_t sv = wv * mViewMatrix;
+        vector4_t sv = wv * mModelViewMatrix;
         vector4_t pv = sv * mProjectionMatrix;
 
         vector4_t dv;
@@ -317,9 +301,9 @@ public abstract class DrawContext : IDisposable
     protected void CalcViewMatrix()
     {
         //mViewMatrix = matrix4_t.Scale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
-        mViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
+        mModelViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
         //mViewMatrixInv = mViewMatrix.Invert();
-        mViewMatrixInv = mViewMatrix.Inv();
+        mViewMatrixInv = mModelViewMatrix.Inv();
     }
 
     public void CopyProjectionMetrics(DrawContext dc)
@@ -344,7 +328,7 @@ public abstract class DrawContext : IDisposable
 
     public void CopyViewMatrix(DrawContext dc)
     {
-        mViewMatrix = dc.mViewMatrix;
+        mModelViewMatrix = dc.mModelViewMatrix;
         mViewMatrixInv = dc.mViewMatrixInv;
     }
 
@@ -384,7 +368,7 @@ public abstract class DrawContext : IDisposable
         t.dump("ViewDir");
 
         Log.pl("ViewMatrix");
-        mViewMatrix.dump();
+        mModelViewMatrix.dump();
 
         Log.pl("ProjectionMatrix");
         mProjectionMatrix.dump();

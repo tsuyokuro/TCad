@@ -1,28 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using Path = System.IO.Path;
-using Plotter.Serializer;
-
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -62,7 +41,7 @@ public partial class CadFigurePicture : CadFigure
 
         SrcData = new byte[fs.Length];
 
-        fs.Read(SrcData, 0, SrcData.Length);
+        fs.ReadExactly(SrcData);
 
         fs.Close();
 
@@ -157,6 +136,22 @@ public partial class CadFigurePicture : CadFigure
         }
     }
 
+    public override FigureSegment GetFigSegmentAt(int n)
+    {
+        int a = n;
+        int b = (n + 1) % 4;
+        return new FigureSegment(this, n, a, b);
+    }
+
+    public override int SegmentCount
+    {
+        get
+        {
+            return 4;
+        }
+    }
+
+
     public override void Draw(DrawContext dc, DrawOption dp)
     {
         DrawPicture(dc, dp.LinePen);
@@ -182,9 +177,12 @@ public partial class CadFigurePicture : CadFigure
         dc.Drawing.DrawLine(linePen, mPointList[3].vector, mPointList[0].vector);
     }
 
-
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
     {
+        CadVertex a = PointList[idxA];
+        CadVertex b = PointList[idxB];
+
+        dc.Drawing.DrawLine(pen, a.vector, b.vector);
     }
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
@@ -240,7 +238,7 @@ public partial class CadFigurePicture : CadFigure
 
         vector3_t delta = moveInfo.Delta;
 
-        if (cnt >= 3)
+        if (cnt >= 2)
         {
             PointList[0] = StoreList[0] + delta;
             PointList[1] = StoreList[1] + delta;

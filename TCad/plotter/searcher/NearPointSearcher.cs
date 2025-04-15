@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Mathematics;
 using Plotter.Controller;
 using System.Collections.Generic;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -47,9 +31,12 @@ public class NearPointSearcher
         public CadSegment ScrSegment;
     }
 
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
-    private DrawContext DC;
+    private DrawContext DC
+    {
+        get => Controller.DC;
+    }
 
     List<SegmentItem> SegList = new List<SegmentItem>();
 
@@ -57,10 +44,9 @@ public class NearPointSearcher
 
     public vcompo_t Range = 128;
 
-    public NearPointSearcher(PlotterController controller)
+    public NearPointSearcher(IPlotterController controller)
     {
         Controller = controller;
-        DC = Controller.DC;
     }
 
     public List<Result> Search(CadVertex p, vcompo_t range)

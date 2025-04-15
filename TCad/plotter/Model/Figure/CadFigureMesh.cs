@@ -1,26 +1,8 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using HalfEdgeNS;
 using MyCollections;
-using OpenTK.Mathematics;
-using Plotter.Serializer.v1003;
 using System;
 using System.Collections.Generic;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -338,6 +320,15 @@ public partial class CadFigureMesh : CadFigure
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
     {
+        Log.tpl($"idxA:{idxA} idxB:{idxB}");
+
+        CadVertex a = PointList[idxA];
+        CadVertex b = PointList[idxB];
+
+        vcompo_t shift = dc.DevSizeToWoldSize((vcompo_t)(0.11));
+        vector3_t sv = -dc.ViewDir * shift;
+
+        dc.Drawing.DrawLine(pen, a.vector + sv, b.vector + sv);
     }
 
     public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)

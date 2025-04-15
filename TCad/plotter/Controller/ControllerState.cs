@@ -1,6 +1,6 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
+#define ENABLE_LOG
+
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
@@ -8,33 +8,14 @@ using TCad.Controls;
 
 using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Controller;
 
-/// <summary>
-/// ControllerStateMachine
-/// 
-/// </summary>
 public class ControllerStateMachine
 {
     public class StateContext
     {
         public vector3_t StoredObjDownPoint = default;
-        public PlotterController Controller;
+        public IPlotterController Controller;
 
         public ControllerState CurrentState
         {
@@ -57,75 +38,86 @@ public class ControllerStateMachine
 
     private ControllerState[] StateList = new ControllerState[(int)ControllerStates.MEASURING + 1];
 
-    private ControllerState mCurrentState = null;
 
     private Stack<ControllerState> StateStack = new(10);
 
     public ControllerState CurrentState
     {
-        get => mCurrentState;
+        get;
+        private set;
     }
 
     public ControllerStates CurrentStateID
     {
         get
         {
-            if (mCurrentState == null)
-            {
-                return ControllerStates.NONE;
-            }
-
-            return mCurrentState.State;
+            return CurrentState.ID;
         }
     }
 
     private StateContext Context;
 
-    private PlotterController Controller;
+    private IPlotterController Controller;
 
-    public ControllerStateMachine(PlotterController controller)
+    public ControllerStateMachine(IPlotterController controller)
     {
         Controller = controller;
         Context = new StateContext(this);
 
+        StateList[(int)ControllerStates.NONE] = new NoneState(Context);
         StateList[(int)ControllerStates.SELECT] = new SelectingState(Context);
         StateList[(int)ControllerStates.RUBBER_BAND_SELECT] = new RubberBandSelectState(Context);
         StateList[(int)ControllerStates.DRAGING_POINTS] = new DragingPointsState(Context);
         StateList[(int)ControllerStates.DRAGING_VIEW_ORG] = new DragingViewOrgState(Context);
-        StateList[(int)ControllerStates.CREATING] = new CreateFigureState(Context);
+        StateList[(int)ControllerStates.CREATE_FIGURE] = new CreateFigureState(Context);
         StateList[(int)ControllerStates.MEASURING] = new MeasuringState(Context);
+
+        CurrentState = StateList[(int)ControllerStates.NONE];
     }
 
     public void ChangeState(ControllerStates state)
     {
-        if (mCurrentState != null)
+        // If change to the same state, do nothing
+        if (CurrentState.ID == state)
         {
-            Log.pl(mCurrentState.GetType().Name + " Exit");
-            mCurrentState.Exit();
+            return;
         }
 
-        mCurrentState = StateList[(int)state];
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Exit");
+#endif
 
-        if (mCurrentState != null)
-        {
-            Log.pl(mCurrentState.GetType().Name + " Enter");
-            mCurrentState.Enter();
-        }
+        CurrentState.Exit();
 
-        if (Controller.InteractCtrl.IsActive)
+        CurrentState = StateList[(int)state];
+
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Enter");
+#endif
+
+        CurrentState.Enter();
+
+        if (Controller.Input.InteractCtrl.IsActive)
         {
-            Controller.InteractCtrl.Cancel();
+            Controller.Input.InteractCtrl.Cancel();
         }
     }
 
     public void PushState(ControllerStates state)
     {
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Push");
+#endif
+
         StateStack.Push(CurrentState);
-        mCurrentState = StateList[(int)state];
-        if (mCurrentState != null)
-        {
-            mCurrentState.Enter();
-        }
+
+        CurrentState = StateList[(int)state];
+
+#if ENABLE_LOG
+        Log.pl(CurrentState.GetType().Name + " Enter");
+#endif
+
+        CurrentState.Enter();
     }
 
     public void PopState()
@@ -133,23 +125,24 @@ public class ControllerStateMachine
         ControllerState backState;
         if (StateStack.TryPop(out backState))
         {
-            mCurrentState = backState;
+            CurrentState = backState;
+
+#if ENABLE_LOG
+            Log.pl(CurrentState.GetType().Name + " is Poped");
+#endif
+
         }
     }
 }
 
-/// <summary>
-/// CreateFigureState
-/// 
-/// </summary>
 public class ControllerState
 {
-    public virtual ControllerStates State
+    public virtual ControllerStates ID
     {
         get => ControllerStates.NONE;
     }
 
-    protected PlotterController Ctrl
+    protected IPlotterController Controller
     {
         get => Context.Controller;
     }
@@ -180,17 +173,30 @@ public class ControllerState
     public virtual void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
     public virtual void Cancel() { }
+
+    public virtual void MoveKeyDown(MoveInfo moveInfo, bool isStart) { }
+
+    public virtual void MoveKeyUp() { }
 }
 
-/// <summary>
-/// CreateFigureState
-/// 
-/// </summary>
+public class NoneState : ControllerState
+{
+    public override ControllerStates ID
+    {
+        get => ControllerStates.NONE;
+    }
+
+    public NoneState(StateContext context) : base(context)
+    {
+    }
+}
+
+
 public class CreateFigureState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
-        get => ControllerStates.CREATING;
+        get => ControllerStates.CREATE_FIGURE;
     }
 
     public CreateFigureState(StateContext context) : base(context)
@@ -213,11 +219,11 @@ public class CreateFigureState : ControllerState
             return;
         }
 
-        FigCreator creator = Ctrl.FigureCreator;
+        FigCreator creator = Controller.FigureCreator;
 
         if (creator != null)
         {
-            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p = dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
             creator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
@@ -226,56 +232,56 @@ public class CreateFigureState : ControllerState
     {
         if (isStart)
         {
-            Ctrl.LastDownPoint = Ctrl.SnapPoint;
+            Controller.Input.LastDownPoint = Controller.Input.SnapPoint;
 
-            CadFigure fig = Ctrl.DB.NewFigure(Ctrl.CreatingFigType);
+            CadFigure fig = Controller.DB.NewFigure(Controller.CreatingFigType);
 
-            Ctrl.FigureCreator = FigCreator.Get(Ctrl.CreatingFigType, fig);
+            Controller.FigureCreator = FigCreator.Get(Controller.CreatingFigType, fig);
 
             // TODO Remove States.CREATING state
             //Ctrl.State = States.CREATING;
 
             isStart = false;
 
-            Ctrl.FigureCreator.StartCreate(dc);
+            Controller.FigureCreator.StartCreate(dc);
 
-            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Controller.Input.SnapPoint);
         }
         else
         {
-            Ctrl.LastDownPoint = Ctrl.SnapPoint;
+            Controller.Input.LastDownPoint = Controller.Input.SnapPoint;
 
-            SetPointInCreating(dc, (CadVertex)Ctrl.SnapPoint);
+            SetPointInCreating(dc, (CadVertex)Controller.Input.SnapPoint);
         }
     }
 
     public override void Cancel()
     {
-        if (Ctrl.FigureCreator?.Figure.PointCount > 0)
+        if (Controller.FigureCreator?.Figure.PointCount > 0)
         {
-            Ctrl.UpdateObjectTree(true);
+            Controller.UpdateObjectTree(true);
         }
 
         Context.ChangeState(ControllerStates.SELECT);
 
-        Ctrl.CreatingFigType = CadFigure.Types.NONE;
-        Ctrl.NotifyStateChange(
+        Controller.CreatingFigType = CadFigure.Types.NONE;
+        Controller.NotifyStateChange(
             new StateChangedParam(StateChangedType.CREATING_FIG_TYPE_CHANGED));
     }
 
     private FigCreator FigureCreator
     {
-        get => Ctrl.FigureCreator;
+        get => Controller.FigureCreator;
     }
 
     private CadLayer CurrentLayer
     {
-        get => Ctrl.CurrentLayer;
+        get => Controller.CurrentLayer;
     }
 
     private HistoryManager HistoryMan
     {
-        get => Ctrl.HistoryMan;
+        get => Controller.HistoryMan;
     }
 
     private void SetPointInCreating(DrawContext dc, CadVertex p)
@@ -292,7 +298,7 @@ public class CreateFigureState : ControllerState
             HistoryMan.foward(ope);
             CurrentLayer.AddFigure(FigureCreator.Figure);
 
-            Ctrl.NextState();
+            Controller.NextState();
         }
         else if (state == FigCreator.State.ENOUGH)
         {
@@ -314,13 +320,13 @@ public class CreateFigureState : ControllerState
     }
 }
 
-/// <summary>
-/// SelectingState
-/// 
-/// </summary>
 public class SelectingState : ControllerState
 {
-    public override ControllerStates State
+    private bool EditStarted = false;
+    private List<CadFigure> EditFigList = null;
+
+
+    public override ControllerStates ID
     {
         get => ControllerStates.SELECT;
     }
@@ -346,17 +352,17 @@ public class SelectingState : ControllerState
         vector3_t pixp = new(x, y, 0);
 
 
-        if (Ctrl.SelectNearest(dc, Ctrl.CrossCursor.Pos))
+        if (Controller.Input.SelectNearest(dc, Controller.Input.CrossCursor.Pos))
         {
-            if (!Ctrl.CursorLocked)
+            if (!Controller.Input.CursorLocked)
             {
                 Context.ChangeState(ControllerStates.DRAGING_POINTS);
                 Context.CurrentState.LButtonDown(pointer, dc, x, y);
             }
 
-            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
+            Controller.Input.CrossCursorOffset = pixp - Controller.Input.CrossCursor.Pos;
 
-            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
+            Context.StoredObjDownPoint = Controller.Input.ObjDownPoint;
         }
         else
         {
@@ -367,25 +373,59 @@ public class SelectingState : ControllerState
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Ctrl.NotifyStateChange(
+        Controller.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
     }
 
     public override void Cancel()
     {
     }
+
+    public override void MoveKeyDown(MoveInfo moveInfo, bool isStart)
+    {
+        if (isStart)
+        {
+            EditFigList = Controller.DB.GetSelectedFigList();
+            if (EditFigList != null && EditFigList.Count > 0)
+            {
+                EditStarted = true;
+                Controller.EditManager.StartEdit(EditFigList);
+            }
+        }
+
+
+        if (EditStarted)
+        {
+            Controller.CommandProc.MovePointsFromStored(EditFigList, moveInfo);
+            Controller.Drawer.Redraw();
+        }
+        else
+        {
+            vector3_t p = Controller.Input.GetCursorPos();
+            Controller.Input.SetCursorWoldPos(p + moveInfo.Delta);
+            Controller.Drawer.Redraw();
+        }
+    }
+
+    public override void MoveKeyUp()
+    {
+        if (EditStarted)
+        {
+            Controller.EditManager.EndEdit(EditFigList);
+
+            EditFigList = null;
+            EditStarted = false;
+        }
+        Controller.Drawer.Redraw();
+    }
 }
 
-/// <summary>
-/// RubberBandSelectState
-/// 
-/// </summary>
 public class RubberBandSelectState : ControllerState
 {
     private vector3_t RubberBandScrnPoint0 = VectorExt.InvalidVector3;
     private vector3_t RubberBandScrnPoint1 = default;
 
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.RUBBER_BAND_SELECT;
     }
@@ -415,22 +455,6 @@ public class RubberBandSelectState : ControllerState
 
         RubberBandScrnPoint0 = pixp;
         RubberBandScrnPoint1 = pixp;
-
-        if (Ctrl.SelectNearest(dc, (vector3_t)Ctrl.CrossCursor.Pos))
-        {
-            if (!Ctrl.CursorLocked)
-            {
-                Context.ChangeState(ControllerStates.DRAGING_POINTS);
-            }
-
-            Ctrl.CrossCursorOffset = pixp - Ctrl.CrossCursor.Pos;
-
-            Context.StoredObjDownPoint = Ctrl.ObjDownPoint;
-        }
-        else
-        {
-            Context.ChangeState(ControllerStates.RUBBER_BAND_SELECT);
-        }
     }
 
     public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -441,7 +465,7 @@ public class RubberBandSelectState : ControllerState
 
         RubberBandScrnPoint0 = VectorExt.InvalidVector3;
 
-        Ctrl.NotifyStateChange(
+        Controller.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
 
         Context.ChangeState(ControllerStates.SELECT);
@@ -460,12 +484,12 @@ public class RubberBandSelectState : ControllerState
 
     private void RubberBandSelect(DrawContext dc, vector3_t p0, vector3_t p1)
     {
-        Ctrl.LastSelPoint = null;
-        Ctrl.LastSelSegment = null;
+        Controller.Input.LastSelPoint = null;
+        Controller.Input.LastSelSegment = null;
 
         vector3_t minp = VectorExt.Min(p0, p1);
         vector3_t maxp = VectorExt.Max(p0, p1);
-        Ctrl.DB.ForEachEditableFigure(
+        Controller.DB.ForEachEditableFigure(
             (layer, fig) =>
             {
                 SelectIfContactRect(dc, minp, maxp, fig);
@@ -487,15 +511,11 @@ public class RubberBandSelectState : ControllerState
     }
 }
 
-/// <summary>
-/// DragingPointsState
-/// 
-/// </summary>
 public class DragingPointsState : ControllerState
 {
     vector3_t StartPos;
 
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.DRAGING_POINTS;
     }
@@ -507,7 +527,7 @@ public class DragingPointsState : ControllerState
     public override void Enter()
     {
         isStart = true;
-        StartPos = Ctrl.CrossCursor.Pos;
+        StartPos = Controller.Input.CrossCursor.Pos;
     }
 
     public override void Exit()
@@ -531,7 +551,7 @@ public class DragingPointsState : ControllerState
         //DOut.pl("LButtonUp isStart:" + isStart);
         if (!isStart)
         {
-            Ctrl.EndEdit();
+            Controller.EditManager.EndEdit();
         }
 
         Context.ChangeState(ControllerStates.SELECT);
@@ -546,41 +566,38 @@ public class DragingPointsState : ControllerState
             // 最初だけある程度ずらさないと移動しないようにする
             //
             CadVertex v = CadVertex.Create(x, y, 0);
-            vcompo_t d = (Ctrl.RawDownPoint - v).Norm();
+            vcompo_t d = (Controller.Input.RawDownPoint - v).Norm();
 
             if (d > SettingsHolder.Settings.InitialMoveLimit)
             {
                 isStart = false;
-                Ctrl.StartEdit();
+                Controller.EditManager.StartEdit();
             }
         }
         else
         {
             vector3_t p0 = dc.DevPointToWorldPoint(StartPos);
-            vector3_t p1 = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            vector3_t p1 = dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
 
             vector3_t delta = p1 - p0;
 
-            Ctrl.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Ctrl.CrossCursor.Pos));
+            Controller.Editor.MoveSelectedPoints(dc, new MoveInfo(p0, p1, Controller.Input.CrossCursor.Pos));
 
-            Ctrl.ObjDownPoint = Context.StoredObjDownPoint + delta;
+            Controller.Input.ObjDownPoint = Context.StoredObjDownPoint + delta;
         }
     }
 
     public override void Cancel()
     {
-        Ctrl.CancelEdit();
+        Controller.EditManager.CancelEdit();
         Context.ChangeState(ControllerStates.SELECT);
-        Ctrl.ClearSelection();
+        Controller.Input.ClearSelection();
     }
 }
 
-/// <summary>
-/// MeasuringState
-/// </summary>
 public class MeasuringState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.MEASURING;
     }
@@ -599,26 +616,26 @@ public class MeasuringState : ControllerState
 
     public override void Draw(DrawContext dc)
     {
-        if (Ctrl.MeasureFigureCreator != null)
+        if (Controller.MeasureFigureCreator != null)
         {
-            vector3_t p = dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
-            Ctrl.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
+            vector3_t p = dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
+            Controller.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 
     public override void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        Ctrl.LastDownPoint = Ctrl.SnapPoint;
+        Controller.Input.LastDownPoint = Controller.Input.SnapPoint;
 
         CadVertex p;
 
-        if (Ctrl.CurrentSnapInfo.IsPointMatch)
+        if (Controller.Input.CurrentSnapInfo.IsPointMatch)
         {
-            p = new CadVertex(Ctrl.SnapPoint);
+            p = new CadVertex(Controller.Input.SnapPoint);
         }
         else
         {
-            p = (CadVertex)dc.DevPointToWorldPoint(Ctrl.CrossCursor.Pos);
+            p = (CadVertex)dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
         }
 
         SetPointInMeasuring(dc, p);
@@ -636,16 +653,16 @@ public class MeasuringState : ControllerState
     public override void Cancel()
     {
         Context.ChangeState(ControllerStates.SELECT);
-        Ctrl.MeasureMode = MeasureModes.NONE;
-        Ctrl.MeasureFigureCreator = null;
+        Controller.MeasureMode = MeasureModes.NONE;
+        Controller.MeasureFigureCreator = null;
 
-        Ctrl.NotifyStateChange(
+        Controller.NotifyStateChange(
             new StateChangedParam(StateChangedType.MESURE_MODE_CHANGED));
     }
 
     private FigCreator MeasureFigureCreator
     {
-        get => Ctrl.MeasureFigureCreator;
+        get => Controller.MeasureFigureCreator;
     }
 
     private void SetPointInMeasuring(DrawContext dc, CadVertex p)
@@ -697,13 +714,9 @@ public class MeasuringState : ControllerState
     }
 }
 
-/// <summary>
-/// DragingViewOrgState
-/// 
-/// </summary>
 public class DragingViewOrgState : ControllerState
 {
-    public override ControllerStates State
+    public override ControllerStates ID
     {
         get => ControllerStates.DRAGING_VIEW_ORG;
     }
@@ -747,11 +760,11 @@ public class DragingViewOrgState : ControllerState
 
         vector3_t d = cp - pointer.MDownPoint;
 
-        vector3_t op = Ctrl.StoreViewOrg + d;
+        vector3_t op = Controller.Input.StoreViewOrg + d;
 
         ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
 
-        Ctrl.CrossCursor.Pos = Ctrl.CrossCursor.StorePos + d;
+        Controller.Input.CrossCursor.Pos = Controller.Input.CrossCursor.StorePos + d;
     }
 }
 

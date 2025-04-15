@@ -1,24 +1,8 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Windows.Forms;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -50,7 +34,7 @@ class DrawContextGLPers : DrawContextGL
 
 
         GL.MatrixMode(MatrixMode.Modelview);
-        GL.LoadMatrix(ref mViewMatrix);
+        GL.LoadMatrix(ref mModelViewMatrix);
 
         GL.MatrixMode(MatrixMode.Projection);
         GL.LoadMatrix(ref mProjectionMatrix);
@@ -263,7 +247,7 @@ class DrawContextGLPers : DrawContextGL
     {
         vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
 
-        vector4_t sv = wv * mViewMatrix;
+        vector4_t sv = wv * mModelViewMatrix;
         vector4_t pv = sv * mProjectionMatrix;
 
         vector4_t dv;

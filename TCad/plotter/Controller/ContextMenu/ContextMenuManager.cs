@@ -1,20 +1,4 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using TCad.Properties;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter.Controller;
 
@@ -22,7 +6,7 @@ public class ContextMenuManager
 {
     MenuInfo mContextMenuInfo = new MenuInfo();
 
-    PlotterController mController;
+    IPlotterController mController;
 
     public static MenuInfo.Item CreatingFigureQuit = new MenuInfo.Item(Resources.menu_quit_create, "quit_create");
     public static MenuInfo.Item CreatingFigureEnd = new MenuInfo.Item(Resources.menu_end_create, "end_create");
@@ -31,7 +15,7 @@ public class ContextMenuManager
     public static MenuInfo.Item Paste = new MenuInfo.Item(Resources.menu_paste, "paste");
     public static MenuInfo.Item InsertPoint = new MenuInfo.Item(Resources.menu_insert_point, "insert_point");
 
-    public ContextMenuManager(PlotterController controller)
+    public ContextMenuManager(IPlotterController controller)
     {
         mController = controller;
     }
@@ -83,18 +67,18 @@ public class ContextMenuManager
 
         if (mContextMenuInfo.Items.Count > 0)
         {
-            mController.ViewModelIF.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
+            mController.ViewModel.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
         }
     }
 
     private bool SegSelected()
     {
-        if (mController.LastSelSegment == null)
+        if (mController.Input.LastSelSegment == null)
         {
             return false;
         }
 
-        MarkSegment seg = mController.LastSelSegment.Value;
+        MarkSegment seg = mController.Input.LastSelSegment.Value;
 
         CadFigure fig = mController.DB.GetFigure(seg.FigureID);
 
@@ -141,15 +125,15 @@ public class ContextMenuManager
                 break;
 
             case "copy":
-                mController.Copy();
+                mController.CommandProc.Copy();
                 break;
 
             case "paste":
-                mController.Paste();
+                mController.CommandProc.Paste();
                 break;
 
             case "insert_point":
-                mController.InsPoint();
+                mController.CommandProc.InsPoint();
                 break;
         }
     }

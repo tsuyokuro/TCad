@@ -1,27 +1,14 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using MyCollections;
 using Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Windows.Resources;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -61,8 +48,11 @@ public class DrawTools : IDisposable
     public const int PEN_COMPASS_Z = 32;
     public const int PEN_MESH_EDGE_LINE = 33;
     public const int PEN_CURRENT_FIG_SELECTED_POINT = 34;
+    public const int PEN_CROSS_CURSOR2 = 35;
+    public const int PEN_LAST_SEL_SEG = 36;
+    public const int PEN_LAST_SEL_POINT = 37;
 
-    public const int PEN_TBL_SIZE = 35;
+    public const int PEN_TBL_SIZE = 40;
 
 
     public const int BRUSH_DEFAULT = 1;
@@ -77,8 +67,6 @@ public class DrawTools : IDisposable
     public const int BRUSH_COMPASS_LABEL_X = 9;
     public const int BRUSH_COMPASS_LABEL_Y = 10;
     public const int BRUSH_COMPASS_LABEL_Z = 11;
-    public const int BRUSH_SELECTED_POINT = 12;
-    public const int BRUSH_CURRENT_FIG_SELECTED_POINT = 13;
 
     public const int BRUSH_TBL_SIZE = 14;
 
@@ -88,9 +76,6 @@ public class DrawTools : IDisposable
 
     public const int FONT_SIZE_DEFAULT = 11;
     public const int FONT_SIZE_SMALL = 11;
-
-    public Color[] PenColorTbl;
-    public Color[] BrushColorTbl;
 
     FlexArray<DrawPen> PenTbl = null;
     FlexArray<DrawBrush> BrushTbl = null;
@@ -103,71 +88,52 @@ public class DrawTools : IDisposable
         GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
     }
 
-    public void Setup(DrawModes t, int penW = 0)
+    public void Setup(DrawModes t)
     {
         Dispose();
 
         if (t == DrawModes.DARK)
         {
-            SetupScreenSet(DarkColors.Instance, penW);
+            SetupScreenSet("dark.json", new ColorPack(255, 192, 192, 192));
         }
         else if (t == DrawModes.LIGHT)
         {
-            SetupScreenSet(LightColors.Instance, penW);
+            SetupScreenSet("light.json", new ColorPack(255, 92, 92, 92));
         }
         else if (t == DrawModes.PRINTER)
         {
-            SetupPrinterSet(penW);
+            SetupPrinterSet();
         }
     }
 
-    private void SetupScreenSet(ColorSet colorSet, int penW)
+    private void SetupScreenSet(String fname, ColorPack defColor)
     {
         AllocTbl();
 
-        PenColorTbl = colorSet.PenColorTbl;
-        BrushColorTbl = colorSet.BrushColorTbl;
+        var pathName = PathName(fname);
 
-        for (int i = 0; i < PEN_TBL_SIZE; i++)
-        {
-            PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
-        }
+        LoadTheme(pathName, defColor);
 
-        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
-        {
-            BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
-        }
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
-        FontFamily fontFamily = new FontFamily("MS UI Gothic");
+        FontFamily fontFamily = new("MS UI Gothic");
         //FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
 
         GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
         GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
     }
 
-    private void SetupPrinterSet(int penW)
+    private void SetupPrinterSet()
     {
         AllocTbl();
 
-        ColorSet colorSet = PrintColors.Instance;
 
-        PenColorTbl = colorSet.PenColorTbl;
-        BrushColorTbl = colorSet.BrushColorTbl;
+        LoadTheme(PathName("printer.json"), new ColorPack(255, 0, 0, 0));
 
-        for (int i = 0; i < PEN_TBL_SIZE; i++)
-        {
-            PenTbl[i] = new DrawPen(PenColorTbl[i].ToArgb(), penW);
-        }
-
-        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
-        {
-            BrushTbl[i] = new DrawBrush(BrushColorTbl[i].ToArgb());
-        }
 
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         //FontFamily fontFamily = new FontFamily("MS UI Gothic");
-        FontFamily fontFamily = new FontFamily("MS Gothic");
+        FontFamily fontFamily = new("MS Gothic");
 
         GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
         GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
@@ -189,14 +155,13 @@ public class DrawTools : IDisposable
         {
             foreach (Font font in GDIFontTbl)
             {
-                if (font != null)
-                {
-                    font.Dispose();
-                }
+                font?.Dispose();
             }
 
             GDIFontTbl = null;
         }
+
+        GC.SuppressFinalize(this);
     }
 
     public DrawTools()
@@ -214,7 +179,11 @@ public class DrawTools : IDisposable
         StreamResourceInfo si = System.Windows.Application.GetResourceStream(
             new Uri(fname, UriKind.Relative));
 
-        return LoadFontFamily(si.Stream);
+        FontFamily fontFamily = LoadFontFamily(si.Stream);
+
+        si.Stream.Close();
+
+        return fontFamily;
     }
 
     // Load font family from stream
@@ -222,13 +191,13 @@ public class DrawTools : IDisposable
     {
         var buffer = new byte[stream.Length];
 
-        stream.Read(buffer, 0, buffer.Length);
+        stream.ReadExactly(buffer, 0, buffer.Length);
 
         return LoadFontFamily(buffer);
     }
 
 
-    static PrivateFontCollection PrivateFonts = new PrivateFontCollection();
+    static readonly PrivateFontCollection PrivateFonts = new();
 
     // load font family from byte array
     public static FontFamily LoadFontFamily(byte[] buffer)
@@ -259,5 +228,132 @@ public class DrawTools : IDisposable
     public Font font(int id)
     {
         return GDIFontTbl[id];
+    }
+
+
+    private void LoadTheme(string fname, ColorPack defColor)
+    {
+        for (int i = 0; i < PEN_TBL_SIZE; i++)
+        {
+            PenTbl[i] = new DrawPen(defColor.Argb, 1);
+        }
+
+        for (int i = 0; i < BRUSH_TBL_SIZE; i++)
+        {
+            BrushTbl[i] = new DrawBrush(defColor.Argb);
+        }
+
+        string json = File.ReadAllText(fname);
+        JsonDocument jdoc = JsonDocument.Parse(json);
+
+        // Pens
+        jdoc.RootElement.TryGetProperty("pens", out JsonElement jPens);
+        var jpenList = jPens.EnumerateArray().ToList();
+
+        foreach (var jpen in jpenList)
+        {
+            string? name = jpen.GetProperty("name").GetString();
+
+            if (name == null) continue;
+
+            var c = jpen.GetProperty("color");
+
+            ColorPack color = GetColorFromJson(c, defColor);
+
+            int width = jpen.GetProperty("width").GetInt32();
+            if (width == 0) width = 1;
+
+            DrawPen pen = new DrawPen(color.Argb, width);
+
+            SetPenTbl(name, pen);
+        }
+
+        // Brushes
+        jdoc.RootElement.TryGetProperty("brushes", out JsonElement jBrushes);
+        var jbrushList = jBrushes.EnumerateArray().ToList();
+
+        foreach (var jbrush in jbrushList)
+        {
+            string? name = jbrush.GetProperty("name").GetString();
+
+            if (name == null) continue;
+
+            var c = jbrush.GetProperty("color");
+            ColorPack color = GetColorFromJson(c, defColor);
+
+            DrawBrush brush = new DrawBrush(color.Argb);
+
+            SetBrushTbl(name, brush);
+        }
+    }
+
+    private ColorPack GetColorFromJson(JsonElement jColor, ColorPack defaultColor)
+    {
+        var c = jColor.EnumerateArray().ToList();
+        if (c == null) return defaultColor;
+
+        if (c.Count < 3) return defaultColor;
+
+        if (c.Count == 3)
+        {
+            return new ColorPack(
+                255,
+                c[0].GetByte(),
+                c[1].GetByte(),
+                c[2].GetByte()
+                );
+        }
+
+        return new ColorPack(
+            c[0].GetByte(),
+            c[1].GetByte(),
+            c[2].GetByte(),
+            c[3].GetByte()
+            );
+    }
+
+    private bool SetPenTbl(string name, DrawPen pen)
+    {
+        if (name == "") return false;
+
+        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        if (fi == null) return false;
+        if (fi.FieldType != typeof(int)) return false;
+
+        int? penId = (int?)fi.GetValue(this);
+
+        if (penId == null) return false;
+
+        PenTbl[penId.Value] = pen;
+
+        return true;
+    }
+
+    private bool SetBrushTbl(string name, DrawBrush brush)
+    {
+        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        if (fi == null) return false;
+
+        int? brushId = (int?)fi.GetValue(this);
+
+        if (brushId == null) return false;
+
+        BrushTbl[brushId.Value] = brush;
+
+        return true;
+    }
+
+
+    private string PathName(string fname)
+    {
+        Assembly? asm = Assembly.GetEntryAssembly();
+
+        string exePath = asm!.Location;
+
+        string? dir = Path.GetDirectoryName(exePath);
+
+        string fileName = dir + @"\Resources\DrawTheme\" + fname;
+
+        return fileName;
     }
 }

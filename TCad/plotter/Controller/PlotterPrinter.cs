@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 //#define PRINT_WITH_GL_ONLY
 //#define PRINT_WITH_GDI_ONLY
 
@@ -8,28 +7,11 @@ using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Controller;
 
 public class PlotterPrinter
 {
-    public int PenWidth = 1;
-
-    public void PrintPage(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
+    public void PrintPage(IPlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
         Log.pl($"Dev Width:{deviceSize.Width} Height:{deviceSize.Height}");
 #if PRINT_WITH_GL_ONLY
@@ -42,7 +24,7 @@ public class PlotterPrinter
 #endif
     }
 
-    private void PrintPageSwitch(PlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
+    private void PrintPageSwitch(IPlotterController pc, Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize)
     {
         if (pc.DC.GetType() == typeof(DrawContextGLPers) || SettingsHolder.Settings.PrintWithBitmap)
         {
@@ -52,13 +34,13 @@ public class PlotterPrinter
         else
         {
             DrawContextPrinter dc = new DrawContextPrinter(pc.DC, printerGraphics, pageSize, deviceSize);
-            dc.SetupTools(DrawModes.PRINTER, PenWidth);
+            dc.SetupTools(DrawModes.PRINTER);
 
-            pc.DrawFiguresRaw(dc);
+            pc.Drawer.DrawFiguresRaw(dc);
         }
     }
 
-    private static Bitmap GetPrintableBmp(PlotterController pc, CadSize2D pageSize, CadSize2D deviceSize)
+    private static Bitmap GetPrintableBmp(IPlotterController pc, CadSize2D pageSize, CadSize2D deviceSize)
     {
         if (!(pc.DC is DrawContextGL))
         {
@@ -70,7 +52,7 @@ public class PlotterPrinter
         deviceSize *= upRes;
 
         DrawContext dc = pc.DC.CreatePrinterContext(pageSize, deviceSize);
-        dc.SetupTools(DrawModes.PRINTER, 2);
+        dc.SetupTools(DrawModes.PRINTER);
 
         // Bitmapを印刷すると大きさが変わるので、補正
         vcompo_t mag = SettingsHolder.Settings.MagnificationBitmapPrinting;
@@ -103,7 +85,7 @@ public class PlotterPrinter
 
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
 
-        pc.DrawFiguresRaw(dc);
+        pc.Drawer.DrawFiguresRaw(dc);
 
         // EnableCap.LineSmoothがONだと線が太くなる(謎)
         GL.Disable(EnableCap.LineSmooth);

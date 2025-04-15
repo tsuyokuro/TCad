@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter.Serializer;
 using Plotter.Controller;
 using Plotter;
 using System.IO;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace TCad.ViewModel;
 
@@ -33,12 +17,14 @@ public class CadFileAccessor
 
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            SaveExternalData(SerializeContext.Json, vm.Controller.DB, fname);
+            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
+            SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackJsonFile(fname, vm);
         }
         else
         {
-            SaveExternalData(SerializeContext.MpBin, vm.Controller.DB, fname);
+            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
+            SaveExternalData(sc, vm.Controller.DB, fname);
             SaveToMsgPackFile(fname, vm);
         }
     }
@@ -47,16 +33,18 @@ public class CadFileAccessor
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
+            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             LoadFromMsgPackJsonFile(fname, vm);
-            LoadExternalData(DeserializeContext.Json, vm.Controller.DB, fname);
+            LoadExternalData(dsc, vm.Controller.DB, fname);
         }
         else
         {
+            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             LoadFromMsgPackFile(fname, vm);
-            LoadExternalData(DeserializeContext.MpBin, vm.Controller.DB, fname);
+            LoadExternalData(dsc, vm.Controller.DB, fname);
         }
 
-        vm.Controller.Redraw();
+        vm.Controller.Drawer.Redraw();
     }
 
     private static void SaveExternalData(SerializeContext sc, CadObjectDB db, string fname)
@@ -117,9 +105,9 @@ public class CadFileAccessor
 
     private static void SaveToMsgPackFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
-        CadData cd = new CadData(
+        CadData cd = new(
                             pc.DB,
                             pc.DC.WorldScale,
                             pc.PageSize
@@ -130,7 +118,7 @@ public class CadFileAccessor
 
     private static void LoadFromMsgPackFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         CadData? cd = MpCadFile.Load(fname);
 
@@ -152,9 +140,9 @@ public class CadFileAccessor
 
     private static void SaveToMsgPackJsonFile(string fname, IPlotterViewModel vm)
     {
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
-        CadData cd = new CadData(
+        CadData cd = new(
             pc.DB,
             pc.DC.WorldScale,
             pc.PageSize);
@@ -173,7 +161,7 @@ public class CadFileAccessor
 
         vm.SetWorldScale(rcd.WorldScale);
 
-        PlotterController pc = vm.Controller;
+        IPlotterController pc = vm.Controller;
 
         pc.PageSize = rcd.PageSize;
 

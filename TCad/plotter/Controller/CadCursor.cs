@@ -1,26 +1,10 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
 public struct CadCursor
 {
-    public vector3_t Pos;
+    public vector3_t Pos; // Device座標系
     public vector3_t DirX;
     public vector3_t DirY;
 
@@ -28,7 +12,7 @@ public struct CadCursor
 
     public static CadCursor Create()
     {
-        CadCursor cc = default(CadCursor);
+        CadCursor cc = default;
 
         cc.DirX = vector3_t.UnitX;
         cc.DirY = vector3_t.UnitY;
@@ -38,7 +22,7 @@ public struct CadCursor
 
     public static CadCursor Create(vector3_t pixp)
     {
-        CadCursor cc = default(CadCursor);
+        CadCursor cc = default;
 
         cc.Pos = pixp;
         cc.DirX = vector3_t.UnitX;

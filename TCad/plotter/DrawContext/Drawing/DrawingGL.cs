@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using GLFont;
 using GLUtil;
@@ -11,21 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static Plotter.DrawingGL;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -50,7 +34,7 @@ public class DrawingGL : IDrawing
         mFontFaceW.SetSize(24);
         */
 
-        mFontFaceW = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
+        mFontFaceW = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
 
         mFontRenderer = FontRenderer.Instance;
 
@@ -72,6 +56,7 @@ public class DrawingGL : IDrawing
     public void DrawLine(DrawPen pen, vector3_t a, vector3_t b)
     {
         GL.Color4(pen.Color4);
+        GL.LineWidth(pen.Width);
 
         GL.Begin(PrimitiveType.LineStrip);
 
@@ -197,6 +182,7 @@ public class DrawingGL : IDrawing
 
         int stride = Marshal.SizeOf(typeof(VboVertex));
 
+
         int vCnt = vboVertices.Count;
         int vertexBufferId = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
@@ -206,8 +192,11 @@ public class DrawingGL : IDrawing
             {
                 GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
             }
+
+            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
+            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(vector3_t));
         }
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
 
         int idxCnt = indexes.Count;
         int idxBufferId = GL.GenBuffer();
@@ -219,21 +208,16 @@ public class DrawingGL : IDrawing
                 GL.BufferData(BufferTarget.ElementArrayBuffer, idxCnt * sizeof(int), (nint)ptr, BufferUsageHint.StaticDraw);
             }
         }
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
 
         GL.EnableClientState(ArrayCap.VertexArray);
         GL.EnableClientState(ArrayCap.NormalArray);
 
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
-        unsafe
-        {
-            GL.VertexPointer(3, VertexPointerType.Float, stride, 0);
-            GL.NormalPointer(NormalPointerType.Float, stride, sizeof(vector3_t));
-        }
 
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, idxBufferId);
         GL.DrawElements(BeginMode.Triangles, indexes.Count, DrawElementsType.UnsignedInt, 0);
 
+
+        // 後処理
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -249,9 +233,9 @@ public class DrawingGL : IDrawing
     {
         DisableLight();
 
-        vcompo_t len = DC.DevSizeToWoldSize(DrawingConst.NormalLen);
-        vcompo_t arrowLen = DC.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
-        vcompo_t arrowW = DC.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+        vcompo_t len = DC.DevSizeToWoldSize(DrawSizes.NormalLen);
+        vcompo_t arrowLen = DC.DevSizeToWoldSize(DrawSizes.NormalArrowLen);
+        vcompo_t arrowW = DC.DevSizeToWoldSize(DrawSizes.NormalArrowWidth);
 
         for (int i = 0; i < model.FaceStore.Count; i++)
         {
@@ -782,6 +766,7 @@ public class DrawingGL : IDrawing
         vector3_t p1;
 
         GL.LineWidth(1);
+        GL.Disable(EnableCap.DepthTest);
 
         GL.Begin(PrimitiveType.Lines);
 
@@ -977,16 +962,30 @@ public class DrawingGL : IDrawing
         PopMatrixes();
     }
 
+
     public void DrawSelectedPoint(vector3_t pt, DrawPen pen)
     {
         vector3_t p = DC.WorldPointToDevPoint(pt);
         Start2D();
         GL.Color4(pen.Color4);
-        GL.PointSize(3);
+        GL.PointSize(DrawSizes.SelectedPointSize);
 
         GL.Begin(PrimitiveType.Points);
 
         GL.Vertex3(p);
+
+        GL.End();
+        End2D();
+    }
+    public void DrawLastSelectedPoint(vector3_t pt, DrawPen pen)
+    {
+        vector3_t p = DC.WorldPointToDevPoint(pt);
+        GL.Color4(pen.Color4);
+
+        Start2D();
+        GL.Color4(pen.Color4);
+
+        DrawX2D(p, 3);
 
         GL.End();
         End2D();
@@ -1090,7 +1089,7 @@ public class DrawingGL : IDrawing
 
         GL.Disable(EnableCap.DepthTest);
         GL.Color4(pen.Color4);
-        GL.PointSize(3);
+        GL.PointSize(DrawSizes.SelectedPointSize);
 
         GL.EnableClientState(ArrayCap.VertexArray);
 
@@ -1182,7 +1181,7 @@ public class DrawingGL : IDrawing
 
     private vector3_t GetShiftForOutLine()
     {
-        vcompo_t shift = DC.DevSizeToWoldSize((vcompo_t)(0.9));
+        vcompo_t shift = DC.DevSizeToWoldSize((vcompo_t)(0.1));
         vector3_t vv = -DC.ViewDir * shift;
 
         return vv;
@@ -1248,10 +1247,25 @@ public class DrawingGL : IDrawing
 
     public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
     {
+        DrawCrossCursorScrn(pp, pen, -1, -1);
+    }
+
+    public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize)
+    {
         vcompo_t size = (vcompo_t)Math.Max(DC.ViewWidth, DC.ViewHeight);
 
-        vector3_t p0 = pp.Pos - (pp.DirX * size);
-        vector3_t p1 = pp.Pos + (pp.DirX * size);
+        if (xsize == -1)
+        {
+            xsize = size;
+        }
+
+        if (ysize == -1)
+        {
+            ysize = size;
+        }
+
+        vector3_t p0 = pp.Pos - (pp.DirX * xsize);
+        vector3_t p1 = pp.Pos + (pp.DirX * xsize);
 
         p0 = DC.DevPointToWorldPoint(p0);
         p1 = DC.DevPointToWorldPoint(p1);
@@ -1260,18 +1274,16 @@ public class DrawingGL : IDrawing
 
         GL.Begin(PrimitiveType.Lines);
 
-        //DrawLine(pen, p0, p1);
         GL.Color4(pen.Color4);
         GL.Vertex3(p0);
         GL.Vertex3(p1);
 
-        p0 = pp.Pos - (pp.DirY * size);
-        p1 = pp.Pos + (pp.DirY * size);
+        p0 = pp.Pos - (pp.DirY * ysize);
+        p1 = pp.Pos + (pp.DirY * ysize);
 
         p0 = DC.DevPointToWorldPoint(p0);
         p1 = DC.DevPointToWorldPoint(p1);
 
-        //DrawLine(pen, p0, p1);
         GL.Vertex3(p0);
         GL.Vertex3(p1);
 
@@ -1279,6 +1291,8 @@ public class DrawingGL : IDrawing
 
         GL.Enable(EnableCap.DepthTest);
     }
+
+
 
     public void DrawMarkCursor(DrawPen pen, vector3_t p, vcompo_t pix_size)
     {
@@ -1329,13 +1343,13 @@ public class DrawingGL : IDrawing
     // Snap時にハイライトされるポイントを描画する
     public void DrawHighlightPoint(vector3_t pt, DrawPen pen)
     {
-        GL.LineWidth(DrawingConst.HighlightPointLineWidth);
+        GL.LineWidth(DrawSizes.HighlightPointLineWidth);
 
         Start2D();
 
         GL.Color4(pen.Color4);
         //DrawCross2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
-        DrawX2D(DC.WorldPointToDevPoint(pt), DrawingConst.HighlightPointLineLength);
+        DrawX2D(DC.WorldPointToDevPoint(pt), DrawSizes.HighlightPointLineLength);
 
         End2D();
 
@@ -1350,13 +1364,13 @@ public class DrawingGL : IDrawing
 
         Start2D();
 
-        GL.LineWidth(DrawingConst.HighlightPointLineWidth);
+        GL.LineWidth(DrawSizes.HighlightPointLineWidth);
 
         list.ForEach(item =>
         {
             GL.Color4(item.Pen.Color4);
             //DrawCross2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
-            DrawX2D(DC.WorldPointToDevPoint(item.Point), DrawingConst.HighlightPointLineLength);
+            DrawX2D(DC.WorldPointToDevPoint(item.Point), DrawSizes.HighlightPointLineLength);
         });
 
         GL.LineWidth(1);
@@ -1400,7 +1414,7 @@ public class DrawingGL : IDrawing
         //GL.End();
     }
 
-    // Point sizeをそのまま使って十字を描画
+    // Point sizeをそのまま使ってXを描画
     private void DrawX2D(vector3_t p, vcompo_t size)
     {
         vcompo_t hs = size;
@@ -1739,12 +1753,12 @@ public class DrawingGL : IDrawing
 
         Start2D();
 
-        GL.LineWidth(DrawingConst.ExtSnapPointLineWidth);
+        GL.LineWidth(DrawSizes.ExtSnapPointLineWidth);
         GL.Color4(pen.Color4);
 
         pointList.ForEach(v =>
         {
-            DrawCross2D(DC.WorldPointToDevPoint(v), DrawingConst.ExtSnapPointLineLength);
+            DrawCross2D(DC.WorldPointToDevPoint(v), DrawSizes.ExtSnapPointLineLength);
         });
 
         GL.LineWidth(1);

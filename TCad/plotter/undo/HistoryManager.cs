@@ -1,32 +1,16 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter.Controller;
 using System.Collections.Generic;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
 public class HistoryManager
 {
-    private PlotterController mPC;
+    private IPlotterController mPC;
 
     public Stack<CadOpe> mUndoStack = new Stack<CadOpe>();
     public Stack<CadOpe> mRedoStack = new Stack<CadOpe>();
 
-    public HistoryManager(PlotterController pc)
+    public HistoryManager(IPlotterController pc)
     {
         mPC = pc;
     }

@@ -1,20 +1,4 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter.Settings;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -33,7 +17,6 @@ public class DrawOption
     public DrawBrush TextBrush = default;
 
     public DrawPen SelectedPointPen = default;
-    public DrawBrush SelectedPointBrush = default;
 
     public bool DrawMeshBorder = true;
 
@@ -98,7 +81,6 @@ public class DrawOptionSet
         foreach (DrawOption opt in Tbl)
         {
             opt.SelectedPointPen = DC.GetPen(DrawTools.PEN_SELECTED_POINT);
-            opt.SelectedPointBrush = DC.GetBrush(DrawTools.BRUSH_SELECTED_POINT);
         }
 
         //Current.SelectedPointPen = DC.GetPen(DrawTools.PEN_CURRENT_FIG_SELECTED_POINT);

@@ -1,72 +1,114 @@
-
-//#define USE_CONSOLE
-#define USE_DEBUG_SERVER
-
-
 // 強制的にリソース文字列をUSにする
 // ForceLinePen resource string to US
 //#define FORCE_US
 
-using TCad.Util;
 using Plotter;
 using Plotter.Serializer;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Resources;
 using System.Windows.Threading;
 
 namespace TCad;
 
 public partial class App : Application
 {
-    enum DebugOutTarget
-    {
-        None,
-        Console,
-        DebugServer,
-    }
-
-    //DebugOutTarget DOutTarget = DebugOutTarget.Console;
-    DebugOutTarget DOutTarget = DebugOutTarget.DebugServer;
-    //DebugOutTarget DOutTarget = DebugOutTarget.None;
-
     private MySplashWindow SplashWindow = null;
 
-    private TaskScheduler mMainThreadScheduler;
-
-#if USE_DEBUG_SERVER
-    private DebugServer DServer;
-#endif
-
-    public static App GetCurrent()
-    {
-        return (App)Current;
-    }
-
-    public static TaskScheduler MainThreadScheduler
-    {
-        get
-        {
-            return GetCurrent().mMainThreadScheduler;
-        }
-    }
+    Stopwatch StartUpSW = new Stopwatch();
 
     private static bool NowExceptionHandling = false;
 
     public App()
     {
+        //Log.LogOutput = new LogVisualStudioDebug();
+        //Log.LogOutput = new LogConsole();
+        Log.LogOutput = new LogDebugServer();
+
+        StartUpSW.Start();
+
 #if FORCE_US
         CultureInfo ci = new CultureInfo("en-US");
         Thread.CurrentThread.CurrentCulture = ci;
         Thread.CurrentThread.CurrentUICulture = ci;
 #endif
+
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+        SetupExceptionHandling();
+    }
+
+    [STAThread]
+    override protected void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
+
+        // アニメーションのためSplashWindowを別Threadで表示
+        Thread thread = new Thread(() =>
+        {
+            SplashWindow = new MySplashWindow();
+
+            // Memory leakよけ 
+            SplashWindow.Closed += (o, args) =>
+            {
+                Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+            };
+
+
+            SplashWindow.Show();
+
+            Dispatcher.Run();
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Thread.Sleep(50);
+        Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
+
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
+        // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
+        // 紛れさせる
+        MpInitializer.Init();
+
+
+        MainWindow = new MainWindow();
+
+        MainWindow.Show();
+
+        sw.Stop();
+
+        Log.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
+
+        Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
+
+        SplashWindow.Dispatcher.Invoke(() =>
+        {
+            SplashWindow.Close();
+            SplashWindow = null;
+        });
+
+        Thread.Sleep(50);
+        GC.Collect();
+        Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Log.Stop();
+        base.OnExit(e);
+    }
+
+    // 例外ハンドリングの設定
+    private void SetupExceptionHandling()
+    {
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
@@ -96,21 +138,9 @@ public partial class App : Application
     // 別ThreadのException
     private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
-        new Task(() =>
-        {
-            HandleException(e.Exception);
-        }
-        ).Start(mMainThreadScheduler);
+        Current.Dispatcher.Invoke(() => { HandleException(e.Exception); });
     }
 
-    public static void ThrowException(object e)
-    {
-        new Task(() =>
-        {
-            GetCurrent().HandleException(e);
-        }
-        ).Start(GetCurrent().mMainThreadScheduler);
-    }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void HandleException(object e)
@@ -140,92 +170,5 @@ public partial class App : Application
         if (result == null) return false;
 
         return result.Value;
-    }
-
-    [STAThread]
-    override protected void OnStartup(StartupEventArgs e)
-    {
-        base.OnStartup(e);
-
-        SplashWindow = new MySplashWindow();
-        SplashWindow.Show();
-
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
-
-#if USE_CONSOLE
-        WinAPI.AllocConsole();
-#endif
-#if USE_DEBUG_SERVER
-        DServer = new DebugServer();
-        DServer.Start();
-#endif
-        mMainThreadScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
-        //OpenTK.Toolkit.Init();
-
-        // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
-        // 紛れさせる
-        MpInitializer.Init();
-
-        SetupDebugConsole();
-
-        MainWindow = new MainWindow();
-
-        MainWindow.Show();
-
-        sw.Stop();
-
-        Log.pl($"MainWindow startup. Start up time: {sw.ElapsedMilliseconds} (milli sec)");
-
-        SplashWindow.Close();
-        SplashWindow = null;
-    }
-
-    private void SetupDebugConsole()
-    {
-        if (DOutTarget == DebugOutTarget.Console)
-        {
-            Log.Print = Console.Write;
-            Log.PrintLn = Console.WriteLine;
-
-            Log.pl("DOut's output setting is Console");
-        }
-        else if (DOutTarget == DebugOutTarget.DebugServer)
-        {
-            Log.Print = DServer.Print;
-            Log.PrintLn = DServer.PrintLn;
-
-            Log.pl("DOut's output setting is DebugServer");
-        }
-    }
-
-    // e.g. ReadResourceText("/Shader/font_fragment.shader")
-    public static string ReadResourceText(string path)
-    {
-        Uri fileUri = new Uri(path, UriKind.Relative);
-        StreamResourceInfo info = Application.GetResourceStream(fileUri);
-        StreamReader sr = new StreamReader(info.Stream);
-
-        string s = sr.ReadToEnd();
-        sr.Close();
-
-        return s;
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-#if USE_CONSOLE
-        WinAPI.FreeConsole();
-#endif
-
-#if USE_DEBUG_SERVER
-        if (DServer != null)
-        {
-            DServer.Stop();
-        }
-#endif
-
-        base.OnExit(e);
     }
 }

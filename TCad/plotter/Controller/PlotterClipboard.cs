@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using Plotter.Serializer;
 using System.Collections.Generic;
 using System.Windows;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter.Controller;
 
@@ -28,7 +12,7 @@ public class PlotterClipboard
         return Clipboard.ContainsData(CadClipBoard.TypeNameBin);
     }
 
-    public static void CopyFiguresAsBin(PlotterController controller)
+    public static void CopyFiguresAsBin(IPlotterController controller)
     {
         var figList = controller.GetSelectedRootFigureList();
 
@@ -42,7 +26,7 @@ public class PlotterClipboard
         Clipboard.SetData(CadClipBoard.TypeNameBin, bin);
     }
 
-    public static void PasteFiguresAsBin(PlotterController controller)
+    public static void PasteFiguresAsBin(IPlotterController controller)
     {
         if (!Clipboard.ContainsData(CadClipBoard.TypeNameBin))
         {
@@ -54,7 +38,7 @@ public class PlotterClipboard
         List<CadFigure> figList = BinToFigList(bin);
 
         // Pase figures in fig list
-        vector3_t pp = controller.LastDownPoint;
+        vector3_t pp = controller.Input.LastDownPoint;
 
         MinMax3D mm3d = CadUtil.GetFigureMinMaxIncludeChild(figList);
 
@@ -74,7 +58,7 @@ public class PlotterClipboard
         controller.HistoryMan.foward(opeRoot);
     }
 
-    private static void PasteFigure(PlotterController controller, CadFigure fig, vector3_t delta)
+    private static void PasteFigure(IPlotterController controller, CadFigure fig, vector3_t delta)
     {
         fig.MoveAllPoints(delta);
 

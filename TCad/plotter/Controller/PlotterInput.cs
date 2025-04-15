@@ -1,37 +1,82 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
 using TCad.ViewModel;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Controller;
 
-// User interface handling
-public partial class PlotterController
+public class PlotterInput
 {
+    IPlotterController Controller;
+
+    public DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public IPlotterViewModel ViewModelIF
+    {
+        get => Controller.ViewModel;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public SelectModes SelectMode
+    {
+        get => Controller.SelectMode;
+    }
+
+    public ControllerStates StateID
+    {
+        get => Controller.StateID;
+    }
+
+    public ControllerState CurrentState
+    {
+        get => Controller.CurrentState;
+    }
+
+    public FigCreator FigureCreator
+    {
+        get => Controller.FigureCreator;
+    }
+
+    public FigCreator MeasureFigureCreator
+    {
+        get => Controller.MeasureFigureCreator;
+    }
+
+    public ControllerStateMachine StateMachine
+    {
+        get => Controller.StateMachine;
+    }
+
+    public Vector3List ExtendSnapPointList
+    {
+        get;
+        private set;
+    } = new Vector3List(20);
+
+
     public InteractCtrl InteractCtrl
     {
         get;
         private set;
     } = new InteractCtrl();
 
-    public CadMouse Mouse { get; } = new CadMouse();
+    public CadMouse Mouse
+    {
+        get;
+        private set;
+    } = new CadMouse();
 
     public CadCursor CrossCursor = CadCursor.Create();
 
@@ -51,7 +96,10 @@ public partial class PlotterController
     public SnapInfo CurrentSnapInfo;
 
     // 生のL button down point (デバイス座標系)
-    public vector3_t RawDownPoint = default;
+    public vector3_t RawDownPoint {
+        get;
+        set;
+    } = default;
 
     // Snap等で補正された L button down point (World座標系)
     private vector3_t mLastDownPoint = default;
@@ -71,58 +119,70 @@ public partial class PlotterController
     // 実際のMouse座標からCross cursorへのOffset
     public vector3_t CrossCursorOffset = default;
 
-    public MarkSegment? LastSelSegment = null;
 
-    public MarkPoint? LastSelPoint = null;
+    public MarkSegment? LastSelSegment_ = null;
 
-    private CadFigure mCurrentFigure = null;
+    public MarkSegment? LastSelSegment {
+        set {
+            LastSelSegment_ = value;
+        }
+
+        get => LastSelSegment_;
+    }
+
+    public MarkPoint? LastSelPoint_ = null;
+    public MarkPoint? LastSelPoint
+    {
+        set
+        {
+            LastSelPoint_ = value;
+            if (LastSelPoint_ != null)
+            {
+                Log.pl($"==== LastSelPoint FigID:{LastSelPoint_.Value.FigureID} Idx:{LastSelPoint_.Value.PointIndex}");
+            }
+            else
+            {
+                Log.pl("==== LastSelPoint set null");
+            }
+        }
+        get => LastSelPoint_;
+    }
+
+
+    private CadFigure CurrentFigure_ = null;
+
     public CadFigure CurrentFigure
     {
         set
         {
-            if (mCurrentFigure != null)
+            if (CurrentFigure_ != null)
             {
-                mCurrentFigure.GetGroupRoot().Current = false;
+                CurrentFigure_.GetGroupRoot().Current = false;
             }
 
-            mCurrentFigure = value;
+            CurrentFigure_ = value;
 
-            if (mCurrentFigure != null)
+            if (CurrentFigure_ != null)
             {
-                mCurrentFigure.GetGroupRoot().Current = true;
+                CurrentFigure_.GetGroupRoot().Current = true;
             }
         }
 
         get
         {
-            return mCurrentFigure;
+            return CurrentFigure_;
         }
     }
 
-    private bool mCursorLocked = false;
     public bool CursorLocked
     {
-        set
-        {
-            mCursorLocked = value;
-            ViewModelIF.CursorLocked(mCursorLocked);
-            if (!mCursorLocked)
-            {
-                mSpPointList = null;
-                ViewModelIF.ClosePopupMessage();
-            }
-            else
-            {
-                ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
-            }
-        }
-
-        get => mCursorLocked;
+        private set;
+        get;
     }
 
-    private List<HighlightPointListItem> HighlightPointList = new List<HighlightPointListItem>();
+    public List<HighlightPointListItem> HighlightPointList = new List<HighlightPointListItem>();
 
-    private List<MarkSegment> HighlightSegList = new List<MarkSegment>();
+    public List<MarkSegment> HighlightSegList = new List<MarkSegment>();
 
     private Gridding mGridding = new Gridding();
 
@@ -134,6 +194,14 @@ public partial class PlotterController
         }
     }
 
+    public PlotterInput(IPlotterController controller)
+    {
+        Controller = controller;
+
+        ObjDownPoint = VectorExt.InvalidVector3;
+
+        InitHid();
+    }
 
     private void InitHid()
     {
@@ -241,14 +309,14 @@ public partial class PlotterController
 
         mPointSearcher.SetTargetPoint(sc.Cursor);
 
-        mPointSearcher.SearchAllLayer(sc.DC, mDB);
+        mPointSearcher.SearchAllLayer(sc.DC, DB);
 
         if (CurrentFigure != null)
         {
             mPointSearcher.CheckFigure(sc.DC, CurrentLayer, CurrentFigure);
         }
 
-        sc.MarkPt = mPointSearcher.GetXYMatch();
+        sc.MarkPt = mPointSearcher.XYMatch;
 
         //sc.MarkPt.dump();
 
@@ -259,9 +327,9 @@ public partial class PlotterController
 
         ObjDownPoint = sc.MarkPt.Point;
 
-        CadFigure fig = mDB.GetFigure(sc.MarkPt.FigureID);
+        CadFigure fig = DB.GetFigure(sc.MarkPt.FigureID);
 
-        CadLayer layer = mDB.GetLayer(sc.MarkPt.LayerID);
+        CadLayer layer = DB.GetLayer(sc.MarkPt.LayerID);
 
         if (layer.Locked)
         {
@@ -307,16 +375,16 @@ public partial class PlotterController
         mSegSearcher.SetTargetPoint(sc.Cursor);
         mSegSearcher.CheckStorePoint = SettingsHolder.Settings.SnapToSelfPoint;
 
-        mSegSearcher.SearchAllLayer(sc.DC, mDB);
+        mSegSearcher.SearchAllLayer(sc.DC, DB);
 
-        sc.MarkSeg = mSegSearcher.GetMatch();
+        sc.MarkSeg = mSegSearcher.MatchSegment;
 
         if (sc.MarkSeg.FigureID == 0)
         {
             return sc;
         }
 
-        CadLayer layer = mDB.GetLayer(sc.MarkSeg.LayerID);
+        CadLayer layer = DB.GetLayer(sc.MarkSeg.LayerID);
 
         if (layer.Locked)
         {
@@ -337,28 +405,28 @@ public partial class PlotterController
             ObjDownPoint = sc.MarkSeg.CrossPoint;
         }
 
-        CadFigure fig = mDB.GetFigure(sc.MarkSeg.FigureID);
+        CadFigure fig = DB.GetFigure(sc.MarkSeg.FigureID);
 
         ClearSelectionConditional(sc.MarkSeg);
 
         if (SelectMode == SelectModes.POINT)
         {
-            LastSelPoint = null;
             LastSelSegment = sc.MarkSeg;
 
             sc.SegmentSelected = true;
 
             fig.SelectPointAt(sc.MarkSeg.PtIndexA, true);
             fig.SelectPointAt(sc.MarkSeg.PtIndexB, true);
+            UpdateLastSelPointWithSelSegment(sc, LastSelSegment.Value);
         }
         else if (SelectMode == SelectModes.OBJECT)
         {
             sc.SegmentSelected = true;
 
-            LastSelPoint = null;
             LastSelSegment = sc.MarkSeg;
 
             fig.SelectWithGroup();
+            UpdateLastSelPointWithSelSegment(sc, LastSelSegment.Value);
         }
 
         if (sc.SegmentSelected)
@@ -371,9 +439,39 @@ public partial class PlotterController
         return sc;
     }
 
+    private void UpdateLastSelPointWithSelSegment(SelectContext sc, MarkSegment selSeg)
+    {
+        if (!selSeg.Valid) return;
+
+        var fig = LastSelSegment.Value.Figure;
+
+        var pa = DC.WorldPointToDevPoint(selSeg.pA);
+        var pb = DC.WorldPointToDevPoint(selSeg.pB);
+
+        int idx = -1;
+
+        if ((pa - sc.CursorScrPt).Norm() <= (pb - sc.CursorScrPt).Norm())
+        {
+            idx = selSeg.PtIndexA;
+        }
+        else
+        {
+            idx = selSeg.PtIndexB;
+        }
+
+        MarkPoint markPoint = default;
+
+        markPoint.Figure = fig;
+        markPoint.Point = fig.PointList[idx].vector;
+        markPoint.PointIndex = idx;
+        markPoint.PointScrn = DC.WorldPointToDevPoint(markPoint.Point);
+
+        LastSelPoint = markPoint;
+    }
+
     private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        if (State == ControllerStates.DRAGING_VIEW_ORG)
+        if (StateID == ControllerStates.DRAGING_VIEW_ORG)
         {
             //ViewOrgDrag(pointer, DC, x, y);
             CurrentState.MouseMove(pointer, dc, x, y);
@@ -397,7 +495,7 @@ public partial class PlotterController
             SnapCursor(dc);
         }
 
-        if (CurrentState.State == ControllerStates.DRAGING_POINTS || CurrentState.State == ControllerStates.RUBBER_BAND_SELECT)
+        if (CurrentState.ID == ControllerStates.DRAGING_POINTS || CurrentState.ID == ControllerStates.RUBBER_BAND_SELECT)
         {
             CurrentState.MouseMove(pointer, dc, x, y);
         }
@@ -431,12 +529,9 @@ public partial class PlotterController
 
         CurrentState.LButtonDown(pointer, dc, x, y);
 
-        UpdateObjectTree(false);
+        Controller.UpdateObjectTree(false);
 
-        if (CursorLocked)
-        {
-            CursorLocked = false;
-        }
+        UnlockCursor();
 
         ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
@@ -445,7 +540,7 @@ public partial class PlotterController
     {
         CurrentState.LButtonUp(pointer, dc, x, y);
 
-        UpdateObjectTree(false);
+        Controller.UpdateObjectTree(false);
 
         CrossCursorOffset = default;
     }
@@ -457,7 +552,8 @@ public partial class PlotterController
         StateMachine.PushState(ControllerStates.DRAGING_VIEW_ORG);
 
         StoreViewOrg = dc.ViewOrg;
-        CursorLocked = false;
+
+        UnlockCursor();
 
         CrossCursor.Store();
 
@@ -484,7 +580,7 @@ public partial class PlotterController
     {
         if (CadKeyboard.IsCtrlKeyDown())
         {
-            CursorLocked = false;
+            UnlockCursor();
 
             vcompo_t f;
 
@@ -505,14 +601,14 @@ public partial class PlotterController
     {
         LastDownPoint = SnapPoint;
 
-        mContextMenuMan.RequestContextMenu(x, y);
+        Controller.ContextMenuMan.RequestContextMenu(x, y);
     }
 
     private void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
     }
 
-    private void PointSnap(DrawContext dc)
+    private void PointSnap(DrawContext dc, PointSearcher pointSearcher)
     {
         // 複数の点が必要な図形を作成中、最初の点が入力された状態では、
         // オブジェクトがまだ作成されていない。このため、別途チェックする
@@ -520,7 +616,7 @@ public partial class PlotterController
         {
             if (FigureCreator.Figure.PointCount == 1)
             {
-                mPointSearcher.Check(dc, FigureCreator.Figure.GetPointAt(0).vector);
+                pointSearcher.Check(dc, FigureCreator.Figure.GetPointAt(0).vector);
             }
         }
 
@@ -528,27 +624,27 @@ public partial class PlotterController
         {
             foreach (vector3_t v in InteractCtrl.PointList)
             {
-                mPointSearcher.Check(dc, v);
+                pointSearcher.Check(dc, v);
             }
         }
 
         // 計測用オブジェクトの点のチェック
         if (MeasureFigureCreator != null)
         {
-            mPointSearcher.Check(dc, MeasureFigureCreator.Figure.PointList);
+            pointSearcher.Check(dc, MeasureFigureCreator.Figure.PointList);
         }
 
         CheckExtendSnapPoints(dc);
 
         // Search point
-        mPointSearcher.SearchAllLayer(dc, mDB);
+        pointSearcher.SearchAllLayer(dc, DB);
     }
 
-    private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si)
+    private SnapInfo EvalPointSearcher(DrawContext dc, SnapInfo si, PointSearcher pointSearcher)
     {
-        MarkPoint mxy = mPointSearcher.GetXYMatch();
-        MarkPoint mx = mPointSearcher.GetXMatch();
-        MarkPoint my = mPointSearcher.GetYMatch();
+        MarkPoint mxy = pointSearcher.XYMatch;
+        MarkPoint mx = pointSearcher.XMatch;
+        MarkPoint my = pointSearcher.YMatch;
 
         vector3_t cp = si.Cursor.Pos;
 
@@ -564,7 +660,6 @@ public partial class PlotterController
             cp += distanceX;
 
             si.SnapPoint = dc.DevPointToWorldPoint(cp);
-            si.PriorityMatch = SnapInfo.MatchType.X_MATCH;
         }
 
         if (my.IsValid)
@@ -579,11 +674,6 @@ public partial class PlotterController
             cp += distanceY;
 
             si.SnapPoint = dc.DevPointToWorldPoint(cp);
-
-            if (my.DistanceY < mx.DistanceX)
-            {
-                si.PriorityMatch = SnapInfo.MatchType.Y_MATCH;
-            }
         }
 
         if (mxy.IsValid)
@@ -592,7 +682,6 @@ public partial class PlotterController
             HighlightPointList.Add(new HighlightPointListItem(mxy.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT2)));
             si.SnapPoint = mxy.Point;
             si.IsPointMatch = true;
-            si.PriorityMatch = SnapInfo.MatchType.POINT_MATCH;
 
             cp = dc.WorldPointToDevPoint(mxy.Point);
         }
@@ -602,22 +691,22 @@ public partial class PlotterController
         return si;
     }
 
-    private void SegSnap(DrawContext dc)
+    private void SegSnap(DrawContext dc, SegSearcher segSearcher)
     {
-        mSegSearcher.SearchAllLayer(dc, mDB);
+        segSearcher.SearchAllLayer(dc, DB);
     }
 
-    private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si)
+    private SnapInfo EvalSegSeracher(DrawContext dc, SnapInfo si, SegSearcher segSearcher)
     {
-        MarkSegment markSeg = mSegSearcher.GetMatch();
+        MarkSegment matchSeg = segSearcher.MatchSegment;
 
-        if (mSegSearcher.IsMatch)
+        if (segSearcher.IsMatch)
         {
-            if (markSeg.Distance < si.Distance)
+            if (matchSeg.Distance < si.PointSearcher.Distance)
             {
-                HighlightSegList.Add(markSeg);
+                HighlightSegList.Add(matchSeg);
 
-                vector3_t center = markSeg.CenterPoint;
+                vector3_t center = matchSeg.CenterPoint;
 
                 vector3_t t = dc.WorldPointToDevPoint(center);
 
@@ -634,10 +723,10 @@ public partial class PlotterController
                 }
                 else
                 {
-                    si.SnapPoint = markSeg.CrossPoint;
+                    si.SnapPoint = matchSeg.CrossPoint;
                     si.IsPointMatch = true;
 
-                    si.Cursor.Pos = markSeg.CrossPointScrn;
+                    si.Cursor.Pos = dc.WorldPointToDevPoint(matchSeg.CrossPoint);
                     si.Cursor.Pos.Z = 0;
 
                     HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
@@ -645,7 +734,7 @@ public partial class PlotterController
             }
             else
             {
-                mSegSearcher.Clean();
+                segSearcher.Clean();
             }
         }
 
@@ -672,13 +761,14 @@ public partial class PlotterController
     {
         if (mPointSearcher.IsXMatch)
         {
-            si.Cursor.Pos.X = mPointSearcher.GetXMatch().PointScrn.X;
+            si.Cursor.Pos.X = mPointSearcher.XMatch.PointScrn.X;
         }
 
         if (mPointSearcher.IsYMatch)
         {
-            si.Cursor.Pos.Y = mPointSearcher.GetYMatch().PointScrn.Y;
+            si.Cursor.Pos.Y = mPointSearcher.YMatch.PointScrn.Y;
         }
+
 
         RulerInfo ri = RulerSet.Capture(dc, si.Cursor, SettingsHolder.Settings.LineSnapRange);
 
@@ -689,7 +779,7 @@ public partial class PlotterController
 
             if (mSegSearcher.IsMatch)
             {
-                MarkSegment ms = mSegSearcher.GetMatch();
+                MarkSegment ms = mSegSearcher.MatchSegment;
 
                 if (ms.FigureID != ri.Ruler.Fig.ID)
                 {
@@ -727,8 +817,18 @@ public partial class PlotterController
             new SnapInfo(
                 CrossCursor,
                 SnapPoint,
-                mPointSearcher.Distance()
+                mPointSearcher,
+                mSegSearcher
                 );
+
+        if (SettingsHolder.Settings.SnapToGrid)
+        {
+            si = SnapGrid(dc, si);
+            if (si.IsPointMatch)
+            {
+                return;
+            }
+        }
 
         #region Point search
 
@@ -760,21 +860,18 @@ public partial class PlotterController
 
         if (SettingsHolder.Settings.SnapToPoint)
         {
-            PointSnap(dc);
-            si = EvalPointSearcher(dc, si);
-
-            //DOut.tpl($"si.si.PriorityMatch: {si.PriorityMatch}");
+            PointSnap(dc, mPointSearcher);
         }
+
+        si = EvalPointSearcher(dc, si, mPointSearcher);
 
         #endregion
 
-        #region Segment search
 
         mSegSearcher.Clean();
         mSegSearcher.SetRangePixel(dc, SettingsHolder.Settings.LineSnapRange);
         mSegSearcher.SetTargetPoint(si.Cursor);
         mSegSearcher.CheckStorePoint = SettingsHolder.Settings.SnapToSelfPoint;
-        mSegSearcher.SetCheckPriorityWithSnapInfo(si);
 
         HighlightSegList.Clear();
 
@@ -782,20 +879,12 @@ public partial class PlotterController
         {
             if (!mPointSearcher.IsXYMatch)
             {
-                SegSnap(dc);
-                si = EvalSegSeracher(dc, si);
+                SegSnap(dc, mSegSearcher);
             }
         }
 
-        #endregion
+        si = EvalSegSeracher(dc, si, mSegSearcher);
 
-        if (SettingsHolder.Settings.SnapToGrid)
-        {
-            if (!mPointSearcher.IsXYMatch && !mSegSearcher.IsMatch)
-            {
-                si = SnapGrid(dc, si);
-            }
-        }
 
         if (SettingsHolder.Settings.SnapToLine)
         {
@@ -815,7 +904,7 @@ public partial class PlotterController
     {
         if (mSpPointList == null)
         {
-            NearPointSearcher searcher = new NearPointSearcher(this);
+            NearPointSearcher searcher = new NearPointSearcher(Controller);
 
             var resList = searcher.Search((CadVertex)CrossCursor.Pos, 64);
 
@@ -833,17 +922,62 @@ public partial class PlotterController
 
         vector3_t sv = DC.WorldPointToDevPoint(res.WoldPoint.vector);
 
-        LockCursorScrn(sv);
+        LockCursor(sv);
+
+        LastDownPoint = res.WoldPoint.vector;
 
         Mouse.MouseMove(dc, sv.X, sv.Y);
     }
 
-    public void LockCursorScrn(vector3_t p)
+    public void LockCursor(vector3_t devP)
     {
+        bool prevSate = CursorLocked;
         CursorLocked = true;
 
-        SnapPoint = DC.DevPointToWorldPoint(p);
-        CrossCursor.Pos = p;
+        SnapPoint = DC.DevPointToWorldPoint(devP);
+        CrossCursor.Pos = devP;
+
+        if (prevSate != CursorLocked)
+        {
+            NotifyCursorLock(CursorLocked);
+        }
+    }
+
+    public void LockCursor()
+    {
+        bool prevSate = CursorLocked;
+        CursorLocked = true;
+
+        LastDownPoint = DC.DevPointToWorldPoint(CrossCursor.Pos);
+        SnapPoint = DC.DevPointToWorldPoint(LastDownPoint);
+
+        if (prevSate != CursorLocked)
+        {
+            NotifyCursorLock(CursorLocked);
+        }
+    }
+
+    public void UnlockCursor()
+    {
+        if (CursorLocked)
+        {
+            CursorLocked = false;
+            NotifyCursorLock(false);
+        }
+    }
+
+    private void NotifyCursorLock(bool locked)
+    {
+        ViewModelIF.CursorLocked(locked);
+        if (!locked)
+        {
+            mSpPointList = null;
+            ViewModelIF.ClosePopupMessage();
+        }
+        else
+        {
+            ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
+        }
     }
 
     public vector3_t GetCursorPos()
@@ -873,5 +1007,18 @@ public partial class PlotterController
     private void CheckExtendSnapPoints(DrawContext dc)
     {
         ExtendSnapPointList.ForEach(v => mPointSearcher.Check(dc, v));
+    }
+
+    public void ClearSelection()
+    {
+        CurrentFigure = null;
+
+        LastSelPoint = null;
+        LastSelSegment = null;
+
+        foreach (CadLayer layer in DB.LayerList)
+        {
+            layer.ClearSelectedFlags();
+        }
     }
 }

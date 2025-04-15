@@ -1,45 +1,65 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.Collections.Generic;
 using CadDataTypes;
 using TCad.Properties;
-using OpenTK;
-using OpenTK.Mathematics;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using Plotter.Controller.TaskRunner;
 
 namespace Plotter.Controller;
 
 // Edit figure functions
 
-public partial class PlotterController
+public class PlotterEditor
 {
+    private IPlotterController Controller;
+
+    PlotterInput Input
+    {
+        get => Controller.Input;
+    }
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+    }
+
+    public PlotterTaskRunner PlotterTaskRunner
+    {
+        get => Controller.PlotterTaskRunner;
+    }
+
+    DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public PlotterEditor(IPlotterController controller)
+    {
+        Controller = controller;
+    }
+
     public bool ToBezier()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return false;
         }
 
-        bool ret = ToBezier(LastSelSegment.Value);
+        bool ret = ToBezier(Input.LastSelSegment.Value);
 
         if (ret)
         {
-            ClearSelection();
-            UpdateObjectTree(true);
+            Input.ClearSelection();
+            Controller.UpdateObjectTree(true);
         }
 
         return ret;
@@ -52,7 +72,7 @@ public partial class PlotterController
             return false;
         }
 
-        CadFigure fig = mDB.GetFigure(seg.FigureID);
+        CadFigure fig = DB.GetFigure(seg.FigureID);
 
         int num = CadUtil.InsertBezierHandle(fig, seg.PtIndexA, seg.PtIndexB);
 
@@ -71,18 +91,18 @@ public partial class PlotterController
 
     public void SeparateFigures()
     {
-        if (LastSelPoint == null)
+        if (Input.LastSelPoint == null)
         {
             return;
         }
 
-        SeparateFigures(LastSelPoint.Value.Figure, LastSelPoint.Value.PointIndex);
-        ClearSelection();
+        SeparateFigures(Input.LastSelPoint.Value.Figure, Input.LastSelPoint.Value.PointIndex);
+        Input.ClearSelection();
     }
 
     public void SeparateFigures(CadFigure fig, int pointIdx)
     {
-        var res = CadFigureCutter.Cut(mDB, fig, pointIdx);
+        var res = CadFigureCutter.Cut(DB, fig, pointIdx);
 
         if (!res.isValid())
         {
@@ -94,7 +114,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -104,7 +124,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -117,13 +137,13 @@ public partial class PlotterController
 
     public void BondFigures()
     {
-        BondFigures(CurrentFigure);
-        ClearSelection();
+        BondFigures(Input.CurrentFigure);
+        Input.ClearSelection();
     }
 
     public void BondFigures(CadFigure fig)
     {
-        var res = CadFigureBonder.Bond(mDB, fig);
+        var res = CadFigureBonder.Bond(DB, fig);
 
         if (!res.isValid())
         {
@@ -135,7 +155,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -145,7 +165,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -158,14 +178,14 @@ public partial class PlotterController
 
     public void CutSegment()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return;
         }
 
-        MarkSegment ms = LastSelSegment.Value;
+        MarkSegment ms = Input.LastSelSegment.Value;
         CutSegment(ms);
-        ClearSelection();
+        Input.ClearSelection();
     }
 
     public void CutSegment(MarkSegment ms)
@@ -180,7 +200,7 @@ public partial class PlotterController
             return;
         }
 
-        var res = CadSegmentCutter.CutSegment(mDB, ms, ms.CrossPoint);
+        var res = CadSegmentCutter.CutSegment(DB, ms, ms.CrossPoint);
 
         if (!res.isValid())
         {
@@ -192,7 +212,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.AddList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -202,7 +222,7 @@ public partial class PlotterController
 
         foreach (EditResult.Item ri in res.RemoveList)
         {
-            CadLayer layer = mDB.GetLayer(ri.LayerID);
+            CadLayer layer = DB.GetLayer(ri.LayerID);
 
             ope = new CadOpeRemoveFigure(layer, ri.FigureID);
             opeRoot.OpeList.Add(ope);
@@ -243,7 +263,7 @@ public partial class PlotterController
 
     public void FlipWithVector()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile(
@@ -251,12 +271,12 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.FlipWithInteractive(target);
+        PlotterTaskRunner.FlipWithInteractive(target);
     }
 
     public void FlipAndCopyWithVector()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile(
@@ -264,34 +284,34 @@ public partial class PlotterController
             return;
         }
 
-        mPlotterTaskRunner.FlipAndCopyWithInteractive(target);
+        PlotterTaskRunner.FlipAndCopyWithInteractive(target);
     }
 
     public void CutMeshWithVector()
     {
-        CadFigure target = CurrentFigure;
+        CadFigure target = Input.CurrentFigure;
         if (target == null)
         {
             ItConsole.printFaile("No Figure selected.");
             return;
         }
 
-        mPlotterTaskRunner.CutMeshWithInteractive(target);
+        PlotterTaskRunner.CutMeshWithInteractive(target);
     }
 
     public void RotateWithPoint()
     {
-        List<CadFigure> target = GetSelectedRootFigureList();
+        List<CadFigure> target = Controller.GetSelectedRootFigureList();
         if (target.Count <= 0)
         {
             ItConsole.printFaile("No target figure.");
             return;
         }
 
-        mPlotterTaskRunner.RotateWithInteractive(target);
+        PlotterTaskRunner.RotateWithInteractive(target);
     }
 
-    private void RemoveSelectedPoints()
+    public void RemoveSelectedPoints()
     {
         List<CadFigure> figList = DB.GetSelectedFigList();
         foreach (CadFigure fig in figList)
@@ -304,18 +324,19 @@ public partial class PlotterController
             fig.RemoveGarbageChildren();
         }
 
-        UpdateObjectTree(true);
+        Input.ClearSelection();
+        Controller.UpdateObjectTree(true);
     }
 
 
     public bool InsPointToLastSelectedSeg()
     {
-        if (LastSelSegment == null)
+        if (Input.LastSelSegment == null)
         {
             return false;
         }
 
-        MarkSegment seg = LastSelSegment.Value;
+        MarkSegment seg = Input.LastSelSegment.Value;
 
         CadFigure fig = DB.GetFigure(seg.FigureID);
 
@@ -343,20 +364,29 @@ public partial class PlotterController
         int ins0 = Math.Min(seg.PtIndexA, seg.PtIndexB);
         int ins1 = Math.Max(seg.PtIndexA, seg.PtIndexB);
 
-        if (ins0 == 0 && ins1==fig.PointCount-1)
+
+        if (fig.IsLoop)
         {
-            ins = ins1 + 1;
+            if (ins0 == 0 && ins1 == fig.PointCount - 1)
+            {
+                ins = ins1 + 1;
+            }
+            else
+            {
+                ins = ins1;
+            }
         }
         else
         {
             ins = ins1;
         }
 
+
         Log.pl($"ins={ins} pcnt={fig.PointCount}");
 
-        fig.InsertPointAt(ins, (CadVertex)LastDownPoint);
+        fig.InsertPointAt(ins, (CadVertex)Input.LastDownPoint);
 
-        ClearSelection();
+        Input.ClearSelection();
 
         fig.SelectPointAt(ins, true);
 
@@ -372,7 +402,7 @@ public partial class PlotterController
             return;
         }
 
-        CadFigure pointFig = mDB.NewFigure(CadFigure.Types.POINT);
+        CadFigure pointFig = DB.NewFigure(CadFigure.Types.POINT);
         pointFig.AddPoint((CadVertex)cent.Point);
 
         pointFig.EndCreate(DC);
@@ -386,5 +416,21 @@ public partial class PlotterController
 
         ItConsole.println("Centroid:" + s);
         ItConsole.println("Area:" + (cent.Area / 100).ToString() + "(㎠)");
+    }
+
+    public void MoveSelectedPoints(DrawContext dc, MoveInfo moveInfo)
+    {
+        List<uint> figIDList = DB.GetSelectedFigIDList();
+
+        //delta.z = 0;
+
+        foreach (uint id in figIDList)
+        {
+            CadFigure fig = DB.GetFigure(id);
+            if (fig != null)
+            {
+                fig.MoveSelectedPointsFromStored(dc, moveInfo);
+            }
+        }
     }
 }

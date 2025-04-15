@@ -1,10 +1,9 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 #define MOUSE_THREAD
 
 using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 
 using Plotter.Controller;
 using Plotter.Settings;
@@ -16,29 +15,13 @@ using GLFont;
 using TCad.ViewModel;
 using TCad.Util;
 
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter;
 
 class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 {
     private DrawContextGL mDrawContext = null;
 
-    private PlotterController mController = null;
-
-    private IPlotterViewModel mVM;
+    private IPlotterController mController = null;
 
     private vector3_t PrevMousePos = default;
 
@@ -49,7 +32,8 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
     private MyEventHandler mEventSequencer;
 
-    private Cursor PointCursor;
+    private Cursor PointCursorWhite;
+    private Cursor PointCursorBlack;
 
 
     public DrawContext DrawContext => mDrawContext;
@@ -62,19 +46,18 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     private DrawContextGLPers mDrawContextPers;
 
 
-    public static PlotterViewGL Create(IPlotterViewModel vm)
+    public static PlotterViewGL Create(IPlotterController controller)
     {
         Log.plx("in");
-        PlotterViewGL v = new PlotterViewGL(vm);
+        PlotterViewGL v = new PlotterViewGL(controller);
         v.MakeCurrent();
         Log.plx("out");
         return v;
     }
 
-    private PlotterViewGL(IPlotterViewModel vm)
+    private PlotterViewGL(IPlotterController controller)
     {
-        mVM = vm;
-        mController = mVM.Controller;
+        mController = controller;
 
         SetupContextMenu();
 
@@ -130,12 +113,33 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     protected void SetupCursor()
     {
         StreamResourceInfo si = System.Windows.Application.GetResourceStream(
-            new Uri("/Resources/Cursors/mini_cross.cur", UriKind.Relative));
+            new Uri("/Resources/Cursors/dot_wt.cur", UriKind.Relative));
 
-        PointCursor = new Cursor(si.Stream);
+        PointCursorWhite = new Cursor(si.Stream);
+        si.Stream.Close();
 
-        base.Cursor = PointCursor;
+
+        si = System.Windows.Application.GetResourceStream(
+            new Uri("/Resources/Cursors/dot_bk.cur", UriKind.Relative));
+
+        PointCursorBlack = new Cursor(si.Stream);
+        si.Stream.Close();
+
+        ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
+
+    private void SetPointCursor()
+    {
+        if (SettingsHolder.Settings.DrawMode == DrawModes.DARK)
+        {
+            base.Cursor = PointCursorWhite;
+        }
+        else
+        {
+            base.Cursor = PointCursorBlack;
+        }
+    }
+
 
     private void OnMouseUp(object sender, MouseEventArgs e)
     {
@@ -217,7 +221,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         //        mController.Redraw(mController.DC);
         //#endif
 
-        mController.Redraw(mController.DC);
+        mController.Drawer.Redraw(mController.DC);
     }
 
     private void OnPaint(object sender, PaintEventArgs e)
@@ -245,7 +249,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
             mDrawContext.SetViewOrg(org);
 
-            mController.SetCursorWoldPos(vector3_t.Zero);
+            mController.Input.SetCursorWoldPos(vector3_t.Zero);
         }
 
         sizeChangeCnt++;
@@ -295,11 +299,11 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (locked)
         {
-            base.Cursor = Cursors.Arrow;
+            ChangeMouseCursor(UITypes.MouseCursorType.NORMAL_ARROW);
         }
         else
         {
-            base.Cursor = PointCursor;
+            ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
         }
     }
 
@@ -308,7 +312,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         switch (cursorType)
         {
             case UITypes.MouseCursorType.CROSS:
-                base.Cursor = PointCursor;
+                SetPointCursor();
                 break;
             case UITypes.MouseCursorType.NORMAL_ARROW:
                 base.Cursor = Cursors.Arrow;
@@ -327,11 +331,11 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         {
             if (s == ContextMenuEx.State.OPENED)
             {
-                base.Cursor = Cursors.Arrow;
+                ChangeMouseCursor(UITypes.MouseCursorType.NORMAL_ARROW);
             }
             else if (s == ContextMenuEx.State.CLOSED)
             {
-                base.Cursor = PointCursor;
+                ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
             }
         };
     }
@@ -382,7 +386,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     private void HandleMouseUp(MouseEventArgs e)
     {
         DownButton = MouseButtons.None;
-        mController.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
+        mController.Input.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
 
         Redraw();
     }
@@ -400,7 +404,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+            mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
         }
         else
         {
@@ -409,7 +413,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
             //if (DownButton != MouseButtons.Middle)
             {
-                mController.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+                mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
             }
         }
 
@@ -420,7 +424,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
+            mController.Input.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
             Redraw();
         }
         else
@@ -447,7 +451,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+            mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
             Redraw();
         }
         else
@@ -484,7 +488,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
             }
             else
             {
-                mController.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+                mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
                 Redraw();
             }
         }
@@ -557,7 +561,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     }
 
 
-    public void DrawModeUpdated(DrawModes mode)
+    public void DrawModeChanged(DrawModes mode)
     {
         if (mDrawContextOrtho != null)
         {
@@ -568,6 +572,8 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         {
             mDrawContextPers.SetupTools(mode);
         }
+
+        ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     public void GLMakeCurrent()

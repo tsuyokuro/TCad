@@ -4,6 +4,7 @@ using OpenGL.GLU;
 using Plotter;
 using Plotter.Controller;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,7 +12,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using TCad.Controls;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
@@ -20,7 +20,7 @@ namespace TCad;
 
 public partial class MainWindow : Window, ICadMainWindow
 {
-    public PlotterViewModel ViewModel;
+    public IPlotterViewModel ViewModel;
 
     private ImageSource[] PopupMessageIcons = new ImageSource[3];
 
@@ -34,13 +34,11 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ViewModel = new PlotterViewModel(this);
 
-        ViewModel.DrawModeChanged += DrawModeChanged;
-
         ViewModel.Open();
 
-        ViewModel.ObjTreeVM.ObjectTree = ObjTree;
+        ViewModel.ObjectTree = ObjTree;
 
-        ViewModel.SetupTextCommandView(textCommand);
+        ViewModel.AttachCommandView(textCommand);
 
         SetupInteractionConsole();
 
@@ -57,11 +55,6 @@ public partial class MainWindow : Window, ICadMainWindow
         InitPopup();
 
         Log.plx("out");
-    }
-
-    public CadConsoleView GetBuiltinConsole()
-    {
-        return MyConsole;
     }
 
     private void SetupInteractionConsole()
@@ -110,7 +103,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
         FileName.DataContext = ViewModel;
 
-        ViewModePanel.DataContext = ViewModel.mViewManager;
+        ViewModePanel.DataContext = ViewModel.ViewManager;
         ResetCameraButton.DataContext = ViewModel;
 
         SnapToolBar.DataContext = ViewModel.Settings;
@@ -181,7 +174,8 @@ public partial class MainWindow : Window, ICadMainWindow
                     Thread.Sleep(10);
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        LayoutRoot.Margin = new Thickness(9);
+                        LayoutRoot.Margin = new Thickness(-1);
+
                     });
                 });
 
@@ -200,6 +194,7 @@ public partial class MainWindow : Window, ICadMainWindow
         TextureProvider.Instance.RemoveAll();
         FontShader.GetInstance().Dispose();
         ImageShader.GetInstance().Dispose();
+        WireFrameShader.GetInstance().Dispose();
 
         Glu.Dispose();
     }
@@ -208,13 +203,15 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        var hsrc = HwndSource.FromVisual(this) as HwndSource;
-        hsrc.AddHook(WndProc);
+        //var hsrc = HwndSource.FromVisual(this) as HwndSource;
+        //hsrc.AddHook(WndProc);
 
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         ImageRenderer.Provider.Get();
+
+        WireFrameShader.GetInstance();
 
         Log.plx("out");
     }
@@ -243,6 +240,18 @@ public partial class MainWindow : Window, ICadMainWindow
         }
     }
     #endregion
+
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == IntPtr.Zero)
+        {
+            return;
+        }
+        HwndSource.FromHwnd(handle).AddHook(this.WndProc);
+    }
 
     IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
@@ -279,7 +288,43 @@ public partial class MainWindow : Window, ICadMainWindow
 
             case WinAPI.WM_SIZE:
                 break;
+            case WinAPI.WM_GETMINMAXINFO:
+                {
+                    var result = OnGetMinMaxInfo(hwnd, wParam, lParam);
+                    if (result != null)
+                    {
+                        handled = true;
+                        return result.Value;
+                    }
+                }
+                break;
         }
+        return IntPtr.Zero;
+    }
+
+    private IntPtr? OnGetMinMaxInfo(IntPtr hwnd, IntPtr wParam, IntPtr lParam)
+    {
+        var monitor = WinAPI.Monitor.MonitorFromWindow(hwnd, WinAPI.Monitor.MONITOR_DEFAULTTONEAREST);
+        if (monitor == IntPtr.Zero)
+        {
+            return null;
+        }
+
+        var monitorInfo = new WinAPI.Monitor.MONITORINFO();
+        monitorInfo.Size = Marshal.SizeOf(monitorInfo);
+        if (WinAPI.Monitor.GetMonitorInfo(monitor, ref monitorInfo) != true)
+        {
+            return null;
+        }
+
+        var workingRectangle = monitorInfo.WorkRect;
+        var monitorRectangle = monitorInfo.MonitorRect;
+        var minmax = (WinAPI.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(WinAPI.MINMAXINFO));
+        minmax.MaxPosition.X = Math.Abs(workingRectangle.Left - monitorRectangle.Left);
+        minmax.MaxPosition.Y = Math.Abs(workingRectangle.Top - monitorRectangle.Top);
+        minmax.MaxSize.X = Math.Abs(workingRectangle.Right - monitorRectangle.Left);
+        minmax.MaxSize.Y = Math.Abs(workingRectangle.Bottom - monitorRectangle.Top);
+        Marshal.StructureToPtr(minmax, lParam, true);
         return IntPtr.Zero;
     }
 
@@ -310,7 +355,7 @@ public partial class MainWindow : Window, ICadMainWindow
     }
     #endregion
 
-    #region PlotterViewModel Event
+    #region ViewManager Event
     public void DrawModeChanged(DrawModes drawMode)
     {
         Log.plx("in");

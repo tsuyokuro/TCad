@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using HalfEdgeNS;
 using MessagePack;
 using System;
@@ -8,19 +7,7 @@ using SplineCurve;
 using System.Drawing.Printing;
 using OpenTK.Mathematics;
 
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-namespace Plotter.Serializer.v1003;
+namespace Plotter.Serializer;
 
 public class VersionCode_v1003
 {
@@ -40,9 +27,6 @@ public class MpCadData_v1003
 
     [Key("ViewInfo")]
     public MpViewInfo_v1003 ViewInfo;
-
-    [IgnoreMember]
-    CadObjectDB DB = null;
 
     public static MpCadData_v1003 Create(SerializeContext sc, CadData cadData)
     {
@@ -175,9 +159,9 @@ public class MpCadObjectDB_v1003
         ret.FigureIdCount = db.FigIdProvider.Counter;
 
         //ret.FigureList = MpUtil_v1003.FigureMapToMp_v1003(db.FigureMap);
-        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1003>(sc, db.FigureMap, MpFigure_v1003.Create);
+        ret.FigureList = MpUtil.FigureMapToMp<MpFigure_v1003>(sc, db.FigureMap);
 
-        ret.LayerList = MpUtil.LayerListToMp(sc, db.LayerList, MpLayer_v1003.Create);
+        ret.LayerList = MpUtil.LayerListToMp<MpLayer_v1003>(sc, db.LayerList);
 
         ret.CurrentLayerID = db.CurrentLayerID;
 
@@ -284,7 +268,7 @@ public class MpCadObjectDB_v1003
 
 
 [MessagePackObject]
-public class MpLayer_v1003 : MpLayer
+public class MpLayer_v1003 : IMpLayer
 {
     [Key("ID")]
     public uint ID;
@@ -302,16 +286,21 @@ public class MpLayer_v1003 : MpLayer
     {
         MpLayer_v1003 ret = new MpLayer_v1003();
 
-        ret.ID = layer.ID;
-        ret.Visible = layer.Visible;
-        ret.Locked = layer.Locked;
-
-        ret.FigureIdList = MpUtil.FigureListToIdList(layer.FigureList);
+        ret.Store(sc, layer);
 
         return ret;
     }
 
-    public override CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic)
+    public void Store(SerializeContext sc, CadLayer layer)
+    {
+        ID = layer.ID;
+        Visible = layer.Visible;
+        Locked = layer.Locked;
+
+        FigureIdList = MpUtil.FigureListToIdList(layer.FigureList);
+    }
+
+    public CadLayer Restore(DeserializeContext dsc, Dictionary<uint, CadFigure> dic)
     {
         CadLayer ret = new CadLayer();
         ret.ID = ID;
@@ -329,7 +318,7 @@ public class MpLayer_v1003 : MpLayer
 }
 
 [MessagePackObject]
-public class MpFigure_v1003 : MpFigure
+public class MpFigure_v1003 : IMpFigure
 {
     public const uint VERSION = 0x00001000;
 
@@ -370,33 +359,22 @@ public class MpFigure_v1003 : MpFigure
     {
         MpFigure_v1003 ret = new MpFigure_v1003();
 
-        ret.StoreCommon(sc, fig);
+        ret.Store(sc, fig, withChild);
 
-        if (withChild)
-        {
-            ret.StoreChildList(sc, fig);
-        }
-        else
-        {
-            ret.StoreChildIdList(fig);
-        }
         return ret;
     }
 
-    public virtual void ForEachFig(Action<MpFigure_v1003> d)
+    public void Store(SerializeContext sc, CadFigure fig, bool withChild)
     {
-        d(this);
+        StoreCommon(sc, fig);
 
-        if (ChildList == null)
+        if (withChild)
         {
-            return;
+            StoreChildList(sc, fig);
         }
-
-        int i;
-        for (i = 0; i < ChildList.Count; i++)
+        else
         {
-            MpFigure_v1003 c = ChildList[i];
-            c.ForEachFig(d);
+            StoreChildIdList(fig);
         }
     }
 
@@ -441,7 +419,7 @@ public class MpFigure_v1003 : MpFigure
 
     public void StoreChildList(SerializeContext sc, CadFigure fig)
     {
-        ChildList = MpUtil.FigureListToMp<MpFigure_v1003>(sc, fig.ChildList,Create);
+        ChildList = MpUtil.FigureListToMp<MpFigure_v1003>(sc, fig.ChildList);
     }
 
     public void RestoreTo(DeserializeContext dsc, CadFigure fig)
@@ -474,7 +452,7 @@ public class MpFigure_v1003 : MpFigure
         fig.FillBrush = FillBrush.Restore();
     }
 
-    public override CadFigure Restore(DeserializeContext dsc)
+    public CadFigure Restore(DeserializeContext dsc)
     {
         CadFigure fig = CadFigure.Create((CadFigure.Types)Type);
 
@@ -485,7 +463,7 @@ public class MpFigure_v1003 : MpFigure
 }
 
 [MessagePackObject]
-public struct MpVector3_v1003 : MpVector3
+public struct MpVector3_v1003 : IMpVector3
 {
     [Key(0)]
     public vcompo_t X;
@@ -498,13 +476,17 @@ public struct MpVector3_v1003 : MpVector3
 
     public static MpVector3_v1003 Create(vector3_t v)
     {
-        MpVector3_v1003 ret = new MpVector3_v1003();
-
-        ret.X = v.X;
-        ret.Y = v.Y;
-        ret.Z = v.Z;
+        MpVector3_v1003 ret = new();
+        ret.Store(v);
 
         return ret;
+    }
+
+    public void Store(vector3_t v)
+    {
+        X = v.X;
+        Y = v.Y;
+        Z = v.Z;
     }
 
     public vector3_t Restore()
@@ -615,10 +597,9 @@ public struct MpVertexAttr_v1003
     {
         MpVertexAttr_v1003 ret = new MpVertexAttr_v1003();
 
-        ret.Color1 = MpColor4_v1003.Create(attr.Color1);
-        ret.Color2 = MpColor4_v1003.Create(attr.Color2);
+        ret.Color1 = MpColor4_v1003.Create(attr.Color);
         ret.Normal =MpVector3_v1003.Create(attr.Normal);
-        ret.Flags = attr.Flags;
+        ret.Flags = 0;
         return ret;
     }
 
@@ -626,16 +607,14 @@ public struct MpVertexAttr_v1003
     {
         CadVertexAttr attr = new CadVertexAttr();
 
-        attr.Color1 = Color1.Restore();
-        attr.Color2 = Color2.Restore();
+        attr.Color = Color1.Restore();
         attr.Normal = Normal.Restore();
-        attr.Flags = Flags;
         return attr;
     }
 }
 
 [MessagePackObject]
-public struct MpVertex_v1003 : MpVertex
+public struct MpVertex_v1003 : IMpVertex
 {
     [Key("flag")]
     public byte Flag;
@@ -654,22 +633,24 @@ public struct MpVertex_v1003 : MpVertex
     {
         MpVertex_v1003 ret = new MpVertex_v1003();
 
-        ret.Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
-
-        ret.P.X = v.X;
-        ret.P.Y = v.Y;
-        ret.P.Z = v.Z;
-
-        ret.Attr = MpVertexAttr_v1003.Create(v.Attr);
+        ret.Store(v);
 
         return ret;
+    }
+
+    public void Store(CadVertex v)
+    {
+        Flag = (byte)(v.Flag & ~CadVertex.SELECTED);
+
+        P.X = v.X;
+        P.Y = v.Y;
+        P.Z = v.Z;
     }
 
     public CadVertex Restore()
     {
         CadVertex v = CadVertex.Create(P.X, P.Y, P.Z);
         v.Flag = Flag;
-        v.Attr = Attr.Restore();
 
         return v;
     }
@@ -774,11 +755,11 @@ public class MpHeModel_v1003
     {
         MpHeModel_v1003 ret = new MpHeModel_v1003();
 
-        ret.VertexStore = MpUtil.VertexListToMp(model.VertexStore, MpVertex_v1003.Create);
+        ret.VertexStore = MpUtil.VertexListToMp<MpVertex_v1003>(model.VertexStore);
 
-        ret.NormalStore = MpUtil.Vector3ListToMp(model.NormalStore, MpVector3_v1003.Create);
+        ret.NormalStore = MpUtil.Vector3ListToMp<MpVector3_v1003>(model.NormalStore);
 
-        ret.FaceStore = MpUtil.HeFaceListToMp(model.FaceStore, MpHeFace_v1003.Create);
+        ret.FaceStore = MpUtil.HeFaceListToMp<MpHeFace_v1003>(model.FaceStore);
 
         ret.HeIdCount = model.HeIdProvider.Counter;
 
@@ -786,7 +767,7 @@ public class MpHeModel_v1003
 
         List<HalfEdge> heList = model.GetHalfEdgeList();
 
-        ret.HalfEdgeList = MpUtil.HalfEdgeListToMp(heList, MpHalfEdge_v1003.Create);
+        ret.HalfEdgeList = MpUtil.HalfEdgeListToMp<MpHalfEdge_v1003>(heList);
 
         return ret;
     }
@@ -832,7 +813,7 @@ public class MpHeModel_v1003
 }
 
 [MessagePackObject]
-public class MpHeFace_v1003 : MpHeFace
+public class MpHeFace_v1003 : IMpHeFace
 {
     [Key("ID")]
     public uint ID;
@@ -846,14 +827,19 @@ public class MpHeFace_v1003 : MpHeFace
     public static MpHeFace_v1003 Create(HeFace face)
     {
         MpHeFace_v1003 ret = new MpHeFace_v1003();
-        ret.ID = face.ID;
-        ret.HeadID = face.Head.ID;
-        ret.Normal = face.Normal;
+        ret.Store(face);
 
         return ret;
     }
 
-    public override HeFace Restore(Dictionary<uint, HalfEdge> dic)
+    public void Store(HeFace face)
+    {
+        ID = face.ID;
+        HeadID = face.Head.ID;
+        Normal = face.Normal;
+    }
+
+    public HeFace Restore(Dictionary<uint, HalfEdge> dic)
     {
         HalfEdge he = dic[HeadID];
 
@@ -868,7 +854,7 @@ public class MpHeFace_v1003 : MpHeFace
 }
 
 [MessagePackObject]
-public class MpHalfEdge_v1003
+public class MpHalfEdge_v1003 : IMpHalfEdge
 {
     [Key("ID")]
     public uint ID;
@@ -899,17 +885,22 @@ public class MpHalfEdge_v1003
     public static MpHalfEdge_v1003 Create(HalfEdge he)
     {
         MpHalfEdge_v1003 ret = new MpHalfEdge_v1003();
-
-        ret.ID = he.ID;
-        ret.PairID = he.Pair != null ? he.Pair.ID : 0;
-        ret.NextID = he.Next != null ? he.Next.ID : 0;
-        ret.PrevID = he.Prev != null ? he.Prev.ID : 0;
-
-        ret.Vertex = he.Vertex;
-        ret.Face = he.Face;
-        ret.Normal = he.Normal;
+        ret.Store(he);
 
         return ret;
+    }
+
+    public void Store(HalfEdge he)
+    {
+        ID = he.ID;
+        PairID = he.Pair != null ? he.Pair.ID : 0;
+        NextID = he.Next != null ? he.Next.ID : 0;
+        PrevID = he.Prev != null ? he.Prev.ID : 0;
+
+        Vertex = he.Vertex;
+        Face = he.Face;
+        Normal = he.Normal;
+
     }
 
     // リンク情報はRestoreされない
@@ -954,7 +945,7 @@ public class MpNurbsLine_v1003
         ret.CtrlCnt = src.CtrlCnt;
         ret.CtrlDataCnt = src.CtrlDataCnt;
         ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
-        ret.CtrlPoints = MpUtil.VertexListToMp(src.CtrlPoints, MpVertex_v1003.Create);
+        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1003>(src.CtrlPoints);
         ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
 
         ret.BSplineP = MpBSplineParam_v1003.Create(src.BSplineP);
@@ -1018,7 +1009,7 @@ public class MpNurbsSurface_v1003
         ret.UCtrlDataCnt = src.UCtrlDataCnt;
         ret.VCtrlDataCnt = src.VCtrlDataCnt;
 
-        ret.CtrlPoints = MpUtil.VertexListToMp(src.CtrlPoints, MpVertex_v1003.Create);
+        ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1003>(src.CtrlPoints);
 
         ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
         ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);

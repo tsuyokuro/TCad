@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using CadDataTypes;
 using OpenTK;
 using OpenTK.Mathematics;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -557,6 +541,15 @@ public partial class CadMath
 
     public static vcompo_t SegNorm(vector3_t a, vector3_t b)
     {
+        vector3_t v = b - a;
+        return v.Norm();
+    }
+
+    public static vcompo_t SegNormNZ(vector3_t a, vector3_t b)
+    {
+        a.Z = 0;
+        b.Z = 0;
+
         vector3_t v = b - a;
         return v.Norm();
     }

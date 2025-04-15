@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -59,7 +59,11 @@
     <None Remove="Fonts\mplus-1m-regular.ttf" />
     <None Remove="Fonts\mplus-1m-thin.ttf" />
     <None Remove="Resources\BaseScript.py" />
+    <None Remove="Resources\Cursors\cross_bk.cur" />
+    <None Remove="Resources\Cursors\cross_wt.cur" />
     <None Remove="Resources\Cursors\dot.cur" />
+    <None Remove="Resources\Cursors\dot_bk.cur" />
+    <None Remove="Resources\Cursors\dot_wt.cur" />
     <None Remove="Resources\Cursors\mini_cross.cur" />
     <None Remove="Resources\Cursors\null.cur" />
   </ItemGroup>
@@ -79,23 +83,27 @@
     <Resource Include="Fonts\mplus-1m-light.ttf" />
     <Resource Include="Fonts\mplus-1m-regular.ttf" />
     <Resource Include="Fonts\mplus-1m-thin.ttf" />
+    <Resource Include="Resources\Cursors\cross_bk.cur" />
+    <Resource Include="Resources\Cursors\cross_wt.cur" />
     <Resource Include="Resources\Cursors\dot.cur" />
+    <Resource Include="Resources\Cursors\dot_bk.cur" />
+    <Resource Include="Resources\Cursors\dot_wt.cur" />
     <Resource Include="Resources\Cursors\mini_cross.cur" />
     <Resource Include="Resources\Cursors\null.cur" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
-    <PackageReference Include="IronPython" Version="3.4.1" />
-    <PackageReference Include="MessagePack" Version="2.5.129" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.5.129">
+    <PackageReference Include="IronPython" Version="3.4.2" />
+    <PackageReference Include="MessagePack" Version="3.1.3" />
+    <PackageReference Include="MessagePackAnalyzer" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.8.1" />
-    <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
+    <PackageReference Include="OpenTK" Version="4.9.3" />
+    <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -128,6 +136,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\DrawTheme\dark.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\DrawTheme\light.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\DrawTheme\printer.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Python-Mode.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -140,5 +157,7 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="echo PlatformName=$(PlatformName)" />
   </Target>
+
+  <ProjectExtensions><VisualStudio><UserProperties resources_4drawtheme_4dark_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" resources_4drawtheme_4light_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" resources_4drawtheme_4printer_1json__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

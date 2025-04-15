@@ -1,23 +1,6 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
-using OpenTK.Mathematics;
 using Plotter;
 using Plotter.Controller;
 using System.ComponentModel;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace TCad.ViewModel;
 
@@ -25,46 +8,51 @@ public class ViewManager : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public IPlotterViewModel mContext;
 
-    private IPlotterView mPlotterView = null;
-    public IPlotterView PlotterView
-    {
-        get => mPlotterView;
-    }
+    private IPlotterController Controller;
 
-    public DrawContext DrawContext
+    private ICadMainWindow MainWindow;
+
+
+    public IPlotterView View
     {
-        get => mPlotterView.DrawContext;
-    }
+        get;
+        private set;
+    } = null;
 
     private PlotterViewGL PlotterViewGL1 = null;
 
-    private ViewModes mViewMode = ViewModes.NONE;
+    private ViewModes ViewMode_ = ViewModes.NONE;
     public ViewModes ViewMode
     {
         set
         {
-            bool changed = ChangeViewMode(value);
-            if (changed)
+            if (value == ViewMode_)
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ViewMode)));
+                return;
             }
+
+            ViewMode_ = value;
+
+            ChangeViewMode(ViewMode_);
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ViewMode)));
         }
 
-        get => mViewMode;
+        get => ViewMode_;
     }
 
-    public ViewManager(IPlotterViewModel context)
+    public ViewManager(ICadMainWindow mainWindow, IPlotterController controler)
     {
-        mContext = context;
+        MainWindow = mainWindow;
+        Controller = controler;
     }
 
     public void SetupViews()
     {
         Log.plx("in");
 
-        PlotterViewGL1 = PlotterViewGL.Create(mContext);
+        PlotterViewGL1 = PlotterViewGL.Create(Controller);
 
         ViewMode = ViewModes.FRONT;
 
@@ -76,16 +64,17 @@ public class ViewManager : INotifyPropertyChanged
         PlotterViewGL1.SetWorldScale(scale);
     }
 
-    public void DrawModeUpdated(DrawModes mode)
+    public void DrawModeChanged(DrawModes mode)
     {
-        PlotterViewGL1.DrawModeUpdated(mode);
+        PlotterViewGL1.DrawModeChanged(mode);
+        MainWindow.DrawModeChanged(mode);
     }
 
     public void ResetCamera()
     {
-        DrawContext dc = mPlotterView.DrawContext;
+        DrawContext dc = View.DrawContext;
 
-        switch (mViewMode)
+        switch (ViewMode)
         {
             case ViewModes.FRONT:
             case ViewModes.BACK:
@@ -108,20 +97,13 @@ public class ViewManager : INotifyPropertyChanged
         }
     }
 
-    private bool ChangeViewMode(ViewModes newMode)
+    private void ChangeViewMode(ViewModes newMode)
     {
-        if (mViewMode == newMode)
-        {
-            return false;
-        }
+        DrawContext currentDC = View?.DrawContext;
+        DrawContext nextDC = View?.DrawContext;
+        IPlotterView view = View;
 
-        mViewMode = newMode;
-
-        DrawContext currentDC = mPlotterView?.DrawContext;
-        DrawContext nextDC = mPlotterView?.DrawContext;
-        IPlotterView view = mPlotterView;
-
-        switch (mViewMode)
+        switch (ViewMode_)
         {
             case ViewModes.FRONT:
                 PlotterViewGL1.EnablePerse(false);
@@ -193,16 +175,16 @@ public class ViewManager : INotifyPropertyChanged
         if (nextDC != null) nextDC.Activate();
 
         SetView(view);
-        mContext.Redraw();
-        return true;
     }
 
     private void SetView(IPlotterView view)
     {
-        mPlotterView = view;
+        View = view;
 
-        mContext.Controller.DC = view.DrawContext;
+        Controller.DC = view.DrawContext;
 
-        mContext.MainWindow.SetPlotterView(view);
+        MainWindow.SetPlotterView(view);
+
+        Controller.RedrawOnUiThread();
     }
 }

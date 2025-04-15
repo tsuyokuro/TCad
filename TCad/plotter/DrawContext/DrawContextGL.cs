@@ -1,31 +1,15 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Windows.Forms;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter;
 
 public abstract class DrawContextGL : DrawContext
 {
-    public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)(250.0);
-    public const vcompo_t DEFAULT_NEAR = (vcompo_t)(0.1);
-    public const vcompo_t DEFAULT_FAR = 2000;
+    public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)250.0;
+    public const vcompo_t DEFAULT_NEAR = (vcompo_t)0.1;
+    public const vcompo_t DEFAULT_FAR = (vcompo_t)2000.0;
 
     protected Control ViewCtrl;
 

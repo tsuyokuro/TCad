@@ -1,25 +1,9 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using HalfEdgeNS;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -53,7 +37,7 @@ public class DrawingGDI : IDrawing
         vector3_t p0 = default;
         vector3_t p1 = default;
 
-        vcompo_t len = DrawingConst.AxisLength;
+        vcompo_t len = DrawSizes.AxisLength;
 
         // X軸
         p0.X = -len;
@@ -247,6 +231,19 @@ public class DrawingGDI : IDrawing
         vector3_t pp = DC.WorldPointToDevPoint(pt);
 
         int size = 2;
+
+        DrawRectangleScrn(
+            pen,
+            (int)pp.X - size, (int)pp.Y - size,
+            (int)pp.X + size, (int)pp.Y + size
+            );
+    }
+
+    public void DrawLastSelectedPoint(vector3_t pt, DrawPen pen)
+    {
+        vector3_t pp = DC.WorldPointToDevPoint(pt);
+
+        int size = 3;
 
         DrawRectangleScrn(
             pen,
@@ -458,15 +455,29 @@ public class DrawingGDI : IDrawing
 
     public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen)
     {
-        vcompo_t size = (vcompo_t)Math.Max(DC.ViewWidth, DC.ViewHeight);
+        DrawCrossCursorScrn(pp, pen, -1, -1);
+    }
 
-        vector3_t p0 = pp.Pos - (pp.DirX * size);
-        vector3_t p1 = pp.Pos + (pp.DirX * size);
+    public void DrawCrossCursorScrn(CadCursor pp, DrawPen pen, vcompo_t xsize, vcompo_t ysize)
+    {
+        if (xsize == -1)
+        {
+            xsize = DC.ViewWidth;
+        }
+
+        if (ysize == -1)
+        {
+            ysize = DC.ViewHeight;
+        }
+
+
+        vector3_t p0 = pp.Pos - (pp.DirX * xsize);
+        vector3_t p1 = pp.Pos + (pp.DirX * xsize);
 
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
 
-        p0 = pp.Pos - (pp.DirY * size);
-        p1 = pp.Pos + (pp.DirY * size);
+        p0 = pp.Pos - (pp.DirY * ysize);
+        p1 = pp.Pos + (pp.DirY * ysize);
 
         DrawLineScrn(pen, p0.X, p0.Y, p1.X, p1.Y);
     }

@@ -1,31 +1,16 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using TCad.Controls;
 using TCad.Dialogs;
 using Plotter;
 using Plotter.Settings;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using Plotter.Controller;
 
 namespace TCad.ViewModel;
 
-public class ObjectTreeViewModel
+public class ObjectTreeViewModel(IPlotterController controller)
 {
-    IPlotterViewModel mVMContext;
+    protected IPlotterController Controller = controller;
 
-    ICadObjectTree mObjectTree;
+    protected ICadObjectTree mObjectTree;
 
     public ICadObjectTree ObjectTree
     {
@@ -49,17 +34,12 @@ public class ObjectTreeViewModel
         get => mObjectTree;
     }
 
-    public ObjectTreeViewModel(IPlotterViewModel context)
-    {
-        mVMContext = context;
-    }
-
     private void StateChanged(CadObjTreeItem item)
     {
-        mVMContext.Controller.CurrentFigure =
-            TreeViewUtil.GetCurrentFigure(item, mVMContext.Controller.CurrentFigure);
+        Controller.Input.CurrentFigure =
+            TreeViewUtil.GetCurrentFigure(item, Controller.Input.CurrentFigure);
 
-        mVMContext.Redraw();
+        Controller.Drawer.Redraw();
     }
 
     public void UpdateTreeView(bool remakeTree)
@@ -77,7 +57,7 @@ public class ObjectTreeViewModel
             return;
         }
 
-        mObjectTree.Update(remakeTree, SettingsHolder.Settings.FilterObjectTree, mVMContext.Controller.CurrentLayer);
+        mObjectTree.Update(remakeTree, SettingsHolder.Settings.FilterObjectTree, Controller.CurrentLayer);
     }
 
     public void SetTreeViewPos(int index)
@@ -106,7 +86,7 @@ public class ObjectTreeViewModel
 
     public void ItemCommand(CadObjTreeItem treeItem, string cmd)
     {
-        if (!(treeItem is CadFigTreeItem))
+        if (treeItem is not CadFigTreeItem)
         {
             return;
         }
@@ -117,9 +97,10 @@ public class ObjectTreeViewModel
         {
             CadFigure fig = figItem.Fig;
 
-            InputStringDialog dlg = new InputStringDialog();
-
-            dlg.Message = TCad.Properties.Resources.string_input_fig_name;
+            InputStringDialog dlg = new()
+            {
+                Message = TCad.Properties.Resources.string_input_fig_name
+            };
 
             if (fig.Name != null)
             {

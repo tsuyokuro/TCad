@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using TCad.Properties;
 using Microsoft.Scripting.Hosting;
 using System;
@@ -20,26 +19,11 @@ using System.Windows;
 using TCad.ViewModel;
 using Plotter.Controller;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Scripting;
 
 public partial class ScriptEnvironment
 {
-    public PlotterController Controller;
+    public IPlotterController Controller;
 
     private ScriptEngine Engine;
 
@@ -63,7 +47,7 @@ public partial class ScriptEnvironment
 
     private readonly TestCommands mTestCommands;
 
-    public ScriptEnvironment(PlotterController controller)
+    public ScriptEnvironment(IPlotterController controller)
     {
         Log.plx("in");
 
@@ -137,12 +121,12 @@ public partial class ScriptEnvironment
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModelIF.OpenPopupMessage(text, type);
+        Controller.ViewModel.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModelIF.ClosePopupMessage();
+        Controller.ViewModel.ClosePopupMessage();
     }
 
     public async void ExecuteCommandAsync(string s)
@@ -171,9 +155,9 @@ public partial class ScriptEnvironment
             RunScript(s, false);
         });
 
-        Controller.Clear();
-        Controller.DrawAll();
-        Controller.UpdateView();
+        Controller.Drawer.Clear();
+        Controller.Drawer.DrawAll();
+        Controller.Drawer.UpdateView();
     }
 
     private Thread mScriptThread = null;
@@ -218,9 +202,9 @@ public partial class ScriptEnvironment
             mTraceBack = null;
         });
 
-        Controller.Clear();
-        Controller.DrawAll();
-        Controller.UpdateView();
+        Controller.Drawer.Clear();
+        Controller.Drawer.DrawAll();
+        Controller.Drawer.UpdateView();
         Controller.UpdateObjectTree(true);
 
         if (callback != null)

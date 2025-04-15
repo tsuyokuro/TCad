@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:TCad"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="428.107"
-    Height="236.757"
+    Height="267"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
@@ -24,6 +24,7 @@
     <Grid Background="#ff424247">
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="30" />
             <RowDefinition Height="80" />
         </Grid.RowDefinitions>
@@ -48,19 +49,41 @@
                 Foreground="{StaticResource SplashAppTitleColor}"
                 />
         </Grid>
-        
+
+        <Rectangle Grid.Row="1" Width="30" Height="30" Stroke="AliceBlue" StrokeThickness="2">
+            <Rectangle.RenderTransform>
+                <RotateTransform CenterX="15" CenterY="15" Angle="20"/>
+            </Rectangle.RenderTransform>
+
+            <Rectangle.Triggers>
+                <EventTrigger  RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)"
+                                        To="360" Duration="0:0:3"
+                                        RepeatBehavior="Forever">
+                                <DoubleAnimation.EasingFunction>
+                                    <PowerEase Power="5" EasingMode="EaseInOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+
         <Label
-            Grid.Row="1"
+            Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Content="Version 0.8"
             FontSize="14"
             Foreground="PaleGreen" />
         <Label
-            Grid.Row="2"
+            Grid.Row="3"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Content="Copyright 2022 Tsuyoshi Kuroki All Rights Reserved."
+            Content="Copyright 2025 Tsuyoshi Kuroki All Rights Reserved."
             FontSize="12"
             Foreground="DarkGray" />
     </Grid>

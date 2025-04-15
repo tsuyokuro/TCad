@@ -1,28 +1,6 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
-using Plotter.Serializer.v1003;
-using Plotter.Serializer;
-
-
-
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -169,9 +147,9 @@ public partial class CadFigurePolyLines : CadFigure
 
         if (SettingsHolder.Settings.DrawNormal && mPointList.Count > 2)
         {
-            vcompo_t len = dc.DevSizeToWoldSize(DrawingConst.NormalLen);
-            vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawingConst.NormalArrowLen);
-            vcompo_t arrowW = dc.DevSizeToWoldSize(DrawingConst.NormalArrowWidth);
+            vcompo_t len = dc.DevSizeToWoldSize(DrawSizes.NormalLen);
+            vcompo_t arrowLen = dc.DevSizeToWoldSize(DrawSizes.NormalArrowLen);
+            vcompo_t arrowW = dc.DevSizeToWoldSize(DrawSizes.NormalArrowWidth);
 
             vector3_t normal = CadMath.Normal(PointList[0].vector, PointList[1].vector, PointList[2].vector);
 

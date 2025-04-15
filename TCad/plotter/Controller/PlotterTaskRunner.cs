@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using CadDataTypes;
 using HalfEdgeNS;
 using MeshUtilNS;
@@ -10,28 +9,13 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.ViewModel;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Controller.TaskRunner;
 
 public class PlotterTaskRunner
 {
-    public PlotterController Controller;
+    public IPlotterController Controller;
 
-    public PlotterTaskRunner(PlotterController controller)
+    public PlotterTaskRunner(IPlotterController controller)
     {
         Controller = controller;
     }
@@ -40,18 +24,18 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            Controller.StartEdit();
+            Controller.EditManager.StartEdit();
             var res = InputLine("Input flip axis");
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
             if ((res.p1 - res.p0).IsZero())
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Same point");
                 return;
             }
@@ -63,8 +47,8 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.EndEdit();
-                Controller.Redraw();
+                Controller.EditManager.EndEdit();
+                Controller.Drawer.Redraw();
             });
         });
     }
@@ -135,7 +119,7 @@ public class PlotterTaskRunner
 
         RunOnMainThread(() =>
         {
-            Controller.Redraw();
+            Controller.Drawer.Redraw();
             Controller.UpdateObjectTree(remakeTree : true);
         });
     }
@@ -148,13 +132,13 @@ public class PlotterTaskRunner
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
             if ((res.p1 - res.p0).IsZero())
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Same point");
                 return;
             }
@@ -163,7 +147,7 @@ public class PlotterTaskRunner
             
             if (mesh == null)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 ItConsole.println("Error: Target is not mesh");
                 return;
             }
@@ -175,8 +159,8 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.ClearSelection();
-                Controller.Redraw();
+                Controller.Input.ClearSelection();
+                Controller.Drawer.Redraw();
             });
         });
     }
@@ -223,12 +207,12 @@ public class PlotterTaskRunner
     {
         await Task.Run(() =>
         {
-            Controller.StartEdit();
+            Controller.EditManager.StartEdit();
             var res = InputPoint();
 
             if (res.state != InteractCtrl.States.END)
             {
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
@@ -255,7 +239,7 @@ public class PlotterTaskRunner
             {
                 ItConsole.println("Cancel!");
 
-                Controller.AbendEdit();
+                Controller.EditManager.AbendEdit();
                 return;
             }
 
@@ -265,11 +249,11 @@ public class PlotterTaskRunner
                 Controller.DC.ViewDir,
                 CadMath.Deg2Rad(angle));
 
-            Controller.EndEdit();
+            Controller.EditManager.EndEdit();
 
             RunOnMainThread(() =>
             {
-                Controller.Redraw();
+                Controller.Drawer.Redraw();
                 Controller.UpdateObjectTree(remakeTree : false);
             });
         });
@@ -288,7 +272,7 @@ public class PlotterTaskRunner
 
     public (vector3_t p0, InteractCtrl.States state) InputPoint()
     {
-        InteractCtrl ctrl = Controller.InteractCtrl;
+        InteractCtrl ctrl = Controller.Input.InteractCtrl;
 
         ctrl.Start();
 
@@ -320,7 +304,7 @@ public class PlotterTaskRunner
 
     public (vector3_t p0, vector3_t p1, InteractCtrl.States state) InputLine(string message)
     {
-        InteractCtrl ctrl = Controller.InteractCtrl;
+        InteractCtrl ctrl = Controller.Input.InteractCtrl;
 
         ctrl.Start();
 
@@ -371,16 +355,16 @@ public class PlotterTaskRunner
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModelIF.OpenPopupMessage(text, type);
+        Controller.ViewModel.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModelIF.ClosePopupMessage();
+        Controller.ViewModel.ClosePopupMessage();
     }
 
     private void RunOnMainThread(Action action)
     {
-        ThreadUtil.RunOnMainThread(action, true);
+        ThreadUtil.RunOnMainThread(action: action, wait: true);
     }
 }

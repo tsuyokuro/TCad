@@ -1,6 +1,5 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using MessagePack;
-using Plotter.Serializer.v1003;
+using Plotter.Serializer;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,23 +11,6 @@ using JNode = System.Text.Json.Nodes.JsonNode;
 using System;
 using System.Xml;
 using System.Runtime.Serialization.Json;
-
-
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter.Serializer;
 
@@ -86,12 +68,6 @@ public enum SerializeType
 
 public class SerializeContext
 {
-    public static SerializeContext MpBin =
-        new SerializeContext(MpCadFile.CurrentVersion,SerializeType.MP_BIN);
-
-    public static SerializeContext Json =
-        new SerializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
-
     public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
 
     public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
@@ -105,12 +81,6 @@ public class SerializeContext
 
 public class DeserializeContext
 {
-    public static DeserializeContext MpBin =
-        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
-
-    public static DeserializeContext Json =
-        new DeserializeContext(MpCadFile.CurrentVersion, SerializeType.JSON);
-
     public VersionCode Version { get; set; } = MpCadFile.CurrentVersion;
     public SerializeType SerializeType { get; set; } = SerializeType.MP_BIN;
 
@@ -123,7 +93,7 @@ public class DeserializeContext
 
 public class MpCadFile
 {
-    public static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 3);
+    public static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 4);
 
     private static byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
     private static byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
@@ -139,7 +109,7 @@ public class MpCadFile
 
         byte[] sign = new byte[Sign.Length];
 
-        fs.Read(sign, 0, Sign.Length);
+        fs.ReadExactly(sign, 0, Sign.Length);
 
         if (!Sign.SequenceEqual<byte>(sign) && !SignOld.SequenceEqual<byte>(sign))
         {
@@ -149,22 +119,30 @@ public class MpCadFile
 
         byte[] version = new byte[VersionCode.CodeLength];
 
-        fs.Read(version, 0, VersionCode.CodeLength);
+        fs.ReadExactly(version, 0, VersionCode.CodeLength);
 
         byte[] data = new byte[fs.Length - Sign.Length - VersionCode.CodeLength];
 
-        fs.Read(data, 0, data.Length);
+        fs.ReadExactly(data);
 
         fs.Close();
 
         Log.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
+
+        VersionCode fileVersion = new VersionCode(version);
+        DeserializeContext dc = new DeserializeContext(fileVersion, SerializeType.MP_BIN);
 
         try
         {
             if (VersionCode_v1003.Version.Equals(version))
             {
                 MpCadData_v1003 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1003>(data);
-                return mpdata.Restore(DeserializeContext.MpBin);
+                return mpdata.Restore(dc);
+            }
+            else if (VersionCode_v1004.Version.Equals(version))
+            {
+                MpCadData_v1004 mpdata = MessagePackSerializer.Deserialize<MpCadData_v1004>(data);
+                return mpdata.Restore(dc);
             }
         }
         catch
@@ -186,7 +164,7 @@ public class MpCadFile
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
         byte[] data = new byte[fs.Length];
-        fs.Read(data, 0, data.Length);
+        fs.ReadExactly(data);
         fs.Close();
 
 
@@ -215,12 +193,20 @@ public class MpCadFile
 
         byte[] bin = MessagePackSerializer.ConvertFromJson(body);
 
+        VersionCode fileVersion = new VersionCode(version);
+        DeserializeContext dc = new DeserializeContext(fileVersion, SerializeType.JSON);
+
         try
         {
             if (version == VersionCode_v1003.Version.Str)
             {
                 MpCadData_v1003 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1003>(bin);
-                return mpcd.Restore(DeserializeContext.Json);
+                return mpcd.Restore(dc);
+            }
+            else if (version == VersionCode_v1004.Version.Str)
+            {
+                MpCadData_v1004 mpcd = MessagePackSerializer.Deserialize<MpCadData_v1004>(bin);
+                return mpcd.Restore(dc);
             }
         }
         catch
@@ -284,7 +270,10 @@ public class MpCadFile
 
     public static void Save(string fname, CadData cd)
     {
-        var mpcd = MpCadData_v1003.Create(SerializeContext.MpBin, cd);
+        SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.MP_BIN);
+
+        var mpcd = new MpCadData_v1004();
+        mpcd.Store(sc, cd);
 
         mpcd.MpDB.GarbageCollect();
 
@@ -308,8 +297,10 @@ public class MpCadFile
         header.Add("version", MpCadFile.CurrentVersion.Str);
         root.Add("header", header);
 
+        SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.JSON);
 
-        var data = MpCadData_v1003.Create(SerializeContext.Json, cd);
+        var data = new MpCadData_v1004();
+        data.Store(sc, cd);
 
         string dbJs = MessagePackSerializer.SerializeToJson(data);
 

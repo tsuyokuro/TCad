@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using SharpFont;
@@ -8,24 +7,11 @@ using System.IO;
 using System.Windows;
 using System.Windows.Resources;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace GLFont;
 
-public class FontFaceW
+// フォントファイルの中にはnormalとboldのように複数種のFaceが含まれている
+// このクラスはその中の一つのFaceを扱う
+public partial class FontFaceW
 {
     private Library mLib;
 
@@ -37,31 +23,46 @@ public class FontFaceW
 
     private Dictionary<char, FontPoly> PolyCache = new();
 
+    private const float DefaultSize = 8.25f;
+
+    public static FontFaceW FromResource(string uri, float size = DefaultSize, int faceIndex = 0)
+    {
+        FontFaceW face = new FontFaceW();
+        face.SetResourceFont(uri, size, faceIndex);
+
+        return face;
+    }
+
+    public static FontFaceW FromFile(string fname, float size = DefaultSize, int faceIndex = 0)
+    {
+        FontFaceW face = new FontFaceW();
+        face.SetFileFont(fname, size, faceIndex);
+
+        return face;
+    }
+
+
     private FontFaceW()
     {
         mLib = new Library();
         Size = 8.25f;
     }
 
-    private void SetFont(string filename, int face_index = 0)
+    private void SetFileFont(string filename, float size, int face_index)
     {
         FontFace = new Face(mLib, filename, face_index);
-        SetSize(this.Size);
 
-        TextureCache.Clear();
-    }
+        FontFace.SetCharSize(0, size, 0, 96);
 
-    private void SetFont(byte[] data, int face_index = 0)
-    {
-        FontFace = new Face(mLib, data, face_index);
-        SetSize(this.Size);
+        Size = size;
 
         TextureCache.Clear();
     }
 
     // url e.g. "/Fonts/mplus-1m-thin.ttf"
-    private void SetResourceFont(string url, int face_index = 0)
+    private void SetResourceFont(string url, float size, int face_index)
     {
+        // Resource 読み込み
         Uri fileUri = new Uri(url, UriKind.Relative);
         StreamResourceInfo info = Application.GetResourceStream(fileUri);
         Stream stream = info.Stream;
@@ -72,16 +73,14 @@ public class FontFaceW
 
         int read = stream.Read(data, 0, (int)len);
 
-        SetFont(data, face_index);
-    }
+        stream.Close();
 
-    private void SetSize(float size)
-    {
+        // FontFace の作成
+        FontFace = new Face(mLib, data, face_index);
+
+        FontFace.SetCharSize(0, size, 0, 96);
+
         Size = size;
-        if (FontFace != null)
-        {
-            FontFace.SetCharSize(0, size, 0, 96);
-        }
 
         TextureCache.Clear();
     }
@@ -234,60 +233,5 @@ public class FontFaceW
             fontTex.W, fontTex.H, 0,
             PixelFormat.Alpha,
             PixelType.UnsignedByte, fontTex.Data);
-    }
-
-
-    public class Provider
-    {
-        private static Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
-
-        public static FontFaceW GetFromFile(string fname, float size, int faceIndex)
-        {
-            string key = GetKey(fname, size, faceIndex);
-
-            FontFaceW face;
-
-            if (FaceMap.TryGetValue(key, out face)) {
-                return face;
-            }
-
-            face = new FontFaceW();
-            face.SetFont(fname, faceIndex);
-            face.SetSize(size);
-
-            FaceMap.Add(key, face);
-
-            return face;
-        }
-
-        public static FontFaceW GetFromResource(string uri, float size, int faceIndex)
-        {
-            string key = GetKey(uri, size, faceIndex);
-
-            FontFaceW face;
-
-            if (FaceMap.TryGetValue(key, out face))
-            {
-                return face;
-            }
-
-            face = new FontFaceW();
-            face.SetResourceFont(uri, faceIndex);
-            face.SetSize(size);
-
-            FaceMap.Add(key, face);
-
-            return face;
-        }
-
-        public static void Dispose()
-        {
-            FaceMap.Clear();
-        }
-
-        private static string GetKey(string name, float size, int faceIndex)
-        {
-            return name + "_" + size.ToString() + "_" + faceIndex.ToString();
-        }
     }
 }

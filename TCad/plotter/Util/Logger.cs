@@ -1,23 +1,94 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using System;
 using System.Threading;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
+using TCad;
+using TCad.Util;
 
 namespace Plotter;
+
+
+public interface ILogWriter
+{
+    void Start();
+    void Stop();
+
+    void Print(string s);
+    void PrintLn(string s);
+}
+
+
+public class LogConsole : ILogWriter
+{
+    public void Start() {
+
+        WinAPI.AllocConsole();
+    }
+
+    public void Stop() {
+        WinAPI.FreeConsole();
+    }
+
+
+    public void Print(string s)
+    {
+        Console.Write(s);
+    }
+    public void PrintLn(string s)
+    {
+        Console.WriteLine(s);
+    }
+}
+
+public class LogDebugServer : ILogWriter
+{
+    DebugServer DServer;
+
+    public void Start() {
+        if (DServer != null)
+        {
+            DServer.Start();
+        }
+    }
+    public void Stop() {
+        if (DServer != null)
+        {
+            DServer.Stop();
+        }
+    }
+
+
+    public LogDebugServer()
+    {
+        DServer = new DebugServer();
+    }
+
+    public void Print(string s)
+    {
+        DServer.Print(s);
+    }
+    public void PrintLn(string s)
+    {
+        DServer.PrintLn(s);
+    }
+}
+
+
+public class LogVisualStudioDebug : ILogWriter
+{
+    public void Start() { }
+    public void Stop() { }
+
+
+    public void Print(string s)
+    {
+        System.Diagnostics.Debug.Write(s);
+    }
+
+    public void PrintLn(string s)
+    {
+        System.Diagnostics.Debug.WriteLine(s);
+    }
+}
+
 
 public static class Log
 {
@@ -28,10 +99,43 @@ public static class Log
 
     public static string space = "";
 
-    public static Action<string> Print = (s)=> { };
-    public static Action<string> PrintLn = (s)=> { };
+    private static ILogWriter LogOutput_;
+    public static ILogWriter LogOutput
+    {
+        get => LogOutput_;
+        set
+        {
+            if (LogOutput_ != null)
+            {
+                LogOutput_.Stop();
+            }
+
+            LogOutput_ = value;
+
+
+            Print = LogOutput_.Print;
+            PrintLn = LogOutput_.PrintLn;
+            LogOutput_.Start();
+        }
+    }
+
+
+    public static Action<string> Print = (s) => { /* NOP */ };
+    public static Action<string> PrintLn = (s) => { /* NOP */ };
 
     public static Mutex Lock = new Mutex();
+
+
+    public static void Start()
+    {
+        LogOutput!.Start();
+    }
+
+    public static void Stop()
+    {
+        LogOutput?.Stop();
+    }
+
 
     public static int Indent
     {

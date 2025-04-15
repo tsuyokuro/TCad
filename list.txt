@@ -151,7 +151,7 @@ TCad/plotter/Serializer/VersionCode.cs
 TCad/plotter/Serializer/v1002/CadMessagePack_v1002.cs
 TCad/plotter/Serializer/v1002/MpUtil_v1002.cs
 TCad/plotter/Serializer/v1003/CadMessagePack_v1003.cs
-TCad/plotter/Serializer/v1003/MpUtil_v1003.cs
+TCad/plotter/Serializer/MpUtil.cs
 TCad/plotter/Util/BitmapUtil.cs
 TCad/plotter/Util/CadConst.cs
 TCad/plotter/Util/CadDxfLoader.cs

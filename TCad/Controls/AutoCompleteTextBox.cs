@@ -72,7 +72,7 @@ public class CandidatePopup : Popup
 }
 
 
-public class AutoCompleteTextBox : TextBox
+public class AutoCompleteTextBox : TextBox, IAutoCompleteTextBox
 {
     static AutoCompleteTextBox()
     {
@@ -376,8 +376,8 @@ public class AutoCompleteTextBox : TextBox
         string targetWord = null;
 
         MatchCollection mc = WordPattern.Matches(currentText);
-        
-        foreach(Match m in mc)
+
+        foreach (Match m in mc)
         {
             if (cpos >= m.Index && cpos <= m.Index + m.Length)
             {

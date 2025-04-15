@@ -1,24 +1,8 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace TCad.ViewModel;
 
@@ -31,7 +15,7 @@ public class LayerListViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
     }
 
-    public ObservableCollection<LayerHolder> LayerList_ = new ObservableCollection<LayerHolder>();
+    public ObservableCollection<LayerHolder> LayerList_ = [];
     public ObservableCollection<LayerHolder> LayerList
     {
         get
@@ -49,7 +33,7 @@ public class LayerListViewModel : INotifyPropertyChanged
     {
         get
         {
-            int idx = GetLayerListIndex(mContext.Controller.CurrentLayer.ID);
+            int idx = GetLayerListIndex(Controller.CurrentLayer.ID);
             if (idx < 0)
             {
                 return null;
@@ -59,34 +43,34 @@ public class LayerListViewModel : INotifyPropertyChanged
 
         set
         {
-            LayerHolder lh = value;
-            if (lh == null)
+            LayerHolder layerHolder = value;
+            if (layerHolder == null)
             {
                 return;
             }
 
-            if (mContext.Controller.CurrentLayer.ID != lh.ID)
+            if (Controller.CurrentLayer.ID != layerHolder.ID)
             {
-                mContext.Controller.SetCurrentLayer(lh.ID);
+                Controller.SetCurrentLayer(layerHolder.ID);
 
-                mContext.Redraw();
+                Controller.Drawer.Redraw();
             }
 
             NotifyPropertyChanged("SelectedItem");
         }
     }
 
-    private IPlotterViewModel mContext;
+    protected IPlotterController Controller;
 
-    public LayerListViewModel(IPlotterViewModel context)
+    public LayerListViewModel(IPlotterController controller)
     {
-        mContext = context;
+        Controller = controller;
     }
 
     public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         LayerHolder lh = (LayerHolder)sender;
-        mContext.Redraw();
+        Controller.Drawer.Redraw();
     }
 
     public void LayerListChanged(LayerListInfo layerListInfo)

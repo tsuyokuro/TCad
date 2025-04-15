@@ -1,5 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
-using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using Plotter.Scripting;
 using Plotter.Settings;
@@ -8,34 +6,21 @@ using System.Drawing;
 using System.Drawing.Printing;
 using TCad.ViewModel;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace Plotter.Controller;
 
-public partial class PlotterController
+public class PlotterController : IPlotterController
 {
-    private CadObjectDB mDB = new CadObjectDB();
-    public CadObjectDB DB => mDB;
+    public CadObjectDB DB
+    {
+        get;
+        private set;
+    } = new CadObjectDB();
 
-    private PaperPageSize mPageSize = new PaperPageSize(PaperKind.A4, false);
     public PaperPageSize PageSize
     {
-        get => mPageSize;
-        set => mPageSize = value;
-    }
+        get;
+        set;
+    } = new PaperPageSize(PaperKind.A4, false);
 
     public SelectModes SelectMode
     {
@@ -45,73 +30,79 @@ public partial class PlotterController
 
     public CadLayer CurrentLayer
     {
-        get => mDB.CurrentLayer;
-
+        get => DB.CurrentLayer;
         set
         {
-            mDB.CurrentLayer = value;
+            DB.CurrentLayer = value;
             UpdateObjectTree(true);
         }
     }
 
-
-    CadFigure.Types mCreatingFigType = CadFigure.Types.NONE;
-
     public CadFigure.Types CreatingFigType
     {
-        set => mCreatingFigType = value;
-        get => mCreatingFigType;
-    }
+        get;
+        set;
+    } = CadFigure.Types.NONE;
 
-    private MeasureModes mMeasureMode = MeasureModes.NONE;
     public MeasureModes MeasureMode
     {
-        get => mMeasureMode;
-        set => mMeasureMode = value;
-    }
+        get;
+        set;
+    } = MeasureModes.NONE;
 
-    private FigCreator mFigureCreator = null;
     public FigCreator FigureCreator
     {
-        get => mFigureCreator;
-        set => mFigureCreator = value;
-    }
+        get;
+        set;
+    } = null;
 
-    public FigCreator MeasureFigureCreator = null;
-
-
-    public HistoryManager HistoryMan = null;
-
-    private List<CadFigure> EditFigList = new List<CadFigure>();
-
-    public bool ContinueCreate { set; get; } = true;
-
-    private IPlotterViewModel mPlotterVM = IPlotterViewModel.Dummy;
-    public IPlotterViewModel ViewModelIF
+    public FigCreator MeasureFigureCreator
     {
-        get => mPlotterVM;
-        private set => mPlotterVM = value;
+        get;
+        set;
+    } = null;
+
+    public HistoryManager HistoryMan
+    {
+        get;
+        private set;
+    } = null;
+
+
+    public IPlotterViewModel ViewModel
+    {
+        get;
+        private set;
     }
 
-    public List<CadFigure> TempFigureList = new List<CadFigure>();
+    public List<CadFigure> TempFigureList
+    {
+        get;
+        private set;
+    } = new List<CadFigure>();
 
-    private DrawContext mDC;
     public DrawContext DC
     {
-        set => mDC = value; 
-        get => mDC;
+        get;
+        set;
     }
 
-    public ScriptEnvironment ScriptEnv;
+    public ScriptEnvironment ScriptEnv
+    {
+        get;
+        private set;
+    }
 
-    public PlotterTaskRunner mPlotterTaskRunner;
+    public PlotterTaskRunner PlotterTaskRunner
+    {
+        get;
+        set;
+    }
 
-    private Vector3List ExtendSnapPointList = new Vector3List(20);
-
-    private ContextMenuManager mContextMenuMan;
     public ContextMenuManager ContextMenuMan
     {
-        get => mContextMenuMan;
+        get;
+        private set;
     }
 
     public string CurrentFileName
@@ -120,24 +111,52 @@ public partial class PlotterController
         set;
     } = null;
 
-    private ControllerStateMachine StateMachine;
+    public ControllerStateMachine StateMachine
+    {
+        get;
+        private set;
+    }
 
-    public ControllerStates State
+    public ControllerStates StateID
     {
         get => StateMachine.CurrentStateID;
     }
 
-    private ControllerState CurrentState
+    public ControllerState CurrentState
     {
         get => StateMachine.CurrentState;
     }
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="vm"> Interface of Plotter ViewModel</param>
-    /// <exception cref="System.ArgumentNullException"></exception>
-    /// 
+    public PlotterInput Input
+    {
+        get;
+        private set;
+    }
+
+    public PlotterDrawer Drawer
+    {
+        get;
+        private set;
+    }
+
+    public PlotterCommandProcessor CommandProc
+    {
+        get;
+        private set;
+    }
+
+    public PlotterEditManager EditManager
+    {
+        get;
+        private set;
+    }
+
+    public PlotterEditor Editor
+    {
+        get;
+        private set;
+    }
+
     public PlotterController(IPlotterViewModel vm)
     {
         Log.plx("in");
@@ -147,26 +166,33 @@ public partial class PlotterController
             throw new System.ArgumentNullException(nameof(vm));
         }
 
-        ViewModelIF = vm;
+        ViewModel = vm;
+
+        Drawer = new PlotterDrawer(this);
+
+        Input = new PlotterInput(this);
+
+        CommandProc = new PlotterCommandProcessor(this);
+
+        EditManager = new PlotterEditManager(this);
+
+        Editor = new PlotterEditor(this);
 
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);
 
-        CadLayer layer = mDB.NewLayer();
-        mDB.LayerList.Add(layer);
+        CadLayer layer = DB.NewLayer();
+        DB.LayerList.Add(layer);
         CurrentLayer = layer;
 
         HistoryMan = new HistoryManager(this);
 
         ScriptEnv = new ScriptEnvironment(this);
 
-        mContextMenuMan = new ContextMenuManager(this);
+        ContextMenuMan = new ContextMenuManager(this);
 
-        mPlotterTaskRunner = new PlotterTaskRunner(this);
+        PlotterTaskRunner = new PlotterTaskRunner(this);
 
-        ObjDownPoint = VectorExt.InvalidVector3;
-
-        InitHid();
 
         Log.plx("out");
     }
@@ -179,31 +205,30 @@ public partial class PlotterController
     #region ObjectTree handling
     public void UpdateObjectTree(bool remakeTree)
     {
-        ViewModelIF.UpdateTreeView(remakeTree);
+        ViewModel.UpdateTreeView(remakeTree);
     }
 
     public void SetObjectTreePos(int index)
     {
-        ViewModelIF.SetTreeViewPos(index);
+        ViewModel.SetTreeViewPos(index);
     }
 
     public int FindObjectTreeItem(uint id)
     {
-        return ViewModelIF.FindTreeViewItemIndex(id);
+        return ViewModel.FindTreeViewItemIndex(id);
     }
     #endregion ObjectTree handling
 
 
-    #region Notify
     public void UpdateLayerList()
     {
-        ViewModelIF.LayerListChanged(GetLayerListInfo());
+        ViewModel.LayerListChanged(GetLayerListInfo());
     }
 
     private LayerListInfo GetLayerListInfo()
     {
         LayerListInfo layerInfo = default(LayerListInfo);
-        layerInfo.LayerList = mDB.LayerList;
+        layerInfo.LayerList = DB.LayerList;
         layerInfo.CurrentID = CurrentLayer.ID;
 
         return layerInfo;
@@ -211,23 +236,21 @@ public partial class PlotterController
 
     public void NotifyStateChange(StateChangedParam param)
     {
-        ViewModelIF.StateChanged(param);
+        ViewModel.StateChanged(param);
     }
-    #endregion Notify
 
-    #region Start and End creating figure
     public void StartCreateFigure(CadFigure.Types type)
     {
-        ChangeState(ControllerStates.CREATING);
+        ChangeState(ControllerStates.CREATE_FIGURE);
         CreatingFigType = type;
     }
 
     public void EndCreateFigure()
     {
-        if (mFigureCreator != null)
+        if (FigureCreator != null)
         {
-            mFigureCreator.EndCreate(DC);
-            mFigureCreator = null;
+            FigureCreator.EndCreate(DC);
+            FigureCreator = null;
         }
 
         NextState();
@@ -250,17 +273,17 @@ public partial class PlotterController
 
     public void NextState()
     {
-        if (State == ControllerStates.CREATING)
+        if (StateID == ControllerStates.CREATE_FIGURE)
         {
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
-                mFigureCreator = null;
+                FigureCreator = null;
                 StartCreateFigure(CreatingFigType);
                 UpdateObjectTree(true);
             }
             else
             {
-                mFigureCreator = null;
+                FigureCreator = null;
                 CreatingFigType = CadFigure.Types.NONE;
                 ChangeState(ControllerStates.SELECT);
 
@@ -274,7 +297,7 @@ public partial class PlotterController
     public void StartMeasure(MeasureModes mode)
     {
         ChangeState(ControllerStates.MEASURING);
-        mMeasureMode = mode;
+        MeasureMode = mode;
         MeasureFigureCreator =
             FigCreator.Get(
                 CadFigure.Types.POLY_LINES,
@@ -285,15 +308,13 @@ public partial class PlotterController
     public void EndMeasure()
     {
         ChangeState(ControllerStates.SELECT);
-        mMeasureMode = MeasureModes.NONE;
+        MeasureMode = MeasureModes.NONE;
         MeasureFigureCreator = null;
     }
-    #endregion Start and End creating figure
 
-    #region UnDo ReDo
     public void Undo()
     {
-        ClearSelection();
+        Input.ClearSelection();
         HistoryMan.undo();
         UpdateObjectTree(true);
         UpdateLayerList();
@@ -301,19 +322,17 @@ public partial class PlotterController
 
     public void Redo()
     {
-        ClearSelection();
+        Input.ClearSelection();
         HistoryMan.redo();
         UpdateObjectTree(true);
         UpdateLayerList();
     }
-    #endregion UnDo ReDo
 
-    #region Getting selection
     public bool HasSelect()
     {
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
-            foreach (CadFigure fig in layer.FigureList )
+            foreach (CadFigure fig in layer.FigureList)
             {
                 if (fig.HasSelectedPointInclueChild())
                 {
@@ -329,7 +348,7 @@ public partial class PlotterController
     {
         List<CadFigure> figList = new List<CadFigure>();
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             layer.ForEachFig(fig =>
             {
@@ -347,7 +366,7 @@ public partial class PlotterController
     {
         List<CadFigure> figList = new List<CadFigure>();
 
-        foreach (CadLayer layer in mDB.LayerList)
+        foreach (CadLayer layer in DB.LayerList)
         {
             layer.ForEachRootFig(fig =>
             {
@@ -360,11 +379,10 @@ public partial class PlotterController
 
         return figList;
     }
-    #endregion Getting selection
 
     public void SetDB(CadObjectDB db, bool clearHistory)
     {
-        mDB = db;
+        DB = db;
 
         if (clearHistory)
         {
@@ -374,8 +392,6 @@ public partial class PlotterController
         UpdateLayerList();
 
         UpdateObjectTree(true);
-
-        //Redraw();
     }
 
     public void SetDB(CadObjectDB db)
@@ -385,7 +401,7 @@ public partial class PlotterController
 
     public void SetCurrentLayer(uint id)
     {
-        mDB.CurrentLayerID = id;
+        DB.CurrentLayerID = id;
         UpdateObjectTree(true);
     }
 
@@ -399,5 +415,26 @@ public partial class PlotterController
     {
         PlotterPrinter printer = new PlotterPrinter();
         printer.PrintPage(this, printerGraphics, pageSize, deviceSize);
+    }
+
+    public void ClearAll()
+    {
+        PageSize = new PaperPageSize();
+
+        DB.ClearAll();
+        HistoryMan.Clear();
+
+        UpdateLayerList();
+        UpdateObjectTree(true);
+    }
+
+    public void Redraw()
+    {
+        Drawer.Redraw();
+    }
+
+    public void RedrawOnUiThread()
+    {
+        ThreadUtil.RunOnMainThread(Drawer.Redraw, true);
     }
 }

@@ -1,37 +1,43 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using System.Collections.Generic;
 using CadDataTypes;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter.Controller;
 
 // Actions for DB
 
-public partial class PlotterController
+public class PlotterCommandProcessor
 {
+    IPlotterController Controller;
+
+    public CadObjectDB DB
+    {
+        get => Controller.DB;
+    }
+
+    public CadLayer CurrentLayer
+    {
+        get => Controller.CurrentLayer;
+        set => Controller.CurrentLayer = value;
+    }
+
+    public HistoryManager HistoryMan
+    {
+        get => Controller.HistoryMan;
+    }
+
+    DrawContext DC
+    {
+        get => Controller.DC;
+    }
+
+    public PlotterCommandProcessor(IPlotterController controller)
+    {
+        Controller = controller;
+    }
+
     public void ClearAll()
     {
-        PageSize = new PaperPageSize();
-
-        mDB.ClearAll();
-        HistoryMan.Clear();
-
-        UpdateLayerList();
-        UpdateObjectTree(true);
+        Controller.ClearAll();
     }
 
     #region Layer
@@ -50,7 +56,7 @@ public partial class PlotterController
             layerID = CurrentLayer.ID;
         }
 
-        CadLayer layer = mDB.GetLayer(layerID);
+        CadLayer layer = DB.GetLayer(layerID);
 
         if (layer == null) return;
 
@@ -61,58 +67,58 @@ public partial class PlotterController
 
     public void AddLayer(string name)
     {
-        CadLayer layer = mDB.NewLayer();
+        CadLayer layer = DB.NewLayer();
 
         layer.Name = name;
 
         CurrentLayer = layer;
 
-        mDB.LayerList.Add(layer);
+        DB.LayerList.Add(layer);
 
-        UpdateLayerList();
+        Controller.UpdateLayerList();
 
         ItConsole.println("Layer added.  Name:" + layer.Name + " ID:" + layer.ID);
     }
 
     public void RemoveLayer(uint id)
     {
-        if (mDB.LayerList.Count == 1)
+        if (DB.LayerList.Count == 1)
         {
             return;
         }
 
-        CadLayer layer = mDB.GetLayer(id);
+        CadLayer layer = DB.GetLayer(id);
 
         if (layer == null)
         {
             return;
         }
 
-        int index = mDB.LayerIndex(id);
+        int index = DB.LayerIndex(id);
 
         int nextCurrentIdx = -1;
 
         if (CurrentLayer.ID == id)
         {
-            nextCurrentIdx = mDB.LayerIndex(CurrentLayer.ID);
+            nextCurrentIdx = DB.LayerIndex(CurrentLayer.ID);
         }
 
         CadOpeRemoveLayer ope = new CadOpeRemoveLayer(layer, index);
         HistoryMan.foward(ope);
 
-        mDB.RemoveLayer(id);
+        DB.RemoveLayer(id);
 
         if (nextCurrentIdx >= 0)
         {
-            if (nextCurrentIdx > mDB.LayerList.Count - 1)
+            if (nextCurrentIdx > DB.LayerList.Count - 1)
             {
-                nextCurrentIdx = mDB.LayerList.Count - 1;
+                nextCurrentIdx = DB.LayerList.Count - 1;
             }
 
-            CurrentLayer = mDB.LayerList[nextCurrentIdx];
+            CurrentLayer = DB.LayerList[nextCurrentIdx];
         }
 
-        UpdateLayerList();
+        Controller.UpdateLayerList();
         ItConsole.println("Layer removed.  Name:" + layer.Name + " ID:" + layer.ID);
     }
     #endregion
@@ -138,30 +144,30 @@ public partial class PlotterController
 
     public void Remove()
     {
-        StartEdit();
+        Controller.EditManager.StartEdit();
 
-        RemoveSelectedPoints();
+        Controller.Editor.RemoveSelectedPoints();
 
-        EndEdit();
+        Controller.EditManager.EndEdit();
     }
 
     public void InsPoint()
     {
-        StartEdit();
-        if (InsPointToLastSelectedSeg())
+        Controller.EditManager.StartEdit();
+        if (Controller.Editor.InsPointToLastSelectedSeg())
         {
-            EndEdit();
+            Controller.EditManager.EndEdit();
         }
         else
         {
-            AbendEdit();
+            Controller.EditManager.AbendEdit();
         }
     }
 
     public void AddPointToCursorPos()
     {
         CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
-        fig.AddPoint((CadVertex)GetCursorPos());
+        fig.AddPoint((CadVertex)Controller.Input.GetCursorPos());
 
         fig.EndCreate(DC);
 
@@ -174,15 +180,15 @@ public partial class PlotterController
 
     public void Copy()
     {
-        PlotterClipboard.CopyFiguresAsBin(this);
+        PlotterClipboard.CopyFiguresAsBin(Controller);
     }
 
     public void Paste()
     {
-        ClearSelection();
+        Controller.Input.ClearSelection();
 
-        PlotterClipboard.PasteFiguresAsBin(this);
-        UpdateObjectTree(true);
+        PlotterClipboard.PasteFiguresAsBin(Controller);
+        Controller.UpdateObjectTree(true);
     }
 
     private struct ClusterInfo
@@ -315,7 +321,7 @@ public partial class PlotterController
 
         layer.FigureList = newFigList;
 
-        ViewModelIF.UpdateTreeView(true);
+        Controller.ViewModel.UpdateTreeView(true);
     }
 
     #endregion

@@ -1,23 +1,7 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using OpenTK.Mathematics;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
 
 namespace Plotter;
 
@@ -55,9 +39,7 @@ public class DrawingGDIBmp : DrawingGDI
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
-        Color c = DC.PenColor(DrawTools.PEN_GRID);
-
-        int argb = c.ToArgb();
+        int argb = DC.Tools.Pen(DrawTools.PEN_GRID).Argb;
 
         vcompo_t n = grid.Decimate(DC, grid, 8);
 

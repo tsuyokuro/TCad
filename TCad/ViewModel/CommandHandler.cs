@@ -1,4 +1,3 @@
-//#define DEFAULT_DATA_TYPE_DOUBLE
 using Plotter;
 using Plotter.Controller;
 using Plotter.Serializer;
@@ -18,48 +17,26 @@ using TCad.Controls;
 using TCad.Dialogs;
 using TCad.ScriptEditor;
 
-
-
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-
-
 namespace TCad.ViewModel;
 
 public class CommandHandler
 {
-    public class KeyAction
+    public class KeyAction(Action down, Action up, string description = null)
     {
-        public Action Down;
-        public Action Up;
-        public string Description;
-
-        public KeyAction(Action down, Action up, string description = null)
-        {
-            Down = down;
-            Up = up;
-            Description = description;
-        }
+        public Action Down = down;
+        public Action Up = up;
+        public string Description = description;
     }
 
-    PlotterController Controller;
-    IPlotterViewModel ViewModel;
+    readonly IPlotterController Controller;
+    readonly IPlotterViewModel ViewModel;
 
     private Dictionary<string, Action> CommandMap;
     private Dictionary<string, KeyAction> KeyMap;
 
     private Window mEditorWindow;
 
-    private MoveKeyHandler mMoveKeyHandler;
+    private readonly MoveKeyHandler mMoveKeyHandler;
 
     public CommandHandler(IPlotterViewModel vm)
     {
@@ -157,8 +134,7 @@ public class CommandHandler
 
     public void ExecCommand(string cmd)
     {
-        Action action;
-        if (CommandMap.TryGetValue(cmd, out action))
+        if (CommandMap.TryGetValue(cmd, out Action action))
         {
             action.Invoke();
         }
@@ -170,8 +146,7 @@ public class CommandHandler
 
     public bool ExecShortcutKey(string keyCmd, bool down)
     {
-        KeyAction ka;
-        if (KeyMap.TryGetValue(keyCmd, out ka))
+        if (KeyMap.TryGetValue(keyCmd, out KeyAction ka))
         {
             if (down)
             {
@@ -198,7 +173,7 @@ public class CommandHandler
         return ExecShortcutKey(ks, false);
     }
 
-    private string GetModifyerKeysString()
+    private static string GetModifyerKeysString()
     {
         ModifierKeys modifierKeys = Keyboard.Modifiers;
 
@@ -222,7 +197,7 @@ public class CommandHandler
         return s;
     }
 
-    private string KeyString(KeyEventArgs e)
+    private static string KeyString(KeyEventArgs e)
     {
         string ks = GetModifyerKeysString();
 
@@ -231,7 +206,7 @@ public class CommandHandler
         return ks;
     }
 
-    private string GetDisplayKeyString(string s)
+    private static string GetDisplayKeyString(string s)
     {
         string[] ss = s.Split('+');
 
@@ -252,7 +227,7 @@ public class CommandHandler
 
     public List<string> HelpOfKey(string keyword)
     {
-        List<string> ret = new();
+        List<string> ret = [];
 
         if (keyword == null)
         {
@@ -303,94 +278,94 @@ public class CommandHandler
 
     public void Remove()
     {
-        Controller.Remove();
+        Controller.CommandProc.Remove();
         Redraw();
     }
 
     public void SeparateFigure()
     {
-        Controller.SeparateFigures();
+        Controller.Editor.SeparateFigures();
         Redraw();
     }
 
     public void BondFigure()
     {
-        Controller.BondFigures();
+        Controller.Editor.BondFigures();
         Redraw();
     }
 
     public void ToBezier()
     {
-        Controller.ToBezier();
+        Controller.Editor.ToBezier();
         Redraw();
     }
 
     public void CutSegment()
     {
-        Controller.CutSegment();
+        Controller.Editor.CutSegment();
         Redraw();
     }
 
     public void InsPoint()
     {
-        Controller.InsPoint();
+        Controller.CommandProc.InsPoint();
         Redraw();
     }
 
     public void AddPoint()
     {
-        Controller.AddPointToCursorPos();
+        Controller.CommandProc.AddPointToCursorPos();
         Redraw();
     }
 
     public void ToLoop()
     {
-        Controller.SetLoop(true);
+        Controller.Editor.SetLoop(true);
         Redraw();
     }
 
     public void ToUnloop()
     {
-        Controller.SetLoop(false);
+        Controller.Editor.SetLoop(false);
         Redraw();
     }
 
     public void FlipWithVector()
     {
-        Controller.FlipWithVector();
+        Controller.Editor.FlipWithVector();
     }
 
     public void FlipAndCopyWithVector()
     {
-        Controller.FlipAndCopyWithVector();
+        Controller.Editor.FlipAndCopyWithVector();
     }
 
     public void CutMeshWithVector()
     {
-        Controller.CutMeshWithVector();
+        Controller.Editor.CutMeshWithVector();
     }
 
     public void RotateWithPoint()
     {
-        Controller.RotateWithPoint();
+        Controller.Editor.RotateWithPoint();
     }
 
 
     public void ClearLayer()
     {
-        Controller.ClearLayer(0);
+        Controller.CommandProc.ClearLayer(0);
         Redraw();
     }
 
     public void Copy()
     {
-        Controller.Copy();
+        Controller.CommandProc.Copy();
         Redraw();
     }
 
     public void Paste()
     {
-        Controller.Paste();
+        Controller.CommandProc.Paste();
         Redraw();
     }
 
@@ -400,11 +375,11 @@ public class CommandHandler
 
         ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
 
-        Controller.ClearAll();
+        Controller.CommandProc.ClearAll();
         Redraw();
     }
 
-    private bool IsVaridDir(string path)
+    private static bool IsVaridDir(string path)
     {
         if (path == null)
         {
@@ -475,10 +450,11 @@ public class CommandHandler
 
     public void GridSettings()
     {
-        GridSettingsDialog dlg = new();
-
-        dlg.GridSize = ViewModel.Settings.GridSize;
-        dlg.Owner = Application.Current.MainWindow;
+        GridSettingsDialog dlg = new()
+        {
+            GridSize = ViewModel.Settings.GridSize,
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -491,12 +467,13 @@ public class CommandHandler
 
     public void SnapSettings()
     {
-        SnapSettingsDialog dlg = new();
+        SnapSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.PointSnapRange = ViewModel.Settings.PointSnapRange;
-        dlg.LineSnapRange = ViewModel.Settings.LineSnapRange;
+            PointSnapRange = ViewModel.Settings.PointSnapRange,
+            LineSnapRange = ViewModel.Settings.LineSnapRange
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -511,13 +488,14 @@ public class CommandHandler
 
     public void PrintSettings()
     {
-        PrintSettingsDialog dlg = new();
+        PrintSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.PrintWithBitmap = ViewModel.Settings.PrintWithBitmap;
-        dlg.MagnificationBitmapPrinting = ViewModel.Settings.MagnificationBitmapPrinting;
-        dlg.PrintLineSmooth = ViewModel.Settings.PrintLineSmooth;
+            PrintWithBitmap = ViewModel.Settings.PrintWithBitmap,
+            MagnificationBitmapPrinting = ViewModel.Settings.MagnificationBitmapPrinting,
+            PrintLineSmooth = ViewModel.Settings.PrintLineSmooth
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -531,12 +509,13 @@ public class CommandHandler
 
     public void MoveKeySettings()
     {
-        MoveKeySettingsDialog dlg = new();
+        MoveKeySettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.MoveX = ViewModel.Settings.MoveKeyUnitX;
-        dlg.MoveY = ViewModel.Settings.MoveKeyUnitY;
+            MoveX = ViewModel.Settings.MoveKeyUnitX,
+            MoveY = ViewModel.Settings.MoveKeyUnitY
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -549,18 +528,19 @@ public class CommandHandler
 
     public void SetLineColor()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null)
         {
             return;
         }
 
-        ColorPickerDialog dlg = new();
+        ColorPickerDialog dlg = new()
+        {
+            SelectedColor = fig.LinePen.Color4,
 
-        dlg.SelectedColor = fig.LinePen.Color4;
-
-        dlg.Owner = Application.Current.MainWindow;
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -586,18 +566,19 @@ public class CommandHandler
 
     public void SetFillColor()
     {
-        CadFigure fig = Controller.CurrentFigure;
+        CadFigure fig = Controller.Input.CurrentFigure;
 
         if (fig == null)
         {
             return;
         }
 
-        ColorPickerDialog dlg = new();
+        ColorPickerDialog dlg = new()
+        {
+            SelectedColor = fig.FillBrush.Color4,
 
-        dlg.SelectedColor = fig.FillBrush.Color4;
-
-        dlg.Owner = Application.Current.MainWindow;
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -608,11 +589,11 @@ public class CommandHandler
 
             if (dlg.InvalidColor)
             {
-                Controller.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
+                Controller.Input.CurrentFigure.FillBrush.Color4 = DrawPen.InvalidPen.Color4;
             }
             else
             {
-                Controller.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
+                Controller.Input.CurrentFigure.FillBrush.Color4 = dlg.SelectedColor;
             }
 
             newBrush = fig.FillBrush;
@@ -726,7 +707,7 @@ public class CommandHandler
 
     public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
     {
-        HashSet<CadFigure> set = new HashSet<CadFigure>();
+        HashSet<CadFigure> set = [];
 
         foreach (CadFigure fig in srcList)
         {
@@ -748,9 +729,10 @@ public class CommandHandler
 
     public void Test()
     {
-        ColorPickerDialog dlg = new();
-
-        dlg.Owner = Application.Current.MainWindow;
+        ColorPickerDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -763,8 +745,11 @@ public class CommandHandler
     {
         if (mEditorWindow == null)
         {
-            mEditorWindow = new EditorWindow(Controller.ScriptEnv);
-            mEditorWindow.Owner = Application.Current.MainWindow;
+            mEditorWindow = new EditorWindow(Controller.ScriptEnv)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
             mEditorWindow.Show();
 
             mEditorWindow.Closed += (_, _) =>
@@ -813,22 +798,22 @@ public class CommandHandler
 
     public void ObjOrderDown()
     {
-        Controller.ObjOrderDown();
+        Controller.CommandProc.ObjOrderDown();
     }
 
     public void ObjOrderUp()
     {
-        Controller.ObjOrderUp();
+        Controller.CommandProc.ObjOrderUp();
     }
 
     public void ObjOrderBottom()
     {
-        Controller.ObjOrderBottom();
+        Controller.CommandProc.ObjOrderBottom();
     }
 
     public void ObjOrderTop()
     {
-        Controller.ObjOrderTop();
+        Controller.CommandProc.ObjOrderTop();
     }
 
     public void ResetCamera()
@@ -839,43 +824,43 @@ public class CommandHandler
 
     public void AddLayer()
     {
-        Controller.AddLayer(null);
+        Controller.CommandProc.AddLayer(null);
         Redraw();
     }
 
     public void RemoveLayer()
     {
-        Controller.RemoveLayer(Controller.CurrentLayer.ID);
+        Controller.CommandProc.RemoveLayer(Controller.CurrentLayer.ID);
         Redraw();
     }
 
     public void AddCentroid()
     {
-        Controller.AddCentroid();
+        Controller.Editor.AddCentroid();
         Redraw();
     }
 
     public void SelectAll()
     {
-        Controller.SelectAllInCurrentLayer();
+        Controller.CommandProc.SelectAllInCurrentLayer();
         Redraw();
     }
 
     public void Cancel()
     {
-        Controller.Cancel();
+        Controller.EditManager.Cancel();
         Redraw();
     }
 
     public void SearchNearPoint()
     {
-        Controller.MoveCursorToNearPoint(ViewModel.ViewManager.DrawContext);
+        Controller.Input.MoveCursorToNearPoint(ViewModel.ViewManager.View.DrawContext);
         Redraw();
     }
 
     public void CursorLock()
     {
-        Controller.CursorLocked = true;
+        Controller.Input.LockCursor();
     }
 
     public void MoveKeyDown()
@@ -891,13 +876,13 @@ public class CommandHandler
 
     public void AddMark()
     {
-        Controller.AddExtendSnapPoint();
+        Controller.Input.AddExtendSnapPoint();
         Redraw();
     }
 
     public void CleanMark()
     {
-        Controller.ClearExtendSnapPointList();
+        Controller.Input.ClearExtendSnapPointList();
         Redraw();
     }
 
@@ -918,9 +903,10 @@ public class CommandHandler
 
         pd.PrintPage += PrintPage;
 
-        System.Windows.Forms.PrintDialog pdlg = new();
-
-        pdlg.Document = pd;
+        System.Windows.Forms.PrintDialog pdlg = new()
+        {
+            Document = pd
+        };
 
         if (pdlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
@@ -946,11 +932,12 @@ public class CommandHandler
     {
         System.Windows.Forms.PageSetupDialog pageDlg = new();
 
-        PageSettings pageSettings = new();
-
-        pageSettings.PaperSize = Controller.PageSize.GetPaperSize();
-        pageSettings.Landscape = Controller.PageSize.mLandscape;
-        pageSettings.Margins = new Margins(0, 0, 0, 0);
+        PageSettings pageSettings = new()
+        {
+            PaperSize = Controller.PageSize.GetPaperSize(),
+            Landscape = Controller.PageSize.mLandscape,
+            Margins = new Margins(0, 0, 0, 0)
+        };
 
         pageDlg.EnableMetric = true;
         pageDlg.PageSettings = pageSettings;
@@ -967,11 +954,12 @@ public class CommandHandler
 
     public void DocSetting()
     {
-        DocumentSettingsDialog dlg = new();
+        DocumentSettingsDialog dlg = new()
+        {
+            Owner = Application.Current.MainWindow,
 
-        dlg.Owner = Application.Current.MainWindow;
-
-        dlg.WorldScale = ViewModel.ViewManager.DrawContext.WorldScale_;
+            WorldScale = ViewModel.ViewManager.View.DrawContext.WorldScale
+        };
 
         bool? result = dlg.ShowDialog();
 
@@ -984,6 +972,6 @@ public class CommandHandler
 
     public void Redraw()
     {
-        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
+        ThreadUtil.RunOnMainThread(Controller.Drawer.Redraw, true);
     }
 }
