@@ -9,18 +9,14 @@ public class UserSettingDataAttribute : System.Attribute
 {
 }
 
-public class SettingsVeiwModel(
-        ViewManager viewManager,
-        IPlotterController controller
-
-    ): INotifyPropertyChanged
+public class SettingsVeiwModel : INotifyPropertyChanged
 {
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public IPlotterController Controller = controller;
+    public IPlotterController Controller;
 
-    private readonly ViewManager ViewMgr = viewManager;
+    private readonly ViewManager ViewMgr;
 
 
     [UserSettingData]
@@ -389,6 +385,12 @@ public class SettingsVeiwModel(
         }
 
         get => SettingsHolder.Settings.PrintLineSmooth;
+    }
+
+    public SettingsVeiwModel(ViewManager viewManager, IPlotterController controller)
+    {
+        Controller = controller;
+        ViewMgr = viewManager;
     }
 
     private void Redraw()

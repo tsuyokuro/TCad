@@ -21,12 +21,19 @@ namespace TCad.ViewModel;
 
 public class CommandHandler
 {
-    public class KeyAction(Action down, Action up, string description = null)
+    public class KeyAction
     {
-        public Action Down = down;
-        public Action Up = up;
-        public string Description = description;
+        public Action Down;
+        public Action Up;
+        public string Description;
+
+        public KeyAction(Action down, Action up, string description = null)
+        {
+            Down = down;
+            Up = up;
+            Description = description;
     }
+}
 
     readonly IPlotterController Controller;
     readonly IPlotterViewModel ViewModel;
@@ -227,7 +234,7 @@ public class CommandHandler
 
     public List<string> HelpOfKey(string keyword)
     {
-        List<string> ret = [];
+        List<string> ret = new();
 
         if (keyword == null)
         {
@@ -707,7 +714,7 @@ public class CommandHandler
 
     public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
     {
-        HashSet<CadFigure> set = [];
+        HashSet<CadFigure> set = new();
 
         foreach (CadFigure fig in srcList)
         {

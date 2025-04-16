@@ -6,11 +6,16 @@ using Plotter.Controller;
 
 namespace TCad.ViewModel;
 
-public class ObjectTreeViewModel(IPlotterController controller)
+public class ObjectTreeViewModel
 {
-    protected IPlotterController Controller = controller;
+    protected IPlotterController Controller;
 
     protected ICadObjectTree mObjectTree;
+
+    public ObjectTreeViewModel(IPlotterController controller)
+    {
+        Controller = controller;
+    }
 
     public ICadObjectTree ObjectTree
     {

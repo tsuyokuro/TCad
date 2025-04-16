@@ -15,7 +15,7 @@ public class LayerListViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
     }
 
-    public ObservableCollection<LayerHolder> LayerList_ = [];
+    public ObservableCollection<LayerHolder> LayerList_ = new();
     public ObservableCollection<LayerHolder> LayerList
     {
         get
