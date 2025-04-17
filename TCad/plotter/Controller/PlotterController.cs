@@ -73,7 +73,7 @@ public class PlotterController : IPlotterController
     {
         get;
         private set;
-    }
+    } = null;
 
     public List<CadFigure> TempFigureList
     {
@@ -157,16 +157,9 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterController(IPlotterViewModel vm)
+    public PlotterController()
     {
         Log.plx("in");
-
-        if (vm == null)
-        {
-            throw new System.ArgumentNullException(nameof(vm));
-        }
-
-        ViewModel = vm;
 
         Drawer = new PlotterDrawer(this);
 
@@ -181,10 +174,6 @@ public class PlotterController : IPlotterController
         StateMachine = new ControllerStateMachine(this);
         ChangeState(ControllerStates.SELECT);
 
-        CadLayer layer = DB.NewLayer();
-        DB.LayerList.Add(layer);
-        CurrentLayer = layer;
-
         HistoryMan = new HistoryManager(this);
 
         ScriptEnv = new ScriptEnvironment(this);
@@ -195,6 +184,20 @@ public class PlotterController : IPlotterController
 
 
         Log.plx("out");
+    }
+
+    public void Startup(IPlotterViewModel viewModel)
+    {
+        ViewModel = viewModel;
+
+        CadLayer layer = DB.NewLayer();
+        DB.LayerList.Add(layer);
+        CurrentLayer = layer;
+    }
+
+    public void Shutdown()
+    {
+        DC.Dispose();
     }
 
     public void ChangeState(ControllerStates state)

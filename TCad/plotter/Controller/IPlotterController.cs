@@ -33,6 +33,9 @@ public interface IPlotterController
     List<CadFigure> TempFigureList { get; }
     IPlotterViewModel ViewModel { get; }
 
+    void Startup(IPlotterViewModel viewModel);
+    void Shutdown();
+
     void ChangeState(ControllerStates state);
     void ClearAll();
     void CloseFigure();

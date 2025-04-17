@@ -22,6 +22,8 @@ public partial class MainWindow : Window, ICadMainWindow
 {
     public IPlotterViewModel ViewModel;
 
+    public IPlotterController Contoroller;
+
     private ImageSource[] PopupMessageIcons = new ImageSource[3];
 
     public MainWindow()
@@ -32,9 +34,11 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Glu.Initialize();
 
-        ViewModel = new PlotterViewModel(this);
+        Contoroller = new PlotterController();
 
-        ViewModel.Open();
+        ViewModel = new PlotterViewModel(this, Contoroller);
+
+        ViewModel.Startup();
 
         ViewModel.ObjectTree = ObjTree;
 
@@ -188,7 +192,8 @@ public partial class MainWindow : Window, ICadMainWindow
 
     private void MainWindow_Closed(object sender, EventArgs e)
     {
-        ViewModel.Close();
+        Contoroller.Shutdown();
+        ViewModel.Shutdown();
         ImageRenderer.Provider.Release();
         FontRenderer.Instance.Dispose();
         TextureProvider.Instance.RemoveAll();

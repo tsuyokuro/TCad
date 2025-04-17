@@ -146,16 +146,22 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     private CommandHandler mCommandHandler;
 
-    public PlotterViewModel(ICadMainWindow mainWindow)
+    public PlotterViewModel(
+        ICadMainWindow mainWindow,
+        IPlotterController controller
+        )
     {
         Log.plx("in");
+
+        mMainWindow = mainWindow;
+
+        Controller_ = controller;
+        Controller_.Startup(this);
+
 
         CurrentFigCmd = new(this);
         SimpleCmd = new(this);
 
-        mMainWindow = mainWindow;
-
-        Controller_ = new PlotterController(this);
 
         mCommandHandler = new CommandHandler(this);
 
@@ -180,7 +186,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         Log.plx("out");
     }
-        
+    
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
         mMainWindow.OpenPopupMessage(text, messageType);
@@ -359,7 +365,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     }
 
 
-    public void Open()
+    public void Startup()
     {
         Log.plx("in");
 
@@ -369,7 +375,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         Log.plx("out");
     }
 
-    public void Close()
+    public void Shutdown()
     {
         Settings.Save();
 
