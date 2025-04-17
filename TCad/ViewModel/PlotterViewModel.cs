@@ -156,15 +156,12 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         mMainWindow = mainWindow;
 
         Controller_ = controller;
-        Controller_.Startup(this);
-
 
         CurrentFigCmd = new(this);
+
         SimpleCmd = new(this);
 
-
         mCommandHandler = new CommandHandler(this);
-
 
         ObjTreeVM = new ObjectTreeViewModel(Controller_);
 
@@ -182,11 +179,40 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         SelectMode = Controller_.SelectMode;
         CreatingFigureType = Controller_.CreatingFigType;
 
-        Controller_.UpdateLayerList();
+        Log.plx("out");
+    }
+
+    public void Startup()
+    {
+        Log.plx("in");
+
+        Settings.Load();
+
+        ViewManager_.SetupViews();
 
         Log.plx("out");
     }
-    
+
+    public void Shutdown()
+    {
+        Log.plx("in");
+
+        Settings.Save();
+
+        if (mEditorWindow != null)
+        {
+            mEditorWindow.Close();
+            mEditorWindow = null;
+        }
+
+        CommandTextBox.Determined -= EvalTextCommand;
+
+        GDIToolManager.Instance.Dispose();
+
+        Log.plx("out");
+    }
+
+
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
         mMainWindow.OpenPopupMessage(text, messageType);
@@ -364,31 +390,6 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         return true;
     }
 
-
-    public void Startup()
-    {
-        Log.plx("in");
-
-        Settings.Load();
-        ViewManager_.SetupViews();
-
-        Log.plx("out");
-    }
-
-    public void Shutdown()
-    {
-        Settings.Save();
-
-        if (mEditorWindow != null)
-        {
-            mEditorWindow.Close();
-            mEditorWindow = null;
-        }
-
-        CommandTextBox.Determined -= EvalTextCommand;
-
-        GDIToolManager.Instance.Dispose();
-    }
 
     public void Redraw()
     {

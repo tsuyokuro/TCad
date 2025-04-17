@@ -38,7 +38,11 @@ public partial class MainWindow : Window, ICadMainWindow
 
         ViewModel = new PlotterViewModel(this, Contoroller);
 
+        Contoroller.ConnectViewModel(ViewModel);
+
         ViewModel.Startup();
+
+        Contoroller.Startup();
 
         ViewModel.ObjectTree = ObjTree;
 
@@ -190,10 +194,27 @@ public partial class MainWindow : Window, ICadMainWindow
         }
     }
 
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        Log.plx("in");
+
+        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+        XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
+
+        ImageRenderer.Provider.Get();
+
+        WireFrameShader.GetInstance();
+
+        Log.plx("out");
+    }
+
     private void MainWindow_Closed(object sender, EventArgs e)
     {
+        Log.plx("in");
+
         Contoroller.Shutdown();
         ViewModel.Shutdown();
+
         ImageRenderer.Provider.Release();
         FontRenderer.Instance.Dispose();
         TextureProvider.Instance.RemoveAll();
@@ -202,21 +223,6 @@ public partial class MainWindow : Window, ICadMainWindow
         WireFrameShader.GetInstance().Dispose();
 
         Glu.Dispose();
-    }
-
-    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-    {
-        Log.plx("in");
-
-        //var hsrc = HwndSource.FromVisual(this) as HwndSource;
-        //hsrc.AddHook(WndProc);
-
-        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
-        XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
-
-        ImageRenderer.Provider.Get();
-
-        WireFrameShader.GetInstance();
 
         Log.plx("out");
     }

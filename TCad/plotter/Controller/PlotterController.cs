@@ -182,22 +182,33 @@ public class PlotterController : IPlotterController
 
         PlotterTaskRunner = new PlotterTaskRunner(this);
 
+        var layer = DB.NewLayer();
+        DB.LayerList.Add(layer);
+        DB.CurrentLayer = layer;
 
         Log.plx("out");
     }
 
-    public void Startup(IPlotterViewModel viewModel)
+    public void ConnectViewModel(IPlotterViewModel viewModel)
     {
         ViewModel = viewModel;
+    }
 
-        CadLayer layer = DB.NewLayer();
-        DB.LayerList.Add(layer);
-        CurrentLayer = layer;
+    public void Startup()
+    {
+        Log.plx("in");
+
+        UpdateLayerList();
+        UpdateObjectTree(true);
+
+        Log.plx("out");
     }
 
     public void Shutdown()
     {
+        Log.plx("in");
         DC.Dispose();
+        Log.plx("out");
     }
 
     public void ChangeState(ControllerStates state)

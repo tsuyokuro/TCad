@@ -33,7 +33,8 @@ public interface IPlotterController
     List<CadFigure> TempFigureList { get; }
     IPlotterViewModel ViewModel { get; }
 
-    void Startup(IPlotterViewModel viewModel);
+    void ConnectViewModel(IPlotterViewModel viewModel);
+    void Startup();
     void Shutdown();
 
     void ChangeState(ControllerStates state);
