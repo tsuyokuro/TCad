@@ -1,16 +1,11 @@
 using MessagePack;
-using Plotter.Serializer;
+//using JObj = Newtonsoft.Json.Linq.JObject;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Text.Json;
 using JObj = System.Text.Json.Nodes.JsonObject;
-using JNode = System.Text.Json.Nodes.JsonNode;
-//using JObj = Newtonsoft.Json.Linq.JObject;
-using System;
-using System.Xml;
-using System.Runtime.Serialization.Json;
 
 namespace Plotter.Serializer;
 
@@ -187,7 +182,7 @@ public class MpCadFile
 
         if (!jheader.RootElement.TryGetProperty("version", out je)) return null;
         string version = jheader.RootElement.GetProperty("version").GetString();
-        
+
         string body = GetJsonObject(data, ref jsonReader, "body");
         if (body == null) return null;
 
@@ -247,9 +242,9 @@ public class MpCadFile
                 {
                     startIdx = (int)jsonReader.TokenStartIndex;
                     int scount = (int)jsonReader.BytesConsumed;
-                    
+
                     jsonReader.Skip(); // Skip all members
-                    
+
                     len = (int)jsonReader.BytesConsumed - scount + 1;
 
                     break;

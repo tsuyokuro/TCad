@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Controller;
 using System.Collections.Generic;
 

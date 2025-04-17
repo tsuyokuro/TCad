@@ -2,7 +2,6 @@ using CadDataTypes;
 using CarveWapper;
 using MeshMakerNS;
 using MyCollections;
-using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ public class MeshUtil
     {
         FlexArray<CadFace> faceStore = new FlexArray<CadFace>();
 
-        for (int i=0; i<mesh.FaceStore.Count; i++)
+        for (int i = 0; i < mesh.FaceStore.Count; i++)
         {
             CadFace face = mesh.FaceStore[i];
             if (face.VList.Count < 3)
@@ -83,10 +82,10 @@ public class MeshUtil
 
         triangle = GetTriangleWithCenterPoint(src, i1);
 
-        vector3_t tp0 = mesh.VertexStore[ triangle.VList[0] ].vector;
-        vector3_t tp1 = mesh.VertexStore[ triangle.VList[1] ].vector;
-        vector3_t tp2 = mesh.VertexStore[ triangle.VList[2] ].vector;
-        
+        vector3_t tp0 = mesh.VertexStore[triangle.VList[0]].vector;
+        vector3_t tp1 = mesh.VertexStore[triangle.VList[1]].vector;
+        vector3_t tp2 = mesh.VertexStore[triangle.VList[2]].vector;
+
         vector3_t dir = CadMath.Normal(tp1, tp0, tp2);
         vector3_t currentDir = vector3_t.Zero;
 
@@ -103,9 +102,9 @@ public class MeshUtil
 
             triangle = GetTriangleWithCenterPoint(src, i1);
 
-            tp0 = mesh.VertexStore[ triangle.VList[0] ].vector;
-            tp1 = mesh.VertexStore[ triangle.VList[1] ].vector;
-            tp2 = mesh.VertexStore[ triangle.VList[2] ].vector;
+            tp0 = mesh.VertexStore[triangle.VList[0]].vector;
+            tp1 = mesh.VertexStore[triangle.VList[1]].vector;
+            tp2 = mesh.VertexStore[triangle.VList[2]].vector;
 
             currentDir = CadMath.Normal(tp1, tp0, tp2);
 
@@ -153,14 +152,14 @@ public class MeshUtil
     {
         FlexArray<int> tps = triangle.VList;
 
-        for (int i=0; i< face.VList.Count; i++)
+        for (int i = 0; i < face.VList.Count; i++)
         {
-            vector3_t fv = mesh.VertexStore[ face.VList[i] ].vector;
+            vector3_t fv = mesh.VertexStore[face.VList[i]].vector;
 
             if (
-                fv.Equals(mesh.VertexStore[ tps[0] ].vector) ||
-                fv.Equals(mesh.VertexStore[ tps[1] ].vector) ||
-                fv.Equals(mesh.VertexStore[ tps[2] ].vector)
+                fv.Equals(mesh.VertexStore[tps[0]].vector) ||
+                fv.Equals(mesh.VertexStore[tps[1]].vector) ||
+                fv.Equals(mesh.VertexStore[tps[2]].vector)
                 )
             {
                 continue;
@@ -187,7 +186,7 @@ public class MeshUtil
 
         for (i = 0; i < f.VList.Count; i++)
         {
-            CadVertex fp = mesh.VertexStore[ f.VList[i] ];
+            CadVertex fp = mesh.VertexStore[f.VList[i]];
 
             t = fp - p0;
             vcompo_t d = t.Norm();
@@ -229,9 +228,9 @@ public class MeshUtil
             return false;
         }
 
-        vector3_t p0 = mesh.VertexStore[ triangle.VList[0] ].vector;
-        vector3_t p1 = mesh.VertexStore[ triangle.VList[1] ].vector;
-        vector3_t p2 = mesh.VertexStore[ triangle.VList[2] ].vector;
+        vector3_t p0 = mesh.VertexStore[triangle.VList[0]].vector;
+        vector3_t p1 = mesh.VertexStore[triangle.VList[1]].vector;
+        vector3_t p2 = mesh.VertexStore[triangle.VList[2]].vector;
 
         vector3_t c1 = CadMath.OuterProduct(p, p0, p1);
         vector3_t c2 = CadMath.OuterProduct(p, p1, p2);
@@ -265,7 +264,7 @@ public class MeshUtil
 
         FlexArray<int> nl = new FlexArray<int>(vl.Count);
 
-        for (i=0; i<vl.Count; i++)
+        for (i = 0; i < vl.Count; i++)
         {
             nl.Add(i);
         }

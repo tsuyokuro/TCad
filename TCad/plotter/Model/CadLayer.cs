@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Plotter;
@@ -166,7 +166,7 @@ public class CadLayer
     public void ForEachFigRev(Action<CadFigure> d)
     {
         int i = mFigureList.Count - 1;
-        for (; i>=0; i--)
+        for (; i >= 0; i--)
         {
             CadFigure fig = mFigureList[i];
             fig.ForEachFig(d);
@@ -176,7 +176,7 @@ public class CadLayer
     public void sdump()
     {
         Log.pl(
-            this.GetType().Name + 
+            this.GetType().Name +
             "(" + this.GetHashCode().ToString() + ")" +
             "ID=" + ID.ToString());
     }

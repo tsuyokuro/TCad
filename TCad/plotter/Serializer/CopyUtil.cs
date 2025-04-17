@@ -6,15 +6,15 @@ using System.Threading;
 namespace Plotter.Serializer;
 
 
-using MpFig = MpFigure_v1004;
 using MpCadObjectDB = MpCadObjectDB_v1004;
+using MpFig = MpFigure_v1004;
 
 public class CopyUtil
 {
     private delegate T Deserialize_<T>(ReadOnlyMemory<byte> buffer, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default);
 
     private static Deserialize_<List<MpFig>> Deserialize = MessagePackSerializer.Deserialize<List<MpFig>>;
-    
+
     private static Deserialize_<MpFig> DeserializeFig = MessagePackSerializer.Deserialize<MpFig>;
 
     private static SerializeContext SC = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);

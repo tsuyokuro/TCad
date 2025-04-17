@@ -140,7 +140,8 @@ public partial class FontFaceW
             if (ft.PosX < 0)
             {
                 ft.PosX = 0;
-            };
+            }
+            ;
 
             float top = (float)FontFace.Size.Metrics.Ascender;
             float bottom = (float)(FontFace.Glyph.Metrics.Height - FontFace.Glyph.Metrics.HorizontalBearingY);

@@ -1,7 +1,7 @@
-using TCad.Controls;
 using CadDataTypes;
-using System.Windows.Media;
 using Plotter;
+using System.Windows.Media;
+using TCad.Controls;
 
 namespace TCad.ViewModel;
 
@@ -16,7 +16,7 @@ class CadPointTreeItem : CadObjTreeItem
     {
         get
         {
-            if (Index >=0 && Index < Fig.PointCount)
+            if (Index >= 0 && Index < Fig.PointCount)
             {
                 return Fig.GetPointAt(Index).Selected;
             }

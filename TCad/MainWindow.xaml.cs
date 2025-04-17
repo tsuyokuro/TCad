@@ -348,7 +348,8 @@ public partial class MainWindow : Window, ICadMainWindow
 
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
-        ThreadUtil.RunOnMainThread(() => {
+        ThreadUtil.RunOnMainThread(() =>
+        {
             if (PopupMessage.IsOpen) return;
 
             PopupMessageIcon.Source = SelectPopupMessageIcon(messageType);

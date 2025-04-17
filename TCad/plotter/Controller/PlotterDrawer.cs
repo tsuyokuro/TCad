@@ -1,9 +1,6 @@
 using MyCollections;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Windows.Controls;
 
 namespace Plotter.Controller;
 
@@ -11,7 +8,8 @@ public class PlotterDrawer
 {
     IPlotterController Controller;
 
-    DrawContext DC {
+    DrawContext DC
+    {
         get => Controller.DC;
     }
 
@@ -77,7 +75,7 @@ public class PlotterDrawer
     {
         Clear(DC);
     }
-    
+
     public void Clear(DrawContext dc = null)
     {
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
@@ -199,7 +197,7 @@ public class PlotterDrawer
                         AlphaFigList.Add(fig);
                         continue;
                     }
-                    
+
                     if (fig.Current)
                     {
                         fig.DrawEach(dc, current_dp);

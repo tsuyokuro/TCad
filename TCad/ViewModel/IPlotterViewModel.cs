@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using Plotter.Controller;
-using TCad.Controls;
 using Plotter;
+using Plotter.Controller;
+using System.Collections.Generic;
 using System.Windows.Input;
+using TCad.Controls;
 
 namespace TCad.ViewModel;
 

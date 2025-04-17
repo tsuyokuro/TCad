@@ -11,13 +11,13 @@ public partial class ColorPickerDialog : Window
 {
     Color4 mSelectedColor;
 
-		public Color4 SelectedColor
-		{
+    public Color4 SelectedColor
+    {
         get
         {
             return mSelectedColor;
         }
-			set
+        set
         {
             if (value.IsInvalid())
             {
@@ -26,7 +26,7 @@ public partial class ColorPickerDialog : Window
             }
             mSelectedColor = value;
         }
-		}
+    }
 
     public bool InvalidColor
     {

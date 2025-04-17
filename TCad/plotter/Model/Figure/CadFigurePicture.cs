@@ -15,7 +15,7 @@ public partial class CadFigurePicture : CadFigure
 
     private Bitmap mBitmap;
 
-    private byte[] SrcData; 
+    private byte[] SrcData;
 
     public string OrgFilePathName;
     public string FilePathName;
@@ -26,7 +26,7 @@ public partial class CadFigurePicture : CadFigure
 
         if (mBitmap == null)
         {
-            
+
         }
     }
 
@@ -298,7 +298,8 @@ public partial class CadFigurePicture : CadFigure
         bool keepAspect = true;
 
         CrossInfo ci;
-        if (keepAspect) { 
+        if (keepAspect)
+        {
             ci = CadMath.PerpCrossLine(
                 vector3_t.Zero,
                 mPointList[aIdx].vector - mPointList[mIdx].vector,

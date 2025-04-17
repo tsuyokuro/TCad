@@ -59,7 +59,7 @@ public class SegSearcher
     {
         Search(dc, db, db.CurrentLayer);
 
-        for (int i=0; i<db.LayerList.Count; i++)
+        for (int i = 0; i < db.LayerList.Count; i++)
         {
             CadLayer layer = db.LayerList[i];
 
@@ -86,7 +86,7 @@ public class SegSearcher
 
         MinDist = CadConst.MaxValue;
 
-        for (int i=layer.FigureList.Count-1; i>=0; i--)
+        for (int i = layer.FigureList.Count - 1; i >= 0; i--)
         {
             CadFigure fig = layer.FigureList[i];
             CheckFig(dc, layer, fig);
@@ -274,7 +274,7 @@ public class SegSearcher
 
     private void CheckSegs(DrawContext dc, CadLayer layer, CadFigure fig)
     {
-        for (int i=0; i < fig.SegmentCount; i++)
+        for (int i = 0; i < fig.SegmentCount; i++)
         {
             FigureSegment seg = fig.GetFigSegmentAt(i);
             CheckSeg(dc, layer, seg);

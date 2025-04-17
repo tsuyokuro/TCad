@@ -1,5 +1,3 @@
-using OpenTK.Mathematics;
-
 namespace Plotter;
 
 public static class MatrixExt

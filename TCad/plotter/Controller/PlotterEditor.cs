@@ -1,8 +1,8 @@
+using CadDataTypes;
+using Plotter.Controller.TaskRunner;
 using System;
 using System.Collections.Generic;
-using CadDataTypes;
 using TCad.Properties;
-using Plotter.Controller.TaskRunner;
 
 namespace Plotter.Controller;
 

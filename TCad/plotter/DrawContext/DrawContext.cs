@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Controller;
 using System;
 
@@ -148,9 +147,9 @@ public abstract class DrawContext : IDisposable
         Log.plx("out");
     }
 
-    public virtual void Activate() {}
+    public virtual void Activate() { }
 
-    public virtual void Deactivate() {}
+    public virtual void Deactivate() { }
 
     public virtual void SetViewOrg(vector3_t org)
     {

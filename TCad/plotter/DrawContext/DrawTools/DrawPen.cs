@@ -64,12 +64,12 @@ public struct DrawPen : IEquatable<DrawPen>
     }
 
 
-    public static bool operator == (DrawPen pen1, DrawPen pen2)
+    public static bool operator ==(DrawPen pen1, DrawPen pen2)
     {
         return (pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width);
     }
 
-    public static bool operator != (DrawPen pen1, DrawPen pen2)
+    public static bool operator !=(DrawPen pen1, DrawPen pen2)
     {
         return !((pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width));
     }

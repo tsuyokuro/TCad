@@ -1,7 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 
 namespace OpenGL.GLU;
 

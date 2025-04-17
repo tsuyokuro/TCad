@@ -1,6 +1,3 @@
-using OpenTK.Mathematics;
-using System;
-
 namespace Plotter.Controller;
 
 public struct SnapInfo
@@ -8,7 +5,7 @@ public struct SnapInfo
     public CadCursor Cursor;
     public vector3_t SnapPoint;
 
-    public bool IsPointMatch {  get; set; }
+    public bool IsPointMatch { get; set; }
 
     public PointSearcher PointSearcher;
 

@@ -1,16 +1,6 @@
-using CadDataTypes;
 using GLUtil;
-using OpenGL.GLU;
-using OpenTK.Mathematics;
 using SharpFont;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
-using static GLUtil.Tessellator;
 
 namespace GLFont;
 
@@ -81,7 +71,7 @@ internal class FontTessellator
             vector3_t next = FTV2vector3_t(points[start]);
             vector3_t cur = FTV2vector3_t(points[((num - 1) % num) + start]);
 
-            for (int i=0; i<num; i++)
+            for (int i = 0; i < num; i++)
             {
                 int idx = start + i;
 
@@ -307,7 +297,7 @@ internal class FontTessellator
             v.Z = 0;
             onCurvePoints.Add(v);
         }
-        v = points[points.Count -1];
+        v = points[points.Count - 1];
         v.Z = 0;
 
         onCurvePoints.Add(v);

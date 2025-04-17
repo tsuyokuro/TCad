@@ -1,6 +1,5 @@
 using CadDataTypes;
 using HalfEdgeNS;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 

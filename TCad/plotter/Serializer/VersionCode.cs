@@ -83,7 +83,9 @@ public struct VersionCode
             C_2 = byte.Parse(vt[2], NumberStyles.HexNumber);
             C_3 = byte.Parse(vt[3], NumberStyles.HexNumber);
 
-        } catch (FormatException) {
+        }
+        catch (FormatException)
+        {
             C_0 = 0xFF;
             C_1 = 0xFF;
             C_2 = 0xFF;

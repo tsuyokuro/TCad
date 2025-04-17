@@ -1,10 +1,10 @@
 using System;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text;
-using System.IO;
 using System.Xml;
-using System.Runtime.Serialization.Json;
 
 namespace Plotter.Serializer;
 

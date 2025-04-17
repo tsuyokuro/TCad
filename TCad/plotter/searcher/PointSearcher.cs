@@ -1,7 +1,6 @@
 #define LOG_DEBUG
 
 using CadDataTypes;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -87,7 +86,7 @@ public class PointSearcher
         Target = cursor;
     }
 
-    public vcompo_t Distance 
+    public vcompo_t Distance
     {
         get
         {

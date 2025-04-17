@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using Plotter.Controller;
 using Plotter.Serializer;
 using System;
@@ -105,7 +104,7 @@ public class CadOpeFigureSnapShotList : CadOpe
 
     public void StoreBefore(List<CadFigure> figList)
     {
-        for (int i=0; i<figList.Count; i++)
+        for (int i = 0; i < figList.Count; i++)
         {
             CadOpeFigureSnapShot ss = new CadOpeFigureSnapShot();
 
@@ -117,7 +116,7 @@ public class CadOpeFigureSnapShotList : CadOpe
 
     public void StoreAfter(CadObjectDB db)
     {
-        for (int i = 0; i<SnapShotList.Count; i++)
+        for (int i = 0; i < SnapShotList.Count; i++)
         {
             CadOpeFigureSnapShot ss = SnapShotList[i];
             ss.StoreAfter(db.GetFigure(ss.FigureID));
@@ -126,7 +125,7 @@ public class CadOpeFigureSnapShotList : CadOpe
 
     public override void Undo(IPlotterController pc)
     {
-        for (int i=0; i< SnapShotList.Count; i++)
+        for (int i = 0; i < SnapShotList.Count; i++)
         {
             SnapShotList[i].Undo(pc);
         }
@@ -381,7 +380,7 @@ public class CadOpeRemoveFigure : CadOpeFigureBase
 
 public class CadOpeAddChildlen : CadOpe
 {
-    private uint ParentID = 0; 
+    private uint ParentID = 0;
     private List<uint> ChildIDList = new List<uint>();
 
     public CadOpeAddChildlen(CadFigure parent, List<CadFigure> childlen)
@@ -390,7 +389,7 @@ public class CadOpeAddChildlen : CadOpe
 
         childlen.ForEach(a =>
         {
-           ChildIDList.Add(a.ID);
+            ChildIDList.Add(a.ID);
         });
     }
 
@@ -400,7 +399,7 @@ public class CadOpeAddChildlen : CadOpe
 
         foreach (uint childID in ChildIDList)
         {
-            parent.ChildList.RemoveAll( a => a.ID == childID);
+            parent.ChildList.RemoveAll(a => a.ID == childID);
             CadFigure fig = pc.DB.GetFigure(childID);
             fig.Parent = null;
         }

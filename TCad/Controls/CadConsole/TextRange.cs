@@ -11,7 +11,7 @@ public struct TextPos
         Col = col;
     }
 
-    public static bool operator < (TextPos left, TextPos right)
+    public static bool operator <(TextPos left, TextPos right)
     {
         if (left.Row != right.Row)
         {
@@ -21,7 +21,7 @@ public struct TextPos
         return left.Col < right.Col;
     }
 
-    public static bool operator > (TextPos left, TextPos right)
+    public static bool operator >(TextPos left, TextPos right)
     {
         if (left.Row != right.Row)
         {

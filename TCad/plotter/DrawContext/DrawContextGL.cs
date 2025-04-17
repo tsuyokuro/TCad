@@ -197,7 +197,7 @@ public abstract class DrawContextGL : DrawContext
             Tools.Dispose();
         }
 
-        if (mDrawing!=null)
+        if (mDrawing != null)
         {
             mDrawing.Dispose();
         }

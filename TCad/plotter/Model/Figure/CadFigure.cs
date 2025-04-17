@@ -75,7 +75,8 @@ public abstract partial class CadFigure
         set;
     }
 
-    public virtual bool IsLoop {
+    public virtual bool IsLoop
+    {
         get => false;
         set { /* Nop */ }
     }

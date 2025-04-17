@@ -1,7 +1,6 @@
 using CadDataTypes;
 using HalfEdgeNS;
 using MeshUtilNS;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -120,7 +119,7 @@ public class PlotterTaskRunner
         RunOnMainThread(() =>
         {
             Controller.Drawer.Redraw();
-            Controller.UpdateObjectTree(remakeTree : true);
+            Controller.UpdateObjectTree(remakeTree: true);
         });
     }
 
@@ -144,7 +143,7 @@ public class PlotterTaskRunner
             }
 
             CadFigureMesh mesh = fig as CadFigureMesh;
-            
+
             if (mesh == null)
             {
                 Controller.EditManager.AbendEdit();
@@ -254,7 +253,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.Drawer.Redraw();
-                Controller.UpdateObjectTree(remakeTree : false);
+                Controller.UpdateObjectTree(remakeTree: false);
             });
         });
     }

@@ -70,7 +70,8 @@ public static partial class Glu
         }
 
         MethodInfo m = importsClass.GetMethod(name.Substring(3), BindingFlags.Static | BindingFlags.NonPublic);
-        if (m == null) {
+        if (m == null)
+        {
             return null;
         }
 

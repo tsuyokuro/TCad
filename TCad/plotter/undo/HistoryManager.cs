@@ -110,7 +110,8 @@ public class HistoryManager
         {
             Log.pl("{");
             Log.Indent++;
-            foreach (CadOpe item in ((CadOpeList)ope).OpeList) {
+            foreach (CadOpe item in ((CadOpeList)ope).OpeList)
+            {
                 dumpCadOpe(item);
             }
             Log.Indent--;

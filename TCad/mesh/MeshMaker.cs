@@ -1,7 +1,5 @@
 using CadDataTypes;
 using MeshUtilNS;
-using OpenTK;
-using OpenTK.Mathematics;
 using Plotter;
 using System;
 
@@ -241,13 +239,13 @@ public class MeshMaker
         vcompo_t dl = len / sl;
         vcompo_t y = len / 2;
 
-        for (vcompo_t i=0; i < sl; i++)
+        for (vcompo_t i = 0; i < sl; i++)
         {
             vl.Add(new CadVertex(r, y - (i * dl), 0));
         }
 
         vl.Add(new CadVertex(r, -len / 2, 0));
-        
+
         return CreateRotatingBody(
             circleDiv, vector3_t.Zero, vector3_t.UnitY, vl, true, true, FaceType.TRIANGLE);
     }

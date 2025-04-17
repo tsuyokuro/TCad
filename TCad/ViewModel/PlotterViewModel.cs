@@ -142,7 +142,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public CurrentFigCommand CurrentFigCmd { get; set; }
 
-    public SimpleCommand SimpleCmd{ get; set; }
+    public SimpleCommand SimpleCmd { get; set; }
 
     private CommandHandler mCommandHandler;
 

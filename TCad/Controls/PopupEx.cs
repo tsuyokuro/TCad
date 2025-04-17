@@ -39,7 +39,9 @@ public class PopupEx : Popup
                 win.LocationChanged += OnFollowWindowChanged;
                 win.SizeChanged += OnFollowWindowChanged;
             }
-        } else {
+        }
+        else
+        {
             if (win != null)
             {
                 win.LocationChanged -= OnFollowWindowChanged;

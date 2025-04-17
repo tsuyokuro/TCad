@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Imaging;
 

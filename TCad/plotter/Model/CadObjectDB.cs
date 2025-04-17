@@ -110,7 +110,7 @@ public class CadObjectDB
 
         return -1;
     }
-    
+
     #endregion
 
 
@@ -167,7 +167,7 @@ public class CadObjectDB
     #endregion Manage Figure
 
 
-    
+
     #region Walk
     //public static Func<CadLayer, bool> EditableLayerFilter = (layer) =>
     //{

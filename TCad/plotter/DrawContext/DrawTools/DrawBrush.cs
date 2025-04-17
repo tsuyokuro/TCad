@@ -59,12 +59,12 @@ public struct DrawBrush : IEquatable<DrawBrush>
         mColor4 = color;
     }
 
-    public static bool operator == (DrawBrush brush1, DrawBrush brush2)
+    public static bool operator ==(DrawBrush brush1, DrawBrush brush2)
     {
         return (brush1.Color4 == brush2.Color4);
     }
 
-    public static bool operator != (DrawBrush brush1, DrawBrush brush2)
+    public static bool operator !=(DrawBrush brush1, DrawBrush brush2)
     {
         return !(brush1.Color4 == brush2.Color4);
     }

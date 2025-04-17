@@ -96,7 +96,8 @@ public class PlotterInput
     public SnapInfo CurrentSnapInfo;
 
     // 生のL button down point (デバイス座標系)
-    public vector3_t RawDownPoint {
+    public vector3_t RawDownPoint
+    {
         get;
         set;
     } = default;
@@ -122,8 +123,10 @@ public class PlotterInput
 
     public MarkSegment? LastSelSegment_ = null;
 
-    public MarkSegment? LastSelSegment {
-        set {
+    public MarkSegment? LastSelSegment
+    {
+        set
+        {
             LastSelSegment_ = value;
         }
 

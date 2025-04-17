@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 namespace GLFont;
@@ -25,7 +24,7 @@ public struct FontPoly
         Mesh = new CadMesh(src.Mesh);
 
         ContourList = new();
-        for (int i=0; i < src.ContourList.Count; i++)
+        for (int i = 0; i < src.ContourList.Count; i++)
         {
             List<int> cont = new(src.ContourList[i]);
             ContourList.Add(cont);

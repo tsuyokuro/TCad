@@ -1,9 +1,8 @@
 using CadDataTypes;
+using HalfEdgeNS;
+using MyCollections;
 using System;
 using System.Collections.Generic;
-using HalfEdgeNS;
-
-using MyCollections;
 
 
 namespace Plotter.Serializer;
@@ -51,7 +50,7 @@ public class MpUtil
         return ret;
     }
 
-    public static List<TMpFig> FigureMapToMp<TMpFig> (
+    public static List<TMpFig> FigureMapToMp<TMpFig>(
         SerializeContext sc,
         Dictionary<uint, CadFigure> figMap,
         bool withChild = false
@@ -84,7 +83,7 @@ public class MpUtil
 
     public static List<TMpVertex> VertexListToMp<TMpVertex>(
         VertexList v
-        ) where TMpVertex : IMpVertex, new ()
+        ) where TMpVertex : IMpVertex, new()
     {
         List<TMpVertex> ret = new List<TMpVertex>();
         for (int i = 0; i < v.Count; i++)
@@ -134,7 +133,7 @@ public class MpUtil
         List<HalfEdge> list
         ) where TMpHalfEdge : IMpHalfEdge, new()
     {
-        List <TMpHalfEdge > ret = new();
+        List<TMpHalfEdge> ret = new();
         for (int i = 0; i < list.Count; i++)
         {
             TMpHalfEdge mp = new();

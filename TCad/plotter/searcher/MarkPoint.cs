@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using System;
 
 namespace Plotter;
@@ -106,7 +105,7 @@ public struct MarkPoint : IEquatable<MarkPoint>
 
     public override int GetHashCode()
     {
-        return Point.GetHashCode() + 
+        return Point.GetHashCode() +
             (int)(Layer == null ? 0 : Layer.ID) +
             (int)(Figure == null ? 0 : Figure.ID);
     }

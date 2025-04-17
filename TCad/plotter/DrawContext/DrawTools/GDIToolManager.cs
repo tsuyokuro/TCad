@@ -26,7 +26,7 @@ public class GDIToolManager : IDisposable
     private Dictionary<DrawPen, Pen> PenMap = new();
     private Dictionary<DrawBrush, SolidBrush> BrushMap = new();
 
-    private GDIToolManager(){}
+    private GDIToolManager() { }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     public Pen Pen(in DrawPen dpen)
@@ -64,7 +64,7 @@ public class GDIToolManager : IDisposable
         {
             pen.Dispose();
         }
-        PenMap.Clear(); 
+        PenMap.Clear();
 
         foreach (SolidBrush brush in BrushMap.Values)
         {

@@ -1,23 +1,18 @@
-using TCad.Properties;
-using Microsoft.Scripting.Hosting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TCad.Controls;
-using OpenTK;
-using OpenTK.Mathematics;
-using System.Threading;
 using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
-using System.Diagnostics;
-using System.Windows;
-using TCad.ViewModel;
+using Microsoft.Scripting.Hosting;
 using Plotter.Controller;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using TCad.Controls;
+using TCad.ViewModel;
 
 namespace Plotter.Scripting;
 

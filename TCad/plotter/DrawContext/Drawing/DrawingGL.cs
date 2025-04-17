@@ -1,6 +1,5 @@
 using CadDataTypes;
 using GLFont;
-using GLUtil;
 using HalfEdgeNS;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
@@ -9,7 +8,6 @@ using Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using static Plotter.DrawingGL;
 
 namespace Plotter;
 
@@ -1045,7 +1043,7 @@ public class DrawingGL : IDrawing
                 CadVertex* p = ptr;
                 UInt64 ep = ((UInt64)p) + ((UInt64)sizeof(CadVertex) * (UInt64)num);
 
-                for (; (UInt64)p < ep ;)
+                for (; (UInt64)p < ep;)
                 {
                     if (p->Selected)
                     {
@@ -1199,13 +1197,13 @@ public class DrawingGL : IDrawing
             return;
         }
 
-        if ((opt.Option & DrawTextOption.H_CENTER)!=0)
+        if ((opt.Option & DrawTextOption.H_CENTER) != 0)
         {
             a -= (xv / 2);
         }
 
         GL.Color4(brush.Color4);
-        
+
         mFontRenderer.Render(tex, a, xv, yv);
     }
 

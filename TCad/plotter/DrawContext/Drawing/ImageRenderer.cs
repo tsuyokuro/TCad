@@ -1,6 +1,5 @@
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -53,7 +52,7 @@ public class ImageRenderer
         // Use my shader
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 
-                    
+
         GL.BindTexture(TextureTarget.Texture2D, TextureID);
 
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);

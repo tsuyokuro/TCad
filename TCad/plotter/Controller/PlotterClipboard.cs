@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using Plotter.Serializer;
 using System.Collections.Generic;
 using System.Windows;

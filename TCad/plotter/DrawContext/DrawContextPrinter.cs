@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -34,7 +33,7 @@ class DrawContextPrinter : DrawContextGDI
 
         org.X = deviceSize.Width / (vcompo_t)(2.0);
         org.Y = deviceSize.Height / (vcompo_t)(2.0);
-        
+
         SetViewOrg(org);
 
         SetupDrawing();

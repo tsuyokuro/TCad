@@ -1,6 +1,5 @@
 using CadDataTypes;
 using MyCollections;
-using OpenTK.Mathematics;
 using Plotter;
 using System;
 using System.Collections.Generic;
@@ -138,7 +137,7 @@ public class HeModel
                 );
 
             face.Normal = newNormalStore.Add(n);
-            
+
             for (; ; )
             {
                 c.Normal = newNormalStore.Add(n);
@@ -180,7 +179,7 @@ public class HeModel
 
         var rmFaceList = FindFaceAll(vindex);
 
-        for (int i=0; i<rmFaceList.Count; i++)
+        for (int i = 0; i < rmFaceList.Count; i++)
         {
             int rmFace = rmFaceList[i];
 
@@ -190,7 +189,7 @@ public class HeModel
 
         int p = 0;
 
-        for (int i=0; i<FaceStore.Count; i++)
+        for (int i = 0; i < FaceStore.Count; i++)
         {
             if (indexMap[i] == -1)
             {
@@ -217,7 +216,7 @@ public class HeModel
             }
         }
 
-        for (int i = indexMap.Length-1; i >= 0; i--)
+        for (int i = indexMap.Length - 1; i >= 0; i--)
         {
             if (indexMap[i] == -1)
             {
@@ -230,7 +229,7 @@ public class HeModel
     {
         int[] indexMap = new int[VertexStore.Count];
 
-        for (int i=0; i<idxList.Count; i++)
+        for (int i = 0; i < idxList.Count; i++)
         {
             indexMap[idxList[i]] = -1;
         }
@@ -255,7 +254,7 @@ public class HeModel
             }
         });
 
-        for (int i=VertexStore.Count-1; i>=0; i--)
+        for (int i = VertexStore.Count - 1; i >= 0; i--)
         {
             if (indexMap[i] == -1)
             {
@@ -314,8 +313,9 @@ public class HeModel
     {
         // Pairを持たないHalfEdgeのリストを作成
         List<HalfEdge> heList = new List<HalfEdge>();
-        
-        ForEachHalfEdge(he => {
+
+        ForEachHalfEdge(he =>
+        {
             if (he.Pair == null)
             {
                 heList.Add(he);
@@ -366,7 +366,7 @@ public class HeModel
 
     public int FindHalfEdge(int idx, List<HalfEdge> list)
     {
-        for (int i=0; i<list.Count; i++)
+        for (int i = 0; i < list.Count; i++)
         {
             if (list[i].Vertex == idx)
             {
@@ -386,7 +386,7 @@ public class HeModel
 
         int ret = -1;
 
-        for (int i=0; i<heList.Count; i++)
+        for (int i = 0; i < heList.Count; i++)
         {
             int vi = heList[i].Vertex;
 

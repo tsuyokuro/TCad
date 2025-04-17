@@ -1,4 +1,3 @@
-using OpenTK.Mathematics;
 using System;
 
 namespace Plotter;

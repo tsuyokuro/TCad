@@ -1,16 +1,16 @@
+using System;
 using TCad.Controls;
 using TCad.Properties;
-using System;
 
 namespace Plotter;
 
 public class ItConsole
 {
-    public static Action<string> Print = (s) => {};
-    public static Action<string> PrintLn = (s) => {};
-    public static Action<string, object []> PrintF = (s, args) => { };
+    public static Action<string> Print = (s) => { };
+    public static Action<string> PrintLn = (s) => { };
+    public static Action<string, object[]> PrintF = (s, args) => { };
     public static Action Clear = () => { };
-    public static Func<string, string, string> GetString = (msg, def) => { return ""; }; 
+    public static Func<string, string, string> GetString = (msg, def) => { return ""; };
 
     public static void print(string s)
     {

@@ -29,7 +29,7 @@ public class TextureProvider
 
     public void RemoveAll()
     {
-        for (int i=0;i<mTextures.Count;i++)
+        for (int i = 0; i < mTextures.Count; i++)
         {
             GL.DeleteTexture(mTextures[i]);
         }

@@ -1,9 +1,4 @@
 using Plotter.Serializer;
-using System.Windows.Media.Media3D;
-using CadDataTypes;
-using System.Drawing;
-using System.IO;
-using System;
 
 namespace Plotter;
 

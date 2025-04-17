@@ -1,8 +1,6 @@
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
-using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 
 namespace GLFont;
@@ -70,7 +68,7 @@ public class FontRenderer
         Render(tex, p, xv, yv);
     }
 
-    public static int Counter = 0; 
+    public static int Counter = 0;
 
     public void Render(FontTex tex, vector3_t p, vector3_t xv, vector3_t yv)
     {

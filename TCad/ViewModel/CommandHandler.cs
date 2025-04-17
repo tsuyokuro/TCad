@@ -32,8 +32,8 @@ public class CommandHandler
             Down = down;
             Up = up;
             Description = description;
+        }
     }
-}
 
     readonly IPlotterController Controller;
     readonly IPlotterViewModel ViewModel;

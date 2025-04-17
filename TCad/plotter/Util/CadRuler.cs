@@ -1,5 +1,3 @@
-using OpenTK.Mathematics;
-using System;
 using System.Diagnostics;
 
 namespace Plotter;

@@ -9,7 +9,8 @@ public class FontFaceProvider
 
     private static FontFaceProvider Instance_;
 
-    public static FontFaceProvider Instance {
+    public static FontFaceProvider Instance
+    {
         get
         {
             if (Instance_ == null)
@@ -26,7 +27,8 @@ public class FontFaceProvider
 
         FontFaceW face;
 
-        if (FaceMap.TryGetValue(key, out face)) {
+        if (FaceMap.TryGetValue(key, out face))
+        {
             return face;
         }
 

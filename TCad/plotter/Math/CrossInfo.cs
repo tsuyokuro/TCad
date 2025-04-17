@@ -1,5 +1,3 @@
-using OpenTK.Mathematics;
-
 namespace Plotter;
 
 public struct CrossInfo

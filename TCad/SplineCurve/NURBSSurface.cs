@@ -1,6 +1,4 @@
 using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
 
 namespace SplineCurve;
 
@@ -112,7 +110,7 @@ public class NurbsSurface
 
     public void SetDefaultWeights()
     {
-        Weights = new vcompo_t[UCtrlDataCnt*VCtrlDataCnt];
+        Weights = new vcompo_t[UCtrlDataCnt * VCtrlDataCnt];
 
         for (int i = 0; i < Weights.Length; i++)
         {

@@ -1,6 +1,6 @@
-using Plotter.Serializer;
-using Plotter.Controller;
 using Plotter;
+using Plotter.Controller;
+using Plotter.Serializer;
 using System.IO;
 
 namespace TCad.ViewModel;
@@ -90,7 +90,8 @@ public class CadFileAccessor
 
         foreach (CadFigure c in fig.ChildList)
         {
-            try {
+            try
+            {
                 LoadExternalData(dsc, c, fname);
             }
             catch

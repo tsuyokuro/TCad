@@ -1,6 +1,5 @@
 using CadDataTypes;
 using System;
-using System.Drawing;
 
 namespace Plotter;
 

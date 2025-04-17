@@ -300,7 +300,7 @@ public partial class ColorMaker : UserControl
 
     private void ColorPicker_Loaded(object sender, RoutedEventArgs e)
     {
-        
+
     }
 
     private void TextChangedI(object sender, TextChangedEventArgs args)

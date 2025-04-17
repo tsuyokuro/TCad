@@ -1,5 +1,3 @@
-using OpenTK.Mathematics;
-
 namespace Plotter;
 
 // 直方体の対角線を保持

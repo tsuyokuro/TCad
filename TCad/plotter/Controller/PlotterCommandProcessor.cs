@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using CadDataTypes;
+using System.Collections.Generic;
 
 namespace Plotter.Controller;
 
@@ -232,7 +232,7 @@ public class PlotterCommandProcessor
 
         ClusterInfo ci = new ClusterInfo(cnt);
 
-        for (int i=0; i<cnt; i++)
+        for (int i = 0; i < cnt; i++)
         {
             CadFigure fig = figList[i];
 
@@ -257,7 +257,8 @@ public class PlotterCommandProcessor
 
         int ins = ci.Bottom - ci.SelFigList.Count + 2;
 
-        if (ins > ci.FigList.Count) {
+        if (ins > ci.FigList.Count)
+        {
             return;
         }
 

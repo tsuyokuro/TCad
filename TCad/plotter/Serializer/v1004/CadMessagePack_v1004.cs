@@ -1,11 +1,11 @@
+using CadDataTypes;
 using HalfEdgeNS;
 using MessagePack;
+using OpenTK.Mathematics;
+using SplineCurve;
 using System;
 using System.Collections.Generic;
-using CadDataTypes;
-using SplineCurve;
 using System.Drawing.Printing;
-using OpenTK.Mathematics;
 
 namespace Plotter.Serializer;
 

@@ -557,7 +557,7 @@ public class DragingPointsState : ControllerState
         Context.ChangeState(ControllerStates.SELECT);
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) 
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         if (isStart)
         {

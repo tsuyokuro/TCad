@@ -1,9 +1,7 @@
-using Plotter.Serializer;
-using System.Windows.Media.Media3D;
 using CadDataTypes;
-using System.Drawing;
-using System.IO;
+using Plotter.Serializer;
 using System;
+using System.Drawing;
 
 namespace Plotter;
 
@@ -139,7 +137,7 @@ public partial class CadFigurePicture : CadFigure
         {
             geo.Base64 = null;
             geo.Bytes = new byte[SrcData.Length];
-            SrcData.CopyTo(geo.Bytes,0);
+            SrcData.CopyTo(geo.Bytes, 0);
         }
 
 

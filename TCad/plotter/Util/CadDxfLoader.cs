@@ -1,7 +1,7 @@
+using CadDataTypes;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using CadDataTypes;
 
 namespace Plotter;
 
@@ -38,7 +38,7 @@ class CadDxfLoader
         TotalPointCount = 0;
         TotalFaceCount = 0;
 
-        CadMesh mesh = new CadMesh(10,10);
+        CadMesh mesh = new CadMesh(10, 10);
 
         StreamReader reader = new StreamReader(fname);
 
@@ -147,7 +147,7 @@ class CadDxfLoader
 
         CadFace f = new CadFace();
 
-        for (int i=0; i<plist.Count; i++)
+        for (int i = 0; i < plist.Count; i++)
         {
             pidx = mesh.VertexStore.Add(plist[i]);
             f.VList.Add(pidx);

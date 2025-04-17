@@ -1,6 +1,4 @@
 using CadDataTypes;
-using OpenTK;
-using OpenTK.Mathematics;
 
 namespace SplineCurve;
 
@@ -78,7 +76,7 @@ public class NurbsLine
     private vector3_t CalcPoint(vcompo_t t)
     {
         vector3_t linePoint = vector3_t.Zero;
-			vcompo_t weight = 0f;
+        vcompo_t weight = 0f;
 
         vcompo_t bs;
 
@@ -88,17 +86,17 @@ public class NurbsLine
 
         for (i = 0; i < CtrlCnt; ++i)
         {
-				bs = BSplineP.BasisFunc(i, t);
+            bs = BSplineP.BasisFunc(i, t);
 
             di = CtrlOrder[i];
 
             linePoint += bs * Weights[di] * CtrlPoints[di].vector;
 
             weight += bs * Weights[di];
-			}
+        }
 
         return linePoint / weight;
-		}
+    }
 
     public void Eval(VertexList vl)
     {
@@ -110,7 +108,7 @@ public class NurbsLine
                 t = BSplineP.HighKnot - BSpline.Epsilon;
             }
 
-            vl.Add( new CadVertex(CalcPoint(t)) );
+            vl.Add(new CadVertex(CalcPoint(t)));
         }
     }
 

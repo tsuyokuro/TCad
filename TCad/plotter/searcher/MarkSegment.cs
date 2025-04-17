@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 
 namespace Plotter;
 
@@ -86,7 +85,7 @@ public struct MarkSegment
 
     public bool Valid { get { return FigureID != 0; } }
 
-    public void dump(string name= "MarkSeg")
+    public void dump(string name = "MarkSeg")
     {
         Log.pl(name + " {");
         Log.Indent++;

@@ -1,5 +1,3 @@
-using OpenTK.Mathematics;
-
 namespace Plotter.Controller;
 
 public static class ViewUtil

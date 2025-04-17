@@ -1,5 +1,4 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 
 namespace SplineCurve;
 
@@ -18,8 +17,8 @@ public class SplineUtil
     {
         VertexList vl = new VertexList(ucnt * vcnt);
 
-        vector3_t ud = ((vcompo_t)(ucnt-1) / (vcompo_t)(2.0)) * uunit;
-        vector3_t vd = ((vcompo_t)(vcnt-1) / (vcompo_t)(2.0)) * vunit;
+        vector3_t ud = ((vcompo_t)(ucnt - 1) / (vcompo_t)(2.0)) * uunit;
+        vector3_t vd = ((vcompo_t)(vcnt - 1) / (vcompo_t)(2.0)) * vunit;
 
         vector3_t p = vector3_t.Zero;
 

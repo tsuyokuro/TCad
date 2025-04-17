@@ -93,7 +93,7 @@ public partial class CadConsoleView : FrameworkElement
 
     protected ScrollViewer Scroll;
 
-    protected FastRingBuffer<TextLine> mList = new FastRingBuffer<TextLine>(); 
+    protected FastRingBuffer<TextLine> mList = new FastRingBuffer<TextLine>();
 
     protected AnsiPalette Palette = new AnsiPalette();
 
@@ -166,7 +166,8 @@ public partial class CadConsoleView : FrameworkElement
     {
     }
 
-    protected override void OnInitialized(EventArgs e) {
+    protected override void OnInitialized(EventArgs e)
+    {
         base.OnInitialized(e);
         Log.plx("");
 
@@ -459,7 +460,7 @@ public partial class CadConsoleView : FrameworkElement
         double p = 0;
 
         int i = 0;
-        for (;i<s.Length;i++)
+        for (; i < s.Length; i++)
         {
             char c = s[i];
 
@@ -786,7 +787,7 @@ public partial class CadConsoleView : FrameworkElement
 
         if (IsFocused)
         {
-            Rect sr = new Rect(0, offset + 1, ActualWidth, dispHeight-1);
+            Rect sr = new Rect(0, offset + 1, ActualWidth, dispHeight - 1);
             dc.DrawRectangle(null, FocusedBorderPen, sr);
         }
     }
@@ -809,7 +810,7 @@ public partial class CadConsoleView : FrameworkElement
 
         FormattedText ft = GetFormattedText(s, foreground);
 
-        Rect r = new Rect(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight); 
+        Rect r = new Rect(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight);
 
         Brush background = Palette.Brushes[attr.BColor];
 

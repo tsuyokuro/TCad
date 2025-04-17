@@ -201,10 +201,10 @@ public abstract class EventHandler<EventT> where EventT : EventHandlerEvent, new
 
     public void RemoveAll(int what)
     {
-        lock(Events.GetLock())
+        lock (Events.GetLock())
         {
             int cnt = Events.Count;
-            for (int i=0; i < cnt; i++)
+            for (int i = 0; i < cnt; i++)
             {
                 EventT evt = Events.Pop();
                 if (evt.What != what)

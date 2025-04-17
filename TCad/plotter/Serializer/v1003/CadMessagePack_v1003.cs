@@ -1,11 +1,11 @@
+using CadDataTypes;
 using HalfEdgeNS;
 using MessagePack;
+using OpenTK.Mathematics;
+using SplineCurve;
 using System;
 using System.Collections.Generic;
-using CadDataTypes;
-using SplineCurve;
 using System.Drawing.Printing;
-using OpenTK.Mathematics;
 
 namespace Plotter.Serializer;
 
@@ -598,7 +598,7 @@ public struct MpVertexAttr_v1003
         MpVertexAttr_v1003 ret = new MpVertexAttr_v1003();
 
         ret.Color1 = MpColor4_v1003.Create(attr.Color);
-        ret.Normal =MpVector3_v1003.Create(attr.Normal);
+        ret.Normal = MpVector3_v1003.Create(attr.Normal);
         ret.Flags = 0;
         return ret;
     }

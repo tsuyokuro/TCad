@@ -1,9 +1,9 @@
+using CadDataTypes;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
-using CadDataTypes;
 
 namespace Plotter;
 

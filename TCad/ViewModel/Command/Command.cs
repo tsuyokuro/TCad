@@ -1,6 +1,6 @@
+using Plotter;
 using System;
 using System.Windows.Input;
-using Plotter;
 
 namespace TCad.ViewModel;
 

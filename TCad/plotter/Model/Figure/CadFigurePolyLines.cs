@@ -290,7 +290,7 @@ public partial class CadFigurePolyLines : CadFigure
         mPointList[index] = pt;
     }
 
-   public override void EndEdit()
+    public override void EndEdit()
     {
         base.EndEdit();
     }

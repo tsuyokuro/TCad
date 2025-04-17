@@ -1,8 +1,8 @@
+using Plotter;
+using Plotter.Controller;
+using Plotter.Settings;
 using TCad.Controls;
 using TCad.Dialogs;
-using Plotter;
-using Plotter.Settings;
-using Plotter.Controller;
 
 namespace TCad.ViewModel;
 
@@ -72,7 +72,8 @@ public class ObjectTreeViewModel
             return;
         }
 
-        ThreadUtil.RunOnMainThread(() => {
+        ThreadUtil.RunOnMainThread(() =>
+        {
             mObjectTree.SetPos(index);
         }, true);
     }
