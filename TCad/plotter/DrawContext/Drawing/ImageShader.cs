@@ -30,15 +30,17 @@ public class ImageShader
 
     private static ImageShader sInstance;
 
-    public static ImageShader GetInstance()
+    public static ImageShader Instance
     {
-        if (sInstance == null)
-        {
-            sInstance = new ImageShader();
-            sInstance.SetupShader();
-        }
+        get {
+            if (sInstance == null)
+            {
+                sInstance = new ImageShader();
+                sInstance.SetupShader();
+            }
 
-        return sInstance;
+            return sInstance;
+        }
     }
 
     private void SetupShader()

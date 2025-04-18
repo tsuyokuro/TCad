@@ -164,7 +164,7 @@ public partial class CadFigurePicture : CadFigure
             return;
         }
 
-        ImageRenderer renderer = ImageRenderer.Provider.Get();
+        ImageRenderer renderer = ImageRenderer.Instance;
 
         vector3_t xv = (vector3_t)(mPointList[1] - mPointList[0]);
         vector3_t yv = (vector3_t)(mPointList[3] - mPointList[0]);

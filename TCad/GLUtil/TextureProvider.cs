@@ -6,9 +6,9 @@ namespace GLUtil;
 
 public class TextureProvider
 {
-    private static TextureProvider sInstance;
-
     private readonly List<int> mTextures = new();
+
+    private static TextureProvider sInstance;
 
     public static TextureProvider Instance
     {
@@ -36,12 +36,12 @@ public class TextureProvider
         mTextures.Clear();
     }
 
-    public void Remove(int name)
+    public void Remove(int textureID)
     {
-        if (mTextures.Contains(name))
+        if (mTextures.Contains(textureID))
         {
-            GL.DeleteTexture(name);
-            mTextures.Remove(name);
+            GL.DeleteTexture(textureID);
+            mTextures.Remove(textureID);
         }
     }
 }

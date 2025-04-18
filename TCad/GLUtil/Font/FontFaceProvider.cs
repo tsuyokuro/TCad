@@ -7,17 +7,14 @@ public class FontFaceProvider
 {
     private Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
 
-    private static FontFaceProvider Instance_;
+    private static FontFaceProvider sInstance;
 
     public static FontFaceProvider Instance
     {
         get
         {
-            if (Instance_ == null)
-            {
-                Instance_ = new FontFaceProvider();
-            }
-            return Instance_;
+            sInstance ??= new FontFaceProvider();
+            return sInstance;
         }
     }
 

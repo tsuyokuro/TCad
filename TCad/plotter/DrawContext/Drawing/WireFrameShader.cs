@@ -60,15 +60,18 @@ public class WireFrameShader
 
     private static WireFrameShader sInstance;
 
-    public static WireFrameShader GetInstance()
+    public static WireFrameShader Instance
     {
-        if (sInstance == null)
+        get
         {
-            sInstance = new WireFrameShader();
-            sInstance.SetupShader();
-        }
+            if (sInstance == null)
+            {
+                sInstance = new WireFrameShader();
+                sInstance.SetupShader();
+            }
 
-        return sInstance;
+            return sInstance;
+        }
     }
 
     private void SetupShader()

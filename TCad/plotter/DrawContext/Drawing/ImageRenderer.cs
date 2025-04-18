@@ -9,13 +9,34 @@ public class ImageRenderer
 {
     private int TextureID = -1;
 
-    private bool mInitialized = false;
+    private bool Valid {
+
+        get
+        {
+            return TextureID != -1;
+        }
+    }
 
     private ImageShader mShader;
 
-    public bool Initialized
+    private static ImageRenderer sInstance;
+
+    public static ImageRenderer Instance
     {
-        get => mInitialized;
+        get
+        {
+            if (sInstance == null)
+            {
+                sInstance = new ImageRenderer();
+                sInstance.Init();
+            }
+            else if (!sInstance.Valid)
+            {
+                sInstance.Init();
+            }
+
+            return sInstance;
+        }
     }
 
     public void Init()
@@ -25,19 +46,16 @@ public class ImageRenderer
         TextureID = TextureProvider.Instance.GetNew();
 
         // Use my shader
-        mShader = ImageShader.GetInstance();
-
-        mInitialized = true;
+        mShader = ImageShader.Instance;
     }
 
     public void Dispose()
     {
-        if (mInitialized)
+        if (Valid)
         {
             TextureProvider.Instance.Remove(TextureID);
+            TextureID = -1;
         }
-
-        mInitialized = false;
     }
 
 
@@ -116,34 +134,5 @@ public class ImageRenderer
 
         // Not use my shader
         //GL.Disable(EnableCap.Texture2D);
-    }
-
-
-    public class Provider
-    {
-        private static ImageRenderer sImageRenderer;
-
-        public static ImageRenderer Get()
-        {
-            if (sImageRenderer == null)
-            {
-                sImageRenderer = new ImageRenderer();
-            }
-
-            if (!sImageRenderer.Initialized)
-            {
-                sImageRenderer.Init();
-            }
-
-            return sImageRenderer;
-        }
-
-        public static void Release()
-        {
-            if (sImageRenderer != null)
-            {
-                sImageRenderer.Dispose();
-            }
-        }
     }
 }

@@ -32,15 +32,16 @@ public class FontShader
 
     private static FontShader sInstance;
 
-    public static FontShader GetInstance()
+    public static FontShader Instance
     {
-        if (sInstance == null)
-        {
-            sInstance = new FontShader();
-            sInstance.SetupShader();
+        get {
+            if (sInstance == null)
+            {
+                sInstance = new FontShader();
+                sInstance.SetupShader();
+            }
+            return sInstance;
         }
-
-        return sInstance;
     }
 
     private void SetupShader()

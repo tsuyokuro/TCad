@@ -14,11 +14,7 @@ public class GDIToolManager : IDisposable
         [MethodImpl(MethodImplOptions.Synchronized)]
         get
         {
-            if (sInstance == null)
-            {
-                sInstance = new GDIToolManager();
-            }
-
+            sInstance ??= new GDIToolManager();
             return sInstance;
         }
     }

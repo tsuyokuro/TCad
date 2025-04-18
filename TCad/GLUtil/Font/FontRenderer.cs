@@ -44,7 +44,7 @@ public class FontRenderer
 
         TextureID = TextureProvider.Instance.GetNew();
 
-        mShader = FontShader.GetInstance();
+        mShader = FontShader.Instance;
 
         mInitialized = true;
     }

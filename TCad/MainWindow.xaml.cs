@@ -201,9 +201,9 @@ public partial class MainWindow : Window, ICadMainWindow
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
-        ImageRenderer.Provider.Get();
+        var img = ImageRenderer.Instance;
 
-        WireFrameShader.GetInstance();
+        var ws = WireFrameShader.Instance;
 
         Log.plx("out");
     }
@@ -215,12 +215,12 @@ public partial class MainWindow : Window, ICadMainWindow
         Contoroller.Shutdown();
         ViewModel.Shutdown();
 
-        ImageRenderer.Provider.Release();
+        ImageRenderer.Instance.Dispose();
         FontRenderer.Instance.Dispose();
         TextureProvider.Instance.RemoveAll();
-        FontShader.GetInstance().Dispose();
-        ImageShader.GetInstance().Dispose();
-        WireFrameShader.GetInstance().Dispose();
+        FontShader.Instance.Dispose();
+        ImageShader.Instance.Dispose();
+        WireFrameShader.Instance.Dispose();
 
         Glu.Dispose();
 
