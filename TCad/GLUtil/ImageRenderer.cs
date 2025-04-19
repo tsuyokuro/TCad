@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Plotter;
+namespace GLUtil;
 
 public class ImageRenderer
 {
@@ -107,22 +107,22 @@ public class ImageRenderer
         vector3_t x = xv;
         vector3_t y = yv;
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)1.0);
 
         GL.Normal3(new vector3_t(0, 0, 1));
 
         GL.Begin(PrimitiveType.Quads);
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)1.0);
         GL.Vertex3(p + x + y);
 
-        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)0.0, (vcompo_t)1.0);
         GL.Vertex3(p + y);
 
-        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(0.0));
+        GL.TexCoord2((vcompo_t)0.0, (vcompo_t)0.0);
         GL.Vertex3(p);
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(0.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)0.0);
         GL.Vertex3(p + x);
 
         GL.End();

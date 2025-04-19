@@ -1,7 +1,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 
-namespace Plotter;
+namespace GLUtil;
 
 public class WireFrameShader
 {
