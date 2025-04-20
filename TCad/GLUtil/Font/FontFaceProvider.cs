@@ -7,17 +7,6 @@ public class FontFaceProvider
 {
     private Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
 
-    private static FontFaceProvider sInstance;
-
-    public static FontFaceProvider Instance
-    {
-        get
-        {
-            sInstance ??= new FontFaceProvider();
-            return sInstance;
-        }
-    }
-
     public FontFaceW FromFile(string fname, float size, int faceIndex)
     {
         string key = GetKey(fname, size, faceIndex);

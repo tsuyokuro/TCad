@@ -207,7 +207,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         CommandTextBox.Determined -= EvalTextCommand;
 
-        GDIToolManager.Instance.Dispose();
+        GDIToolManager.Provider.Instance.Dispose();
 
         Log.plx("out");
     }

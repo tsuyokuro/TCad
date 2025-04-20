@@ -58,20 +58,9 @@ public class WireFrameShader
 
     private int ShaderProgram = -1;
 
-    private static WireFrameShader sInstance;
-
-    public static WireFrameShader Instance
+    public WireFrameShader()
     {
-        get
-        {
-            if (sInstance == null)
-            {
-                sInstance = new WireFrameShader();
-                sInstance.SetupShader();
-            }
-
-            return sInstance;
-        }
+        SetupShader();
     }
 
     private void SetupShader()

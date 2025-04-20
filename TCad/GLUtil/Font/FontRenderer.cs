@@ -8,59 +8,34 @@ namespace GLFont;
 public class FontRenderer
 {
     public int TextureID = -1;
-    private bool mInitialized = false;
 
-    FontShader mShader;
 
-    public bool Initialized
+    private FontShader Shader
     {
-        get => mInitialized;
+        get => GLUtilContainer.FontShader.Instance;
     }
 
-    private static FontRenderer sInstance = null;
-    public static FontRenderer Instance
-    {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        get
-        {
-            if (sInstance == null)
-            {
-                sInstance = new FontRenderer();
-                sInstance.Init();
-            }
-
-            return sInstance;
-        }
-    }
-
-    private FontRenderer()
+    public FontRenderer()
     {
 
-    }
-
-    private void Init()
-    {
-        Dispose();
-
-        TextureID = TextureProvider.Instance.GetNew();
-
-        mShader = FontShader.Instance;
-
-        mInitialized = true;
     }
 
     public void Dispose()
     {
-        if (mInitialized)
+        if (TextureID != -1)
         {
-            TextureProvider.Instance.Remove(TextureID);
+            GLUtilContainer.TextureProvider.Instance.Remove(TextureID);
+            TextureID = -1;
         }
-
-        mInitialized = false;
     }
 
     public void Render(FontTex tex)
     {
+        if (TextureID == -1)
+        {
+            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
+        }
+
         vector3_t p = vector3_t.Zero;
         vector3_t xv = vector3_t.UnitX * tex.ImgW;
         vector3_t yv = vector3_t.UnitY * tex.ImgH;
@@ -72,9 +47,9 @@ public class FontRenderer
 
     public void Render(FontTex tex, vector3_t p, vector3_t xv, vector3_t yv)
     {
-        if (!mInitialized)
+        if (TextureID == -1)
         {
-            throw new ObjectDisposedException(nameof(FontRenderer));
+            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
         }
 
         Counter++;
@@ -101,7 +76,7 @@ public class FontRenderer
             GL.BindTexture(TextureTarget.Texture2D, tex.TextureID);
         }
 
-        mShader.Start(texUnitNumber);
+        Shader.Start(texUnitNumber);
 
         GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
 
@@ -134,6 +109,6 @@ public class FontRenderer
 
         // 
         //GL.UseProgram(0);
-        mShader.End();
+        Shader.End();
     }
 }

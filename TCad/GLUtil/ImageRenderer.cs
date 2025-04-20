@@ -1,4 +1,3 @@
-using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,51 +8,20 @@ public class ImageRenderer
 {
     private int TextureID = -1;
 
-    private bool Valid {
-
-        get
-        {
-            return TextureID != -1;
-        }
+    private ImageShader Shader
+    {
+        get => GLUtilContainer.ImageShader.Instance;
     }
 
-    private ImageShader mShader;
-
-    private static ImageRenderer sInstance;
-
-    public static ImageRenderer Instance
+    public ImageRenderer()
     {
-        get
-        {
-            if (sInstance == null)
-            {
-                sInstance = new ImageRenderer();
-                sInstance.Init();
-            }
-            else if (!sInstance.Valid)
-            {
-                sInstance.Init();
-            }
-
-            return sInstance;
-        }
-    }
-
-    public void Init()
-    {
-        Dispose();
-
-        TextureID = TextureProvider.Instance.GetNew();
-
-        // Use my shader
-        mShader = ImageShader.Instance;
     }
 
     public void Dispose()
     {
-        if (Valid)
+        if (TextureID != -1)
         {
-            TextureProvider.Instance.Remove(TextureID);
+            GLUtilContainer.TextureProvider.Instance.Remove(TextureID);
             TextureID = -1;
         }
     }
@@ -61,6 +29,11 @@ public class ImageRenderer
 
     public void Render(Bitmap bitmap, vector3_t p, vector3_t xv, vector3_t yv)
     {
+        if (TextureID == -1)
+        {
+            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
+        }
+
         int texUnitNumber = 1;
 
         // Not use my shader
@@ -101,7 +74,7 @@ public class ImageRenderer
 
 
         // Use my shader
-        mShader.Start(texUnitNumber);
+        Shader.Start(texUnitNumber);
 
 
         vector3_t x = xv;
@@ -129,7 +102,7 @@ public class ImageRenderer
 
 
         // Use my shader
-        mShader.End();
+        Shader.End();
 
 
         // Not use my shader

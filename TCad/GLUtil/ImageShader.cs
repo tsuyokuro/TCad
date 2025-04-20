@@ -28,19 +28,9 @@ public class ImageShader
 
     private int ShaderProgram = -1;
 
-    private static ImageShader sInstance;
-
-    public static ImageShader Instance
+    public ImageShader()
     {
-        get {
-            if (sInstance == null)
-            {
-                sInstance = new ImageShader();
-                sInstance.SetupShader();
-            }
-
-            return sInstance;
-        }
+        SetupShader();
     }
 
     private void SetupShader()

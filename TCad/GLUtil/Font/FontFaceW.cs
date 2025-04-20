@@ -219,7 +219,7 @@ public partial class FontFaceW
     {
         int texUnitNumber = 0;
 
-        fontTex.TextureID = TextureProvider.Instance.GetNew();
+        fontTex.TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
 
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 

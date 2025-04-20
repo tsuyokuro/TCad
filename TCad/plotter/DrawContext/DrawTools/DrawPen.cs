@@ -22,7 +22,7 @@ public struct DrawPen : IEquatable<DrawPen>
 
     public Pen GdiPen
     {
-        get => GDIToolManager.Instance.Pen(this);
+        get => GDIToolManager.Provider.Instance.Pen(this);
     }
 
     public int Argb

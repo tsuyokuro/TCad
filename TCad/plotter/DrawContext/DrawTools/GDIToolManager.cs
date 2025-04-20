@@ -7,22 +7,11 @@ namespace Plotter;
 
 public class GDIToolManager : IDisposable
 {
-    private static GDIToolManager sInstance;
-
-    public static GDIToolManager Instance
-    {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        get
-        {
-            sInstance ??= new GDIToolManager();
-            return sInstance;
-        }
-    }
-
     private Dictionary<DrawPen, Pen> PenMap = new();
     private Dictionary<DrawBrush, SolidBrush> BrushMap = new();
 
-    private GDIToolManager() { }
+    private GDIToolManager() {
+    }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     public Pen Pen(in DrawPen dpen)
@@ -73,4 +62,9 @@ public class GDIToolManager : IDisposable
     {
         Clear();
     }
+
+    public static SingleServiceProvider<GDIToolManager> Provider = new(
+        () => {
+            return new GDIToolManager();
+        });
 }
