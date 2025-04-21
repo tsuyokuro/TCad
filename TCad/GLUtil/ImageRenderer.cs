@@ -8,20 +8,22 @@ public class ImageRenderer
 {
     private int TextureID = -1;
 
-    private ImageShader Shader
-    {
-        get => GLUtilContainer.ImageShader.Instance;
-    }
+    private ImageShader Shader;
 
-    public ImageRenderer()
+    private TextureProvider TextureProvider;
+
+    public ImageRenderer(ImageShader shader, TextureProvider textureProvider)
     {
+        Shader = shader;
+        TextureProvider = textureProvider;
+        TextureID = TextureProvider.GetNew();
     }
 
     public void Dispose()
     {
         if (TextureID != -1)
         {
-            GLUtilContainer.TextureProvider.Instance.Remove(TextureID);
+            TextureProvider.Remove(TextureID);
             TextureID = -1;
         }
     }
@@ -29,11 +31,6 @@ public class ImageRenderer
 
     public void Render(Bitmap bitmap, vector3_t p, vector3_t xv, vector3_t yv)
     {
-        if (TextureID == -1)
-        {
-            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
-        }
-
         int texUnitNumber = 1;
 
         // Not use my shader

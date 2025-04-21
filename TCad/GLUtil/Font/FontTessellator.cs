@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GLFont;
 
-internal class FontTessellator
+static class FontTessellator
 {
     public static FontPoly TessellateRaw(GlyphSlot glyph, int div, Tessellator tesse)
     {

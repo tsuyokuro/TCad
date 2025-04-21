@@ -10,32 +10,28 @@ public class FontRenderer
     public int TextureID = -1;
 
 
-    private FontShader Shader
-    {
-        get => GLUtilContainer.FontShader.Instance;
-    }
+    private FontShader Shader;
 
-    public FontRenderer()
-    {
+    TextureProvider TextureProvider;
 
+    public FontRenderer(FontShader shader, TextureProvider textureProvider)
+    {
+        Shader = shader;
+        TextureProvider = textureProvider;
+        TextureID = TextureProvider.GetNew();
     }
 
     public void Dispose()
     {
         if (TextureID != -1)
         {
-            GLUtilContainer.TextureProvider.Instance.Remove(TextureID);
+            TextureProvider.Remove(TextureID);
             TextureID = -1;
         }
     }
 
     public void Render(FontTex tex)
     {
-        if (TextureID == -1)
-        {
-            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
-        }
-
         vector3_t p = vector3_t.Zero;
         vector3_t xv = vector3_t.UnitX * tex.ImgW;
         vector3_t yv = vector3_t.UnitY * tex.ImgH;
