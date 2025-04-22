@@ -6,7 +6,7 @@ public class ContextMenuManager
 {
     MenuInfo mContextMenuInfo = new MenuInfo();
 
-    IPlotterController mController;
+    IPlotterController Controller;
 
     public static MenuInfo.Item CreatingFigureQuit = new MenuInfo.Item(Resources.menu_quit_create, "quit_create");
     public static MenuInfo.Item CreatingFigureEnd = new MenuInfo.Item(Resources.menu_end_create, "end_create");
@@ -17,7 +17,7 @@ public class ContextMenuManager
 
     public ContextMenuManager(IPlotterController controller)
     {
-        mController = controller;
+        Controller = controller;
     }
 
     public void RequestContextMenu(vcompo_t x, vcompo_t y)
@@ -25,12 +25,12 @@ public class ContextMenuManager
         mContextMenuInfo.Items.Clear();
 
 
-        if (mController.FigureCreator != null)
+        if (Controller.FigureCreator != null)
         {
-            switch (mController.CreatingFigType)
+            switch (Controller.CreatingFigType)
             {
                 case CadFigure.Types.POLY_LINES:
-                    if (mController.FigureCreator.Figure.PointCount > 2)
+                    if (Controller.FigureCreator.Figure.PointCount > 2)
                     {
                         mContextMenuInfo.Items.Add(CreatingFigureClose);
                     }
@@ -51,7 +51,7 @@ public class ContextMenuManager
                 mContextMenuInfo.Items.Add(InsertPoint);
             }
 
-            bool hasSelect = mController.HasSelect();
+            bool hasSelect = Controller.HasSelect();
             bool hasCopyData = PlotterClipboard.HasCopyData();
 
             if (hasSelect)
@@ -67,20 +67,20 @@ public class ContextMenuManager
 
         if (mContextMenuInfo.Items.Count > 0)
         {
-            mController.ViewModel.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
+            Controller.ShowContextMenu(mContextMenuInfo, (int)x, (int)y);
         }
     }
 
     private bool SegSelected()
     {
-        if (mController.Input.LastSelSegment == null)
+        if (Controller.Input.LastSelSegment == null)
         {
             return false;
         }
 
-        MarkSegment seg = mController.Input.LastSelSegment.Value;
+        MarkSegment seg = Controller.Input.LastSelSegment.Value;
 
-        CadFigure fig = mController.DB.GetFigure(seg.FigureID);
+        CadFigure fig = Controller.DB.GetFigure(seg.FigureID);
 
         if (fig == null)
         {
@@ -113,27 +113,27 @@ public class ContextMenuManager
         switch (tag)
         {
             case "to_loop":
-                mController.CloseFigure();
+                Controller.CloseFigure();
                 break;
 
             case "end_create":
-                mController.EndCreateFigure();
+                Controller.EndCreateFigure();
 
                 break;
             case "quit_create":
-                mController.EndCreateFigure();
+                Controller.EndCreateFigure();
                 break;
 
             case "copy":
-                mController.CommandProc.Copy();
+                Controller.CommandProc.Copy();
                 break;
 
             case "paste":
-                mController.CommandProc.Paste();
+                Controller.CommandProc.Paste();
                 break;
 
             case "insert_point":
-                mController.CommandProc.InsPoint();
+                Controller.CommandProc.InsPoint();
                 break;
         }
     }

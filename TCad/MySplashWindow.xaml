@@ -60,10 +60,10 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)"
-                                        To="360" Duration="0:0:3"
+                                        To="380" Duration="0:0:2"
                                         RepeatBehavior="Forever">
                                 <DoubleAnimation.EasingFunction>
-                                    <PowerEase Power="5" EasingMode="EaseInOut"/>
+                                    <PowerEase Power="1" EasingMode="EaseInOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                         </Storyboard>

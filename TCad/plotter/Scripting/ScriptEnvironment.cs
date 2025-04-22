@@ -116,12 +116,12 @@ public partial class ScriptEnvironment
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModel.OpenPopupMessage(text, type);
+        Controller.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModel.ClosePopupMessage();
+        Controller.ClosePopupMessage();
     }
 
     public async void ExecuteCommandAsync(string s)

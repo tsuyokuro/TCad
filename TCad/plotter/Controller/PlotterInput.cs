@@ -19,11 +19,6 @@ public class PlotterInput
         get => Controller.DB;
     }
 
-    private IPlotterViewModel ViewModel
-    {
-        get => Controller.ViewModel;
-    }
-
     public CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
@@ -110,7 +105,7 @@ public class PlotterInput
         set
         {
             mLastDownPoint = value;
-            ViewModel.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+            Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
         }
     }
 
@@ -503,8 +498,8 @@ public class PlotterInput
             CurrentState.MouseMove(pointer, dc, x, y);
         }
 
-        ViewModel.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        ViewModel.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -536,7 +531,7 @@ public class PlotterInput
 
         UnlockCursor();
 
-        ViewModel.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -560,7 +555,7 @@ public class PlotterInput
 
         CrossCursor.Store();
 
-        ViewModel.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
     }
 
     private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -576,7 +571,7 @@ public class PlotterInput
 
         CrossCursor.Pos = new vector3_t(x, y, 0);
 
-        ViewModel.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)
@@ -971,15 +966,15 @@ public class PlotterInput
 
     private void NotifyCursorLock(bool locked)
     {
-        ViewModel.CursorLocked(locked);
+        Controller.CursorLocked(locked);
         if (!locked)
         {
             mSpPointList = null;
-            ViewModel.ClosePopupMessage();
+            Controller.ClosePopupMessage();
         }
         else
         {
-            ViewModel.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
+            Controller.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
         }
     }
 
@@ -993,7 +988,7 @@ public class PlotterInput
         SnapPoint = v;
         CrossCursor.Pos = DC.WorldPointToDevPoint(SnapPoint);
 
-        ViewModel.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
     }
 
     public void AddExtendSnapPoint()

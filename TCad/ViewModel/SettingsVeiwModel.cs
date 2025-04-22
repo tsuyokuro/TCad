@@ -1,3 +1,4 @@
+using Plotter;
 using Plotter.Controller;
 using Plotter.Settings;
 using System.ComponentModel;
@@ -395,7 +396,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 
     private void Redraw()
     {
-        Controller.RedrawOnUiThread();
+        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
     }
 
     public void Load()

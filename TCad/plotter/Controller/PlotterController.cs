@@ -69,10 +69,10 @@ public class PlotterController : IPlotterController
     } = null;
 
 
-    public IPlotterViewModel ViewModel
+    private IPlotterViewModel ViewModel
     {
         get;
-        private set;
+        set;
     } = null;
 
     public List<CadFigure> TempFigureList
@@ -444,11 +444,46 @@ public class PlotterController : IPlotterController
 
     public void Redraw()
     {
-        Drawer.Redraw();
+        Drawer.Redraw(DC);
     }
 
-    public void RedrawOnUiThread()
+    public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        ThreadUtil.RunOnMainThread(Drawer.Redraw, true);
+        ViewModel.OpenPopupMessage(text, type);
+    }
+
+    public void ClosePopupMessage()
+    {
+        ViewModel.ClosePopupMessage();
+    }
+
+    public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
+    {
+        ViewModel.ShowContextMenu(menuInfo, x, y);
+    }
+
+    public void UpdateTreeView(bool remakeTree)
+    {
+        ViewModel.UpdateTreeView(remakeTree);
+    }
+
+    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    {
+        ViewModel.CursorPosChanged(pt, type);
+    }
+
+    public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
+    {
+        ViewModel.ChangeMouseCursor(cursorType);
+    }
+
+    public void CursorLocked(bool locked)
+    {
+        ViewModel.CursorLocked(locked);
+    }
+
+    public List<string> HelpOfKey(string keyword)
+    {
+        return ViewModel.HelpOfKey(keyword);
     }
 }

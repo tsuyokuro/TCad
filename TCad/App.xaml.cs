@@ -68,7 +68,7 @@ public partial class App : Application
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
 
-        Thread.Sleep(50);
+        Thread.Sleep(500);
         Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
 
         Stopwatch sw = new Stopwatch();

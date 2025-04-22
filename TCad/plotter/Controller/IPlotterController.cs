@@ -31,7 +31,7 @@ public interface IPlotterController
     ControllerStates StateID { get; }
     ControllerStateMachine StateMachine { get; }
     List<CadFigure> TempFigureList { get; }
-    IPlotterViewModel ViewModel { get; }
+
 
     void ConnectViewModel(IPlotterViewModel viewModel);
     void Startup();
@@ -61,5 +61,16 @@ public interface IPlotterController
     void UpdateLayerList();
     void UpdateObjectTree(bool remakeTree);
     void Redraw();
-    void RedrawOnUiThread();
+
+    void OpenPopupMessage(string text, UITypes.MessageType type);
+    void ClosePopupMessage();
+
+    void ShowContextMenu(MenuInfo menuInfo, int x, int y);
+    void UpdateTreeView(bool remakeTree);
+
+    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
+    void CursorLocked(bool locked);
+
+    List<string> HelpOfKey(string keyword);
 }

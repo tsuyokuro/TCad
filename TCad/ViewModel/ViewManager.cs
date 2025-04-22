@@ -185,6 +185,6 @@ public class ViewManager : INotifyPropertyChanged
 
         MainWindow.SetPlotterView(view);
 
-        Controller.RedrawOnUiThread();
+        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
     }
 }
