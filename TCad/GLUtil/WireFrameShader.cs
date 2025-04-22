@@ -127,7 +127,7 @@ public class WireFrameShader
         }
     }
 
-    public void Start(int texUnitNumber)
+    public void Start()
     {
         GL.UseProgram(ShaderProgram);
     }
