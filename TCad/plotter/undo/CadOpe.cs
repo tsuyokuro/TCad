@@ -573,12 +573,12 @@ public class CadOpeRemoveLayer : CadOpe
 
     public override void Redo(IPlotterController pc)
     {
-        pc.DB.RemoveLayer(Layer.ID);
+        pc.DB.RemoveLayer(Layer.ID, adjustCurrent: true);
     }
 
     public override void Undo(IPlotterController pc)
     {
-        pc.DB.InserLayer(Layer, Index);
+        pc.DB.InsertLayer(Layer, Index);
     }
 }
 

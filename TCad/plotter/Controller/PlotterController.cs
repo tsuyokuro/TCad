@@ -171,8 +171,7 @@ public class PlotterController : IPlotterController
 
         Editor = new PlotterEditor(this);
 
-        StateMachine = new ControllerStateMachine(this);
-        ChangeState(ControllerStates.SELECT);
+        StateMachine = new ControllerStateMachine(this, ControllerStates.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -182,9 +181,7 @@ public class PlotterController : IPlotterController
 
         PlotterTaskRunner = new PlotterTaskRunner(this);
 
-        var layer = DB.NewLayer();
-        DB.LayerList.Add(layer);
-        DB.CurrentLayer = layer;
+        DB.NewLayer(addLayerList: true, selectCurrent: true);
 
         Log.plx("out");
     }
@@ -216,47 +213,10 @@ public class PlotterController : IPlotterController
         StateMachine.ChangeState(state);
     }
 
-    #region ObjectTree handling
-    public void UpdateObjectTree(bool remakeTree)
-    {
-        ViewModel.UpdateTreeView(remakeTree);
-    }
-
-    public void SetObjectTreePos(int index)
-    {
-        ViewModel.SetTreeViewPos(index);
-    }
-
-    public int FindObjectTreeItem(uint id)
-    {
-        return ViewModel.FindTreeViewItemIndex(id);
-    }
-    #endregion ObjectTree handling
-
-
-    public void UpdateLayerList()
-    {
-        ViewModel.LayerListChanged(GetLayerListInfo());
-    }
-
-    private LayerListInfo GetLayerListInfo()
-    {
-        LayerListInfo layerInfo = default(LayerListInfo);
-        layerInfo.LayerList = DB.LayerList;
-        layerInfo.CurrentID = CurrentLayer.ID;
-
-        return layerInfo;
-    }
-
-    public void NotifyStateChange(StateChangedParam param)
-    {
-        ViewModel.StateChanged(param);
-    }
-
     public void StartCreateFigure(CadFigure.Types type)
     {
-        ChangeState(ControllerStates.CREATE_FIGURE);
         CreatingFigType = type;
+        ChangeState(ControllerStates.CREATE_FIGURE);
     }
 
     public void EndCreateFigure()
@@ -360,38 +320,32 @@ public class PlotterController : IPlotterController
 
     public List<CadFigure> GetSelectedFigureList()
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        //List<CadFigure> figList = new List<CadFigure>();
 
-        foreach (CadLayer layer in DB.LayerList)
-        {
-            layer.ForEachFig(fig =>
-            {
-                if (fig.HasSelectedPoint())
-                {
-                    figList.Add(fig);
-                }
-            });
-        }
+        //foreach (CadLayer layer in DB.LayerList)
+        //{
+        //    layer.ForEachFig(fig =>
+        //    {
+        //        if (fig.HasSelectedPoint())
+        //        {
+        //            figList.Add(fig);
+        //        }
+        //    });
+        //}
 
-        return figList;
+        //return figList;
+
+        return DB.GetSelectedFigList();
     }
 
     public List<CadFigure> GetSelectedRootFigureList()
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        return DB.GetSelectedRootFigureList();
+    }
 
-        foreach (CadLayer layer in DB.LayerList)
-        {
-            layer.ForEachRootFig(fig =>
-            {
-                if (fig.HasSelectedPointInclueChild())
-                {
-                    figList.Add(fig);
-                }
-            });
-        }
-
-        return figList;
+    public void SetDB(CadObjectDB db)
+    {
+        SetDB(db, true);
     }
 
     public void SetDB(CadObjectDB db, bool clearHistory)
@@ -408,15 +362,13 @@ public class PlotterController : IPlotterController
         UpdateObjectTree(true);
     }
 
-    public void SetDB(CadObjectDB db)
-    {
-        SetDB(db, true);
-    }
-
     public void SetCurrentLayer(uint id)
     {
-        DB.CurrentLayerID = id;
-        UpdateObjectTree(true);
+        if (DB.IsValidLayerID(id))
+        {
+            DB.CurrentLayerID = id;
+            UpdateObjectTree(true);
+        }
     }
 
     public void EvalTextCommand(string s)
@@ -445,6 +397,33 @@ public class PlotterController : IPlotterController
     public void Redraw()
     {
         Drawer.Redraw(DC);
+    }
+
+    public void UpdateObjectTree(bool remakeTree)
+    {
+        ViewModel.UpdateTreeView(remakeTree);
+    }
+
+    public void SetObjectTreePos(int index)
+    {
+        ViewModel.SetTreeViewPos(index);
+    }
+
+    public int FindObjectTreeItem(uint id)
+    {
+        return ViewModel.FindTreeViewItemIndex(id);
+    }
+
+    public void UpdateLayerList()
+    {
+        LayerListInfo layerListInfo = new(DB.LayerList, CurrentLayer.ID);
+
+        ViewModel.LayerListChanged(layerListInfo);
+    }
+
+    public void NotifyStateChange(StateChangedParam param)
+    {
+        ViewModel.StateChanged(param);
     }
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)

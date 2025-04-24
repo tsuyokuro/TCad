@@ -548,7 +548,10 @@ public abstract partial class CadFigure
 
         mChildList.ForEach(c =>
         {
-            c.MoveSelectedPointsFromStored(dc, moveInfo);
+            if (c.HasSelectedPoint())
+            {
+                c.MoveSelectedPointsFromStored(dc, moveInfo);
+            }
         });
     }
 

@@ -6,6 +6,12 @@ public struct LayerListInfo
 {
     public List<CadLayer> LayerList;
     public uint CurrentID;
+
+    public LayerListInfo(List<CadLayer> layerList, uint currentID)
+    {
+        LayerList = layerList;
+        CurrentID = currentID;
+    }
 }
 
 public enum StateChangedType

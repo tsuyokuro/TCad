@@ -59,7 +59,7 @@ public class ControllerStateMachine
 
     private IPlotterController Controller;
 
-    public ControllerStateMachine(IPlotterController controller)
+    public ControllerStateMachine(IPlotterController controller, ControllerStates initialState)
     {
         Controller = controller;
         Context = new StateContext(this);
@@ -73,6 +73,7 @@ public class ControllerStateMachine
         StateList[(int)ControllerStates.MEASURING] = new MeasuringState(Context);
 
         CurrentState = StateList[(int)ControllerStates.NONE];
+        ChangeState(initialState);
     }
 
     public void ChangeState(ControllerStates state)
@@ -83,17 +84,17 @@ public class ControllerStateMachine
             return;
         }
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Exit");
-#endif
+        #endif
 
         CurrentState.Exit();
 
         CurrentState = StateList[(int)state];
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Enter");
-#endif
+        #endif
 
         CurrentState.Enter();
 
@@ -105,17 +106,17 @@ public class ControllerStateMachine
 
     public void PushState(ControllerStates state)
     {
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Push");
-#endif
+        #endif
 
         StateStack.Push(CurrentState);
 
         CurrentState = StateList[(int)state];
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Enter");
-#endif
+        #endif
 
         CurrentState.Enter();
     }
@@ -127,9 +128,9 @@ public class ControllerStateMachine
         {
             CurrentState = backState;
 
-#if ENABLE_LOG
+            #if ENABLE_LOG
             Log.pl(CurrentState.GetType().Name + " is Poped");
-#endif
+            #endif
 
         }
     }
@@ -237,9 +238,6 @@ public class CreateFigureState : ControllerState
             CadFigure fig = Controller.DB.NewFigure(Controller.CreatingFigType);
 
             Controller.FigureCreator = FigCreator.Get(Controller.CreatingFigType, fig);
-
-            // TODO Remove States.CREATING state
-            //Ctrl.State = States.CREATING;
 
             isStart = false;
 
