@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
 
-namespace Plotter.Serializer;
+namespace TCad.plotter.Serializer;
 
 public static class JsonElementExtends
 {

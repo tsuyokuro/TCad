@@ -1,10 +1,12 @@
 using MessagePack;
+using Plotter;
+using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using TCad.plotter.Serializer.v1004;
 
-namespace Plotter.Serializer;
+namespace TCad.plotter.Serializer;
 
 
 using MpCadObjectDB = MpCadObjectDB_v1004;
@@ -40,7 +42,7 @@ public class CopyUtil
     {
         var mpfigList = Deserialize(bin);
 
-        var figList = MpUtil.FigureListFromMp<MpFig>(DSC, mpfigList);
+        var figList = MpUtil.FigureListFromMp(DSC, mpfigList);
 
         return figList;
     }

@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Serializer;
 using System;
 using System.Drawing;
+using TCad.plotter.Serializer;
 using TCad.plotter.Serializer.v1003;
 
 namespace Plotter;

@@ -1,11 +1,13 @@
 using CadDataTypes;
 using MyCollections;
+using Plotter;
+using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using TCad.plotter.Model.HalfEdge;
 
 
-namespace Plotter.Serializer;
+namespace TCad.plotter.Serializer;
 
 
 
