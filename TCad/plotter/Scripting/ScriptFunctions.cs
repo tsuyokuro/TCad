@@ -1,7 +1,6 @@
 using CadDataTypes;
 using CarveWapper;
 using GLUtil;
-using HalfEdgeNS;
 using LibiglWrapper;
 using MeshMakerNS;
 using MeshUtilNS;
@@ -18,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Threading;
 using TCad.Controls;
+using TCad.plotter.Model.HalfEdge;
 using TCad.ViewModel;
 using static Plotter.CadFigure;
 

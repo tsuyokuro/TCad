@@ -2,7 +2,6 @@ using CadDataTypes;
 using CarveWapper;
 using GLFont;
 using GLUtil;
-using HalfEdgeNS;
 using LibiglWrapper;
 using MeshMakerNS;
 using OpenGL.GLU;
@@ -23,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TCad.Controls;
+using TCad.plotter.Model.HalfEdge;
 
 namespace Plotter.Scripting;
 

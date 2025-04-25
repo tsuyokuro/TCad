@@ -2,7 +2,7 @@ using CadDataTypes;
 using MyCollections;
 using System.Collections.Generic;
 
-namespace HalfEdgeNS;
+namespace TCad.plotter.Model.HalfEdge;
 
 public class HeModelConverter
 {

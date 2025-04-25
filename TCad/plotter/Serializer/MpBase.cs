@@ -1,6 +1,6 @@
 using CadDataTypes;
-using HalfEdgeNS;
 using System.Collections.Generic;
+using TCad.plotter.Model.HalfEdge;
 
 namespace Plotter.Serializer;
 

@@ -2,7 +2,7 @@ using CadDataTypes;
 using Plotter;
 using System.Collections.Generic;
 
-namespace HalfEdgeNS;
+namespace TCad.plotter.Model.HalfEdge;
 
 public class HeModelBuilder
 {

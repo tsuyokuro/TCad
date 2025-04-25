@@ -1,8 +1,8 @@
 using CadDataTypes;
-using HalfEdgeNS;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using TCad.plotter.Model.HalfEdge;
 
 namespace Plotter;
 

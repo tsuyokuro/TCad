@@ -4,7 +4,7 @@ using Plotter;
 using System;
 using System.Collections.Generic;
 
-namespace HalfEdgeNS;
+namespace TCad.plotter.Model.HalfEdge;
 
 public class HeFace
 {
