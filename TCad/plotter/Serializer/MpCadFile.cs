@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using TCad.plotter.Serializer.v1003;
+using TCad.plotter.Serializer.v1004;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace Plotter.Serializer;
