@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using TCad.Controls;
 using TCad.plotter.Model.HalfEdge;
+using TCad.plotter.undo;
 
 namespace TCad.plotter.Scripting;
 

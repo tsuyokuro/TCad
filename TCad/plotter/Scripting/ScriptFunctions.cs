@@ -20,6 +20,7 @@ using System.Threading;
 using TCad.Controls;
 using TCad.plotter.Model.HalfEdge;
 using TCad.plotter.searcher;
+using TCad.plotter.undo;
 using TCad.ViewModel;
 using static Plotter.CadFigure;
 

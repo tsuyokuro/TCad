@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TCad.Controls;
 using TCad.Dialogs;
 using TCad.plotter.Model.HalfEdge;
+using TCad.plotter.undo;
 using TCad.ViewModel;
 
 namespace Plotter.Controller.TaskRunner;
