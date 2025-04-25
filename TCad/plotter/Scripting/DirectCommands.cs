@@ -1,4 +1,5 @@
 using GLFont;
+using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Plotter.Scripting;
+namespace TCad.plotter.Scripting;
 
 public class DirectCommands
 {

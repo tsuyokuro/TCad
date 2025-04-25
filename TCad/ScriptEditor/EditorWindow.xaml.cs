@@ -1,7 +1,6 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using Plotter.Scripting;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
+using TCad.plotter.Scripting;
+
 
 //using ICSharpCode.AvalonEdit.Search;
 using TCad.ScriptEditor.Search;

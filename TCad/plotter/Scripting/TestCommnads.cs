@@ -7,6 +7,7 @@ using MeshMakerNS;
 using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Plotter;
 using Plotter.Controller;
 using Plotter.svg;
 using SharpFont;
@@ -24,7 +25,7 @@ using System.Xml.Linq;
 using TCad.Controls;
 using TCad.plotter.Model.HalfEdge;
 
-namespace Plotter.Scripting;
+namespace TCad.plotter.Scripting;
 
 public class TestCommands
 {
@@ -298,7 +299,7 @@ public class TestCommands
 
         for (int i = 0; i < hem.VertexStore.Count; i++)
         {
-            hem.VertexStore[i] *= (vcompo_t)(500.0);
+            hem.VertexStore[i] *= (vcompo_t)500.0;
         }
 
         CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
@@ -369,7 +370,7 @@ public class TestCommands
     {
         CadDxfLoader loader = new CadDxfLoader();
 
-        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)(20.0));
+        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)20.0);
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -398,7 +399,7 @@ public class TestCommands
         int ucnt = 8;
         int vcnt = 5;
 
-        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0));
+        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, vector3_t.UnitX * (vcompo_t)20.0, vector3_t.UnitZ * (vcompo_t)20.0);
 
         nfig.Setup(2, ucnt, vcnt, vl, null, 16, 16);
 
@@ -419,7 +420,7 @@ public class TestCommands
         int vcnt = 4;
 
         VertexList vl = SplineUtil.CreateBoxControlPoints(
-            ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0), vector3_t.UnitY * (vcompo_t)(-20.0));
+            ucnt, vcnt, vector3_t.UnitX * (vcompo_t)20.0, vector3_t.UnitZ * (vcompo_t)20.0, vector3_t.UnitY * (vcompo_t)(-20.0));
 
         nfig.Setup(2, ucnt * 2, vcnt, vl, null, 16, 16, false, false, true, true);
 
@@ -557,8 +558,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                v.X = (vcompo_t)fv.X * (vcompo_t)(100.0);
-                v.Y = (vcompo_t)fv.Y * (vcompo_t)(100.0);
+                v.X = (vcompo_t)fv.X * (vcompo_t)100.0;
+                v.Y = (vcompo_t)fv.Y * (vcompo_t)100.0;
                 v.Z = 0;
 
                 tmpFig.AddPoint(v);
@@ -591,7 +592,7 @@ public class TestCommands
         Log.pl("MeshEnd");
     }
 
-    public void VertexCB(IntPtr data)
+    public void VertexCB(nint data)
     {
         int vIndex = (int)data;
         Log.pl("VertexCB vIndex:" + vIndex);
@@ -600,10 +601,10 @@ public class TestCommands
     private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
-                                ref IntPtr dataOut)
+                                ref nint dataOut)
     {
         Log.pl("MeshCombine");
-        dataOut = IntPtr.Zero;
+        dataOut = nint.Zero;
     }
 
     void ErrorCB(int err)
@@ -620,7 +621,7 @@ public class TestCommands
         Outline outline = glyph.Outline;
 
 
-        IntPtr htess = Glu.NewTess();
+        nint htess = Glu.NewTess();
         ItConsole.println("test4 htess:" + htess.ToString("x16"));
 
         Glu.TessCallback(htess, GluTessCallback.Begin, new Glu.TessBeginCallback(BeginCB));
@@ -631,7 +632,7 @@ public class TestCommands
 
         vcompo_t[] va = new vcompo_t[3];
 
-        Glu.TessNormal(htess, new Vector3(0f, 0f, 1f));
+        Glu.TessNormal(htess, new vector3_t(0f, 0f, 1f));
 
         Glu.TessBeginPolygon(htess, 128);
 
@@ -646,8 +647,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                tv[0] = (vcompo_t)fv.X * (vcompo_t)(100.0);
-                tv[1] = (vcompo_t)fv.Y * (vcompo_t)(100.0);
+                tv[0] = (vcompo_t)fv.X * (vcompo_t)100.0;
+                tv[1] = (vcompo_t)fv.Y * (vcompo_t)100.0;
                 tv[2] = 0;
 
                 Glu.TessVertex(htess, tv, idx);
@@ -676,7 +677,7 @@ public class TestCommands
 
         for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
         {
-            fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+            fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
         }
 
         HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -738,14 +739,14 @@ public class TestCommands
                 cvl.Add(fontPoly.VertexList[cont[j]]);
             }
 
-            CreatePolyLines(cvl, (vcompo_t)(400.0), true);
+            CreatePolyLines(cvl, (vcompo_t)400.0, true);
         }
 
         if (fontPoly.Mesh != null)
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -776,7 +777,7 @@ public class TestCommands
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);

@@ -2,6 +2,7 @@ using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
+using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Windows;
 using TCad.Controls;
 using TCad.ViewModel;
 
-namespace Plotter.Scripting;
+namespace TCad.plotter.Scripting;
 
 public partial class ScriptEnvironment
 {

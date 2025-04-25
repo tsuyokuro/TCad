@@ -1,4 +1,6 @@
-namespace Plotter.Scripting;
+using Plotter;
+
+namespace TCad.plotter.Scripting;
 
 public class ScriptSession
 {
