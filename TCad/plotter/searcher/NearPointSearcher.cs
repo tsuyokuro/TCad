@@ -1,8 +1,9 @@
 using CadDataTypes;
+using Plotter;
 using Plotter.Controller;
 using System.Collections.Generic;
 
-namespace Plotter;
+namespace TCad.plotter.searcher;
 
 public class NearPointSearcher
 {

@@ -1,6 +1,7 @@
 using CadDataTypes;
 using Plotter.Settings;
 using System.Collections.Generic;
+using TCad.plotter.searcher;
 using TCad.ViewModel;
 
 namespace Plotter.Controller;

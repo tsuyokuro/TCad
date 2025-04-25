@@ -1,3 +1,5 @@
+using TCad.plotter.searcher;
+
 namespace Plotter.Controller;
 
 public struct SnapInfo

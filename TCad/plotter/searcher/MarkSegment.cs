@@ -1,6 +1,7 @@
 using CadDataTypes;
+using Plotter;
 
-namespace Plotter;
+namespace TCad.plotter.searcher;
 
 public struct MarkSegment
 {

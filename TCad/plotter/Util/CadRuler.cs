@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using TCad.plotter.searcher;
 
 namespace Plotter;
 

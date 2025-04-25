@@ -1,6 +1,7 @@
+using Plotter;
 using System;
 
-namespace Plotter;
+namespace TCad.plotter.searcher;
 
 public struct MarkPoint : IEquatable<MarkPoint>
 {

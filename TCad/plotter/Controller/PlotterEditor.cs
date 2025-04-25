@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using System;
 using System.Collections.Generic;
+using TCad.plotter.searcher;
 using TCad.Properties;
 
 namespace Plotter.Controller;

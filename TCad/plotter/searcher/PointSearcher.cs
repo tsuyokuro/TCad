@@ -1,10 +1,12 @@
 #define LOG_DEBUG
 
 using CadDataTypes;
+using Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.plotter.searcher;
 
-namespace Plotter;
+namespace TCad.plotter.searcher;
 
 public class PointSearcher
 {
