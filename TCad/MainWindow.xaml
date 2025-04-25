@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cc="clr-namespace:TCad.Controls"
+    xmlns:CadConsole="clr-namespace:TCad.Controls.CadConsole"
     xmlns:properties="clr-namespace:TCad.Properties"
     xmlns:local="clr-namespace:TCad"
     xmlns:ext="clr-namespace:TCad.MarkupExtensions"
@@ -830,7 +831,7 @@
                                 Style="{StaticResource CustomScrollViewerStyle}"
                                 VerticalScrollBarVisibility="Visible">
 
-                                <cc:CadConsoleView
+                                <CadConsole:CadConsoleView
                                     x:Name="MyConsole"
                                     VerticalAlignment="Top"
                                     Background="{StaticResource PromptBGColor}"

@@ -6,10 +6,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using TCad.Controls.CadConsole;
 using TCad.Util;
 
-namespace TCad.Controls;
+namespace TCad.Controls.CadConsole;
 
 public partial class CadConsoleView : FrameworkElement
 {
@@ -142,7 +141,7 @@ public partial class CadConsoleView : FrameworkElement
         SizeChanged += CadConsoleView_SizeChanged;
     }
 
-    private void CadConsoleView_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    private void CadConsoleView_KeyUp(object sender, KeyEventArgs e)
     {
         if (Keyboard.Modifiers == ModifierKeys.Control)
         {
@@ -253,7 +252,7 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    private void CopySelected(Object obj, RoutedEventArgs args)
+    private void CopySelected(object obj, RoutedEventArgs args)
     {
         string copyString = GetSelectedString();
 
@@ -528,10 +527,10 @@ public partial class CadConsoleView : FrameworkElement
 
     protected static bool IsHankaku(char c)
     {
-        if ((c <= '\u007e') || // 英数字
-            (c == '\u00a5') || // \記号
-            (c == '\u203e') || // ~記号
-            (c >= '\uff61' && c <= '\uff9f') // 半角カナ
+        if (c <= '\u007e' || // 英数字
+            c == '\u00a5' || // \記号
+            c == '\u203e' || // ~記号
+            c >= '\uff61' && c <= '\uff9f' // 半角カナ
         )
         {
             return true;
@@ -549,7 +548,7 @@ public partial class CadConsoleView : FrameworkElement
 
     private void RecalcSize()
     {
-        Height = mLineHeight * (double)(mList.Count);
+        Height = mLineHeight * mList.Count;
 
         if (Scroll != null)
         {

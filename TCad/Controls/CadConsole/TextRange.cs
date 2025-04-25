@@ -1,4 +1,4 @@
-namespace TCad.Controls;
+namespace TCad.Controls.CadConsole;
 
 public struct TextPos
 {
@@ -87,7 +87,7 @@ public struct TextRange
 
     public bool IsEmpty()
     {
-        return (SP.Row == EP.Row) && (SP.Col == EP.Col);
+        return SP.Row == EP.Row && SP.Col == EP.Col;
     }
 
     public static TextRange Naormalized(TextRange tr)

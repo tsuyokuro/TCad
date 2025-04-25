@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.plotter.Model.HalfEdge;
 using TCad.plotter.undo;
 

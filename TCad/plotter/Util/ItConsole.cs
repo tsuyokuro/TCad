@@ -1,5 +1,5 @@
 using System;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.Properties;
 
 namespace Plotter;

@@ -17,7 +17,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Threading;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.plotter.Model.HalfEdge;
 using TCad.plotter.searcher;
 using TCad.plotter.undo;

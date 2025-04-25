@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.ViewModel;
 
 namespace TCad.plotter.Scripting;

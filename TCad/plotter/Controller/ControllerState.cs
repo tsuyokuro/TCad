@@ -4,7 +4,7 @@ using CadDataTypes;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.plotter.undo;
 using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
 

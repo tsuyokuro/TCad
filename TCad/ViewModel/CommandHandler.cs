@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.Dialogs;
 using TCad.plotter.undo;
 using TCad.ScriptEditor;

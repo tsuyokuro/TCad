@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace TCad.Controls;
+namespace TCad.Controls.CadConsole;
 
 public class AnsiEsc
 {

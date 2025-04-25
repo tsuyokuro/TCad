@@ -3,7 +3,7 @@ using MeshUtilNS;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.Dialogs;
 using TCad.plotter.Model.HalfEdge;
 using TCad.plotter.undo;
