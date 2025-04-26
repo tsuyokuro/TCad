@@ -8,6 +8,7 @@ using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Logger;
 
 namespace TCad.Plotter.Model.Figure;
 

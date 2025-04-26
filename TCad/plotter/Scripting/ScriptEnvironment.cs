@@ -2,7 +2,6 @@ using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using TCad.Plotter;
 using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using TCad.Controls.CadConsole;
 using TCad.ViewModel;
+using TCad.Logger;
 
 namespace TCad.Plotter.Scripting;
 

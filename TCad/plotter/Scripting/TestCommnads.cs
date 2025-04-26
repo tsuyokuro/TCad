@@ -7,7 +7,6 @@ using MeshMakerNS;
 using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter;
 using TCad.Plotter.Controller;
 using Plotter.svg;
 using SharpFont;
@@ -30,6 +29,7 @@ using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.undo;
+using TCad.Logger;
 
 namespace TCad.Plotter.Scripting;
 

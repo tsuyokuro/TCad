@@ -1,4 +1,5 @@
 using CadDataTypes;
+using TCad.Logger;
 
 namespace TCad.Plotter;
 

@@ -4,8 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TCad.Util;
 
-namespace TCad.Util;
+namespace TCad.Logger;
 
 internal class DebugServer
 {

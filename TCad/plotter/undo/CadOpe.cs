@@ -7,6 +7,7 @@ using System.Linq;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;
+using TCad.Logger;
 
 namespace TCad.Plotter.undo;
 

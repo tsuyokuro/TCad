@@ -10,6 +10,8 @@ using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Serializer;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Plotter.Serializer.v1004;
+using TCad.Logger;
+
 using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace Plotter.Serializer;

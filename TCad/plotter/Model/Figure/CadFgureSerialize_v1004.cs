@@ -1,10 +1,11 @@
 using CadDataTypes;
-using TCad.Plotter;
+
 using Plotter.Serializer;
 using System;
 using System.Drawing;
 using TCad.Plotter.Serializer;
 using TCad.Plotter.Serializer.v1004;
+using TCad.Logger;
 
 namespace TCad.Plotter.Model.Figure;
 

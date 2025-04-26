@@ -2,6 +2,7 @@ using TCad.Plotter;
 using TCad.Plotter.Controller;
 using System.ComponentModel;
 using TCad.Plotter.DrawContexts;
+using TCad.Logger;
 
 namespace TCad.ViewModel;
 

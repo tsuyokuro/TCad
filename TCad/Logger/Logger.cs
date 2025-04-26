@@ -1,9 +1,8 @@
 using System;
 using System.Threading;
-using TCad;
-using TCad.Util;
 
-namespace TCad.Plotter;
+
+namespace TCad.Logger;
 
 
 public interface ILogWriter

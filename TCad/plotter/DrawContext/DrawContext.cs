@@ -1,9 +1,10 @@
 using CadDataTypes;
 using TCad.Plotter.Controller;
 using System;
-using TCad.Plotter;
+
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
+using TCad.Logger;
 
 namespace TCad.Plotter.DrawContexts;
 

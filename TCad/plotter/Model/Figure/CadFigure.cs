@@ -1,12 +1,12 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
+using TCad.Logger;
 
 namespace TCad.Plotter.Model.Figure;
 

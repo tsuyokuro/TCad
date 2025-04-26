@@ -11,11 +11,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
 using TCad.Plotter.DrawToolSet;
-
+using TCad.Logger;
 
 namespace TCad;
 

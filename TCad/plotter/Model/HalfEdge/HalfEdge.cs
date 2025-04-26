@@ -4,6 +4,7 @@ using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Logger;
 
 namespace TCad.Plotter.Model.HalfEdgeModel;
 
