@@ -1,7 +1,7 @@
 using System;
 using TCad.Plotter.DrawContexts;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class Gridding
 {

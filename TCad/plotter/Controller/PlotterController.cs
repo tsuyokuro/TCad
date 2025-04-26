@@ -10,7 +10,7 @@ using TCad.Plotter.Scripting;
 using TCad.Plotter.undo;
 using TCad.ViewModel;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterController : IPlotterController
 {

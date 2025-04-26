@@ -1,6 +1,6 @@
 using TCad.Plotter.DrawToolSet;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public struct HighlightPointListItem
 {

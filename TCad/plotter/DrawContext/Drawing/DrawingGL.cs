@@ -4,7 +4,7 @@ using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using TCad.Plotter;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;

@@ -9,7 +9,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 using TCad.ViewModel;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterInput
 {

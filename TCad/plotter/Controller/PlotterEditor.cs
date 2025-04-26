@@ -10,7 +10,7 @@ using TCad.Plotter.searcher;
 using TCad.Plotter.undo;
 using TCad.Properties;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 // Edit figure functions
 

@@ -9,7 +9,7 @@ using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterPrinter
 {

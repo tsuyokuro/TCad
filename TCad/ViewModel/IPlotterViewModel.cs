@@ -1,9 +1,9 @@
-using TCad.Plotter;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using System.Collections.Generic;
-using System.Windows.Input;
 using TCad.Controls;
 using TCad.Plotter.DrawContexts;
+
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;
 
@@ -80,7 +80,7 @@ public interface IPlotterViewModel
 
     void LayerListChanged(LayerListInfo layerListInfo);
 
-    void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, CursorType type);
 
     void UpdateTreeView(bool remakeTree);
 
@@ -151,7 +151,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     {
     }
 
-    public void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, CursorType type)
     {
     }
 

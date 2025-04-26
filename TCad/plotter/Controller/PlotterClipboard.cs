@@ -5,7 +5,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;
 using TCad.Plotter.undo;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterClipboard
 {

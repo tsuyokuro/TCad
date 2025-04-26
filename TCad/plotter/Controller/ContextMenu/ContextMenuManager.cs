@@ -2,7 +2,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 using TCad.Properties;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class ContextMenuManager
 {

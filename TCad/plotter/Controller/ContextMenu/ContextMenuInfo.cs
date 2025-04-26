@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class MenuInfo
 {

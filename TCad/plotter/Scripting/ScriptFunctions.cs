@@ -10,7 +10,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using TCad.Plotter;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

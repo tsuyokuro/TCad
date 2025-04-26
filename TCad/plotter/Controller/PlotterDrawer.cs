@@ -7,7 +7,7 @@ using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterDrawer
 {

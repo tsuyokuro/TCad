@@ -1,13 +1,14 @@
 using TCad.Plotter;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 using TCad.Controls;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
+
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;
 
@@ -253,14 +254,14 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
-    public void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, CursorType type)
     {
-        if (type == global::Plotter.Controller.CursorType.TRACKING)
+        if (type == CursorType.TRACKING)
         {
             CursorPosVM.CursorPos = pt;
             CursorPosVM.CursorPos3 = pt - Controller.Input.LastDownPoint;
         }
-        else if (type == global::Plotter.Controller.CursorType.LAST_DOWN)
+        else if (type == CursorType.LAST_DOWN)
         {
             CursorPosVM.CursorPos2 = pt;
         }

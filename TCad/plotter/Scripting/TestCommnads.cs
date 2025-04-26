@@ -8,7 +8,7 @@ using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using TCad.Plotter;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using Plotter.svg;
 using SharpFont;
 using SplineCurve;
