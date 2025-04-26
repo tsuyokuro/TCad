@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+
+namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContextGL : DrawContext
 {

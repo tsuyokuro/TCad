@@ -1,10 +1,11 @@
 using CadDataTypes;
 using Plotter.Controller;
 using System;
+using Plotter;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContext : IDisposable
 {

@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
 using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;

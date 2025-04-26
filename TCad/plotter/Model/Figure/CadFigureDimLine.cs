@@ -1,6 +1,7 @@
 using CadDataTypes;
 using Plotter;
 using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 

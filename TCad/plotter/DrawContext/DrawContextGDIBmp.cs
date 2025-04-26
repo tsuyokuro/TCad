@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using TCad.Plotter.Drawing;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 public class DrawContextGDIBmp : DrawContextGDI
 {

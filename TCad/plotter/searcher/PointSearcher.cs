@@ -6,6 +6,7 @@ using Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 

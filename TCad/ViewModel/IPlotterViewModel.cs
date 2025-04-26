@@ -3,6 +3,7 @@ using Plotter.Controller;
 using System.Collections.Generic;
 using System.Windows.Input;
 using TCad.Controls;
+using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
 

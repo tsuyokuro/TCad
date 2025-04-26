@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 public class PaperSizes
 {

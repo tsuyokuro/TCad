@@ -1,8 +1,9 @@
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
+using Plotter;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 class DrawContextGLOrtho : DrawContextGL
 {

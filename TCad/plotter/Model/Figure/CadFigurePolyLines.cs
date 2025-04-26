@@ -4,6 +4,7 @@ using Plotter.Settings;
 using System.Collections.Generic;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 

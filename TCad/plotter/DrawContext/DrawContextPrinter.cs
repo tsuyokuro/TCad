@@ -1,7 +1,8 @@
+using Plotter;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 class DrawContextPrinter : DrawContextGDI
 {

@@ -1,6 +1,7 @@
 using CadDataTypes;
 using Plotter;
 using System.Collections.Generic;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Serializer;
 
 namespace TCad.Plotter.Model.Figure;

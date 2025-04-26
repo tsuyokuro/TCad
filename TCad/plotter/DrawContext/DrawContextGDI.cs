@@ -1,9 +1,10 @@
+using Plotter;
 using System.Drawing;
 using System.Windows.Forms;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 public class DrawContextGDI : DrawContext
 {
