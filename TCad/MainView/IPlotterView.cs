@@ -2,7 +2,7 @@ using Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.ViewModel;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public interface IPlotterView
 {

@@ -14,7 +14,7 @@ using TCad.Plotter.DrawContexts;
 using TCad.Util;
 using TCad.ViewModel;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 {

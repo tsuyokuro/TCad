@@ -1,4 +1,4 @@
-using Plotter;
+using TCad.Plotter;
 using System;
 
 namespace TCad.MathFunctions;

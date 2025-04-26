@@ -3,6 +3,7 @@ using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Scripting;

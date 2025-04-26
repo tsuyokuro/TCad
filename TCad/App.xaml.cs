@@ -2,7 +2,7 @@
 // ForceLinePen resource string to US
 //#define FORCE_US
 
-using Plotter;
+using TCad.Plotter;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

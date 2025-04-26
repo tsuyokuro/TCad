@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 [SupportedOSPlatform("windows")]
 public class BitmapUtil

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using TCad.Plotter.Model.Figure;
 using static Community.CsharpSqlite.Sqlite3;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct FigureBelong
 {

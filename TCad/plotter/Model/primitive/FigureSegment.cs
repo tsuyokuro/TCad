@@ -1,7 +1,7 @@
 using CadDataTypes;
 using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 //public struct PointPair
 //{

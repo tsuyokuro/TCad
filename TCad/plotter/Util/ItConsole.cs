@@ -2,7 +2,7 @@ using System;
 using TCad.Controls.CadConsole;
 using TCad.Properties;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class ItConsole
 {

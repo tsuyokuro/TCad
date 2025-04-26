@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 

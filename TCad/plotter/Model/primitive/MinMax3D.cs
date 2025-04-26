@@ -1,6 +1,6 @@
 using System;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct MinMax3D
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Windows;
+using TCad.Plotter;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;
 using TCad.Plotter.undo;

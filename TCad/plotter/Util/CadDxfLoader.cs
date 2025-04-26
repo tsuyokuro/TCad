@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 class CadDxfLoader
 {

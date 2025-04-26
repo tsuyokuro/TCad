@@ -3,7 +3,7 @@ using System.Threading;
 using TCad;
 using TCad.Util;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 
 public interface ILogWriter

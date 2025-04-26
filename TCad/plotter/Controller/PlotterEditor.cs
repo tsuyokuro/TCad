@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using System;
 using System.Collections.Generic;
+using TCad.Plotter;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;

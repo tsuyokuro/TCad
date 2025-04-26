@@ -1,7 +1,7 @@
 
 using System;
 using OpenGL.GLU;
-using Plotter;
+using TCad.Plotter;
 using Plotter.Controller;
 using System.Runtime.InteropServices;
 using System.Threading;

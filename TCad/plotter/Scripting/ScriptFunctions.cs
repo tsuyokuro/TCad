@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using Plotter;
+using TCad.Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;

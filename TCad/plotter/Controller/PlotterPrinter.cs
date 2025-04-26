@@ -5,6 +5,7 @@ using GLUtil;
 using OpenTK.Graphics.OpenGL;
 using Plotter.Settings;
 using System.Drawing;
+using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 

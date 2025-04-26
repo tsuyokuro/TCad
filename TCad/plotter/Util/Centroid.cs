@@ -1,6 +1,6 @@
 using TCad.MathFunctions;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct Centroid
 {

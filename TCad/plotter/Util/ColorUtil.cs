@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct ColorPack

@@ -4,7 +4,7 @@ using System.Linq;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class CadLayer
 {

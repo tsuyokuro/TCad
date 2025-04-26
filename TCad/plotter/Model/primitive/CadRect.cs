@@ -1,4 +1,4 @@
-namespace Plotter;
+namespace TCad.Plotter;
 
 // 直方体の対角線を保持
 public struct CadRect

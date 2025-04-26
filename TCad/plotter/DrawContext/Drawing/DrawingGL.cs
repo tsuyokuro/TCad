@@ -3,7 +3,7 @@ using GLFont;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using Plotter;
+using TCad.Plotter;
 using Plotter.Controller;
 using Plotter.Settings;
 using System;

@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class ImageUtil
 {

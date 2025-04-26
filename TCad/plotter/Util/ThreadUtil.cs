@@ -1,7 +1,7 @@
 using System;
 using System.Windows;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public static class ThreadUtil
 {

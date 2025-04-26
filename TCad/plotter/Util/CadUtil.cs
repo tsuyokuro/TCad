@@ -5,7 +5,7 @@ using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public delegate bool ForEachDelegate<T>(T obj);
 

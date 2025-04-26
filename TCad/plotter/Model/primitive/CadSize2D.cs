@@ -1,5 +1,5 @@
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct CadSize2D
 {
