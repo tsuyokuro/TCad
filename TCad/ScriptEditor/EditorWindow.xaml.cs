@@ -1,7 +1,7 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,7 +1,7 @@
 #define ENABLE_LOG
 
 using CadDataTypes;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using TCad.Controls.CadConsole;

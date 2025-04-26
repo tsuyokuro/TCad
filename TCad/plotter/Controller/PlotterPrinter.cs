@@ -3,7 +3,7 @@
 
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System.Drawing;
 
 using TCad.Plotter.DrawContexts;

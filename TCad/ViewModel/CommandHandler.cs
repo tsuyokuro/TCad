@@ -1,7 +1,7 @@
 using TCad.Plotter;
 using TCad.Plotter.Controller;
 using Plotter.Serializer;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

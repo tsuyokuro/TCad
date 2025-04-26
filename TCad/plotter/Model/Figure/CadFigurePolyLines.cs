@@ -1,6 +1,6 @@
 using CadDataTypes;
 using TCad.Plotter;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System.Collections.Generic;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;

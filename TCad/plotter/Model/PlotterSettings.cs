@@ -6,7 +6,7 @@ using TCad.Plotter.Serializer;
 using JObj = System.Text.Json.Nodes.JsonObject;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 
-namespace Plotter.Settings;
+namespace TCad.Plotter.Settings;
 
 public static class SettingsHolder
 {

@@ -3,7 +3,7 @@
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using Plotter.Settings;
+using TCad.Plotter.Settings;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
