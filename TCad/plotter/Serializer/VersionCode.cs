@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TCad.plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 [MessagePackObject]
 [StructLayout(LayoutKind.Explicit)]

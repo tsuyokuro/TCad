@@ -1,7 +1,8 @@
 using CadDataTypes;
+using Plotter;
 using SplineCurve;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureNurbsSurface : CadFigure
 {

@@ -2,6 +2,7 @@ using CadDataTypes;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using TCad.Plotter.Model.Figure;
 
 namespace Plotter.svg;
 

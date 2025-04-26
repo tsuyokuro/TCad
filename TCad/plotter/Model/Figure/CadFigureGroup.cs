@@ -1,8 +1,9 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
+using Plotter;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureGroup : CadFigure
 {

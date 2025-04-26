@@ -2,9 +2,10 @@ using CadDataTypes;
 using Plotter;
 using Plotter.Serializer;
 using System.Collections.Generic;
-using TCad.plotter.Model.HalfEdge;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace TCad.plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 public interface IMpLayer
 {

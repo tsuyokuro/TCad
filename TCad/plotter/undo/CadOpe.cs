@@ -4,9 +4,10 @@ using Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TCad.plotter.Serializer;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer;
 
-namespace TCad.plotter.undo;
+namespace TCad.Plotter.undo;
 
 /**
 * Item for history of user operation

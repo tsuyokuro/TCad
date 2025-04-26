@@ -1,8 +1,9 @@
 using CadDataTypes;
+using Plotter;
 using System.Collections.Generic;
-using TCad.plotter.Serializer;
+using TCad.Plotter.Serializer;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public class FigUtil
 {

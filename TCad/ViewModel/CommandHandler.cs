@@ -15,7 +15,8 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using TCad.Controls.CadConsole;
 using TCad.Dialogs;
-using TCad.plotter.undo;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.undo;
 using TCad.ScriptEditor;
 
 namespace TCad.ViewModel;

@@ -79,7 +79,7 @@ public interface IPlotterViewModel
 
     void LayerListChanged(LayerListInfo layerListInfo);
 
-    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type);
 
     void UpdateTreeView(bool remakeTree);
 
@@ -150,7 +150,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     {
     }
 
-    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type)
     {
     }
 

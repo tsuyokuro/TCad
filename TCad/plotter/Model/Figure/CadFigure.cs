@@ -1,10 +1,11 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
+using Plotter;
 using System;
 using System.Collections.Generic;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public abstract partial class CadFigure
 {

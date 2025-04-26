@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 
@@ -250,14 +251,14 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
-    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, global::Plotter.Controller.CursorType type)
     {
-        if (type == Plotter.Controller.CursorType.TRACKING)
+        if (type == global::Plotter.Controller.CursorType.TRACKING)
         {
             CursorPosVM.CursorPos = pt;
             CursorPosVM.CursorPos3 = pt - Controller.Input.LastDownPoint;
         }
-        else if (type == Plotter.Controller.CursorType.LAST_DOWN)
+        else if (type == global::Plotter.Controller.CursorType.LAST_DOWN)
         {
             CursorPosVM.CursorPos2 = pt;
         }

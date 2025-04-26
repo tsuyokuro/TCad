@@ -1,6 +1,6 @@
 using Plotter.Serializer;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 //=============================================================================
 // CaFigure

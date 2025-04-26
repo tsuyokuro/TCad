@@ -235,7 +235,7 @@ public class DrawTools : IDisposable
 
         foreach (var jpen in jpenList)
         {
-            string? name = jpen.GetProperty("name").GetString();
+            string name = jpen.GetProperty("name").GetString();
 
             if (name == null) continue;
 
@@ -257,7 +257,7 @@ public class DrawTools : IDisposable
 
         foreach (var jbrush in jbrushList)
         {
-            string? name = jbrush.GetProperty("name").GetString();
+            string name = jbrush.GetProperty("name").GetString();
 
             if (name == null) continue;
 
@@ -299,7 +299,7 @@ public class DrawTools : IDisposable
     {
         if (name == "") return false;
 
-        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(name);
         if (fi == null) return false;
         if (fi.FieldType != typeof(int)) return false;
 
@@ -314,7 +314,7 @@ public class DrawTools : IDisposable
 
     private bool SetBrushTbl(string name, DrawBrush brush)
     {
-        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(name);
         if (fi == null) return false;
 
         int? brushId = (int?)fi.GetValue(this);
@@ -329,11 +329,11 @@ public class DrawTools : IDisposable
 
     private string PathName(string fname)
     {
-        Assembly? asm = Assembly.GetEntryAssembly();
+        Assembly asm = Assembly.GetEntryAssembly();
 
         string exePath = asm!.Location;
 
-        string? dir = Path.GetDirectoryName(exePath);
+        string dir = Path.GetDirectoryName(exePath);
 
         string fileName = dir + @"\Resources\DrawTheme\" + fname;
 

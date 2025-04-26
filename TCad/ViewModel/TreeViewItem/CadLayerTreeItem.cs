@@ -1,6 +1,7 @@
 using Plotter;
 using System;
 using TCad.Controls;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 

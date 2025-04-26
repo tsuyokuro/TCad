@@ -1,7 +1,8 @@
 using CadDataTypes;
+using Plotter;
 using System;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureCircle : CadFigure
 {

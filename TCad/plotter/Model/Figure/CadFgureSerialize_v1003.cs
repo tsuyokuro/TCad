@@ -1,11 +1,12 @@
 using CadDataTypes;
+using Plotter;
 using Plotter.Serializer;
 using System;
 using System.Drawing;
-using TCad.plotter.Serializer;
-using TCad.plotter.Serializer.v1003;
+using TCad.Plotter.Serializer;
+using TCad.Plotter.Serializer.v1003;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 //=============================================================================
 // CaFigure

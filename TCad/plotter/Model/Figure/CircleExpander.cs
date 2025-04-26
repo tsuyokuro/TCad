@@ -1,7 +1,8 @@
 using CadDataTypes;
+using Plotter;
 using System;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 // 円を点リストに展開
 public static class CircleExpander

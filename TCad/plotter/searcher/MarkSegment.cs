@@ -1,7 +1,8 @@
 using CadDataTypes;
 using Plotter;
+using TCad.Plotter.Model.Figure;
 
-namespace TCad.plotter.searcher;
+namespace TCad.Plotter.searcher;
 
 public struct MarkSegment
 {

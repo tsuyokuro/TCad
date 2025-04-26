@@ -1,6 +1,7 @@
 using CadDataTypes;
+using Plotter;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigurePoint : CadFigure
 {

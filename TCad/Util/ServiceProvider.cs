@@ -27,7 +27,7 @@ public class ServiceProvider<T> : IServiceProvider<T>
     }
 }
 
-public class SingleServiceProvider<T> : IServiceProvider<T>
+public class SingleServiceProvider<T> : IServiceProvider<T> where T : class
 {
     public T Instance
     {
@@ -48,11 +48,11 @@ public class SingleServiceProvider<T> : IServiceProvider<T>
     }
 }
 
-public class LateSingleServiceProvider<T> : IServiceProvider<T>
+public class LateSingleServiceProvider<T> : IServiceProvider<T> where T : class
 {
     Func<T> _creator;
 
-    T? _value;
+    T _value;
 
     public T Instance
     {

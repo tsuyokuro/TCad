@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace TCad.plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public class DirectCommands
 {

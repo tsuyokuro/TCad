@@ -1,4 +1,4 @@
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public struct LocalCoordinate
 {

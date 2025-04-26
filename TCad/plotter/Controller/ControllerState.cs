@@ -5,37 +5,39 @@ using Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using TCad.Controls.CadConsole;
-using TCad.plotter.undo;
-using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.undo;
 
 namespace Plotter.Controller;
 
-public class ControllerStateMachine
+
+public class StateContext
 {
-    public class StateContext
+    public vector3_t StoredObjDownPoint = default;
+    public IPlotterController Controller;
+
+    public ControllerState CurrentState
     {
-        public vector3_t StoredObjDownPoint = default;
-        public IPlotterController Controller;
-
-        public ControllerState CurrentState
-        {
-            get => StateMachine.CurrentState;
-        }
-
-        private ControllerStateMachine StateMachine;
-
-        public StateContext(ControllerStateMachine stateMachine)
-        {
-            StateMachine = stateMachine;
-            Controller = stateMachine.Controller;
-        }
-
-        public void ChangeState(ControllerStates state)
-        {
-            StateMachine.ChangeState(state);
-        }
+        get => StateMachine.CurrentState;
     }
 
+    private ControllerStateMachine StateMachine;
+
+    public StateContext(ControllerStateMachine stateMachine)
+    {
+        StateMachine = stateMachine;
+        Controller = stateMachine.Controller;
+    }
+
+    public void ChangeState(ControllerStates state)
+    {
+        StateMachine.ChangeState(state);
+    }
+}
+
+
+public class ControllerStateMachine
+{
     private ControllerState[] StateList = new ControllerState[(int)ControllerStates.MEASURING + 1];
 
 
@@ -57,7 +59,11 @@ public class ControllerStateMachine
 
     private StateContext Context;
 
-    private IPlotterController Controller;
+    public IPlotterController Controller
+    {
+        get;
+        private set;
+    }
 
     public ControllerStateMachine(IPlotterController controller, ControllerStates initialState)
     {

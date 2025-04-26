@@ -1,8 +1,9 @@
 using CadDataTypes;
+using Plotter;
 using Plotter.Settings;
 using System.Collections.Generic;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigurePolyLines : CadFigure
 {

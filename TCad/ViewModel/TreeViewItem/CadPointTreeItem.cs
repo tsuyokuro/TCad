@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter;
 using System.Windows.Media;
 using TCad.Controls;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 

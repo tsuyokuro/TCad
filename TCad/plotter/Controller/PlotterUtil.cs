@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TCad.Plotter.Model.Figure;
 
 namespace Plotter.Controller;
 

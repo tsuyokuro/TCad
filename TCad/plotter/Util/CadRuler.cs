@@ -1,5 +1,6 @@
 using System.Diagnostics;
-using TCad.plotter.searcher;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
 
 namespace Plotter;
 

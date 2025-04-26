@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
-using TCad.plotter.Scripting;
+using TCad.Plotter.Scripting;
 
 
 //using ICSharpCode.AvalonEdit.Search;

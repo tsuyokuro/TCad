@@ -4,9 +4,10 @@ using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using TCad.plotter.Serializer.v1004;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer.v1004;
 
-namespace TCad.plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 
 using MpCadObjectDB = MpCadObjectDB_v1004;

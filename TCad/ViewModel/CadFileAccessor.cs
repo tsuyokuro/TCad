@@ -2,6 +2,7 @@ using Plotter;
 using Plotter.Controller;
 using Plotter.Serializer;
 using System.IO;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 

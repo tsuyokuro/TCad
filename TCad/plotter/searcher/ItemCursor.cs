@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TCad.plotter.searcher;
+namespace TCad.Plotter.searcher;
 
 public class ItemCursor<T> where T : class
 {

@@ -1,4 +1,5 @@
-using TCad.plotter.searcher;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
 using TCad.Properties;
 
 namespace Plotter.Controller;

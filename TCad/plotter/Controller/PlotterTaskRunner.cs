@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TCad.Controls.CadConsole;
 using TCad.Dialogs;
-using TCad.plotter.Model.HalfEdge;
-using TCad.plotter.undo;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
 
 namespace Plotter.Controller.TaskRunner;

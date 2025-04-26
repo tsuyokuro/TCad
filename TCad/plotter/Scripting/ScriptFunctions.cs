@@ -18,13 +18,14 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
-using TCad.plotter.Model.HalfEdge;
-using TCad.plotter.searcher;
-using TCad.plotter.undo;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.searcher;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
-using static Plotter.CadFigure;
+using static TCad.Plotter.Model.Figure.CadFigure;
 
-namespace TCad.plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public class ScriptFunctions
 {

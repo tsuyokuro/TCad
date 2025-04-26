@@ -2,7 +2,7 @@ using Plotter;
 using Plotter.Controller;
 using System.Collections.Generic;
 
-namespace TCad.plotter.undo;
+namespace TCad.Plotter.undo;
 
 public class HistoryManager
 {

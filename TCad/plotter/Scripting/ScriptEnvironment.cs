@@ -15,7 +15,7 @@ using System.Windows;
 using TCad.Controls.CadConsole;
 using TCad.ViewModel;
 
-namespace TCad.plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public partial class ScriptEnvironment
 {

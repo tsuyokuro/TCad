@@ -3,6 +3,7 @@ using Plotter;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using TCad.Controls;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 

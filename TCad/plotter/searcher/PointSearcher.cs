@@ -4,9 +4,10 @@ using CadDataTypes;
 using Plotter;
 using System;
 using System.Collections.Generic;
-using TCad.plotter.searcher;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
 
-namespace TCad.plotter.searcher;
+namespace TCad.Plotter.searcher;
 
 public class PointSearcher
 {

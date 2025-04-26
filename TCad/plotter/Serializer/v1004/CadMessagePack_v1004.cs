@@ -7,9 +7,10 @@ using SplineCurve;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
-using TCad.plotter.Model.HalfEdge;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace TCad.plotter.Serializer.v1004;
+namespace TCad.Plotter.Serializer.v1004;
 
 public class VersionCode_v1004
 {

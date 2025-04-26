@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TCad.Plotter.Model.Figure;
 using static Community.CsharpSqlite.Sqlite3;
 
 namespace Plotter;

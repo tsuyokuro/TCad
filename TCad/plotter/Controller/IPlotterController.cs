@@ -1,8 +1,9 @@
 using Plotter.Controller.TaskRunner;
 using System.Collections.Generic;
 using System.Drawing;
-using TCad.plotter.Scripting;
-using TCad.plotter.undo;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Scripting;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
 
 namespace Plotter.Controller;
