@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using TCad.MathFunctions;
+using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace TCad.Plotter.Drawing;

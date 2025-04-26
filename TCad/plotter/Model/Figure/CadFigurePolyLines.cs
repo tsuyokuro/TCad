@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.Drawing;
+using TCad.Plotter.DrawToolSet;
 
 namespace TCad.Plotter.Model.Figure;
 

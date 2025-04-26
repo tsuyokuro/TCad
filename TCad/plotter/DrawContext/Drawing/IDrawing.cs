@@ -3,6 +3,7 @@ using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;
+using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace TCad.Plotter.Drawing;

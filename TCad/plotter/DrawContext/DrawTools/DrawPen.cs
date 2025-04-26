@@ -1,8 +1,9 @@
 using OpenTK.Mathematics;
+using Plotter;
 using System;
 using System.Drawing;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public struct DrawPen : IEquatable<DrawPen>
 {

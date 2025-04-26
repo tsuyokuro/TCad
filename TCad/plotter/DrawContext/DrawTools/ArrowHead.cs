@@ -1,7 +1,7 @@
 using CadDataTypes;
 using TCad.MathFunctions;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public enum ArrowTypes
 {

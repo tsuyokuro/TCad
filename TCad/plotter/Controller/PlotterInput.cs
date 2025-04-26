@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Settings;
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 using TCad.ViewModel;

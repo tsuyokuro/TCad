@@ -1,9 +1,10 @@
+using Plotter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public class GDIToolManager : IDisposable
 {

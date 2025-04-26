@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using TCad.Controls;
+using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;

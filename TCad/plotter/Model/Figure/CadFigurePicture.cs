@@ -6,6 +6,7 @@ using GLUtil;
 using Plotter;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawToolSet;
 
 namespace TCad.Plotter.Model.Figure;
 

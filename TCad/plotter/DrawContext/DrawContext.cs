@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Controller;
 using System;
 using TCad.Plotter.Drawing;
+using TCad.Plotter.DrawToolSet;
 
 namespace Plotter;
 
