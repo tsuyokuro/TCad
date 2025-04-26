@@ -1,6 +1,6 @@
 using System;
 
-namespace Plotter;
+namespace Plotter.Controller;
 
 public class Gridding
 {

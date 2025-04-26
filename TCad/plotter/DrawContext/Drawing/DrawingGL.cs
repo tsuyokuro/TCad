@@ -3,6 +3,7 @@ using GLFont;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Plotter.Controller;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;

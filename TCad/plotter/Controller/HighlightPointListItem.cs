@@ -1,4 +1,4 @@
-namespace Plotter;
+namespace Plotter.Controller;
 
 public struct HighlightPointListItem
 {

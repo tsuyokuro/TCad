@@ -1,6 +1,6 @@
 using TCad.MathFunctions;
 
-namespace Plotter;
+namespace Plotter.Controller;
 
 public struct CadCursor
 {

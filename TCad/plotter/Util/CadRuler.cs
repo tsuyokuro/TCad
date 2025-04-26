@@ -1,3 +1,4 @@
+using Plotter.Controller;
 using System.Diagnostics;
 using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
