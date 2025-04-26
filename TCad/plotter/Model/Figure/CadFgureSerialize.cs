@@ -1,4 +1,4 @@
-using Plotter.Serializer;
+using TCad.Plotter.Serializer;
 
 namespace TCad.Plotter.Model.Figure;
 

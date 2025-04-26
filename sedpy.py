@@ -3,11 +3,11 @@ import re
 
 fname = sys.argv[1]
 
-before_str1 = r'namespace Plotter.Settings;'
-after_str1 = r'namespace TCad.Plotter.Settings;'
+before_str1 = r'namespace Plotter.Serializer;'
+after_str1 = r'namespace TCad.Plotter.Serializer;'
 
-before_str2 = r'using Plotter.Settings;'
-after_str2 = r'using TCad.Plotter.Settings;'
+before_str2 = r'using Plotter.Serializer;'
+after_str2 = r'using TCad.Plotter.Serializer;'
 
 
 f = open(fname,'r', encoding="utf-8")

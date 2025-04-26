@@ -14,7 +14,7 @@ using TCad.Logger;
 
 using JObj = System.Text.Json.Nodes.JsonObject;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 public struct CadData
 {
