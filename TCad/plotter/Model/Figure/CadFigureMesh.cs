@@ -4,6 +4,7 @@ using Plotter;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace TCad.Plotter.Model.Figure;

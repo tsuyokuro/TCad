@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter.Controller.TaskRunner;
 using System;
 using System.Collections.Generic;
+using TCad.Plotter.Assembler;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.searcher;
 using TCad.Plotter.undo;

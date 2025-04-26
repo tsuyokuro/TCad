@@ -1,7 +1,8 @@
 using CadDataTypes;
+using Plotter;
 using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter.Assembler;
 
 class CadFigureBonder
 {

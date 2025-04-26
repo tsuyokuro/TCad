@@ -5,6 +5,7 @@ using System.IO;
 using GLUtil;
 using Plotter;
 using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
 
 namespace TCad.Plotter.Model.Figure;
 
