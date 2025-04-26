@@ -1,7 +1,7 @@
-using OpenTK.Mathematics;
 using System;
+using TCad.Plotter.DrawContexts;
 
-namespace Plotter;
+namespace TCad.Plotter.Controller;
 
 public class Gridding
 {

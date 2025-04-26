@@ -1,7 +1,10 @@
-using OpenTK.Mathematics;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterUtil
 {

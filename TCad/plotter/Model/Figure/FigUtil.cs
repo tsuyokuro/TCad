@@ -1,9 +1,10 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter.Serializer;
+using TCad.Plotter;
 using System.Collections.Generic;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Serializer;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public class FigUtil
 {
@@ -126,11 +127,11 @@ public class FigUtil
 
     public static string DumpString(CadFigure fig, string margin)
     {
-        string s="";
+        string s = "";
 
         s += margin + "ID:" + fig.ID.ToString() + "\n";
         s += margin + "Point:[\n";
-        for (int i=0; i<fig.PointList.Count; i++)
+        for (int i = 0; i < fig.PointList.Count; i++)
         {
             CadVertex v = fig.PointList[i];
             s += margin + "  " + string.Format("{0},{1},{2}\n", v.X, v.Y, v.Z);

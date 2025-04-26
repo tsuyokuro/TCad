@@ -1,4 +1,7 @@
-namespace Plotter.Scripting;
+using TCad.Plotter;
+using TCad.Plotter.undo;
+
+namespace TCad.Plotter.Scripting;
 
 public class ScriptSession
 {

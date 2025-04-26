@@ -1,12 +1,16 @@
 using Plotter.Controller.TaskRunner;
-using Plotter.Scripting;
 using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Scripting;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterController : IPlotterController
 {
@@ -69,11 +73,11 @@ public class PlotterController : IPlotterController
     } = null;
 
 
-    public IPlotterViewModel ViewModel
+    private IPlotterViewModel ViewModel
     {
         get;
-        private set;
-    }
+        set;
+    } = null;
 
     public List<CadFigure> TempFigureList
     {
@@ -157,16 +161,9 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterController(IPlotterViewModel vm)
+    public PlotterController()
     {
         Log.plx("in");
-
-        if (vm == null)
-        {
-            throw new System.ArgumentNullException(nameof(vm));
-        }
-
-        ViewModel = vm;
 
         Drawer = new PlotterDrawer(this);
 
@@ -178,12 +175,7 @@ public class PlotterController : IPlotterController
 
         Editor = new PlotterEditor(this);
 
-        StateMachine = new ControllerStateMachine(this);
-        ChangeState(ControllerStates.SELECT);
-
-        CadLayer layer = DB.NewLayer();
-        DB.LayerList.Add(layer);
-        CurrentLayer = layer;
+        StateMachine = new ControllerStateMachine(this, ControllerStates.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -193,7 +185,30 @@ public class PlotterController : IPlotterController
 
         PlotterTaskRunner = new PlotterTaskRunner(this);
 
+        DB.NewLayer(addLayerList: true, selectCurrent: true);
 
+        Log.plx("out");
+    }
+
+    public void ConnectViewModel(IPlotterViewModel viewModel)
+    {
+        ViewModel = viewModel;
+    }
+
+    public void Startup()
+    {
+        Log.plx("in");
+
+        UpdateLayerList();
+        UpdateObjectTree(true);
+
+        Log.plx("out");
+    }
+
+    public void Shutdown()
+    {
+        Log.plx("in");
+        DC.Dispose();
         Log.plx("out");
     }
 
@@ -202,47 +217,10 @@ public class PlotterController : IPlotterController
         StateMachine.ChangeState(state);
     }
 
-    #region ObjectTree handling
-    public void UpdateObjectTree(bool remakeTree)
-    {
-        ViewModel.UpdateTreeView(remakeTree);
-    }
-
-    public void SetObjectTreePos(int index)
-    {
-        ViewModel.SetTreeViewPos(index);
-    }
-
-    public int FindObjectTreeItem(uint id)
-    {
-        return ViewModel.FindTreeViewItemIndex(id);
-    }
-    #endregion ObjectTree handling
-
-
-    public void UpdateLayerList()
-    {
-        ViewModel.LayerListChanged(GetLayerListInfo());
-    }
-
-    private LayerListInfo GetLayerListInfo()
-    {
-        LayerListInfo layerInfo = default(LayerListInfo);
-        layerInfo.LayerList = DB.LayerList;
-        layerInfo.CurrentID = CurrentLayer.ID;
-
-        return layerInfo;
-    }
-
-    public void NotifyStateChange(StateChangedParam param)
-    {
-        ViewModel.StateChanged(param);
-    }
-
     public void StartCreateFigure(CadFigure.Types type)
     {
-        ChangeState(ControllerStates.CREATE_FIGURE);
         CreatingFigType = type;
+        ChangeState(ControllerStates.CREATE_FIGURE);
     }
 
     public void EndCreateFigure()
@@ -346,38 +324,32 @@ public class PlotterController : IPlotterController
 
     public List<CadFigure> GetSelectedFigureList()
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        //List<CadFigure> figList = new List<CadFigure>();
 
-        foreach (CadLayer layer in DB.LayerList)
-        {
-            layer.ForEachFig(fig =>
-            {
-                if (fig.HasSelectedPoint())
-                {
-                    figList.Add(fig);
-                }
-            });
-        }
+        //foreach (CadLayer layer in DB.LayerList)
+        //{
+        //    layer.ForEachFig(fig =>
+        //    {
+        //        if (fig.HasSelectedPoint())
+        //        {
+        //            figList.Add(fig);
+        //        }
+        //    });
+        //}
 
-        return figList;
+        //return figList;
+
+        return DB.GetSelectedFigList();
     }
 
     public List<CadFigure> GetSelectedRootFigureList()
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        return DB.GetSelectedRootFigureList();
+    }
 
-        foreach (CadLayer layer in DB.LayerList)
-        {
-            layer.ForEachRootFig(fig =>
-            {
-                if (fig.HasSelectedPointInclueChild())
-                {
-                    figList.Add(fig);
-                }
-            });
-        }
-
-        return figList;
+    public void SetDB(CadObjectDB db)
+    {
+        SetDB(db, true);
     }
 
     public void SetDB(CadObjectDB db, bool clearHistory)
@@ -394,15 +366,13 @@ public class PlotterController : IPlotterController
         UpdateObjectTree(true);
     }
 
-    public void SetDB(CadObjectDB db)
-    {
-        SetDB(db, true);
-    }
-
     public void SetCurrentLayer(uint id)
     {
-        DB.CurrentLayerID = id;
-        UpdateObjectTree(true);
+        if (DB.IsValidLayerID(id))
+        {
+            DB.CurrentLayerID = id;
+            UpdateObjectTree(true);
+        }
     }
 
     public void EvalTextCommand(string s)
@@ -430,11 +400,73 @@ public class PlotterController : IPlotterController
 
     public void Redraw()
     {
-        Drawer.Redraw();
+        Drawer.Redraw(DC);
     }
 
-    public void RedrawOnUiThread()
+    public void UpdateObjectTree(bool remakeTree)
     {
-        ThreadUtil.RunOnMainThread(Drawer.Redraw, true);
+        ViewModel.UpdateTreeView(remakeTree);
+    }
+
+    public void SetObjectTreePos(int index)
+    {
+        ViewModel.SetTreeViewPos(index);
+    }
+
+    public int FindObjectTreeItem(uint id)
+    {
+        return ViewModel.FindTreeViewItemIndex(id);
+    }
+
+    public void UpdateLayerList()
+    {
+        LayerListInfo layerListInfo = new(DB.LayerList, CurrentLayer.ID);
+
+        ViewModel.LayerListChanged(layerListInfo);
+    }
+
+    public void NotifyStateChange(StateChangedParam param)
+    {
+        ViewModel.StateChanged(param);
+    }
+
+    public void OpenPopupMessage(string text, UITypes.MessageType type)
+    {
+        ViewModel.OpenPopupMessage(text, type);
+    }
+
+    public void ClosePopupMessage()
+    {
+        ViewModel.ClosePopupMessage();
+    }
+
+    public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
+    {
+        ViewModel.ShowContextMenu(menuInfo, x, y);
+    }
+
+    public void UpdateTreeView(bool remakeTree)
+    {
+        ViewModel.UpdateTreeView(remakeTree);
+    }
+
+    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    {
+        ViewModel.CursorPosChanged(pt, type);
+    }
+
+    public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
+    {
+        ViewModel.ChangeMouseCursor(cursorType);
+    }
+
+    public void CursorLocked(bool locked)
+    {
+        ViewModel.CursorLocked(locked);
+    }
+
+    public List<string> HelpOfKey(string keyword)
+    {
+        return ViewModel.HelpOfKey(keyword);
     }
 }

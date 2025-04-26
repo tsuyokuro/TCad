@@ -1,16 +1,22 @@
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using Plotter.Settings;
 using TCad.Controls;
 using TCad.Dialogs;
-using Plotter;
-using Plotter.Settings;
-using Plotter.Controller;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 
-public class ObjectTreeViewModel(IPlotterController controller)
+public class ObjectTreeViewModel
 {
-    protected IPlotterController Controller = controller;
+    protected IPlotterController Controller;
 
     protected ICadObjectTree mObjectTree;
+
+    public ObjectTreeViewModel(IPlotterController controller)
+    {
+        Controller = controller;
+    }
 
     public ICadObjectTree ObjectTree
     {
@@ -67,7 +73,8 @@ public class ObjectTreeViewModel(IPlotterController controller)
             return;
         }
 
-        ThreadUtil.RunOnMainThread(() => {
+        ThreadUtil.RunOnMainThread(() =>
+        {
             mObjectTree.SetPos(index);
         }, true);
     }

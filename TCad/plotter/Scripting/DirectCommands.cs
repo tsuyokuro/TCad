@@ -1,12 +1,13 @@
 using GLFont;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public class DirectCommands
 {
@@ -139,7 +140,7 @@ public class DirectCommands
 
     private void HelpOfKey(string keyword)
     {
-        List<string> res = Controller.ViewModel.HelpOfKey(keyword);
+        List<string> res = Controller.HelpOfKey(keyword);
 
         res.ForEach((s) =>
         {

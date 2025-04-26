@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class ContextMenuEx : ContextMenuStrip
 {

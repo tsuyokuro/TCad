@@ -1,8 +1,12 @@
-using OpenTK.Mathematics;
-using System;
 using System.Diagnostics;
 
-namespace Plotter;
+using TCad.Plotter.Controller;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
+
+namespace TCad.Plotter;
 
 public struct RulerInfo
 {

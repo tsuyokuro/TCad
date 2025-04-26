@@ -1,6 +1,6 @@
 using CadDataTypes;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct CadSegment
 {

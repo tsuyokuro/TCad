@@ -10,7 +10,7 @@ public class AutoScroller
 {
     private DispatcherTimer Timer;
 
-    public Action<double, double> Scroll = (dx, dy) => {};
+    public Action<double, double> Scroll = (dx, dy) => { };
 
     private FrameworkElement CaptureView;
 
@@ -72,7 +72,7 @@ public class AutoScroller
     private void Check()
     {
         FrameworkElement v = ScrollView;
-        
+
         var Pos = Mouse.GetPosition(v);
 
         double x = 0;
@@ -82,7 +82,7 @@ public class AutoScroller
         {
             x = Pos.X;
         }
-        
+
         if (Pos.X > v.ActualWidth)
         {
             x = Pos.X - v.ActualWidth;
@@ -90,7 +90,7 @@ public class AutoScroller
 
         if (Pos.Y < 0)
         {
-           y = Pos.Y;
+            y = Pos.Y;
         }
 
         if (Pos.Y > v.ActualHeight)

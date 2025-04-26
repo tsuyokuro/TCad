@@ -1,7 +1,10 @@
 using CadDataTypes;
+using TCad.Plotter;
 using SplineCurve;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureNurbsSurface : CadFigure
 {
@@ -76,8 +79,8 @@ public partial class CadFigureNurbsSurface : CadFigure
         VertexList vl,
         int[] ctrlOrder,
         int uDivCnt, int vDivCnt,
-        bool uedge=true, bool vedge=true,
-        bool uclose=false, bool vclose=false)
+        bool uedge = true, bool vedge = true,
+        bool uclose = false, bool vclose = false)
     {
         Nurbs = new NurbsSurface(deg, ucnt, vcnt, uDivCnt, vDivCnt, uedge, vedge, uclose, vclose);
 
@@ -117,7 +120,7 @@ public partial class CadFigureNurbsSurface : CadFigure
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        for (int i=0; i<mPointList.Count; i++)
+        for (int i = 0; i < mPointList.Count; i++)
         {
             ref CadVertex p0 = ref mPointList[i];
 

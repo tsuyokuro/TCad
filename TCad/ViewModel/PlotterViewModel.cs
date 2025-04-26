@@ -1,10 +1,14 @@
-using Plotter;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 using TCad.Controls;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;
 
@@ -142,23 +146,26 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public CurrentFigCommand CurrentFigCmd { get; set; }
 
-    public SimpleCommand SimpleCmd{ get; set; }
+    public SimpleCommand SimpleCmd { get; set; }
 
     private CommandHandler mCommandHandler;
 
-    public PlotterViewModel(ICadMainWindow mainWindow)
+    public PlotterViewModel(
+        ICadMainWindow mainWindow,
+        IPlotterController controller
+        )
     {
         Log.plx("in");
 
-        CurrentFigCmd = new(this);
-        SimpleCmd = new(this);
-
         mMainWindow = mainWindow;
 
-        Controller_ = new PlotterController(this);
+        Controller_ = controller;
+
+        CurrentFigCmd = new(this);
+
+        SimpleCmd = new(this);
 
         mCommandHandler = new CommandHandler(this);
-
 
         ObjTreeVM = new ObjectTreeViewModel(Controller_);
 
@@ -176,11 +183,40 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         SelectMode = Controller_.SelectMode;
         CreatingFigureType = Controller_.CreatingFigType;
 
-        Controller_.UpdateLayerList();
+        Log.plx("out");
+    }
+
+    public void Startup()
+    {
+        Log.plx("in");
+
+        Settings.Load();
+
+        ViewManager_.SetupViews();
 
         Log.plx("out");
     }
-        
+
+    public void Shutdown()
+    {
+        Log.plx("in");
+
+        Settings.Save();
+
+        if (mEditorWindow != null)
+        {
+            mEditorWindow.Close();
+            mEditorWindow = null;
+        }
+
+        CommandTextBox.Determined -= EvalTextCommand;
+
+        GDIToolManager.Provider.Instance.Dispose();
+
+        Log.plx("out");
+    }
+
+
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
         mMainWindow.OpenPopupMessage(text, messageType);
@@ -218,14 +254,14 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
-    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, CursorType type)
     {
-        if (type == Plotter.Controller.CursorType.TRACKING)
+        if (type == CursorType.TRACKING)
         {
             CursorPosVM.CursorPos = pt;
             CursorPosVM.CursorPos3 = pt - Controller.Input.LastDownPoint;
         }
-        else if (type == Plotter.Controller.CursorType.LAST_DOWN)
+        else if (type == CursorType.LAST_DOWN)
         {
             CursorPosVM.CursorPos2 = pt;
         }
@@ -359,34 +395,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     }
 
 
-    public void Open()
-    {
-        Log.plx("in");
-
-        Settings.Load();
-        ViewManager_.SetupViews();
-
-        Log.plx("out");
-    }
-
-    public void Close()
-    {
-        Settings.Save();
-
-        if (mEditorWindow != null)
-        {
-            mEditorWindow.Close();
-            mEditorWindow = null;
-        }
-
-        CommandTextBox.Determined -= EvalTextCommand;
-
-        GDIToolManager.Instance.Dispose();
-    }
-
     public void Redraw()
     {
-        Controller_.RedrawOnUiThread();
+        ThreadUtil.RunOnMainThread(Controller_.Redraw, true);
     }
 
     public void AttachCommandView(IAutoCompleteTextBox textBox)

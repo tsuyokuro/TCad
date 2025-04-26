@@ -1,8 +1,10 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
+using TCad.Plotter;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter.Assembler;
 
 public class TriangleSplitter
 {

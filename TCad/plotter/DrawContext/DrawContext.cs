@@ -1,9 +1,11 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter.Controller;
+using TCad.Plotter.Controller;
 using System;
+using TCad.Plotter;
+using TCad.Plotter.Drawing;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContext : IDisposable
 {
@@ -148,9 +150,9 @@ public abstract class DrawContext : IDisposable
         Log.plx("out");
     }
 
-    public virtual void Activate() {}
+    public virtual void Activate() { }
 
-    public virtual void Deactivate() {}
+    public virtual void Deactivate() { }
 
     public virtual void SetViewOrg(vector3_t org)
     {

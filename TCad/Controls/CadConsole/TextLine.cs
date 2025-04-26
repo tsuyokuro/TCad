@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TCad.Controls;
+namespace TCad.Controls.CadConsole;
 
 public struct TextAttr
 {

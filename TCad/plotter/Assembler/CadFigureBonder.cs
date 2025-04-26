@@ -1,6 +1,8 @@
 using CadDataTypes;
+using TCad.Plotter;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter.Assembler;
 
 class CadFigureBonder
 {
@@ -21,7 +23,7 @@ class CadFigureBonder
         CadLayer layer = db.GetLayer(fig.LayerID);
 
         CadVertex ps = fig.PointList[0];
-        CadVertex pe = fig.PointList[fig.PointCount-1];
+        CadVertex pe = fig.PointList[fig.PointCount - 1];
 
         int pi = -1;
         int bpi = -1;
@@ -54,14 +56,14 @@ class CadFigureBonder
             if (tps.Equals(pe))
             {
                 bpi = 0;
-                pi = fig.PointCount-1;
+                pi = fig.PointCount - 1;
                 bfig = tfig;
                 break;
             }
 
             if (tpe.Equals(ps))
             {
-                bpi = tfig.PointCount-1;
+                bpi = tfig.PointCount - 1;
                 pi = 0;
                 bfig = tfig;
                 break;

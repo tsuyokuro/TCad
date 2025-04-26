@@ -1,6 +1,4 @@
-using OpenTK.Mathematics;
-
-namespace Plotter;
+namespace TCad.Plotter;
 
 public static class MatrixExt
 {

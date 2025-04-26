@@ -1,25 +1,21 @@
-using TCad.Properties;
-using Microsoft.Scripting.Hosting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TCad.Controls;
-using OpenTK;
-using OpenTK.Mathematics;
-using System.Threading;
 using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
+using Microsoft.Scripting.Hosting;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using TCad.Controls.CadConsole;
 using TCad.ViewModel;
-using Plotter.Controller;
 
-namespace Plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public partial class ScriptEnvironment
 {
@@ -121,12 +117,12 @@ public partial class ScriptEnvironment
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModel.OpenPopupMessage(text, type);
+        Controller.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModel.ClosePopupMessage();
+        Controller.ClosePopupMessage();
     }
 
     public async void ExecuteCommandAsync(string s)

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using TCad.Plotter.Model.Figure;
+using static Community.CsharpSqlite.Sqlite3;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct FigureBelong
 {
@@ -49,6 +52,15 @@ public class CadObjectDB
         set => mLayerList = value;
     }
 
+    public bool IsValidLayerID(uint id)
+    {
+        if (id == 0)
+        {
+            return false;
+        }
+        return mLayerIdMap.ContainsKey(id);
+    }
+
 
     public CadLayer GetLayer(uint id)
     {
@@ -58,14 +70,29 @@ public class CadObjectDB
         }
 
         CadLayer layer;
-        mLayerIdMap.TryGetValue(id, out layer);
-        return layer;
+        if (mLayerIdMap.TryGetValue(id, out layer))
+        {
+            return layer;
+        }
+
+        return null;
     }
 
-    public CadLayer NewLayer()
+    public CadLayer NewLayer(bool addLayerList = false, bool selectCurrent = false)
     {
         CadLayer layer = new CadLayer();
         AddLayer(layer);
+
+        if (addLayerList)
+        {
+            mLayerList.Add(layer);
+        }
+
+        if (selectCurrent)
+        {
+            CurrentLayer = layer;
+        }
+
         return layer;
     }
 
@@ -76,7 +103,7 @@ public class CadObjectDB
         return layer.ID;
     }
 
-    public uint InserLayer(CadLayer layer, int index)
+    public uint InsertLayer(CadLayer layer, int index)
     {
         if (layer.ID == 0)
         {
@@ -89,10 +116,30 @@ public class CadObjectDB
         return layer.ID;
     }
 
-    public void RemoveLayer(uint id)
+    public void RemoveLayer(uint id, bool adjustCurrent)
     {
+        int nextCurrentIdx = -1;
+
+        if (adjustCurrent)
+        {
+            if (id == CurrentLayer.ID)
+            {
+                nextCurrentIdx = LayerIndex(CurrentLayer.ID);
+            }
+        }
+
         mLayerIdMap.Remove(id);
         mLayerList.RemoveAll(a => a.ID == id);
+
+        if (nextCurrentIdx >= 0)
+        {
+            if (nextCurrentIdx > LayerList.Count - 1)
+            {
+                nextCurrentIdx = LayerList.Count - 1;
+            }
+
+            CurrentLayer = LayerList[nextCurrentIdx];
+        }
     }
 
     public int LayerIndex(uint id)
@@ -110,7 +157,7 @@ public class CadObjectDB
 
         return -1;
     }
-    
+
     #endregion
 
 
@@ -166,34 +213,6 @@ public class CadObjectDB
 
     #endregion Manage Figure
 
-
-    
-    #region Walk
-    //public static Func<CadLayer, bool> EditableLayerFilter = (layer) =>
-    //{
-    //    if (layer.Locked) return false;
-    //    if (!layer.Visible) return false;
-
-    //    return true;
-    //};
-
-    //public void ForEachEditableFigure(Action<CadLayer, CadFigure> walk)
-    //{
-    //    mLayerList.ForEach(layer =>
-    //    {
-    //        if (!EditableLayerFilter(layer))
-    //        {
-    //            return;
-    //        }
-
-    //        layer.ForEachFig(fig =>
-    //        {
-    //            walk(layer, fig);
-    //        });
-    //    });
-    //}
-
-
     private void FigureAction(CadLayer layer, CadFigure fig, Action<CadLayer, CadFigure> action)
     {
         action(layer, fig);
@@ -222,8 +241,6 @@ public class CadObjectDB
             }
         }
     }
-
-    #endregion Walk
 
     #region Query
     public List<uint> GetSelectedFigIDList()
@@ -277,6 +294,25 @@ public class CadObjectDB
 
         return list;
     }
+
+    public List<CadFigure> GetSelectedRootFigureList()
+    {
+        List<CadFigure> figList = new List<CadFigure>();
+
+        foreach (CadLayer layer in LayerList)
+        {
+            layer.ForEachRootFig(fig =>
+            {
+                if (fig.HasSelectedPointInclueChild())
+                {
+                    figList.Add(fig);
+                }
+            });
+        }
+
+        return figList;
+    }
+
     #endregion Query
 
     public void ClearAll()

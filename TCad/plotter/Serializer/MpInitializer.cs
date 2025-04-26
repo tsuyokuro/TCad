@@ -1,6 +1,6 @@
 using MessagePack;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 [MessagePackObject]
 public class MpDummy

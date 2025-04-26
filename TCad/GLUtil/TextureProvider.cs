@@ -6,18 +6,10 @@ namespace GLUtil;
 
 public class TextureProvider
 {
-    private static TextureProvider sInstance;
-
     private readonly List<int> mTextures = new();
 
-    public static TextureProvider Instance
+    public TextureProvider()
     {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        get
-        {
-            sInstance ??= new TextureProvider();
-            return sInstance;
-        }
     }
 
     public int GetNew()
@@ -29,19 +21,19 @@ public class TextureProvider
 
     public void RemoveAll()
     {
-        for (int i=0;i<mTextures.Count;i++)
+        for (int i = 0; i < mTextures.Count; i++)
         {
             GL.DeleteTexture(mTextures[i]);
         }
         mTextures.Clear();
     }
 
-    public void Remove(int name)
+    public void Remove(int textureID)
     {
-        if (mTextures.Contains(name))
+        if (mTextures.Contains(textureID))
         {
-            GL.DeleteTexture(name);
-            mTextures.Remove(name);
+            GL.DeleteTexture(textureID);
+            mTextures.Remove(textureID);
         }
     }
 }

@@ -1,9 +1,12 @@
-using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 /**
  * GDI向け描画クラス

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class CadRegion2D
 {

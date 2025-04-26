@@ -1,6 +1,7 @@
+using TCad.Plotter;
 using System;
 
-namespace Plotter;
+namespace TCad.MathFunctions;
 
 /**
  *  汎用行列

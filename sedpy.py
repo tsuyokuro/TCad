@@ -3,37 +3,26 @@ import re
 
 fname = sys.argv[1]
 
-before_str = r'using vcompo_t = System.Single;.*using matrix4_t = OpenTK.Mathematics.Matrix4;'
+before_str1 = r'namespace Plotter.Controller;'
+after_str1 = r'namespace TCad.Plotter.Controller;'
 
-after_str = r'''
-#if DEFAULT_DATA_TYPE_DOUBLE
-using vcompo_t = System.Double;
-using vector3_t = OpenTK.Mathematics.Vector3d;
-using vector4_t = OpenTK.Mathematics.Vector4d;
-using matrix4_t = OpenTK.Mathematics.Matrix4d;
-#else
-using vcompo_t = System.Single;
-using vector3_t = OpenTK.Mathematics.Vector3;
-using vector4_t = OpenTK.Mathematics.Vector4;
-using matrix4_t = OpenTK.Mathematics.Matrix4;
-#endif
-'''
+before_str2 = r'using Plotter.Controller;'
+after_str2 = r'using TCad.Plotter.Controller;'
+
 
 f = open(fname,'r', encoding="utf-8")
-body = f.read()
+source = f.read()
 f.close()
 
-result = re.match(".*DEFAULT_DATA_TYPE_DOUBLE", body, flags=re.DOTALL)
-if (result):
-  print(fname + " <<<< Skip. Aleady Patched.")
-  exit()
+match1 = re.match(before_str1, source, flags=re.DOTALL)
+match2 = re.match(before_str2, source, flags=re.DOTALL)
 
-print(fname + " <<<< Patch")
+print(fname + " <<<< PATCH")
 
-s = "//#define DEFAULT_DATA_TYPE_DOUBLE\n"
-s += re.sub(before_str, after_str, body, flags=re.DOTALL)
+s1 = re.sub(before_str1, after_str1, source, flags=re.DOTALL)
+s2 = re.sub(before_str2, after_str2, s1, flags=re.DOTALL)
 
 f = open(fname,'w', encoding="utf-8")
-f.write(s)
+f.write(s2)
 f.close()
 

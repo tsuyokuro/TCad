@@ -1,8 +1,9 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using System.Threading;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class InteractCtrl
 {

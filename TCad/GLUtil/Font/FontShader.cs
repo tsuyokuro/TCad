@@ -30,17 +30,9 @@ public class FontShader
 
     private int ShaderProgram = -1;
 
-    private static FontShader sInstance;
-
-    public static FontShader GetInstance()
+    public FontShader()
     {
-        if (sInstance == null)
-        {
-            sInstance = new FontShader();
-            sInstance.SetupShader();
-        }
-
-        return sInstance;
+        SetupShader();// Constructor is private to prevent instantiation
     }
 
     private void SetupShader()

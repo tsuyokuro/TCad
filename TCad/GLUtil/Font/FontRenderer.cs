@@ -1,8 +1,6 @@
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
-using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 
 namespace GLFont;
@@ -10,55 +8,26 @@ namespace GLFont;
 public class FontRenderer
 {
     public int TextureID = -1;
-    private bool mInitialized = false;
 
-    FontShader mShader;
 
-    public bool Initialized
+    private FontShader Shader;
+
+    TextureProvider TextureProvider;
+
+    public FontRenderer(FontShader shader, TextureProvider textureProvider)
     {
-        get => mInitialized;
-    }
-
-    private static FontRenderer sInstance = null;
-    public static FontRenderer Instance
-    {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        get
-        {
-            if (sInstance == null)
-            {
-                sInstance = new FontRenderer();
-                sInstance.Init();
-            }
-
-            return sInstance;
-        }
-    }
-
-    private FontRenderer()
-    {
-
-    }
-
-    private void Init()
-    {
-        Dispose();
-
-        TextureID = TextureProvider.Instance.GetNew();
-
-        mShader = FontShader.GetInstance();
-
-        mInitialized = true;
+        Shader = shader;
+        TextureProvider = textureProvider;
+        TextureID = TextureProvider.GetNew();
     }
 
     public void Dispose()
     {
-        if (mInitialized)
+        if (TextureID != -1)
         {
-            TextureProvider.Instance.Remove(TextureID);
+            TextureProvider.Remove(TextureID);
+            TextureID = -1;
         }
-
-        mInitialized = false;
     }
 
     public void Render(FontTex tex)
@@ -70,13 +39,13 @@ public class FontRenderer
         Render(tex, p, xv, yv);
     }
 
-    public static int Counter = 0; 
+    public static int Counter = 0;
 
     public void Render(FontTex tex, vector3_t p, vector3_t xv, vector3_t yv)
     {
-        if (!mInitialized)
+        if (TextureID == -1)
         {
-            throw new ObjectDisposedException(nameof(FontRenderer));
+            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
         }
 
         Counter++;
@@ -103,7 +72,7 @@ public class FontRenderer
             GL.BindTexture(TextureTarget.Texture2D, tex.TextureID);
         }
 
-        mShader.Start(texUnitNumber);
+        Shader.Start(texUnitNumber);
 
         GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
 
@@ -136,6 +105,6 @@ public class FontRenderer
 
         // 
         //GL.UseProgram(0);
-        mShader.End();
+        Shader.End();
     }
 }

@@ -1,17 +1,20 @@
 using MyCollections;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Windows.Controls;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterDrawer
 {
     IPlotterController Controller;
 
-    DrawContext DC {
+    DrawContext DC
+    {
         get => Controller.DC;
     }
 
@@ -77,7 +80,7 @@ public class PlotterDrawer
     {
         Clear(DC);
     }
-    
+
     public void Clear(DrawContext dc = null)
     {
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
@@ -199,7 +202,7 @@ public class PlotterDrawer
                         AlphaFigList.Add(fig);
                         continue;
                     }
-                    
+
                     if (fig.Current)
                     {
                         fig.DrawEach(dc, current_dp);

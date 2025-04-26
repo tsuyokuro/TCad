@@ -1,8 +1,8 @@
-using MyCollections;
 using CadDataTypes;
+using MyCollections;
 using System.Collections.Generic;
 
-namespace HalfEdgeNS;
+namespace TCad.Plotter.Model.HalfEdgeModel;
 
 public class HeModelConverter
 {
@@ -71,7 +71,7 @@ public class HeModelConverter
         cm.VertexStore = new VertexList(hem.VertexStore);
         cm.FaceStore = new FlexArray<CadFace>();
 
-        for (int i=0; i < hem.FaceStore.Count;i++)
+        for (int i = 0; i < hem.FaceStore.Count; i++)
         {
             CadFace cf = ToCadFace(hem.FaceStore[i]);
             if (cf != null)
@@ -90,7 +90,7 @@ public class HeModelConverter
         HalfEdge head = hef.Head;
         HalfEdge c = head;
 
-        while (c!=null)
+        while (c != null)
         {
             ret.VList.Add(c.Vertex);
 

@@ -1,9 +1,8 @@
-using GLFont;
-using GLUtil;
-using OpenGL.GLU;
-using Plotter;
-using Plotter.Controller;
+
 using System;
+using OpenGL.GLU;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,12 +14,17 @@ using System.Windows.Media;
 using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
+using TCad.Plotter.DrawToolSet;
+
 
 namespace TCad;
+
 
 public partial class MainWindow : Window, ICadMainWindow
 {
     public IPlotterViewModel ViewModel;
+
+    public IPlotterController Contoroller;
 
     private ImageSource[] PopupMessageIcons = new ImageSource[3];
 
@@ -32,9 +36,15 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Glu.Initialize();
 
-        ViewModel = new PlotterViewModel(this);
+        Contoroller = new PlotterController();
 
-        ViewModel.Open();
+        ViewModel = new PlotterViewModel(this, Contoroller);
+
+        Contoroller.ConnectViewModel(ViewModel);
+
+        ViewModel.Startup();
+
+        Contoroller.Startup();
 
         ViewModel.ObjectTree = ObjTree;
 
@@ -186,32 +196,26 @@ public partial class MainWindow : Window, ICadMainWindow
         }
     }
 
-    private void MainWindow_Closed(object sender, EventArgs e)
-    {
-        ViewModel.Close();
-        ImageRenderer.Provider.Release();
-        FontRenderer.Instance.Dispose();
-        TextureProvider.Instance.RemoveAll();
-        FontShader.GetInstance().Dispose();
-        ImageShader.GetInstance().Dispose();
-        WireFrameShader.GetInstance().Dispose();
-
-        Glu.Dispose();
-    }
-
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         Log.plx("in");
 
-        //var hsrc = HwndSource.FromVisual(this) as HwndSource;
-        //hsrc.AddHook(WndProc);
-
         ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
-        ImageRenderer.Provider.Get();
+        Log.plx("out");
+    }
 
-        WireFrameShader.GetInstance();
+    private void MainWindow_Closed(object sender, EventArgs e)
+    {
+        Log.plx("in");
+
+        Contoroller.Shutdown();
+        ViewModel.Shutdown();
+
+        GLUtilContainer.DisposeServices();
+
+        Glu.Dispose();
 
         Log.plx("out");
     }
@@ -337,7 +341,8 @@ public partial class MainWindow : Window, ICadMainWindow
 
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
     {
-        ThreadUtil.RunOnMainThread(() => {
+        ThreadUtil.RunOnMainThread(() =>
+        {
             if (PopupMessage.IsOpen) return;
 
             PopupMessageIcon.Source = SelectPopupMessageIcon(messageType);

@@ -1,13 +1,18 @@
-using HalfEdgeNS;
+using CadDataTypes;
 using MessagePack;
+using OpenTK.Mathematics;
+using TCad.Plotter;
+using Plotter.Serializer;
+using SplineCurve;
 using System;
 using System.Collections.Generic;
-using CadDataTypes;
-using SplineCurve;
 using System.Drawing.Printing;
-using OpenTK.Mathematics;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer.v1003;
 
 public class VersionCode_v1003
 {
@@ -64,7 +69,7 @@ public class MpCadData_v1003
 
         if (worldScale == 0)
         {
-            worldScale = (vcompo_t)(1.0);
+            worldScale = (vcompo_t)1.0;
         }
 
         cd.WorldScale = worldScale;
@@ -87,7 +92,7 @@ public class MpCadData_v1003
 public class MpViewInfo_v1003
 {
     [Key("WorldScale")]
-    public vcompo_t WorldScale = (vcompo_t)(1.0);
+    public vcompo_t WorldScale = (vcompo_t)1.0;
 
     [Key("Paper")]
     public MpPaperSettings_v1003 PaperSettings = new MpPaperSettings_v1003();
@@ -97,10 +102,10 @@ public class MpViewInfo_v1003
 public class MpPaperSettings_v1003
 {
     [Key("W")]
-    public vcompo_t Width = (vcompo_t)(210.0);
+    public vcompo_t Width = (vcompo_t)210.0;
 
     [Key("H")]
-    public vcompo_t Height = (vcompo_t)(297.0);
+    public vcompo_t Height = (vcompo_t)297.0;
 
     [Key("Landscape")]
     public bool Landscape = false;
@@ -213,7 +218,7 @@ public class MpCadObjectDB_v1003
         ret.FigIdProvider.Counter = FigureIdCount;
 
         // Figure map
-        List<CadFigure> figList = MpUtil.FigureListFromMp<MpFigure_v1003>(dsc, FigureList);
+        List<CadFigure> figList = MpUtil.FigureListFromMp(dsc, FigureList);
 
         var dic = new Dictionary<uint, CadFigure>();
 
@@ -430,7 +435,7 @@ public class MpFigure_v1003 : IMpFigure
 
         if (ChildList != null)
         {
-            fig.ChildList = MpUtil.FigureListFromMp<MpFigure_v1003>(dsc, ChildList);
+            fig.ChildList = MpUtil.FigureListFromMp(dsc, ChildList);
 
             for (int i = 0; i < fig.ChildList.Count; i++)
             {
@@ -598,7 +603,7 @@ public struct MpVertexAttr_v1003
         MpVertexAttr_v1003 ret = new MpVertexAttr_v1003();
 
         ret.Color1 = MpColor4_v1003.Create(attr.Color);
-        ret.Normal =MpVector3_v1003.Create(attr.Normal);
+        ret.Normal = MpVector3_v1003.Create(attr.Normal);
         ret.Flags = 0;
         return ret;
     }
@@ -656,12 +661,12 @@ public struct MpVertex_v1003 : IMpVertex
     }
 }
 
-[MessagePack.Union(0, typeof(MpSimpleGeometricData_v1003))]
-[MessagePack.Union(1, typeof(MpMeshGeometricData_v1003))]
-[MessagePack.Union(2, typeof(MpNurbsLineGeometricData_v1003))]
-[MessagePack.Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
-[MessagePack.Union(4, typeof(MpPictureGeometricData_v1003))]
-[MessagePack.Union(5, typeof(MpPolyLinesGeometricData_v1003))]
+[Union(0, typeof(MpSimpleGeometricData_v1003))]
+[Union(1, typeof(MpMeshGeometricData_v1003))]
+[Union(2, typeof(MpNurbsLineGeometricData_v1003))]
+[Union(3, typeof(MpNurbsSurfaceGeometricData_v1003))]
+[Union(4, typeof(MpPictureGeometricData_v1003))]
+[Union(5, typeof(MpPolyLinesGeometricData_v1003))]
 public interface MpGeometricData_v1003
 {
 }
@@ -697,7 +702,7 @@ public class MpPictureGeometricData_v1003 : MpGeometricData_v1003
     public List<MpVertex_v1003> PointList;
 
     [Key("Bytes")]
-    public Byte[] Bytes = null;
+    public byte[] Bytes = null;
 
     [Key("base64")]
     public string Base64 = null;
@@ -944,9 +949,9 @@ public class MpNurbsLine_v1003
 
         ret.CtrlCnt = src.CtrlCnt;
         ret.CtrlDataCnt = src.CtrlDataCnt;
-        ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
+        ret.Weights = MpUtil.ArrayClone(src.Weights);
         ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1003>(src.CtrlPoints);
-        ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
+        ret.CtrlOrder = MpUtil.ArrayClone(src.CtrlOrder);
 
         ret.BSplineP = MpBSplineParam_v1003.Create(src.BSplineP);
 
@@ -959,9 +964,9 @@ public class MpNurbsLine_v1003
 
         nurbs.CtrlCnt = CtrlCnt;
         nurbs.CtrlDataCnt = CtrlDataCnt;
-        nurbs.Weights = MpUtil.ArrayClone<vcompo_t>(Weights);
+        nurbs.Weights = MpUtil.ArrayClone(Weights);
         nurbs.CtrlPoints = MpUtil.VertexListFromMp(CtrlPoints);
-        nurbs.CtrlOrder = MpUtil.ArrayClone<int>(CtrlOrder);
+        nurbs.CtrlOrder = MpUtil.ArrayClone(CtrlOrder);
 
         nurbs.BSplineP = BSplineP.Restore();
 
@@ -1011,8 +1016,8 @@ public class MpNurbsSurface_v1003
 
         ret.CtrlPoints = MpUtil.VertexListToMp<MpVertex_v1003>(src.CtrlPoints);
 
-        ret.Weights = MpUtil.ArrayClone<vcompo_t>(src.Weights);
-        ret.CtrlOrder = MpUtil.ArrayClone<int>(src.CtrlOrder);
+        ret.Weights = MpUtil.ArrayClone(src.Weights);
+        ret.CtrlOrder = MpUtil.ArrayClone(src.CtrlOrder);
 
         ret.UBSpline = MpBSplineParam_v1003.Create(src.UBSpline);
         ret.VBSpline = MpBSplineParam_v1003.Create(src.VBSpline);
@@ -1032,8 +1037,8 @@ public class MpNurbsSurface_v1003
 
         nurbs.CtrlPoints = MpUtil.VertexListFromMp(CtrlPoints);
 
-        nurbs.Weights = MpUtil.ArrayClone<vcompo_t>(Weights);
-        nurbs.CtrlOrder = MpUtil.ArrayClone<int>(CtrlOrder);
+        nurbs.Weights = MpUtil.ArrayClone(Weights);
+        nurbs.CtrlOrder = MpUtil.ArrayClone(CtrlOrder);
 
         nurbs.UBSpline = UBSpline.Restore();
         nurbs.VBSpline = VBSpline.Restore();
@@ -1081,7 +1086,7 @@ public class MpBSplineParam_v1003
         ret.DivCnt = src.DivCnt;
         ret.OutputCnt = src.OutputCnt;
         ret.KnotCnt = src.KnotCnt;
-        ret.Knots = MpUtil.ArrayClone<vcompo_t>(src.Knots);
+        ret.Knots = MpUtil.ArrayClone(src.Knots);
         ret.LowKnot = src.LowKnot;
         ret.HighKnot = src.HighKnot;
         ret.Step = src.Step;
@@ -1097,7 +1102,7 @@ public class MpBSplineParam_v1003
         bs.DivCnt = DivCnt;
         bs.OutputCnt = OutputCnt;
         bs.KnotCnt = KnotCnt;
-        bs.Knots = MpUtil.ArrayClone<vcompo_t>(Knots);
+        bs.Knots = MpUtil.ArrayClone(Knots);
         bs.LowKnot = LowKnot;
         bs.HighKnot = HighKnot;
         bs.Step = Step;

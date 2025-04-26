@@ -1,10 +1,12 @@
 using CadDataTypes;
-using HalfEdgeNS;
-using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 public struct DrawTextOption
 {

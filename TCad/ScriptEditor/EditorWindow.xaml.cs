@@ -1,11 +1,6 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Utils;
-using Microsoft.Win32;
-using OpenTK.Graphics.OpenGL;
-using Plotter;
-using Plotter.Scripting;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
@@ -16,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
+using TCad.Plotter.Scripting;
+
 
 //using ICSharpCode.AvalonEdit.Search;
 using TCad.ScriptEditor.Search;
@@ -344,7 +341,8 @@ namespace TCad.ScriptEditor
             ExecuteCommand(cmd);
         }
 
-        private void ExecuteCommand(string cmd) {
+        private void ExecuteCommand(string cmd)
+        {
             if (cmd == "open_script")
             {
                 OpenFile();

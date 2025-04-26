@@ -1,44 +1,31 @@
-using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Plotter;
+namespace GLUtil;
 
 public class ImageRenderer
 {
     private int TextureID = -1;
 
-    private bool mInitialized = false;
+    private ImageShader Shader;
 
-    private ImageShader mShader;
+    private TextureProvider TextureProvider;
 
-    public bool Initialized
+    public ImageRenderer(ImageShader shader, TextureProvider textureProvider)
     {
-        get => mInitialized;
-    }
-
-    public void Init()
-    {
-        Dispose();
-
-        TextureID = TextureProvider.Instance.GetNew();
-
-        // Use my shader
-        mShader = ImageShader.GetInstance();
-
-        mInitialized = true;
+        Shader = shader;
+        TextureProvider = textureProvider;
+        TextureID = TextureProvider.GetNew();
     }
 
     public void Dispose()
     {
-        if (mInitialized)
+        if (TextureID != -1)
         {
-            TextureProvider.Instance.Remove(TextureID);
+            TextureProvider.Remove(TextureID);
+            TextureID = -1;
         }
-
-        mInitialized = false;
     }
 
 
@@ -53,7 +40,7 @@ public class ImageRenderer
         // Use my shader
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);
 
-                    
+
         GL.BindTexture(TextureTarget.Texture2D, TextureID);
 
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
@@ -84,67 +71,38 @@ public class ImageRenderer
 
 
         // Use my shader
-        mShader.Start(texUnitNumber);
+        Shader.Start(texUnitNumber);
 
 
         vector3_t x = xv;
         vector3_t y = yv;
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)1.0);
 
         GL.Normal3(new vector3_t(0, 0, 1));
 
         GL.Begin(PrimitiveType.Quads);
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)1.0);
         GL.Vertex3(p + x + y);
 
-        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(1.0));
+        GL.TexCoord2((vcompo_t)0.0, (vcompo_t)1.0);
         GL.Vertex3(p + y);
 
-        GL.TexCoord2((vcompo_t)(0.0), (vcompo_t)(0.0));
+        GL.TexCoord2((vcompo_t)0.0, (vcompo_t)0.0);
         GL.Vertex3(p);
 
-        GL.TexCoord2((vcompo_t)(1.0), (vcompo_t)(0.0));
+        GL.TexCoord2((vcompo_t)1.0, (vcompo_t)0.0);
         GL.Vertex3(p + x);
 
         GL.End();
 
 
         // Use my shader
-        mShader.End();
+        Shader.End();
 
 
         // Not use my shader
         //GL.Disable(EnableCap.Texture2D);
-    }
-
-
-    public class Provider
-    {
-        private static ImageRenderer sImageRenderer;
-
-        public static ImageRenderer Get()
-        {
-            if (sImageRenderer == null)
-            {
-                sImageRenderer = new ImageRenderer();
-            }
-
-            if (!sImageRenderer.Initialized)
-            {
-                sImageRenderer.Init();
-            }
-
-            return sImageRenderer;
-        }
-
-        public static void Release()
-        {
-            if (sImageRenderer != null)
-            {
-                sImageRenderer.Dispose();
-            }
-        }
     }
 }

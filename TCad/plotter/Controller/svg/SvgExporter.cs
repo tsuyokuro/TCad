@@ -1,8 +1,9 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
 
 namespace Plotter.svg;
 

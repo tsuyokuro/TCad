@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 class CadKeyboard
 {

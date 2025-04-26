@@ -1,7 +1,8 @@
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using Plotter.Serializer;
-using Plotter.Controller;
-using Plotter;
 using System.IO;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 
@@ -90,7 +91,8 @@ public class CadFileAccessor
 
         foreach (CadFigure c in fig.ChildList)
         {
-            try {
+            try
+            {
                 LoadExternalData(dsc, c, fname);
             }
             catch

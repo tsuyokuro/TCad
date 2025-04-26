@@ -1,12 +1,16 @@
 using CadDataTypes;
-using HalfEdgeNS;
 using MeshUtilNS;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
 using TCad.Dialogs;
+using TCad.MathFunctions;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
 
 namespace Plotter.Controller.TaskRunner;
@@ -120,7 +124,7 @@ public class PlotterTaskRunner
         RunOnMainThread(() =>
         {
             Controller.Drawer.Redraw();
-            Controller.UpdateObjectTree(remakeTree : true);
+            Controller.UpdateObjectTree(remakeTree: true);
         });
     }
 
@@ -144,7 +148,7 @@ public class PlotterTaskRunner
             }
 
             CadFigureMesh mesh = fig as CadFigureMesh;
-            
+
             if (mesh == null)
             {
                 Controller.EditManager.AbendEdit();
@@ -254,7 +258,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.Drawer.Redraw();
-                Controller.UpdateObjectTree(remakeTree : false);
+                Controller.UpdateObjectTree(remakeTree: false);
             });
         });
     }
@@ -355,12 +359,12 @@ public class PlotterTaskRunner
 
     public void OpenPopupMessage(string text, UITypes.MessageType type)
     {
-        Controller.ViewModel.OpenPopupMessage(text, type);
+        Controller.OpenPopupMessage(text, type);
     }
 
     public void ClosePopupMessage()
     {
-        Controller.ViewModel.ClosePopupMessage();
+        Controller.ClosePopupMessage();
     }
 
     private void RunOnMainThread(Action action)

@@ -1,9 +1,11 @@
-using OpenTK.Mathematics;
-using Plotter.Serializer;
 using System.Collections.Generic;
 using System.Windows;
+using TCad.Plotter;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer;
+using TCad.Plotter.undo;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterClipboard
 {

@@ -1,10 +1,12 @@
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
 using System.Windows.Forms;
+using TCad.MathFunctions;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 class DrawContextGLPers : DrawContextGL
 {

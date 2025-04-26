@@ -1,7 +1,9 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.MathFunctions;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter.searcher;
 
 public struct MarkSegment
 {
@@ -86,7 +88,7 @@ public struct MarkSegment
 
     public bool Valid { get { return FigureID != 0; } }
 
-    public void dump(string name= "MarkSeg")
+    public void dump(string name = "MarkSeg")
     {
         Log.pl(name + " {");
         Log.Indent++;

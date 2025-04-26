@@ -1,8 +1,9 @@
 using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
 using System.Drawing;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public struct DrawPen : IEquatable<DrawPen>
 {
@@ -22,7 +23,7 @@ public struct DrawPen : IEquatable<DrawPen>
 
     public Pen GdiPen
     {
-        get => GDIToolManager.Instance.Pen(this);
+        get => GDIToolManager.Provider.Instance.Pen(this);
     }
 
     public int Argb
@@ -64,12 +65,12 @@ public struct DrawPen : IEquatable<DrawPen>
     }
 
 
-    public static bool operator == (DrawPen pen1, DrawPen pen2)
+    public static bool operator ==(DrawPen pen1, DrawPen pen2)
     {
         return (pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width);
     }
 
-    public static bool operator != (DrawPen pen1, DrawPen pen2)
+    public static bool operator !=(DrawPen pen1, DrawPen pen2)
     {
         return !((pen1.Color4 == pen1.Color4) && (pen1.Width == pen2.Width));
     }

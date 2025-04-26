@@ -2,8 +2,14 @@ using CadDataTypes;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using GLUtil;
+using TCad.Plotter;
+using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.DrawContexts;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigurePicture : CadFigure
 {
@@ -15,7 +21,7 @@ public partial class CadFigurePicture : CadFigure
 
     private Bitmap mBitmap;
 
-    private byte[] SrcData; 
+    private byte[] SrcData;
 
     public string OrgFilePathName;
     public string FilePathName;
@@ -26,7 +32,7 @@ public partial class CadFigurePicture : CadFigure
 
         if (mBitmap == null)
         {
-            
+
         }
     }
 
@@ -164,7 +170,7 @@ public partial class CadFigurePicture : CadFigure
             return;
         }
 
-        ImageRenderer renderer = ImageRenderer.Provider.Get();
+        ImageRenderer renderer = GLUtilContainer.ImageRenderer.Instance;
 
         vector3_t xv = (vector3_t)(mPointList[1] - mPointList[0]);
         vector3_t yv = (vector3_t)(mPointList[3] - mPointList[0]);
@@ -298,7 +304,8 @@ public partial class CadFigurePicture : CadFigure
         bool keepAspect = true;
 
         CrossInfo ci;
-        if (keepAspect) { 
+        if (keepAspect)
+        {
             ci = CadMath.PerpCrossLine(
                 vector3_t.Zero,
                 mPointList[aIdx].vector - mPointList[mIdx].vector,

@@ -1,9 +1,15 @@
 using CadDataTypes;
 using Plotter.Settings;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.searcher;
 using TCad.ViewModel;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterInput
 {
@@ -17,11 +23,6 @@ public class PlotterInput
     public CadObjectDB DB
     {
         get => Controller.DB;
-    }
-
-    public IPlotterViewModel ViewModelIF
-    {
-        get => Controller.ViewModel;
     }
 
     public CadLayer CurrentLayer
@@ -96,7 +97,8 @@ public class PlotterInput
     public SnapInfo CurrentSnapInfo;
 
     // 生のL button down point (デバイス座標系)
-    public vector3_t RawDownPoint {
+    public vector3_t RawDownPoint
+    {
         get;
         set;
     } = default;
@@ -109,7 +111,7 @@ public class PlotterInput
         set
         {
             mLastDownPoint = value;
-            ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+            Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
         }
     }
 
@@ -122,8 +124,10 @@ public class PlotterInput
 
     public MarkSegment? LastSelSegment_ = null;
 
-    public MarkSegment? LastSelSegment {
-        set {
+    public MarkSegment? LastSelSegment
+    {
+        set
+        {
             LastSelSegment_ = value;
         }
 
@@ -500,8 +504,8 @@ public class PlotterInput
             CurrentState.MouseMove(pointer, dc, x, y);
         }
 
-        ViewModelIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -533,7 +537,7 @@ public class PlotterInput
 
         UnlockCursor();
 
-        ViewModelIF.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -557,7 +561,7 @@ public class PlotterInput
 
         CrossCursor.Store();
 
-        ViewModelIF.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
     }
 
     private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -573,7 +577,7 @@ public class PlotterInput
 
         CrossCursor.Pos = new vector3_t(x, y, 0);
 
-        ViewModelIF.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)
@@ -968,15 +972,15 @@ public class PlotterInput
 
     private void NotifyCursorLock(bool locked)
     {
-        ViewModelIF.CursorLocked(locked);
+        Controller.CursorLocked(locked);
         if (!locked)
         {
             mSpPointList = null;
-            ViewModelIF.ClosePopupMessage();
+            Controller.ClosePopupMessage();
         }
         else
         {
-            ViewModelIF.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
+            Controller.OpenPopupMessage("Cursor locked", UITypes.MessageType.INFO);
         }
     }
 
@@ -990,7 +994,7 @@ public class PlotterInput
         SnapPoint = v;
         CrossCursor.Pos = DC.WorldPointToDevPoint(SnapPoint);
 
-        ViewModelIF.CursorPosChanged(SnapPoint, CursorType.TRACKING);
+        Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
     }
 
     public void AddExtendSnapPoint()

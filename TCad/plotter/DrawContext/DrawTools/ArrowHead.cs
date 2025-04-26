@@ -1,7 +1,7 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
+using TCad.MathFunctions;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public enum ArrowTypes
 {

@@ -1,6 +1,4 @@
-using OpenTK.Mathematics;
-
-namespace Plotter;
+namespace TCad.MathFunctions;
 
 public struct CrossInfo
 {

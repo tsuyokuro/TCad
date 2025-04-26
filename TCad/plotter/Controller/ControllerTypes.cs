@@ -1,12 +1,20 @@
-using OpenTK.Mathematics;
 using System.Collections.Generic;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.searcher;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public struct LayerListInfo
 {
     public List<CadLayer> LayerList;
     public uint CurrentID;
+
+    public LayerListInfo(List<CadLayer> layerList, uint currentID)
+    {
+        LayerList = layerList;
+        CurrentID = currentID;
+    }
 }
 
 public enum StateChangedType

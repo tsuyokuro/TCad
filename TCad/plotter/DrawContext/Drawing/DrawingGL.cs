@@ -1,17 +1,20 @@
 using CadDataTypes;
 using GLFont;
-using GLUtil;
-using HalfEdgeNS;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using static Plotter.DrawingGL;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 public class DrawingGL : IDrawing
 {
@@ -34,9 +37,9 @@ public class DrawingGL : IDrawing
         mFontFaceW.SetSize(24);
         */
 
-        mFontFaceW = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
+        mFontFaceW = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
 
-        mFontRenderer = FontRenderer.Instance;
+        mFontRenderer = GLUtilContainer.FontRenderer.Instance;
 
         FontTex tex = mFontFaceW.CreateTexture('X', true);
         FontTexW = tex.ImgW;
@@ -1045,7 +1048,7 @@ public class DrawingGL : IDrawing
                 CadVertex* p = ptr;
                 UInt64 ep = ((UInt64)p) + ((UInt64)sizeof(CadVertex) * (UInt64)num);
 
-                for (; (UInt64)p < ep ;)
+                for (; (UInt64)p < ep;)
                 {
                     if (p->Selected)
                     {
@@ -1199,13 +1202,13 @@ public class DrawingGL : IDrawing
             return;
         }
 
-        if ((opt.Option & DrawTextOption.H_CENTER)!=0)
+        if ((opt.Option & DrawTextOption.H_CENTER) != 0)
         {
             a -= (xv / 2);
         }
 
         GL.Color4(brush.Color4);
-        
+
         mFontRenderer.Render(tex, a, xv, yv);
     }
 

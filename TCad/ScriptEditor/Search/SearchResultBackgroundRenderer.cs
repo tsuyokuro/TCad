@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -16,74 +16,78 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Linq;
 using System.Windows.Media;
 
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Rendering;
-
 namespace TCad.ScriptEditor.Search
 {
-	class SearchResultBackgroundRenderer : IBackgroundRenderer
-	{
-		TextSegmentCollection<SearchResult> currentResults = new TextSegmentCollection<SearchResult>();
+    class SearchResultBackgroundRenderer : IBackgroundRenderer
+    {
+        TextSegmentCollection<SearchResult> currentResults = new TextSegmentCollection<SearchResult>();
 
-		public TextSegmentCollection<SearchResult> CurrentResults {
-			get { return currentResults; }
-		}
+        public TextSegmentCollection<SearchResult> CurrentResults
+        {
+            get { return currentResults; }
+        }
 
-		public KnownLayer Layer {
-			get {
-				// draw behind selection
-				return KnownLayer.Selection;
-			}
-		}
+        public KnownLayer Layer
+        {
+            get
+            {
+                // draw behind selection
+                return KnownLayer.Selection;
+            }
+        }
 
-		public SearchResultBackgroundRenderer()
-		{
-			MarkerBrush = Brushes.LightGreen;
-			MarkerPen = null;
-			MarkerCornerRadius = 3.0;
-		}
+        public SearchResultBackgroundRenderer()
+        {
+            MarkerBrush = Brushes.LightGreen;
+            MarkerPen = null;
+            MarkerCornerRadius = 3.0;
+        }
 
-		public Brush MarkerBrush { get; set; }
-		public Pen MarkerPen { get; set; }
-		public double MarkerCornerRadius { get; set; }
+        public Brush MarkerBrush { get; set; }
+        public Pen MarkerPen { get; set; }
+        public double MarkerCornerRadius { get; set; }
 
-		public void Draw(TextView textView, DrawingContext drawingContext)
-		{
-			if (textView == null)
-				throw new ArgumentNullException("textView");
-			if (drawingContext == null)
-				throw new ArgumentNullException("drawingContext");
+        public void Draw(TextView textView, DrawingContext drawingContext)
+        {
+            if (textView == null)
+                throw new ArgumentNullException("textView");
+            if (drawingContext == null)
+                throw new ArgumentNullException("drawingContext");
 
-			if (currentResults == null || !textView.VisualLinesValid)
-				return;
+            if (currentResults == null || !textView.VisualLinesValid)
+                return;
 
-			var visualLines = textView.VisualLines;
-			if (visualLines.Count == 0)
-				return;
+            var visualLines = textView.VisualLines;
+            if (visualLines.Count == 0)
+                return;
 
-			int viewStart = visualLines.First().FirstDocumentLine.Offset;
-			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
+            int viewStart = visualLines.First().FirstDocumentLine.Offset;
+            int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 
-			Brush markerBrush = MarkerBrush;
-			Pen markerPen = MarkerPen;
-			double markerCornerRadius = MarkerCornerRadius;
-			double markerPenThickness = markerPen != null ? markerPen.Thickness : 0;
+            Brush markerBrush = MarkerBrush;
+            Pen markerPen = MarkerPen;
+            double markerCornerRadius = MarkerCornerRadius;
+            double markerPenThickness = markerPen != null ? markerPen.Thickness : 0;
 
-			foreach (SearchResult result in currentResults.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
-				BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
-				geoBuilder.AlignToWholePixels = true;
-				geoBuilder.BorderThickness = markerPenThickness;
-				geoBuilder.CornerRadius = markerCornerRadius;
-				geoBuilder.AddSegment(textView, result);
-				Geometry geometry = geoBuilder.CreateGeometry();
-				if (geometry != null) {
-					drawingContext.DrawGeometry(markerBrush, markerPen, geometry);
-				}
-			}
-		}
-	}
+            foreach (SearchResult result in currentResults.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            {
+                BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
+                geoBuilder.AlignToWholePixels = true;
+                geoBuilder.BorderThickness = markerPenThickness;
+                geoBuilder.CornerRadius = markerCornerRadius;
+                geoBuilder.AddSegment(textView, result);
+                Geometry geometry = geoBuilder.CreateGeometry();
+                if (geometry != null)
+                {
+                    drawingContext.DrawGeometry(markerBrush, markerPen, geometry);
+                }
+            }
+        }
+    }
 }

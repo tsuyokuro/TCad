@@ -3,7 +3,7 @@ using System.Threading;
 using TCad;
 using TCad.Util;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 
 public interface ILogWriter
@@ -18,12 +18,14 @@ public interface ILogWriter
 
 public class LogConsole : ILogWriter
 {
-    public void Start() {
+    public void Start()
+    {
 
         WinAPI.AllocConsole();
     }
 
-    public void Stop() {
+    public void Stop()
+    {
         WinAPI.FreeConsole();
     }
 
@@ -42,13 +44,15 @@ public class LogDebugServer : ILogWriter
 {
     DebugServer DServer;
 
-    public void Start() {
+    public void Start()
+    {
         if (DServer != null)
         {
             DServer.Start();
         }
     }
-    public void Stop() {
+    public void Stop()
+    {
         if (DServer != null)
         {
             DServer.Stop();

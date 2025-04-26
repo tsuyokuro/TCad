@@ -1,7 +1,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 
-namespace Plotter;
+namespace GLUtil;
 
 public class WireFrameShader
 {
@@ -58,17 +58,9 @@ public class WireFrameShader
 
     private int ShaderProgram = -1;
 
-    private static WireFrameShader sInstance;
-
-    public static WireFrameShader GetInstance()
+    public WireFrameShader()
     {
-        if (sInstance == null)
-        {
-            sInstance = new WireFrameShader();
-            sInstance.SetupShader();
-        }
-
-        return sInstance;
+        SetupShader();
     }
 
     private void SetupShader()
@@ -135,7 +127,7 @@ public class WireFrameShader
         }
     }
 
-    public void Start(int texUnitNumber)
+    public void Start()
     {
         GL.UseProgram(ShaderProgram);
     }

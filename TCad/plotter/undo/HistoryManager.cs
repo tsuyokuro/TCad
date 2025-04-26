@@ -1,7 +1,8 @@
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System.Collections.Generic;
 
-namespace Plotter;
+namespace TCad.Plotter.undo;
 
 public class HistoryManager
 {
@@ -110,7 +111,8 @@ public class HistoryManager
         {
             Log.pl("{");
             Log.Indent++;
-            foreach (CadOpe item in ((CadOpeList)ope).OpeList) {
+            foreach (CadOpe item in ((CadOpeList)ope).OpeList)
+            {
                 dumpCadOpe(item);
             }
             Log.Indent--;

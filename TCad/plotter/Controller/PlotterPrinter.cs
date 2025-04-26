@@ -3,11 +3,13 @@
 
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using Plotter.Settings;
 using System.Drawing;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public class PlotterPrinter
 {

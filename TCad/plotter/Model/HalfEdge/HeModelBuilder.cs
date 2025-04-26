@@ -1,9 +1,9 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
-using Plotter;
+using TCad.Plotter;
 using System.Collections.Generic;
+using TCad.MathFunctions;
 
-namespace HalfEdgeNS;
+namespace TCad.Plotter.Model.HalfEdgeModel;
 
 public class HeModelBuilder
 {

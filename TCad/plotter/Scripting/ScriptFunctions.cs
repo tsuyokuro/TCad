@@ -1,7 +1,6 @@
 using CadDataTypes;
 using CarveWapper;
 using GLUtil;
-using HalfEdgeNS;
 using LibiglWrapper;
 using MeshMakerNS;
 using MeshUtilNS;
@@ -10,18 +9,26 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Threading;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.searcher;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
-using static Plotter.CadFigure;
+using static TCad.Plotter.Model.Figure.CadFigure;
 
-namespace Plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public class ScriptFunctions
 {
@@ -96,7 +103,7 @@ public class ScriptFunctions
 
         Controller.Input.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
         Controller.Input.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
-    }
+    }   
 
     public void PrintVector(vector3_t v)
     {
@@ -261,7 +268,7 @@ public class ScriptFunctions
         if (list.Count < 2)
         {
             ItConsole.println(
-                TCad.Properties.Resources.error_select_2_or_more
+                Properties.Resources.error_select_2_or_more
                 );
 
             return;
@@ -306,7 +313,7 @@ public class ScriptFunctions
         }
 
         ItConsole.println(
-                TCad.Properties.Resources.notice_was_grouped
+                Properties.Resources.notice_was_grouped
             );
 
         Session.PostRemakeObjectTree();
@@ -375,7 +382,7 @@ public class ScriptFunctions
         }
 
         ItConsole.println(
-            TCad.Properties.Resources.notice_was_ungrouped
+            Properties.Resources.notice_was_ungrouped
             );
 
         Session.PostRemakeObjectTree();
@@ -951,7 +958,7 @@ public class ScriptFunctions
             AbendEdit();
 
             ItConsole.println(
-                TCad.Properties.Resources.error_operation_failed
+                Properties.Resources.error_operation_failed
                 );
             return;
         }
@@ -959,7 +966,7 @@ public class ScriptFunctions
         EndEdit();
 
         ItConsole.println(
-            TCad.Properties.Resources.notice_operation_success
+            Properties.Resources.notice_operation_success
             );
     }
 
@@ -1053,7 +1060,7 @@ public class ScriptFunctions
         vcompo_t sw = r.p1.X - r.p0.X;
         vcompo_t sh = r.p1.Y - r.p0.Y;
 
-        vcompo_t a = (vcompo_t)Math.Min(w, h) / (Math.Max(sw, sh) + lineW);
+        vcompo_t a = Math.Min(w, h) / (Math.Max(sw, sh) + lineW);
 
         tdc.DeviceScaleX *= a;
         tdc.DeviceScaleY *= a;

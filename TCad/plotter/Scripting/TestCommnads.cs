@@ -1,30 +1,37 @@
+using CadDataTypes;
+using CarveWapper;
+using GLFont;
+using GLUtil;
+using LibiglWrapper;
+using MeshMakerNS;
+using OpenGL.GLU;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using Plotter.svg;
+using SharpFont;
+using SplineCurve;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CadDataTypes;
-using LibiglWrapper;
-using HalfEdgeNS;
-using CarveWapper;
-using MeshMakerNS;
-using SplineCurve;
-using TCad.Controls;
-using OpenTK.Mathematics;
-using Plotter.svg;
 using System.Xml.Linq;
-using System.IO;
-using System.Drawing;
-using GLFont;
-using OpenTK.Graphics.OpenGL;
-using System.Runtime.InteropServices;
-using OpenGL.GLU;
-using GLUtil;
-using SharpFont;
-using Plotter.Controller;
+using TCad.Controls.CadConsole;
+using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.undo;
 
-namespace Plotter.Scripting;
+namespace TCad.Plotter.Scripting;
 
 public class TestCommands
 {
@@ -298,7 +305,7 @@ public class TestCommands
 
         for (int i = 0; i < hem.VertexStore.Count; i++)
         {
-            hem.VertexStore[i] *= (vcompo_t)(500.0);
+            hem.VertexStore[i] *= (vcompo_t)500.0;
         }
 
         CadFigureMesh fig = (CadFigureMesh)Controller.DB.NewFigure(CadFigure.Types.MESH);
@@ -369,7 +376,7 @@ public class TestCommands
     {
         CadDxfLoader loader = new CadDxfLoader();
 
-        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)(20.0));
+        CadMesh cm = loader.Load(@"H:\work\恐竜.DXF", (vcompo_t)20.0);
 
         HeModel hem = HeModelConverter.ToHeModel(cm);
 
@@ -398,7 +405,7 @@ public class TestCommands
         int ucnt = 8;
         int vcnt = 5;
 
-        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0));
+        VertexList vl = SplineUtil.CreateFlatControlPoints(ucnt, vcnt, vector3_t.UnitX * (vcompo_t)20.0, vector3_t.UnitZ * (vcompo_t)20.0);
 
         nfig.Setup(2, ucnt, vcnt, vl, null, 16, 16);
 
@@ -419,7 +426,7 @@ public class TestCommands
         int vcnt = 4;
 
         VertexList vl = SplineUtil.CreateBoxControlPoints(
-            ucnt, vcnt, vector3_t.UnitX * (vcompo_t)(20.0), vector3_t.UnitZ * (vcompo_t)(20.0), vector3_t.UnitY * (vcompo_t)(-20.0));
+            ucnt, vcnt, vector3_t.UnitX * (vcompo_t)20.0, vector3_t.UnitZ * (vcompo_t)20.0, vector3_t.UnitY * (vcompo_t)(-20.0));
 
         nfig.Setup(2, ucnt * 2, vcnt, vl, null, 16, 16, false, false, true, true);
 
@@ -540,7 +547,7 @@ public class TestCommands
     private void Test3()
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        FontFaceW fw = FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
@@ -557,8 +564,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                v.X = (vcompo_t)fv.X * (vcompo_t)(100.0);
-                v.Y = (vcompo_t)fv.Y * (vcompo_t)(100.0);
+                v.X = (vcompo_t)fv.X * (vcompo_t)100.0;
+                v.Y = (vcompo_t)fv.Y * (vcompo_t)100.0;
                 v.Z = 0;
 
                 tmpFig.AddPoint(v);
@@ -591,7 +598,7 @@ public class TestCommands
         Log.pl("MeshEnd");
     }
 
-    public void VertexCB(IntPtr data)
+    public void VertexCB(nint data)
     {
         int vIndex = (int)data;
         Log.pl("VertexCB vIndex:" + vIndex);
@@ -600,10 +607,10 @@ public class TestCommands
     private void CombineCB([MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] double[] coords,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] double[] data,
                                 [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] weight,
-                                ref IntPtr dataOut)
+                                ref nint dataOut)
     {
         Log.pl("MeshCombine");
-        dataOut = IntPtr.Zero;
+        dataOut = nint.Zero;
     }
 
     void ErrorCB(int err)
@@ -613,14 +620,14 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
 
 
-        IntPtr htess = Glu.NewTess();
+        nint htess = Glu.NewTess();
         ItConsole.println("test4 htess:" + htess.ToString("x16"));
 
         Glu.TessCallback(htess, GluTessCallback.Begin, new Glu.TessBeginCallback(BeginCB));
@@ -631,7 +638,7 @@ public class TestCommands
 
         vcompo_t[] va = new vcompo_t[3];
 
-        Glu.TessNormal(htess, new Vector3(0f, 0f, 1f));
+        Glu.TessNormal(htess, new vector3_t(0f, 0f, 1f));
 
         Glu.TessBeginPolygon(htess, 128);
 
@@ -646,8 +653,8 @@ public class TestCommands
             for (; idx <= n;)
             {
                 FTVector fv = outline.Points[idx];
-                tv[0] = (vcompo_t)fv.X * (vcompo_t)(100.0);
-                tv[1] = (vcompo_t)fv.Y * (vcompo_t)(100.0);
+                tv[0] = (vcompo_t)fv.X * (vcompo_t)100.0;
+                tv[1] = (vcompo_t)fv.Y * (vcompo_t)100.0;
                 tv[2] = 0;
 
                 Glu.TessVertex(htess, tv, idx);
@@ -665,7 +672,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
@@ -676,7 +683,7 @@ public class TestCommands
 
         for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
         {
-            fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+            fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
         }
 
         HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -713,7 +720,7 @@ public class TestCommands
     private void Test7()
     {
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
 
         GlyphSlot glyph = fw.GetGlyph('い');
 
@@ -738,14 +745,14 @@ public class TestCommands
                 cvl.Add(fontPoly.VertexList[cont[j]]);
             }
 
-            CreatePolyLines(cvl, (vcompo_t)(400.0), true);
+            CreatePolyLines(cvl, (vcompo_t)400.0, true);
         }
 
         if (fontPoly.Mesh != null)
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -764,7 +771,7 @@ public class TestCommands
 
     private void Test8()
     {
-        FontFaceW fw = FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
@@ -776,7 +783,7 @@ public class TestCommands
         {
             for (int i = 0; i < fontPoly.Mesh.VertexStore.Count; i++)
             {
-                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)(400.0);
+                fontPoly.Mesh.VertexStore[i] *= (vcompo_t)400.0;
             }
 
             HeModel hem = HeModelConverter.ToHeModel(fontPoly.Mesh);
@@ -812,8 +819,8 @@ public class TestCommands
     {
         RunOnMainThread(() =>
         {
-            int name1 = TextureProvider.Instance.GetNew();
-            int name2 = TextureProvider.Instance.GetNew();
+            int name1 = GLUtilContainer.TextureProvider.Instance.GetNew();
+            int name2 = GLUtilContainer.TextureProvider.Instance.GetNew();
             Log.pl("end");
         });
     }

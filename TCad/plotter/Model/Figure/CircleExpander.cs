@@ -1,8 +1,11 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 // 円を点リストに展開
 public static class CircleExpander

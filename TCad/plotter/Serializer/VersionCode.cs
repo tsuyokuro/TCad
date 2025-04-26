@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 [MessagePackObject]
 [StructLayout(LayoutKind.Explicit)]
@@ -83,7 +83,9 @@ public struct VersionCode
             C_2 = byte.Parse(vt[2], NumberStyles.HexNumber);
             C_3 = byte.Parse(vt[3], NumberStyles.HexNumber);
 
-        } catch (FormatException) {
+        }
+        catch (FormatException)
+        {
             C_0 = 0xFF;
             C_1 = 0xFF;
             C_2 = 0xFF;

@@ -1,8 +1,11 @@
 using CadDataTypes;
+using TCad.Plotter;
 using System;
-using System.Drawing;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public static class PolyLineExpander
 {

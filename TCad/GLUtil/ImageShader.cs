@@ -1,7 +1,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 
-namespace Plotter;
+namespace GLUtil;
 
 public class ImageShader
 {
@@ -28,17 +28,9 @@ public class ImageShader
 
     private int ShaderProgram = -1;
 
-    private static ImageShader sInstance;
-
-    public static ImageShader GetInstance()
+    public ImageShader()
     {
-        if (sInstance == null)
-        {
-            sInstance = new ImageShader();
-            sInstance.SetupShader();
-        }
-
-        return sInstance;
+        SetupShader();
     }
 
     private void SetupShader()

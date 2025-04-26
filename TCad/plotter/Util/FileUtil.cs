@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public class FileUtil
 {

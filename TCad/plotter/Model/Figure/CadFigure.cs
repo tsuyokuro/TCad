@@ -1,10 +1,14 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
+using TCad.Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public abstract partial class CadFigure
 {
@@ -75,7 +79,8 @@ public abstract partial class CadFigure
         set;
     }
 
-    public virtual bool IsLoop {
+    public virtual bool IsLoop
+    {
         get => false;
         set { /* Nop */ }
     }
@@ -547,7 +552,10 @@ public abstract partial class CadFigure
 
         mChildList.ForEach(c =>
         {
-            c.MoveSelectedPointsFromStored(dc, moveInfo);
+            if (c.HasSelectedPoint())
+            {
+                c.MoveSelectedPointsFromStored(dc, moveInfo);
+            }
         });
     }
 

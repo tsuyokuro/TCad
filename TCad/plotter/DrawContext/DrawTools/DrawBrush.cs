@@ -1,8 +1,9 @@
 using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
 using System.Drawing;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public struct DrawBrush : IEquatable<DrawBrush>
 {
@@ -20,7 +21,7 @@ public struct DrawBrush : IEquatable<DrawBrush>
 
     public readonly SolidBrush GdiBrush
     {
-        get => GDIToolManager.Instance.Brush(this);
+        get => GDIToolManager.Provider.Instance.Brush(this);
     }
 
     public int Argb
@@ -59,12 +60,12 @@ public struct DrawBrush : IEquatable<DrawBrush>
         mColor4 = color;
     }
 
-    public static bool operator == (DrawBrush brush1, DrawBrush brush2)
+    public static bool operator ==(DrawBrush brush1, DrawBrush brush2)
     {
         return (brush1.Color4 == brush2.Color4);
     }
 
-    public static bool operator != (DrawBrush brush1, DrawBrush brush2)
+    public static bool operator !=(DrawBrush brush1, DrawBrush brush2)
     {
         return !(brush1.Color4 == brush2.Color4);
     }

@@ -1,5 +1,5 @@
-using Plotter;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ public class LayerListViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
     }
 
-    public ObservableCollection<LayerHolder> LayerList_ = [];
+    public ObservableCollection<LayerHolder> LayerList_ = new();
     public ObservableCollection<LayerHolder> LayerList
     {
         get

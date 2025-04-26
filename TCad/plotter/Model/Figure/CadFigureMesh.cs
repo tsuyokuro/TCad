@@ -1,10 +1,15 @@
 using CadDataTypes;
-using HalfEdgeNS;
 using MyCollections;
+using TCad.Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureMesh : CadFigure
 {

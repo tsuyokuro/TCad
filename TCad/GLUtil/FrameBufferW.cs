@@ -1,10 +1,10 @@
 #define TEX_DEPTH_BUFFER
 
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.Versioning;
-using OpenTK.Graphics.OpenGL;
 
 namespace GLUtil;
 
@@ -16,7 +16,8 @@ namespace GLUtil;
 class FrameBufferW
 {
     private int mWidth = 0;
-    public int Width {
+    public int Width
+    {
         get => mWidth;
     }
 
@@ -118,17 +119,17 @@ class FrameBufferW
         {
             GL.DeleteTexture(ColorTexDesc);
         }
-        
+
         if (DepthTexDesc != 0)
         {
             GL.DeleteTexture(DepthTexDesc);
         }
-        
+
         if (DepthRenderBufferDesc != 0)
         {
             GL.DeleteRenderbuffer(DepthRenderBufferDesc);
         }
-        
+
         if (FrameBufferDesc != 0)
         {
             GL.DeleteFramebuffer(FrameBufferDesc);

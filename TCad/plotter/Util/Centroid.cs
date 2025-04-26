@@ -1,6 +1,6 @@
-using OpenTK.Mathematics;
+using TCad.MathFunctions;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public struct Centroid
 {

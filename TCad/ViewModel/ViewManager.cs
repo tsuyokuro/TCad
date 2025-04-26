@@ -1,6 +1,7 @@
-using Plotter;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System.ComponentModel;
+using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
 
@@ -185,6 +186,6 @@ public class ViewManager : INotifyPropertyChanged
 
         MainWindow.SetPlotterView(view);
 
-        Controller.RedrawOnUiThread();
+        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
     }
 }

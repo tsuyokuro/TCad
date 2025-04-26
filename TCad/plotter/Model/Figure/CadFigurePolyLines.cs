@@ -1,8 +1,14 @@
 using CadDataTypes;
+using TCad.Plotter;
 using Plotter.Settings;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter.Assembler;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Drawing;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigurePolyLines : CadFigure
 {
@@ -290,7 +296,7 @@ public partial class CadFigurePolyLines : CadFigure
         mPointList[index] = pt;
     }
 
-   public override void EndEdit()
+    public override void EndEdit()
     {
         base.EndEdit();
     }

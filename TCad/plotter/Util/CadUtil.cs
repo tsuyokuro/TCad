@@ -1,9 +1,11 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public delegate bool ForEachDelegate<T>(T obj);
 
@@ -61,7 +63,7 @@ public class CadUtil
 
         int i = 1;
 
-        c0.Area= TriangleArea(triangles[0]);
+        c0.Area = TriangleArea(triangles[0]);
         c0.Point = TriangleCentroid(triangles[0]);
 
         for (; i < triangles.Count; i++)
@@ -221,7 +223,7 @@ public class CadUtil
     {
         int cnt = points.Count;
 
-        if (cnt<3)
+        if (cnt < 3)
         {
             return false;
         }
@@ -231,7 +233,7 @@ public class CadUtil
         vector3_t cn = default;
         vcompo_t scala = 0;
 
-        for (;i < cnt - 2;)
+        for (; i < cnt - 2;)
         {
             n = CadMath.Normal(points[i].vector, points[i + 1].vector, points[i + 2].vector);
 
@@ -248,7 +250,7 @@ public class CadUtil
             return false;
         }
 
-        for (;i<cnt-2;)
+        for (; i < cnt - 2;)
         {
             cn = CadMath.Normal(points[i].vector, points[i + 1].vector, points[i + 2].vector);
 
@@ -367,7 +369,7 @@ public class CadUtil
         MinMax3D mm = MinMax3D.Create();
 
         int i = 0;
-        for (;i<fig.PointCount; i++)
+        for (; i < fig.PointCount; i++)
         {
             mm.Check(fig.PointList[i].vector);
         }
@@ -516,7 +518,7 @@ public class CadUtil
         return true;
     }
 
-     /// <summary>
+    /// <summary>
     /// 浮動小数点数を文字列に変換
     /// </summary>
     /// <param name="v">値</param>
@@ -565,7 +567,7 @@ public class CadUtil
     public static List<vector3_t> Getvector3_tListFrom(CadFigure fig)
     {
         List<vector3_t> list = new();
-        for (int i=0; i < fig.PointList.Count; i++)
+        for (int i = 0; i < fig.PointList.Count; i++)
         {
             list.Add((vector3_t)fig.PointList[i]);
         }

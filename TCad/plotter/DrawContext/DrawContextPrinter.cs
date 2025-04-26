@@ -1,8 +1,8 @@
-using OpenTK.Mathematics;
+using TCad.Plotter;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawContexts;
 
 class DrawContextPrinter : DrawContextGDI
 {
@@ -34,7 +34,7 @@ class DrawContextPrinter : DrawContextGDI
 
         org.X = deviceSize.Width / (vcompo_t)(2.0);
         org.Y = deviceSize.Height / (vcompo_t)(2.0);
-        
+
         SetViewOrg(org);
 
         SetupDrawing();

@@ -1,11 +1,15 @@
 using CadDataTypes;
-using HalfEdgeNS;
-using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 /**
  * GDI向け描画クラス

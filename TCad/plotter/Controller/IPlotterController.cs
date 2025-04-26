@@ -1,10 +1,14 @@
 using Plotter.Controller.TaskRunner;
-using Plotter.Scripting;
 using System.Collections.Generic;
 using System.Drawing;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Scripting;
+using TCad.Plotter.undo;
 using TCad.ViewModel;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public interface IPlotterController
 {
@@ -31,7 +35,11 @@ public interface IPlotterController
     ControllerStates StateID { get; }
     ControllerStateMachine StateMachine { get; }
     List<CadFigure> TempFigureList { get; }
-    IPlotterViewModel ViewModel { get; }
+
+
+    void ConnectViewModel(IPlotterViewModel viewModel);
+    void Startup();
+    void Shutdown();
 
     void ChangeState(ControllerStates state);
     void ClearAll();
@@ -57,5 +65,16 @@ public interface IPlotterController
     void UpdateLayerList();
     void UpdateObjectTree(bool remakeTree);
     void Redraw();
-    void RedrawOnUiThread();
+
+    void OpenPopupMessage(string text, UITypes.MessageType type);
+    void ClosePopupMessage();
+
+    void ShowContextMenu(MenuInfo menuInfo, int x, int y);
+    void UpdateTreeView(bool remakeTree);
+
+    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
+    void CursorLocked(bool locked);
+
+    List<string> HelpOfKey(string keyword);
 }

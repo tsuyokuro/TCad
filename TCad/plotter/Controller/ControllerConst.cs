@@ -1,4 +1,4 @@
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public enum DrawModes
 {

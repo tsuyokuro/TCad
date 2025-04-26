@@ -1,8 +1,12 @@
 using CadDataTypes;
-using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureCircle : CadFigure
 {
@@ -99,7 +103,7 @@ public partial class CadFigureCircle : CadFigure
 
     private void drawSelected_Circle(DrawContext dc)
     {
-        for (int i=0; i<PointList.Count; i++)
+        for (int i = 0; i < PointList.Count; i++)
         {
             if (PointList[i].Selected)
             {
@@ -173,7 +177,7 @@ public partial class CadFigureCircle : CadFigure
 
         for (int i = 0; i < 4; i++)
         {
-            if (StoreList[i+1].Selected)
+            if (StoreList[i + 1].Selected)
             {
                 ai = i;
                 break;
@@ -224,7 +228,7 @@ public partial class CadFigureCircle : CadFigure
 
         CadVertex tmp;
 
-        for (int i=0; i<vt.Length; i++)
+        for (int i = 0; i < vt.Length; i++)
         {
             tmp = vt[i];
             tmp.Selected = false;

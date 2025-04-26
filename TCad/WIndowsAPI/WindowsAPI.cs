@@ -271,7 +271,7 @@ public class Win32Window
 
     private static readonly object lockObj = new object();
 
-    private static Dictionary<IntPtr, Win32Window> HWndMap = new Dictionary<IntPtr, Win32Window>(); 
+    private static Dictionary<IntPtr, Win32Window> HWndMap = new Dictionary<IntPtr, Win32Window>();
 
     private WndProc delegWndProc = staticWndProc;
 
@@ -393,7 +393,7 @@ public class Win32Window
             default:
                 break;
         }
-        
+
         return WinAPI.DefWindowProc(hWnd, msg, wParam, lParam);
     }
 }

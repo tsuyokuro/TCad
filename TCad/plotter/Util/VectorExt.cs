@@ -1,7 +1,6 @@
-using OpenTK.Mathematics;
 using System;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 public static class VectorExt
 {

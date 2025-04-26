@@ -1,21 +1,20 @@
 #define MOUSE_THREAD
 
-using OpenTK;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.GLControl;
-
-using Plotter.Controller;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using TCad.Plotter.Controller;
 using Plotter.Settings;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
-using GLFont;
-using TCad.ViewModel;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawContexts;
 using TCad.Util;
+using TCad.ViewModel;
 
-namespace Plotter;
+namespace TCad.Plotter;
 
 class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 {

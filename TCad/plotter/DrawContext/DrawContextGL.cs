@@ -2,8 +2,11 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Windows.Forms;
+using TCad.Plotter.Drawing;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+
+namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContextGL : DrawContext
 {
@@ -197,7 +200,7 @@ public abstract class DrawContextGL : DrawContext
             Tools.Dispose();
         }
 
-        if (mDrawing!=null)
+        if (mDrawing != null)
         {
             mDrawing.Dispose();
         }

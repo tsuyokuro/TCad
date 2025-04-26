@@ -1,7 +1,11 @@
-using System.Collections.Generic;
 using CadDataTypes;
+using System.Collections.Generic;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.undo;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 // Actions for DB
 
@@ -67,13 +71,11 @@ public class PlotterCommandProcessor
 
     public void AddLayer(string name)
     {
-        CadLayer layer = DB.NewLayer();
+        CadLayer layer = DB.NewLayer(addLayerList:true, selectCurrent:true);
 
         layer.Name = name;
 
         CurrentLayer = layer;
-
-        DB.LayerList.Add(layer);
 
         Controller.UpdateLayerList();
 
@@ -96,27 +98,11 @@ public class PlotterCommandProcessor
 
         int index = DB.LayerIndex(id);
 
-        int nextCurrentIdx = -1;
-
-        if (CurrentLayer.ID == id)
-        {
-            nextCurrentIdx = DB.LayerIndex(CurrentLayer.ID);
-        }
 
         CadOpeRemoveLayer ope = new CadOpeRemoveLayer(layer, index);
         HistoryMan.foward(ope);
 
-        DB.RemoveLayer(id);
-
-        if (nextCurrentIdx >= 0)
-        {
-            if (nextCurrentIdx > DB.LayerList.Count - 1)
-            {
-                nextCurrentIdx = DB.LayerList.Count - 1;
-            }
-
-            CurrentLayer = DB.LayerList[nextCurrentIdx];
-        }
+        DB.RemoveLayer(id, adjustCurrent: true);
 
         Controller.UpdateLayerList();
         ItConsole.println("Layer removed.  Name:" + layer.Name + " ID:" + layer.ID);
@@ -232,7 +218,7 @@ public class PlotterCommandProcessor
 
         ClusterInfo ci = new ClusterInfo(cnt);
 
-        for (int i=0; i<cnt; i++)
+        for (int i = 0; i < cnt; i++)
         {
             CadFigure fig = figList[i];
 
@@ -257,7 +243,8 @@ public class PlotterCommandProcessor
 
         int ins = ci.Bottom - ci.SelFigList.Count + 2;
 
-        if (ins > ci.FigList.Count) {
+        if (ins > ci.FigList.Count)
+        {
             return;
         }
 
@@ -321,7 +308,7 @@ public class PlotterCommandProcessor
 
         layer.FigureList = newFigList;
 
-        Controller.ViewModel.UpdateTreeView(true);
+        Controller.UpdateTreeView(true);
     }
 
     #endregion

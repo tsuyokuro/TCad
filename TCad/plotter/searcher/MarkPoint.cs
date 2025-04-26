@@ -1,7 +1,8 @@
-using OpenTK.Mathematics;
+using TCad.Plotter;
 using System;
+using TCad.Plotter.Model.Figure;
 
-namespace Plotter;
+namespace TCad.Plotter.searcher;
 
 public struct MarkPoint : IEquatable<MarkPoint>
 {
@@ -106,7 +107,7 @@ public struct MarkPoint : IEquatable<MarkPoint>
 
     public override int GetHashCode()
     {
-        return Point.GetHashCode() + 
+        return Point.GetHashCode() +
             (int)(Layer == null ? 0 : Layer.ID) +
             (int)(Figure == null ? 0 : Figure.ID);
     }

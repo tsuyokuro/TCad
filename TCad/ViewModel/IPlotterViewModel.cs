@@ -1,8 +1,9 @@
+using TCad.Plotter.Controller;
 using System.Collections.Generic;
-using Plotter.Controller;
 using TCad.Controls;
-using Plotter;
-using System.Windows.Input;
+using TCad.Plotter.DrawContexts;
+
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;
 
@@ -25,9 +26,9 @@ public interface UITypes
 
 public interface IPlotterViewModel
 {
-    void Open();
+    void Startup();
 
-    void Close();
+    void Shutdown();
 
 
     string CurrentFileName
@@ -79,7 +80,7 @@ public interface IPlotterViewModel
 
     void LayerListChanged(LayerListInfo layerListInfo);
 
-    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, CursorType type);
 
     void UpdateTreeView(bool remakeTree);
 
@@ -107,3 +108,111 @@ public interface IPlotterViewModel
     bool OnKeyDown(object sender, KeyEventArgs e);
     bool OnKeyUp(object sender, KeyEventArgs e);
 }
+
+public class DummyPlotterViewModel : IPlotterViewModel
+{
+    public string CurrentFileName { get; set; }
+
+    public IPlotterController Controller { get; }
+
+    public ICadMainWindow MainWindow { get; }
+
+    public SettingsVeiwModel Settings { get; }
+
+    public ViewManager ViewManager { get; }
+
+    public ICadObjectTree ObjectTree { get; set; }
+
+    public IAutoCompleteTextBox CommandTextBox { get; }
+
+    public LayerListViewModel LayerListVM { get; }
+
+    public CursorPosViewModel CursorPosVM { get; }
+
+    public DrawContext DC { get; }
+
+    public void AttachCommandView(IAutoCompleteTextBox textBox)
+    {
+    }
+
+    public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
+    {
+    }
+
+    public void Shutdown()
+    {
+    }
+
+    public void ClosePopupMessage()
+    {
+    }
+
+    public void CursorLocked(bool locked)
+    {
+    }
+
+    public void CursorPosChanged(vector3_t pt, CursorType type)
+    {
+    }
+
+    public void ExecCommand(string cmd)
+    {
+    }
+
+    public int FindTreeViewItemIndex(uint id)
+    {
+        return 0;
+    }
+
+    public List<string> HelpOfKey(string keyword)
+    {
+        return new();
+    }
+
+    public void LayerListChanged(LayerListInfo layerListInfo)
+    {
+    }
+
+    public bool OnKeyDown(object sender, KeyEventArgs e)
+    {
+        return false;
+    }
+
+    public bool OnKeyUp(object sender, KeyEventArgs e)
+    {
+        return false;
+    }
+
+    public void Startup()
+    {
+    }
+
+    public void OpenPopupMessage(string text, UITypes.MessageType messageType)
+    {
+    }
+
+    public void Redraw()
+    {
+    }
+
+    public void SetTreeViewPos(int index)
+    {
+    }
+
+    public void SetWorldScale(float scale)
+    {
+    }
+
+    public void ShowContextMenu(MenuInfo menuInfo, int x, int y)
+    {
+    }
+
+    public void StateChanged(StateChangedParam si)
+    {
+    }
+
+    public void UpdateTreeView(bool remakeTree)
+    {
+    }
+}
+

@@ -2,8 +2,7 @@
 // ForceLinePen resource string to US
 //#define FORCE_US
 
-using Plotter;
-using Plotter.Serializer;
+using TCad.Plotter;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -12,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using TCad.Plotter.Serializer;
 
 namespace TCad;
 
@@ -68,7 +68,7 @@ public partial class App : Application
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
 
-        Thread.Sleep(50);
+        Thread.Sleep(500);
         Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
 
         Stopwatch sw = new Stopwatch();

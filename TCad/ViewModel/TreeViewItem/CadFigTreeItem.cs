@@ -1,8 +1,9 @@
-using TCad.Controls;
 using CadDataTypes;
-using System.Windows.Controls;
+using TCad.Plotter;
 using System.Collections.Generic;
-using Plotter;
+using System.Windows.Controls;
+using TCad.Controls;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.ViewModel;
 
@@ -51,14 +52,15 @@ class CadFigTreeItem : CadObjTreeItem
 
         int idx = 0;
 
-        for (int i=0; i < Fig.PointList.Count; i++) {
+        for (int i = 0; i < Fig.PointList.Count; i++)
+        {
             CadVertex p = Fig.PointList[i];
             CadPointTreeItem pi = new CadPointTreeItem(fig, idx);
             Add(pi);
             idx++;
         }
 
-        for (int i=0; i<Fig.ChildList.Count; i++)
+        for (int i = 0; i < Fig.ChildList.Count; i++)
         {
             CadFigure c = Fig.ChildList[i];
             CadFigTreeItem pi = new CadFigTreeItem(c);
@@ -86,7 +88,7 @@ class CadFigTreeItem : CadObjTreeItem
             return;
         }
 
-        for (int i=0; i<Children.Count; i++)
+        for (int i = 0; i < Children.Count; i++)
         {
             CadObjTreeItem c = Children[i];
             c.IsChecked = sel;
@@ -103,7 +105,7 @@ class CadFigTreeItem : CadObjTreeItem
         }
 
         int i;
-        for (i=0; i<Children.Count;i++)
+        for (i = 0; i < Children.Count; i++)
         {
             CadObjTreeItem c = Children[i];
 

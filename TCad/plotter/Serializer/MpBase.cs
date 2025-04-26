@@ -1,8 +1,11 @@
 using CadDataTypes;
-using HalfEdgeNS;
+using TCad.Plotter;
+using Plotter.Serializer;
 using System.Collections.Generic;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 public interface IMpLayer
 {

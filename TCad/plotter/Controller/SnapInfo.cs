@@ -1,14 +1,13 @@
-using OpenTK.Mathematics;
-using System;
+using TCad.Plotter.searcher;
 
-namespace Plotter.Controller;
+namespace TCad.Plotter.Controller;
 
 public struct SnapInfo
 {
     public CadCursor Cursor;
     public vector3_t SnapPoint;
 
-    public bool IsPointMatch {  get; set; }
+    public bool IsPointMatch { get; set; }
 
     public PointSearcher PointSearcher;
 

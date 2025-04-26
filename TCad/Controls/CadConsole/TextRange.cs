@@ -1,4 +1,4 @@
-namespace TCad.Controls;
+namespace TCad.Controls.CadConsole;
 
 public struct TextPos
 {
@@ -11,7 +11,7 @@ public struct TextPos
         Col = col;
     }
 
-    public static bool operator < (TextPos left, TextPos right)
+    public static bool operator <(TextPos left, TextPos right)
     {
         if (left.Row != right.Row)
         {
@@ -21,7 +21,7 @@ public struct TextPos
         return left.Col < right.Col;
     }
 
-    public static bool operator > (TextPos left, TextPos right)
+    public static bool operator >(TextPos left, TextPos right)
     {
         if (left.Row != right.Row)
         {
@@ -87,7 +87,7 @@ public struct TextRange
 
     public bool IsEmpty()
     {
-        return (SP.Row == EP.Row) && (SP.Col == EP.Col);
+        return SP.Row == EP.Row && SP.Col == EP.Col;
     }
 
     public static TextRange Naormalized(TextRange tr)

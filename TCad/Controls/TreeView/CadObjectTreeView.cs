@@ -1,5 +1,4 @@
-using TCad.ViewModel;
-using Plotter;
+using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -7,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using TCad.ViewModel;
 
 namespace TCad.Controls;
 
@@ -237,7 +237,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
 
         if (e.RightButton == MouseButtonState.Pressed)
         {
-            mRoot.ForEachAll((v) => {
+            mRoot.ForEachAll((v) =>
+            {
                 v.IsChecked = false;
             });
 
@@ -281,7 +282,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
                 {
                     if (!CadKeyboard.IsCtrlKeyDown())
                     {
-                        mRoot.ForEachAll((v) => {
+                        mRoot.ForEachAll((v) =>
+                        {
                             v.IsChecked = false;
                         });
                     }
@@ -299,7 +301,8 @@ public class CadObjectTreeView : FrameworkElement, ICadObjectTree
             {
                 if (!CadKeyboard.IsCtrlKeyDown())
                 {
-                    mRoot.ForEachAll((v) => {
+                    mRoot.ForEachAll((v) =>
+                    {
                         v.IsChecked = false;
                     });
                 }

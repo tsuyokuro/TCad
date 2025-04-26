@@ -1,7 +1,7 @@
-using System;
-using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using System;
+using System.Runtime.InteropServices;
 
 namespace OpenGL.GLU;
 
@@ -9,31 +9,31 @@ namespace OpenGL.GLU;
 static partial class Glu
 {
 
-    public static 
+    public static
     void BeginCurve(IntPtr nurb)
     {
         Delegates.gluBeginCurve((IntPtr)nurb);
     }
 
-    public static 
+    public static
     void BeginPolygon(IntPtr tess)
     {
         Delegates.gluBeginPolygon((IntPtr)tess);
     }
 
-    public static 
+    public static
     void BeginSurface(IntPtr nurb)
     {
         Delegates.gluBeginSurface((IntPtr)nurb);
     }
 
-    public static 
+    public static
     void BeginTrim(IntPtr nurb)
     {
         Delegates.gluBeginTrim((IntPtr)nurb);
     }
 
-    public static 
+    public static
     Int32 Build1DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data)
     {
         unsafe
@@ -42,7 +42,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build1DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, [In, Out] object data)
     {
         unsafe
@@ -59,7 +59,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build1DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, IntPtr data)
     {
         unsafe
@@ -68,7 +68,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build1DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, [In, Out] object data)
     {
         unsafe
@@ -85,7 +85,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build2DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data)
     {
         unsafe
@@ -94,7 +94,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build2DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, [In, Out] object data)
     {
         unsafe
@@ -111,7 +111,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build2DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, IntPtr data)
     {
         unsafe
@@ -120,7 +120,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build2DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, [In, Out] object data)
     {
         unsafe
@@ -137,7 +137,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build3DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data)
     {
         unsafe
@@ -146,7 +146,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build3DMipmapLevel(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, [In, Out] object data)
     {
         unsafe
@@ -163,7 +163,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build3DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, IntPtr data)
     {
         unsafe
@@ -172,7 +172,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Build3DMipmap(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, [In, Out] object data)
     {
         unsafe
@@ -189,7 +189,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     bool CheckExtension(Byte[] extName, Byte[] extString)
     {
         unsafe
@@ -202,7 +202,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     bool CheckExtension(ref Byte extName, ref Byte extString)
     {
         unsafe
@@ -215,67 +215,67 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe bool CheckExtension(Byte* extName, Byte* extString)
     {
         return Delegates.gluCheckExtension((Byte*)extName, (Byte*)extString);
     }
 
-    public static 
+    public static
     void Cylinder(IntPtr quad, double @base, double top, double height, Int32 slices, Int32 stacks)
     {
         Delegates.gluCylinder((IntPtr)quad, (double)@base, (double)top, (double)height, (Int32)slices, (Int32)stacks);
     }
 
-    public static 
+    public static
     void DeleteNurbsRenderer(IntPtr nurb)
     {
         Delegates.gluDeleteNurbsRenderer((IntPtr)nurb);
     }
 
-    public static 
+    public static
     void DeleteQuadric(IntPtr quad)
     {
         Delegates.gluDeleteQuadric((IntPtr)quad);
     }
 
-    public static 
+    public static
     void DeleteTess(IntPtr tess)
     {
         Delegates.gluDeleteTess((IntPtr)tess);
     }
 
-    public static 
+    public static
     void Disk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops)
     {
         Delegates.gluDisk((IntPtr)quad, (double)inner, (double)outer, (Int32)slices, (Int32)loops);
     }
 
-    public static 
+    public static
     void EndCurve(IntPtr nurb)
     {
         Delegates.gluEndCurve((IntPtr)nurb);
     }
 
-    public static 
+    public static
     void EndPolygon(IntPtr tess)
     {
         Delegates.gluEndPolygon((IntPtr)tess);
     }
 
-    public static 
+    public static
     void EndSurface(IntPtr nurb)
     {
         Delegates.gluEndSurface((IntPtr)nurb);
     }
 
-    public static 
+    public static
     void EndTrim(IntPtr nurb)
     {
         Delegates.gluEndTrim((IntPtr)nurb);
     }
 
-    public static 
+    public static
     string ErrorString(GluErrorCode error)
     {
         unsafe
@@ -284,7 +284,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     string GetString(GluStringName name)
     {
         unsafe
@@ -293,7 +293,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float[] data)
     {
         unsafe
@@ -305,7 +305,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] out float data)
     {
         unsafe
@@ -318,13 +318,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float* data)
     {
         Delegates.gluGetNurbsProperty((IntPtr)nurb, (GluNurbsProperty)property, (float*)data);
     }
 
-    public static 
+    public static
     void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double[] data)
     {
         unsafe
@@ -336,7 +336,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] out double data)
     {
         unsafe
@@ -349,13 +349,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double* data)
     {
         Delegates.gluGetTessProperty((IntPtr)tess, (GluTessParameter)which, (double*)data);
     }
 
-    public static 
+    public static
     void LoadSamplingMatrices(IntPtr nurb, float[] model, float[] perspective, Int32[] view)
     {
         unsafe
@@ -369,7 +369,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void LoadSamplingMatrices(IntPtr nurb, ref float model, ref float perspective, ref Int32 view)
     {
         unsafe
@@ -383,49 +383,49 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void LoadSamplingMatrices(IntPtr nurb, float* model, float* perspective, Int32* view)
     {
         Delegates.gluLoadSamplingMatrices((IntPtr)nurb, (float*)model, (float*)perspective, (Int32*)view);
     }
 
-    public static 
+    public static
     void LookAt(double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ)
     {
         Delegates.gluLookAt((double)eyeX, (double)eyeY, (double)eyeZ, (double)centerX, (double)centerY, (double)centerZ, (double)upX, (double)upY, (double)upZ);
     }
 
-    public static 
+    public static
     IntPtr NewNurbsRenderer()
     {
         return Delegates.gluNewNurbsRenderer();
     }
 
-    public static 
+    public static
     IntPtr NewQuadric()
     {
         return Delegates.gluNewQuadric();
     }
 
-    public static 
+    public static
     IntPtr NewTess()
     {
         return Delegates.gluNewTess();
     }
 
-    public static 
+    public static
     void NextContour(IntPtr tess, GluTessContour type)
     {
         Delegates.gluNextContour((IntPtr)tess, (GluTessContour)type);
     }
 
-    public static 
+    public static
     void NurbsCallback(IntPtr nurb, GluNurbsCallback which, Delegate CallBackFunc)
     {
         Delegates.gluNurbsCallback((IntPtr)nurb, (GluNurbsCallback)which, (Delegate)CallBackFunc);
     }
 
-    public static 
+    public static
     void NurbsCallbackData(IntPtr nurb, IntPtr userData)
     {
         unsafe
@@ -434,7 +434,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void NurbsCallbackData(IntPtr nurb, [In, Out] object userData)
     {
         unsafe
@@ -451,7 +451,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float[] knots, Int32 stride, [Out] float[] control, Int32 order, MapTarget type)
     {
         unsafe
@@ -464,7 +464,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] out float knots, Int32 stride, [Out] out float control, Int32 order, MapTarget type)
     {
         unsafe
@@ -479,19 +479,19 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float* knots, Int32 stride, [Out] float* control, Int32 order, MapTarget type)
     {
         Delegates.gluNurbsCurve((IntPtr)nurb, (Int32)knotCount, (float*)knots, (Int32)stride, (float*)control, (Int32)order, (MapTarget)type);
     }
 
-    public static 
+    public static
     void NurbsProperty(IntPtr nurb, GluNurbsProperty property, float value)
     {
         Delegates.gluNurbsProperty((IntPtr)nurb, (GluNurbsProperty)property, (float)value);
     }
 
-    public static 
+    public static
     void NurbsSurface(IntPtr nurb, Int32 sKnotCount, float[] sKnots, Int32 tKnotCount, float[] tKnots, Int32 sStride, Int32 tStride, float[] control, Int32 sOrder, Int32 tOrder, MapTarget type)
     {
         unsafe
@@ -505,7 +505,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void NurbsSurface(IntPtr nurb, Int32 sKnotCount, ref float sKnots, Int32 tKnotCount, ref float tKnots, Int32 sStride, Int32 tStride, ref float control, Int32 sOrder, Int32 tOrder, MapTarget type)
     {
         unsafe
@@ -519,31 +519,31 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void NurbsSurface(IntPtr nurb, Int32 sKnotCount, float* sKnots, Int32 tKnotCount, float* tKnots, Int32 sStride, Int32 tStride, float* control, Int32 sOrder, Int32 tOrder, MapTarget type)
     {
         Delegates.gluNurbsSurface((IntPtr)nurb, (Int32)sKnotCount, (float*)sKnots, (Int32)tKnotCount, (float*)tKnots, (Int32)sStride, (Int32)tStride, (float*)control, (Int32)sOrder, (Int32)tOrder, (MapTarget)type);
     }
 
-    public static 
+    public static
     void Ortho2D(double left, double right, double bottom, double top)
     {
         Delegates.gluOrtho2D((double)left, (double)right, (double)bottom, (double)top);
     }
 
-    public static 
+    public static
     void PartialDisk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops, double start, double sweep)
     {
         Delegates.gluPartialDisk((IntPtr)quad, (double)inner, (double)outer, (Int32)slices, (Int32)loops, (double)start, (double)sweep);
     }
 
-    public static 
+    public static
     void Perspective(double fovy, double aspect, double zNear, double zFar)
     {
         Delegates.gluPerspective((double)fovy, (double)aspect, (double)zNear, (double)zFar);
     }
 
-    public static 
+    public static
     void PickMatrix(double x, double y, double delX, double delY, [Out] Int32[] viewport)
     {
         unsafe
@@ -555,7 +555,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void PickMatrix(double x, double y, double delX, double delY, [Out] out Int32 viewport)
     {
         unsafe
@@ -568,13 +568,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void PickMatrix(double x, double y, double delX, double delY, [Out] Int32* viewport)
     {
         Delegates.gluPickMatrix((double)x, (double)y, (double)delX, (double)delY, (Int32*)viewport);
     }
 
-    public static 
+    public static
     Int32 Project(double objX, double objY, double objZ, double[] model, double[] proj, Int32[] view, double[] winX, double[] winY, double[] winZ)
     {
         unsafe
@@ -591,7 +591,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 Project(double objX, double objY, double objZ, ref double model, ref double proj, ref Int32 view, ref double winX, ref double winY, ref double winZ)
     {
         unsafe
@@ -608,13 +608,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe Int32 Project(double objX, double objY, double objZ, double* model, double* proj, Int32* view, double* winX, double* winY, double* winZ)
     {
         return Delegates.gluProject((double)objX, (double)objY, (double)objZ, (double*)model, (double*)proj, (Int32*)view, (double*)winX, (double*)winY, (double*)winZ);
     }
 
-    public static 
+    public static
     void PwlCurve(IntPtr nurb, Int32 count, float[] data, Int32 stride, GluNurbsTrim type)
     {
         unsafe
@@ -626,7 +626,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void PwlCurve(IntPtr nurb, Int32 count, ref float data, Int32 stride, GluNurbsTrim type)
     {
         unsafe
@@ -638,43 +638,43 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void PwlCurve(IntPtr nurb, Int32 count, float* data, Int32 stride, GluNurbsTrim type)
     {
         Delegates.gluPwlCurve((IntPtr)nurb, (Int32)count, (float*)data, (Int32)stride, (GluNurbsTrim)type);
     }
 
-    public static 
+    public static
     void QuadricCallback(IntPtr quad, GluQuadricCallback which, Delegate CallBackFunc)
     {
         Delegates.gluQuadricCallback((IntPtr)quad, (GluQuadricCallback)which, (Delegate)CallBackFunc);
     }
 
-    public static 
+    public static
     void QuadricDrawStyle(IntPtr quad, GluQuadricDrawStyle draw)
     {
         Delegates.gluQuadricDrawStyle((IntPtr)quad, (GluQuadricDrawStyle)draw);
     }
 
-    public static 
+    public static
     void QuadricNormal(IntPtr quad, GluQuadricNormal normal)
     {
         Delegates.gluQuadricNormals((IntPtr)quad, (GluQuadricNormal)normal);
     }
 
-    public static 
+    public static
     void QuadricOrientation(IntPtr quad, GluQuadricOrientation orientation)
     {
         Delegates.gluQuadricOrientation((IntPtr)quad, (GluQuadricOrientation)orientation);
     }
 
-    public static 
+    public static
     void QuadricTexture(IntPtr quad, bool texture)
     {
         Delegates.gluQuadricTexture((IntPtr)quad, (bool)texture);
     }
 
-    public static 
+    public static
     Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, IntPtr dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, [Out] IntPtr dataOut)
     {
         unsafe
@@ -683,7 +683,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, [In, Out] object dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, [In, Out] object dataOut)
     {
         unsafe
@@ -702,19 +702,19 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void Sphere(IntPtr quad, double radius, Int32 slices, Int32 stacks)
     {
         Delegates.gluSphere((IntPtr)quad, (double)radius, (Int32)slices, (Int32)stacks);
     }
 
-    public static 
+    public static
     void TessBeginContour(IntPtr tess)
     {
         Delegates.gluTessBeginContour((IntPtr)tess);
     }
 
-    public static 
+    public static
     void TessBeginPolygon(IntPtr tess, IntPtr data)
     {
         unsafe
@@ -723,7 +723,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void TessBeginPolygon(IntPtr tess, [In, Out] object data)
     {
         unsafe
@@ -740,37 +740,37 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void TessCallback(IntPtr tess, GluTessCallback which, Delegate CallBackFunc)
     {
         Delegates.gluTessCallback((IntPtr)tess, (GluTessCallback)which, (Delegate)CallBackFunc);
     }
 
-    public static 
+    public static
     void TessEndContour(IntPtr tess)
     {
         Delegates.gluTessEndContour((IntPtr)tess);
     }
 
-    public static 
+    public static
     void TessEndPolygon(IntPtr tess)
     {
         Delegates.gluTessEndPolygon((IntPtr)tess);
     }
 
-    public static 
+    public static
     void TessNormal(IntPtr tess, double valueX, double valueY, double valueZ)
     {
         Delegates.gluTessNormal((IntPtr)tess, (double)valueX, (double)valueY, (double)valueZ);
     }
 
-    public static 
+    public static
     void TessProperty(IntPtr tess, GluTessParameter which, double data)
     {
         Delegates.gluTessProperty((IntPtr)tess, (GluTessParameter)which, (double)data);
     }
 
-    public static 
+    public static
     void TessVertex(IntPtr tess, double[] location, IntPtr data)
     {
         unsafe
@@ -782,7 +782,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void TessVertex(IntPtr tess, double[] location, [In, Out] object data)
     {
         unsafe
@@ -802,7 +802,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void TessVertex(IntPtr tess, ref double location, IntPtr data)
     {
         unsafe
@@ -814,7 +814,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     void TessVertex(IntPtr tess, ref double location, [In, Out] object data)
     {
         unsafe
@@ -834,13 +834,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe void TessVertex(IntPtr tess, double* location, IntPtr data)
     {
         Delegates.gluTessVertex((IntPtr)tess, (double*)location, (IntPtr)data);
     }
 
-    public static 
+    public static
     unsafe void TessVertex(IntPtr tess, double* location, [In, Out] object data)
     {
         GCHandle data_ptr = GCHandle.Alloc(data, GCHandleType.Pinned);
@@ -854,7 +854,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 UnProject(double winX, double winY, double winZ, double[] model, double[] proj, Int32[] view, double[] objX, double[] objY, double[] objZ)
     {
         unsafe
@@ -871,7 +871,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 UnProject(double winX, double winY, double winZ, ref double model, ref double proj, ref Int32 view, ref double objX, ref double objY, ref double objZ)
     {
         unsafe
@@ -888,13 +888,13 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe Int32 UnProject(double winX, double winY, double winZ, double* model, double* proj, Int32* view, double* objX, double* objY, double* objZ)
     {
         return Delegates.gluUnProject((double)winX, (double)winY, (double)winZ, (double*)model, (double*)proj, (Int32*)view, (double*)objX, (double*)objY, (double*)objZ);
     }
 
-    public static 
+    public static
     Int32 UnProject4(double winX, double winY, double winZ, double clipW, double[] model, double[] proj, Int32[] view, double near, double far, double[] objX, double[] objY, double[] objZ, double[] objW)
     {
         unsafe
@@ -912,7 +912,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     Int32 UnProject4(double winX, double winY, double winZ, double clipW, ref double model, ref double proj, ref Int32 view, double near, double far, ref double objX, ref double objY, ref double objZ, ref double objW)
     {
         unsafe
@@ -930,7 +930,7 @@ static partial class Glu
         }
     }
 
-    public static 
+    public static
     unsafe Int32 UnProject4(double winX, double winY, double winZ, double clipW, double* model, double* proj, Int32* view, double near, double far, double* objX, double* objY, double* objZ, double* objW)
     {
         return Delegates.gluUnProject4((double)winX, (double)winY, (double)winZ, (double)clipW, (double*)model, (double*)proj, (Int32*)view, (double)near, (double)far, (double*)objX, (double*)objY, (double*)objZ, (double*)objW);
@@ -1078,7 +1078,7 @@ static partial class Glu
 
     public static partial class Ext
     {
-        public static 
+        public static
         void NurbsCallbackData(IntPtr nurb, IntPtr userData)
         {
             unsafe
@@ -1087,7 +1087,7 @@ static partial class Glu
             }
         }
 
-        public static 
+        public static
         void NurbsCallbackData(IntPtr nurb, [In, Out] object userData)
         {
             unsafe
@@ -1108,7 +1108,7 @@ static partial class Glu
 
     public static partial class Sgi
     {
-        public static 
+        public static
         Int32 TexFilterFunc(TextureTarget target, SgisTextureFilter4 filtertype, float[] parms, Int32 n, [Out] float[] weights)
         {
             unsafe
@@ -1121,7 +1121,7 @@ static partial class Glu
             }
         }
 
-        public static 
+        public static
         Int32 TexFilterFunc(TextureTarget target, SgisTextureFilter4 filtertype, ref float parms, Int32 n, [Out] out float weights)
         {
             unsafe
@@ -1136,7 +1136,7 @@ static partial class Glu
             }
         }
 
-        public static 
+        public static
         unsafe Int32 TexFilterFunc(TextureTarget target, SgisTextureFilter4 filtertype, float* parms, Int32 n, [Out] float* weights)
         {
             return Delegates.gluTexFilterFuncSGI((TextureTarget)target, (SgisTextureFilter4)filtertype, (float*)parms, (Int32)n, (float*)weights);

@@ -1,5 +1,6 @@
 using MyCollections;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
@@ -10,7 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows.Resources;
 
-namespace Plotter;
+namespace TCad.Plotter.DrawToolSet;
 
 public class DrawTools : IDisposable
 {
@@ -81,59 +82,38 @@ public class DrawTools : IDisposable
     FlexArray<DrawBrush> BrushTbl = null;
     FlexArray<Font> GDIFontTbl = null; // GDI Modeでしか使わない
 
-    private void AllocTbl()
-    {
-        PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
-        BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
-        GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
-    }
-
     public void Setup(DrawModes t)
     {
         Dispose();
 
         if (t == DrawModes.DARK)
         {
-            SetupScreenSet("dark.json", new ColorPack(255, 192, 192, 192));
+            FromFile("dark.json", new ColorPack(255, 192, 192, 192));
         }
         else if (t == DrawModes.LIGHT)
         {
-            SetupScreenSet("light.json", new ColorPack(255, 92, 92, 92));
+            FromFile("light.json", new ColorPack(255, 92, 92, 92));
         }
         else if (t == DrawModes.PRINTER)
         {
-            SetupPrinterSet();
+            FromFile("printer.json", new ColorPack(255, 0, 0, 0));
         }
     }
 
-    private void SetupScreenSet(String fname, ColorPack defColor)
+    private void FromFile(String fname, ColorPack defColor)
     {
-        AllocTbl();
+        PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
+        BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
 
         var pathName = PathName(fname);
 
         LoadTheme(pathName, defColor);
 
 
+        GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         FontFamily fontFamily = new("MS UI Gothic");
         //FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
-
-        GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
-        GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
-    }
-
-    private void SetupPrinterSet()
-    {
-        AllocTbl();
-
-
-        LoadTheme(PathName("printer.json"), new ColorPack(255, 0, 0, 0));
-
-
-        //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
-        //FontFamily fontFamily = new FontFamily("MS UI Gothic");
-        FontFamily fontFamily = new("MS Gothic");
 
         GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
         GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
@@ -233,6 +213,10 @@ public class DrawTools : IDisposable
 
     private void LoadTheme(string fname, ColorPack defColor)
     {
+        PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
+        BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
+
+
         for (int i = 0; i < PEN_TBL_SIZE; i++)
         {
             PenTbl[i] = new DrawPen(defColor.Argb, 1);
@@ -252,7 +236,7 @@ public class DrawTools : IDisposable
 
         foreach (var jpen in jpenList)
         {
-            string? name = jpen.GetProperty("name").GetString();
+            string name = jpen.GetProperty("name").GetString();
 
             if (name == null) continue;
 
@@ -274,7 +258,7 @@ public class DrawTools : IDisposable
 
         foreach (var jbrush in jbrushList)
         {
-            string? name = jbrush.GetProperty("name").GetString();
+            string name = jbrush.GetProperty("name").GetString();
 
             if (name == null) continue;
 
@@ -316,7 +300,7 @@ public class DrawTools : IDisposable
     {
         if (name == "") return false;
 
-        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(name);
         if (fi == null) return false;
         if (fi.FieldType != typeof(int)) return false;
 
@@ -331,7 +315,7 @@ public class DrawTools : IDisposable
 
     private bool SetBrushTbl(string name, DrawBrush brush)
     {
-        FieldInfo? fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(name);
         if (fi == null) return false;
 
         int? brushId = (int?)fi.GetValue(this);
@@ -346,11 +330,11 @@ public class DrawTools : IDisposable
 
     private string PathName(string fname)
     {
-        Assembly? asm = Assembly.GetEntryAssembly();
+        Assembly asm = Assembly.GetEntryAssembly();
 
         string exePath = asm!.Location;
 
-        string? dir = Path.GetDirectoryName(exePath);
+        string dir = Path.GetDirectoryName(exePath);
 
         string fileName = dir + @"\Resources\DrawTheme\" + fname;
 

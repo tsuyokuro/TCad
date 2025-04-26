@@ -4,38 +4,44 @@ using CadDataTypes;
 using Plotter.Settings;
 using System;
 using System.Collections.Generic;
-using TCad.Controls;
+using TCad.Controls.CadConsole;
+using TCad.MathFunctions;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.undo;
 
-using StateContext = Plotter.Controller.ControllerStateMachine.StateContext;
+namespace TCad.Plotter.Controller;
 
-namespace Plotter.Controller;
+
+public class StateContext
+{
+    public vector3_t StoredObjDownPoint = default;
+    public IPlotterController Controller;
+
+    public ControllerState CurrentState
+    {
+        get => StateMachine.CurrentState;
+    }
+
+    private ControllerStateMachine StateMachine;
+
+    public StateContext(ControllerStateMachine stateMachine)
+    {
+        StateMachine = stateMachine;
+        Controller = stateMachine.Controller;
+    }
+
+    public void ChangeState(ControllerStates state)
+    {
+        StateMachine.ChangeState(state);
+    }
+}
+
 
 public class ControllerStateMachine
 {
-    public class StateContext
-    {
-        public vector3_t StoredObjDownPoint = default;
-        public IPlotterController Controller;
-
-        public ControllerState CurrentState
-        {
-            get => StateMachine.CurrentState;
-        }
-
-        private ControllerStateMachine StateMachine;
-
-        public StateContext(ControllerStateMachine stateMachine)
-        {
-            StateMachine = stateMachine;
-            Controller = stateMachine.Controller;
-        }
-
-        public void ChangeState(ControllerStates state)
-        {
-            StateMachine.ChangeState(state);
-        }
-    }
-
     private ControllerState[] StateList = new ControllerState[(int)ControllerStates.MEASURING + 1];
 
 
@@ -57,9 +63,13 @@ public class ControllerStateMachine
 
     private StateContext Context;
 
-    private IPlotterController Controller;
+    public IPlotterController Controller
+    {
+        get;
+        private set;
+    }
 
-    public ControllerStateMachine(IPlotterController controller)
+    public ControllerStateMachine(IPlotterController controller, ControllerStates initialState)
     {
         Controller = controller;
         Context = new StateContext(this);
@@ -73,6 +83,7 @@ public class ControllerStateMachine
         StateList[(int)ControllerStates.MEASURING] = new MeasuringState(Context);
 
         CurrentState = StateList[(int)ControllerStates.NONE];
+        ChangeState(initialState);
     }
 
     public void ChangeState(ControllerStates state)
@@ -83,17 +94,17 @@ public class ControllerStateMachine
             return;
         }
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Exit");
-#endif
+        #endif
 
         CurrentState.Exit();
 
         CurrentState = StateList[(int)state];
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Enter");
-#endif
+        #endif
 
         CurrentState.Enter();
 
@@ -105,17 +116,17 @@ public class ControllerStateMachine
 
     public void PushState(ControllerStates state)
     {
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Push");
-#endif
+        #endif
 
         StateStack.Push(CurrentState);
 
         CurrentState = StateList[(int)state];
 
-#if ENABLE_LOG
+        #if ENABLE_LOG
         Log.pl(CurrentState.GetType().Name + " Enter");
-#endif
+        #endif
 
         CurrentState.Enter();
     }
@@ -127,9 +138,9 @@ public class ControllerStateMachine
         {
             CurrentState = backState;
 
-#if ENABLE_LOG
+            #if ENABLE_LOG
             Log.pl(CurrentState.GetType().Name + " is Poped");
-#endif
+            #endif
 
         }
     }
@@ -237,9 +248,6 @@ public class CreateFigureState : ControllerState
             CadFigure fig = Controller.DB.NewFigure(Controller.CreatingFigType);
 
             Controller.FigureCreator = FigCreator.Get(Controller.CreatingFigType, fig);
-
-            // TODO Remove States.CREATING state
-            //Ctrl.State = States.CREATING;
 
             isStart = false;
 
@@ -557,7 +565,7 @@ public class DragingPointsState : ControllerState
         Context.ChangeState(ControllerStates.SELECT);
     }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) 
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         if (isStart)
         {

@@ -1,20 +1,24 @@
 using MessagePack;
+using TCad.Plotter;
+using Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer.v1004;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 
-using MpFig = MpFigure_v1004;
 using MpCadObjectDB = MpCadObjectDB_v1004;
+using MpFig = MpFigure_v1004;
 
 public class CopyUtil
 {
     private delegate T Deserialize_<T>(ReadOnlyMemory<byte> buffer, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default);
 
     private static Deserialize_<List<MpFig>> Deserialize = MessagePackSerializer.Deserialize<List<MpFig>>;
-    
+
     private static Deserialize_<MpFig> DeserializeFig = MessagePackSerializer.Deserialize<MpFig>;
 
     private static SerializeContext SC = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
@@ -39,7 +43,7 @@ public class CopyUtil
     {
         var mpfigList = Deserialize(bin);
 
-        var figList = MpUtil.FigureListFromMp<MpFig>(DSC, mpfigList);
+        var figList = MpUtil.FigureListFromMp(DSC, mpfigList);
 
         return figList;
     }

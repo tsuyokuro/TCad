@@ -1,6 +1,6 @@
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
 
 #pragma warning disable 0649
 #pragma warning disable 3019

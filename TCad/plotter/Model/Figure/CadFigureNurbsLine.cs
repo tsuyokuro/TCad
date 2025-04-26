@@ -1,7 +1,10 @@
 using CadDataTypes;
+using TCad.Plotter;
 using SplineCurve;
+using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureNurbsLine : CadFigure
 {
@@ -69,7 +72,7 @@ public partial class CadFigureNurbsLine : CadFigure
         mPointList.Add(p);
     }
 
-    public void Setup(int deg, int divCnt, bool edge = true, bool close=false)
+    public void Setup(int deg, int divCnt, bool edge = true, bool close = false)
     {
         Nurbs = new NurbsLine(deg, mPointList.Count, divCnt, edge, close);
         Nurbs.CtrlPoints = mPointList;

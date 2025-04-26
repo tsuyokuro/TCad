@@ -1,6 +1,8 @@
-using OpenTK.Mathematics;
+using TCad.Plotter;
+using TCad.MathFunctions;
+using TCad.Plotter.DrawToolSet;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 public static class DrawUtil
 {

@@ -1,5 +1,5 @@
-using Plotter;
-using Plotter.Controller;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 
 namespace TCad.ViewModel;
 

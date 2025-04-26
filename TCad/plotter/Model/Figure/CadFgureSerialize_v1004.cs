@@ -1,11 +1,12 @@
-using Plotter.Serializer;
-using System.Windows.Media.Media3D;
 using CadDataTypes;
-using System.Drawing;
-using System.IO;
+using TCad.Plotter;
+using Plotter.Serializer;
 using System;
+using System.Drawing;
+using TCad.Plotter.Serializer;
+using TCad.Plotter.Serializer.v1004;
 
-namespace Plotter;
+namespace TCad.Plotter.Model.Figure;
 
 //=============================================================================
 // CaFigure
@@ -142,7 +143,7 @@ public partial class CadFigurePicture : CadFigure
         {
             geo.Base64 = null;
             geo.Bytes = new byte[SrcData.Length];
-            SrcData.CopyTo(geo.Bytes,0);
+            SrcData.CopyTo(geo.Bytes, 0);
         }
 
 
