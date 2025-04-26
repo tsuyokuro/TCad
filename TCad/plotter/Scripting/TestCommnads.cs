@@ -8,7 +8,6 @@ using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using TCad.Plotter.Controller;
-using Plotter.svg;
 using SharpFont;
 using SplineCurve;
 using System;
@@ -30,6 +29,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.undo;
 using TCad.Logger;
+using TCad.Plotter.Svg;
 
 namespace TCad.Plotter.Scripting;
 

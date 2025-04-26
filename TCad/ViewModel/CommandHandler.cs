@@ -2,7 +2,6 @@ using TCad.Plotter;
 using TCad.Plotter.Controller;
 using Plotter.Serializer;
 using Plotter.Settings;
-using Plotter.svg;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +18,7 @@ using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
 using TCad.ScriptEditor;
+using TCad.Plotter.Svg;
 
 namespace TCad.ViewModel;
 

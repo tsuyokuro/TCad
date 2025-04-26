@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 
-namespace Plotter.svg;
+namespace TCad.Plotter.Svg;
 
 public static class FigureXmlExt
 {
