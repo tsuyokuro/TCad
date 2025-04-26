@@ -2,6 +2,7 @@ using CadDataTypes;
 using MeshUtilNS;
 using Plotter;
 using System;
+using TCad.MathFunctions;
 
 namespace MeshMakerNS;
 

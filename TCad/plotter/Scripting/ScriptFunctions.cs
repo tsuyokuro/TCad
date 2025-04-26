@@ -18,6 +18,7 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
+using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.searcher;
@@ -100,7 +101,7 @@ public class ScriptFunctions
 
         Controller.Input.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
         Controller.Input.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
-    }
+    }   
 
     public void PrintVector(vector3_t v)
     {

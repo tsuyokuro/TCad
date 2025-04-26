@@ -5,6 +5,7 @@ using MyCollections;
 using Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
 
 namespace MeshUtilNS;
 

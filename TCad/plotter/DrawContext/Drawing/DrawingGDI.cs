@@ -2,6 +2,7 @@ using CadDataTypes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using TCad.MathFunctions;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace Plotter;

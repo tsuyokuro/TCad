@@ -3,6 +3,7 @@ using MyCollections;
 using Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.HalfEdgeModel;
 

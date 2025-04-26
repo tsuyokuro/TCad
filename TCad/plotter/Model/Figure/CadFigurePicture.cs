@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using GLUtil;
 using Plotter;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.Figure;
 

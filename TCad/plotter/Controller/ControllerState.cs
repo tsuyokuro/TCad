@@ -5,6 +5,7 @@ using Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using TCad.Controls.CadConsole;
+using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
 

@@ -1,9 +1,8 @@
-using GLFont;
-using GLUtil;
+
+using System;
 using OpenGL.GLU;
 using Plotter;
 using Plotter.Controller;
-using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +15,9 @@ using TCad.Dialogs;
 using TCad.Util;
 using TCad.ViewModel;
 
+
 namespace TCad;
+
 
 public partial class MainWindow : Window, ICadMainWindow
 {

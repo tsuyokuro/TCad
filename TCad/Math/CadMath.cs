@@ -1,6 +1,7 @@
+using Plotter;
 using System;
 
-namespace Plotter;
+namespace TCad.MathFunctions;
 
 public partial class CadMath
 {

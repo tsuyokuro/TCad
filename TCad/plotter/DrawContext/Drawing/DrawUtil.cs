@@ -1,3 +1,5 @@
+using TCad.MathFunctions;
+
 namespace Plotter;
 
 public static class DrawUtil

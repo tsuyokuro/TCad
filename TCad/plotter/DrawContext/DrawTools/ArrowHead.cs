@@ -1,4 +1,5 @@
 using CadDataTypes;
+using TCad.MathFunctions;
 
 namespace Plotter;
 

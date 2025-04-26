@@ -4,6 +4,7 @@ using CadDataTypes;
 using Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.Figure;
 

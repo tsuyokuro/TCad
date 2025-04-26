@@ -1,5 +1,6 @@
 using CadDataTypes;
 using Plotter;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.Figure;
 

@@ -7,6 +7,7 @@ using Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using TCad.MathFunctions;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace Plotter;

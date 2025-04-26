@@ -9,6 +9,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
+using TCad.MathFunctions;
 using TCad.Util;
 using TCad.ViewModel;
 

@@ -1,4 +1,4 @@
-namespace Plotter;
+namespace TCad.MathFunctions;
 
 public struct CrossInfo
 {

@@ -2,6 +2,7 @@ using CadDataTypes;
 using Plotter;
 using Plotter.Settings;
 using System.Collections.Generic;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.Figure;
 

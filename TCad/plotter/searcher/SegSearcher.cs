@@ -1,6 +1,7 @@
 using CadDataTypes;
 using Plotter;
 using System;
+using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 
 namespace TCad.Plotter.searcher;
