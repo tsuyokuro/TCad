@@ -3,6 +3,7 @@ using GLFont;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Plotter;
 using Plotter.Controller;
 using Plotter.Settings;
 using System;
@@ -11,7 +12,7 @@ using System.Runtime.InteropServices;
 using TCad.MathFunctions;
 using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 public class DrawingGL : IDrawing
 {

@@ -1,4 +1,5 @@
 using CadDataTypes;
+using Plotter;
 using Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Drawing;
 using TCad.MathFunctions;
 using TCad.Plotter.Model.HalfEdgeModel;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 /**
  * GDI向け描画クラス

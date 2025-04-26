@@ -1,9 +1,10 @@
+using Plotter;
 using Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Plotter;
+namespace TCad.Plotter.Drawing;
 
 /**
  * GDI向け描画クラス

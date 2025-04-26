@@ -3,6 +3,7 @@ using Plotter;
 using System;
 using TCad.MathFunctions;
 
+
 namespace TCad.Plotter.Model.Figure;
 
 public partial class CadFigureCircle : CadFigure
