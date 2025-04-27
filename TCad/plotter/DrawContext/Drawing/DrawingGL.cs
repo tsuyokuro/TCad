@@ -37,9 +37,9 @@ public class DrawingGL : IDrawing
         mFontFaceW.SetSize(24);
         */
 
-        mFontFaceW = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
+        mFontFaceW = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 24, 0);
 
-        mFontRenderer = GLUtilContainer.FontRenderer.Instance;
+        mFontRenderer = GLUtilContainer.FontRenderer.Get();
 
         FontTex tex = mFontFaceW.CreateTexture('X', true);
         FontTexW = tex.ImgW;

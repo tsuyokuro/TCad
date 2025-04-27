@@ -547,7 +547,7 @@ public class TestCommands
     private void Test3()
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
@@ -620,7 +620,7 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
@@ -672,7 +672,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
@@ -720,7 +720,7 @@ public class TestCommands
     private void Test7()
     {
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromFile(fontFName, 48, 0);
 
         GlyphSlot glyph = fw.GetGlyph('い');
 
@@ -771,7 +771,7 @@ public class TestCommands
 
     private void Test8()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
@@ -819,8 +819,8 @@ public class TestCommands
     {
         RunOnMainThread(() =>
         {
-            int name1 = GLUtilContainer.TextureProvider.Instance.GetNew();
-            int name2 = GLUtilContainer.TextureProvider.Instance.GetNew();
+            int name1 = GLUtilContainer.TextureProvider.Get().GetNew();
+            int name2 = GLUtilContainer.TextureProvider.Get().GetNew();
             Log.pl("end");
         });
     }

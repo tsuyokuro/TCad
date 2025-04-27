@@ -45,7 +45,7 @@ public class FontRenderer
     {
         if (TextureID == -1)
         {
-            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
+            TextureID = GLUtilContainer.TextureProvider.Get().GetNew();
         }
 
         Counter++;

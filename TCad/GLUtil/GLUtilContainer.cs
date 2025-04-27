@@ -30,11 +30,11 @@ class GLUtilContainer
     static void CreateServices()
     {
         TextureProvider = new SingleServiceProvider<TextureProvider>(() => new TextureProvider());
-        var textureProvider = TextureProvider.Instance;
+        var textureProvider = TextureProvider.Get();
 
 
         ImageShader = new SingleServiceProvider<ImageShader>(() => new ImageShader());
-        var imageShader = ImageShader.Instance;
+        var imageShader = ImageShader.Get();
 
         ImageRenderer = new SingleServiceProvider<ImageRenderer>(() =>
             new ImageRenderer(imageShader, textureProvider)
@@ -44,12 +44,12 @@ class GLUtilContainer
         FontFaceProvider = new SingleServiceProvider<FontFaceProvider>(() =>
             new FontFaceProvider()
         );
-        var fontFaceProvider = FontFaceProvider.Instance;
+        var fontFaceProvider = FontFaceProvider.Get();
 
 
         FontShader = new SingleServiceProvider<FontShader>(() =>
             new FontShader());
-        var fontShader = FontShader.Instance;
+        var fontShader = FontShader.Get();
 
         FontRenderer = new SingleServiceProvider<FontRenderer>(() =>
             new FontRenderer(fontShader, textureProvider)
@@ -64,16 +64,16 @@ class GLUtilContainer
 
     public static void DisposeServices()
     {
-        FontRenderer.Instance.Dispose();
-        FontShader.Instance.Dispose();
-        FontFaceProvider.Instance.Dispose();
+        FontRenderer.Get().Dispose();
+        FontShader.Get().Dispose();
+        FontFaceProvider.Get().Dispose();
 
-        ImageRenderer.Instance.Dispose();
-        ImageShader.Instance.Dispose();
+        ImageRenderer.Get().Dispose();
+        ImageShader.Get().Dispose();
 
-        WireFrameShader.Instance.Dispose();
+        WireFrameShader.Get().Dispose();
 
-        TextureProvider.Instance.RemoveAll();
+        TextureProvider.Get().RemoveAll();
 
 
         FontRenderer = null;

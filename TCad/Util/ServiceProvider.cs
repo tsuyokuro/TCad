@@ -4,7 +4,7 @@ namespace TCad.Util;
 
 public interface IServiceProvider<T>
 {
-    T Instance { get; }
+    T Get();
 
     void Override(Func<T> func);
 }
@@ -13,14 +13,15 @@ public class ServiceProvider<T> : IServiceProvider<T>
 {
     Func<T> _creator;
 
-    public T Instance
-    {
-        get => _creator();
-    }
 
     public ServiceProvider(Func<T> creator)
     {
         _creator = creator;
+    }
+
+    public T Get()
+    {
+        return _creator();
     }
 
     public void Override(Func<T> creator)
@@ -31,22 +32,22 @@ public class ServiceProvider<T> : IServiceProvider<T>
 
 public class SingleServiceProvider<T> : IServiceProvider<T> where T : class
 {
-    public T Instance
-    {
-        get;
-        private set;
-    }
+    private T _value;
 
     public SingleServiceProvider(Func<T> creator)
     {
         Console.WriteLine($"SingleServiceProvider<{typeof(T)}> constructor");
+        _value = creator();
+    }
 
-        Instance = creator();
+    public T Get()
+    {
+        return _value;
     }
 
     public void Override(Func<T> creator)
     {
-        Instance = creator();
+        _value = creator();
     }
 }
 
@@ -56,21 +57,19 @@ public class LateSingleServiceProvider<T> : IServiceProvider<T> where T : class
 
     T _value;
 
-    public T Instance
-    {
-        get
-        {
-            if (_value == null)
-            {
-                _value = _creator();
-            }
-            return _value;
-        }
-    }
-
     public LateSingleServiceProvider(Func<T> creator)
     {
         _creator = creator;
+    }
+
+    public T Get()
+    {
+        if (_value == null)
+        {
+            _value = _creator();
+        }
+
+        return _value;
     }
 
     public void Override(Func<T> creator)

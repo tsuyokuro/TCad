@@ -21,7 +21,7 @@ public struct DrawBrush : IEquatable<DrawBrush>
 
     public readonly SolidBrush GdiBrush
     {
-        get => GDIToolManager.Provider.Instance.Brush(this);
+        get => GDIToolManager.Provider.Get().Brush(this);
     }
 
     public int Argb
