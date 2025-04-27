@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
-namespace TCad;
+namespace TCad.WindowsAPI;
 
 partial class WinAPI
 {

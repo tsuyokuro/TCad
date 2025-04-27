@@ -2,7 +2,7 @@ using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.ViewModel;
 
-namespace TCad.Plotter;
+namespace TCad.MainView;
 
 public interface IPlotterView
 {

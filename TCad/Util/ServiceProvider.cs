@@ -1,5 +1,7 @@
 using System;
 
+namespace TCad.Util;
+
 public interface IServiceProvider<T>
 {
     T Instance { get; }

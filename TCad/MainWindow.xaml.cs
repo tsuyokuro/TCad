@@ -17,6 +17,8 @@ using TCad.Util;
 using TCad.ViewModel;
 using TCad.Plotter.DrawToolSet;
 using TCad.Logger;
+using TCad.WindowsAPI;
+using TCad.MainView;
 
 namespace TCad;
 

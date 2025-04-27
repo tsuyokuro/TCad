@@ -58,7 +58,7 @@
     <None Remove="Fonts\mplus-1m-light.ttf" />
     <None Remove="Fonts\mplus-1m-regular.ttf" />
     <None Remove="Fonts\mplus-1m-thin.ttf" />
-    <None Remove="plotter\Controller\IPlotterController.cs~RFcd12e6.TMP" />
+    <None Remove="Plotter\Controller\IPlotterController.cs~RFcd12e6.TMP" />
     <None Remove="Resources\BaseScript.py" />
     <None Remove="Resources\Cursors\cross_bk.cur" />
     <None Remove="Resources\Cursors\cross_wt.cur" />

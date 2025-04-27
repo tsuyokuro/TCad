@@ -3,7 +3,6 @@ using CadDataTypes;
 using TCad.Plotter.Serializer;
 using System;
 using System.Drawing;
-using TCad.Plotter.Serializer;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Logger;
 

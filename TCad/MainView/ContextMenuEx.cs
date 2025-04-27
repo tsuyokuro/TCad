@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace TCad.Plotter;
+namespace TCad.MainView;
 
 public class ContextMenuEx : ContextMenuStrip
 {

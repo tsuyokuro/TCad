@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 
+using TCad.WindowsAPI;
 
 namespace TCad.Logger;
 

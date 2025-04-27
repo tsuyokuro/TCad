@@ -5,6 +5,7 @@ using System;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 using TCad.Logger;
+using TCad.MainView;
 
 namespace TCad.Plotter.DrawContexts;
 

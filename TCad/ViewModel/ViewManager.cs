@@ -3,6 +3,7 @@ using TCad.Plotter.Controller;
 using System.ComponentModel;
 using TCad.Plotter.DrawContexts;
 using TCad.Logger;
+using TCad.MainView;
 
 namespace TCad.ViewModel;
 
