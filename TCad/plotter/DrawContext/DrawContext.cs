@@ -5,7 +5,6 @@ using System;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 using TCad.Logger;
-using TCad.MainView;
 
 namespace TCad.Plotter.DrawContexts;
 
@@ -17,13 +16,6 @@ public abstract class DrawContext : IDisposable
         Perspective,
     }
 
-
-    IPlotterViewForDC mPlotterView;
-    public IPlotterViewForDC PlotterView
-    {
-        set => mPlotterView = value;
-        get => mPlotterView;
-    }
 
     // 画素/Milli
     // 1ミリあたりの画素数
@@ -182,16 +174,6 @@ public abstract class DrawContext : IDisposable
 
     public virtual void EndDraw()
     {
-    }
-
-    public void UpdateView()
-    {
-        mPlotterView?.SwapBuffers(this);
-    }
-
-    public void MakeCurrent()
-    {
-        mPlotterView?.GLMakeCurrent();
     }
 
     #region Point converter

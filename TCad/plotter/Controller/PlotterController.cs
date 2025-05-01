@@ -73,10 +73,10 @@ public class PlotterController : IPlotterController
     } = null;
 
 
-    private IPlotterViewModel ViewModel
+    public IPlotterViewModel ViewModel
     {
         get;
-        set;
+        private set;
     } = null;
 
     public List<CadFigure> TempFigureList

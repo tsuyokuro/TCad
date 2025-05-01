@@ -1177,7 +1177,7 @@ public class ScriptFunctions
 
         DrawPen drawPen = new DrawPen((int)argb, lineW);
 
-        DrawOption drawParams = default;
+        DrawOption drawParams = new();
         drawParams.LinePen = drawPen;
         drawParams.MeshLinePen = DrawPen.InvalidPen;
         drawParams.MeshEdgePen = drawPen;
@@ -1218,7 +1218,7 @@ public class ScriptFunctions
 
         tdc.Dispose();
 
-        orgDC.MakeCurrent();
+        Controller.ViewModel.ViewManager.View.MakeCurrent();
 
         //tmpGLControl.Dispose();
         window.Dispose();

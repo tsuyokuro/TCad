@@ -11,6 +11,7 @@ namespace TCad.Plotter.Controller;
 
 public interface IPlotterController
 {
+    IPlotterViewModel ViewModel { get; }
     PlotterCommandProcessor CommandProc { get; }
     ContextMenuManager ContextMenuMan { get; }
     CadFigure.Types CreatingFigType { get; set; }

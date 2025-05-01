@@ -53,14 +53,6 @@ public class PlotterDrawer
         Controller = controller;
     }
 
-    public void UpdateView(DrawContext dc)
-    {
-        dc.UpdateView();
-    }
-    public void UpdateView()
-    {
-        DC.UpdateView();
-    }
 
     public void Redraw()
     {
@@ -73,7 +65,8 @@ public class PlotterDrawer
         Clear(dc);
         DrawAll(dc);
         dc.EndDraw();
-        dc.UpdateView();
+
+        UpdateView();
     }
 
     public void Clear()
@@ -136,6 +129,11 @@ public class PlotterDrawer
                 fig.DrawEach(dc, normal_dp);
             }
         }
+    }
+
+    public void UpdateView()
+    {
+        Controller.ViewModel.ViewManager.View.SwapBuffers();
     }
 
     #region private

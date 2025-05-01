@@ -27,10 +27,8 @@ public interface IPlotterView
     void DrawModeChanged(DrawModes mode);
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
-}
 
-public interface IPlotterViewForDC
-{
-    void GLMakeCurrent();
-    void SwapBuffers(DrawContext dc);
+    void SwapBuffers();
+
+    void MakeCurrent();
 }

@@ -19,7 +19,7 @@ using TCad.Plotter;
 
 namespace TCad.MainView;
 
-class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
+class PlotterViewGL : GLControl, IPlotterView
 {
     private DrawContextGL mDrawContext = null;
 
@@ -104,10 +104,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
 
         mDrawContext = mDrawContextOrtho;
 
-        mDrawContextOrtho.PlotterView = this;
-        mDrawContextPers.PlotterView = this;
-
-        SwapBuffers();
+        base.SwapBuffers();
 
         Log.plx("out");
     }
@@ -293,7 +290,7 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
     {
         if (dc == mDrawContext)
         {
-            SwapBuffers();
+            base.SwapBuffers();
         }
     }
 
@@ -578,7 +575,12 @@ class PlotterViewGL : GLControl, IPlotterView, IPlotterViewForDC
         ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
-    public void GLMakeCurrent()
+    public new void SwapBuffers()
+    {
+        base.SwapBuffers();
+    }
+
+    public new void MakeCurrent()
     {
         base.MakeCurrent();
     }
