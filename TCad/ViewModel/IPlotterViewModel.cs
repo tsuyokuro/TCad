@@ -4,6 +4,7 @@ using TCad.Controls;
 using TCad.Plotter.DrawContexts;
 
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using System.Windows.Forms;
 
 namespace TCad.ViewModel;
 
@@ -73,7 +74,7 @@ public interface IPlotterViewModel
     CursorPosViewModel CursorPosVM { get; }
     DrawContext DC { get; }
 
-    void Redraw();
+    void Redraw(bool waitUiThread=true);
 
 
     void StateChanged(StateChangedParam si);
@@ -107,6 +108,13 @@ public interface IPlotterViewModel
     void AttachCommandView(IAutoCompleteTextBox textBox);
     bool OnKeyDown(object sender, KeyEventArgs e);
     bool OnKeyUp(object sender, KeyEventArgs e);
+
+    void ContextMenuEvent(MenuInfo.Item menuItem);
+    void SetCursorWoldPos(vector3_t v);
+    void MouseMove(DrawContext dc, vcompo_t x, vcompo_t y);
+    void MouseDown(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y);
+    void MouseUp(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y);
+    void MouseWheel(DrawContext dc, vcompo_t x, vcompo_t y, int delta);
 }
 
 public class DummyPlotterViewModel : IPlotterViewModel
@@ -191,7 +199,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     {
     }
 
-    public void Redraw()
+    public void Redraw(bool waitUiThread)
     {
     }
 
@@ -212,6 +220,30 @@ public class DummyPlotterViewModel : IPlotterViewModel
     }
 
     public void UpdateTreeView(bool remakeTree)
+    {
+    }
+
+    public void SetCursorWoldPos(vector3_t v)
+    {
+    }
+
+    public void MouseMove(DrawContext dc, vcompo_t x, vcompo_t y)
+    {
+    }
+
+    public void MouseDown(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
+    {
+    }
+
+    public void MouseUp(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
+    {
+    }
+
+    public void MouseWheel(DrawContext dc, vcompo_t x, vcompo_t y, int delta)
+    {
+    }
+
+    public void ContextMenuEvent(MenuInfo.Item menuItem)
     {
     }
 }

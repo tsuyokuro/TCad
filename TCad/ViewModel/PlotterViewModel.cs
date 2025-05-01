@@ -3,6 +3,7 @@ using TCad.Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using TCad.Controls;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
@@ -17,10 +18,10 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected IPlotterController Controller_;
     public IPlotterController Controller
     {
-        get => Controller_;
+        get;
+        private set;
     }
 
     protected ICadMainWindow mMainWindow;
@@ -73,7 +74,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         set
         {
             SelectMode_ = value;
-            Controller_.SelectMode = SelectMode_;
+            Controller.SelectMode = SelectMode_;
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectMode)));
         }
@@ -116,7 +117,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public DrawContext DC
     {
-        get => Controller_?.DC;
+        get => Controller?.DC;
     }
 
     private SettingsVeiwModel SettingsVM;
@@ -131,10 +132,10 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public string CurrentFileName
     {
-        get => Controller_.CurrentFileName;
+        get => Controller.CurrentFileName;
         set
         {
-            Controller_.CurrentFileName = value;
+            Controller.CurrentFileName = value;
             CaptionFileName = value;
         }
     }
@@ -160,7 +161,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         mMainWindow = mainWindow;
 
-        Controller_ = controller;
+        Controller = controller;
 
         CurrentFigCmd = new(this);
 
@@ -168,21 +169,21 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         mCommandHandler = new CommandHandler(this);
 
-        ObjTreeVM = new ObjectTreeViewModel(Controller_);
+        ObjTreeVM = new ObjectTreeViewModel(Controller);
 
-        LayerListVM = new LayerListViewModel(Controller_);
+        LayerListVM = new LayerListViewModel(Controller);
 
-        ViewManager_ = new ViewManager(mainWindow, Controller_);
+        ViewManager_ = new ViewManager(mainWindow, this);
 
-        SettingsVM = new SettingsVeiwModel(ViewManager_, Controller_);
+        SettingsVM = new SettingsVeiwModel(ViewManager_, Controller);
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
 
         CurrentFileName = null;
 
-        SelectMode = Controller_.SelectMode;
-        CreatingFigureType = Controller_.CreatingFigType;
+        SelectMode = Controller.SelectMode;
+        CreatingFigureType = Controller.CreatingFigType;
 
         Log.plx("out");
     }
@@ -334,7 +335,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void EvalTextCommand(string s)
     {
-        Controller_.EvalTextCommand(s);
+        Controller.EvalTextCommand(s);
     }
 
     private bool ChangeFigureType(CadFigure.Types newType)
@@ -346,7 +347,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
             // 現在のタイプを再度選択したら解除する
             if (CurrentFigureType_ != CadFigure.Types.NONE)
             {
-                Controller_.EditManager.Cancel();
+                Controller.EditManager.Cancel();
                 Redraw();
                 return true;
             }
@@ -357,7 +358,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         if (newType != CadFigure.Types.NONE)
         {
             MeasureMode = MeasureModes.NONE;
-            Controller_.StartCreateFigure(newType);
+            Controller.StartCreateFigure(newType);
 
             Redraw();
 
@@ -384,11 +385,11 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         if (MeasureMode_ != MeasureModes.NONE)
         {
             CreatingFigureType = CadFigure.Types.NONE;
-            Controller_.StartMeasure(newType);
+            Controller.StartMeasure(newType);
         }
         else if (prev != MeasureModes.NONE)
         {
-            Controller_.EndMeasure();
+            Controller.EndMeasure();
             Redraw();
         }
 
@@ -396,9 +397,9 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
     }
 
 
-    public void Redraw()
+    public void Redraw(bool waitUiThread = true)
     {
-        ThreadUtil.RunOnMainThread(Controller_.Redraw, true);
+        ThreadUtil.RunOnMainThread(Controller.Redraw, waitUiThread);
     }
 
     public void AttachCommandView(IAutoCompleteTextBox textBox)
@@ -408,4 +409,36 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         CommandTextBox.CandidateList.AddRange(Controller.ScriptEnv.AutoCompleteList);
         CommandTextBox.Determined += EvalTextCommand;
     }
+
+    #region View to Controller
+    public void SetCursorWoldPos(vector3_t v)
+    {
+        Controller.Input.SetCursorWoldPos(v);
+    }
+
+    public void MouseMove(DrawContext dc, vcompo_t x, vcompo_t y)
+    {
+        Controller.Input.Mouse.MouseMove(dc, x, y);
+    }
+
+    public void MouseDown(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
+    {
+        Controller.Input.Mouse.MouseDown(dc, btn, x, y);
+    }
+
+    public void MouseUp(DrawContext dc, MouseButtons btn, vcompo_t x, vcompo_t y)
+    {
+        Controller.Input.Mouse.MouseUp(dc, btn, x, y);
+    }
+
+    public void MouseWheel(DrawContext dc, vcompo_t x, vcompo_t y, int delta)
+    {
+        Controller.Input.Mouse.MouseWheel(dc, x, y, delta);
+    }
+
+    public void ContextMenuEvent(MenuInfo.Item menuItem)
+    {
+        Controller.ContextMenuMan.ContextMenuEvent(menuItem);
+    }
+    #endregion View to Controller
 }

@@ -23,7 +23,7 @@ class PlotterViewGL : GLControl, IPlotterView
 {
     private DrawContextGL mDrawContext = null;
 
-    private IPlotterController mController = null;
+    private IPlotterViewModel mViewModel = null;
 
     private vector3_t PrevMousePos = default;
 
@@ -48,11 +48,11 @@ class PlotterViewGL : GLControl, IPlotterView
     private DrawContextGLPers mDrawContextPers;
 
 
-    public PlotterViewGL(IPlotterController controller)
+    public PlotterViewGL(IPlotterViewModel viewModel)
     {
         Log.plx("in");
 
-        mController = controller;
+        mViewModel = viewModel;
 
         SetupContextMenu();
 
@@ -211,21 +211,12 @@ class PlotterViewGL : GLControl, IPlotterView
 
     private void Redraw()
     {
-        //#if MOUSE_THREAD
-        //        ThreadUtil.RunOnMainThread(mController.Redraw, false);
-        //#else
-        //        mController.Redraw(mController.DC);
-        //#endif
-
-        mController.Drawer.Redraw(mController.DC);
+        mViewModel?.Redraw();
     }
 
     private void OnPaint(object sender, PaintEventArgs e)
     {
-        if (mController != null)
-        {
-            Redraw();
-        }
+        Redraw();
     }
 
     private int sizeChangeCnt = 0;
@@ -245,17 +236,14 @@ class PlotterViewGL : GLControl, IPlotterView
 
             mDrawContext.SetViewOrg(org);
 
-            mController.Input.SetCursorWoldPos(vector3_t.Zero);
+            mViewModel.SetCursorWoldPos(vector3_t.Zero);
         }
 
         sizeChangeCnt++;
 
         mDrawContext.SetViewSize(Size.Width, Size.Height);
 
-        if (mController != null)
-        {
-            Redraw();
-        }
+        Redraw();
     }
 
     public void EnablePerse(bool enable)
@@ -344,7 +332,7 @@ class PlotterViewGL : GLControl, IPlotterView
 
         if (infoItem != null)
         {
-            mController.ContextMenuMan.ContextMenuEvent(infoItem);
+            mViewModel.ContextMenuEvent(infoItem);
         }
     }
 
@@ -382,7 +370,7 @@ class PlotterViewGL : GLControl, IPlotterView
     private void HandleMouseUp(MouseEventArgs e)
     {
         DownButton = MouseButtons.None;
-        mController.Input.Mouse.MouseUp(mDrawContext, e.Button, e.X, e.Y);
+        mViewModel.MouseUp(mDrawContext, e.Button, e.X, e.Y);
 
         Redraw();
     }
@@ -400,17 +388,14 @@ class PlotterViewGL : GLControl, IPlotterView
 
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
+            mViewModel.MouseDown(mDrawContext, e.Button, e.X, e.Y);
         }
         else
         {
             VectorExt.Set(out PrevMousePos, e.X, e.Y, 0);
             DownButton = e.Button;
 
-            //if (DownButton != MouseButtons.Middle)
-            {
-                mController.Input.Mouse.MouseDown(mDrawContext, e.Button, e.X, e.Y);
-            }
+            mViewModel.MouseDown(mDrawContext, e.Button, e.X, e.Y);
         }
 
         Redraw();
@@ -420,7 +405,7 @@ class PlotterViewGL : GLControl, IPlotterView
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Input.Mouse.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
+            mViewModel.MouseWheel(mDrawContext, e.X, e.Y, e.Delta);
             Redraw();
         }
         else
@@ -447,7 +432,7 @@ class PlotterViewGL : GLControl, IPlotterView
     {
         if (mDrawContext is DrawContextGLOrtho)
         {
-            mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+            mViewModel.MouseMove(mDrawContext, e.X, e.Y);
             Redraw();
         }
         else
@@ -484,7 +469,7 @@ class PlotterViewGL : GLControl, IPlotterView
             }
             else
             {
-                mController.Input.Mouse.MouseMove(mDrawContext, e.X, e.Y);
+                mViewModel.MouseMove(mDrawContext, e.X, e.Y);
                 Redraw();
             }
         }

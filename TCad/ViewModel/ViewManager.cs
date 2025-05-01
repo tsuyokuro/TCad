@@ -12,7 +12,7 @@ public class ViewManager : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
 
-    private IPlotterController Controller;
+    private IPlotterViewModel ViewModel;
 
     private ICadMainWindow MainWindow;
 
@@ -45,17 +45,17 @@ public class ViewManager : INotifyPropertyChanged
         get => ViewMode_;
     }
 
-    public ViewManager(ICadMainWindow mainWindow, IPlotterController controler)
+    public ViewManager(ICadMainWindow mainWindow, IPlotterViewModel viewModel)
     {
         MainWindow = mainWindow;
-        Controller = controler;
+        ViewModel = viewModel;
     }
 
     public void SetupViews()
     {
         Log.plx("in");
 
-        PlotterViewGL1 = new PlotterViewGL(Controller);
+        PlotterViewGL1 = new PlotterViewGL(ViewModel);
 
         ViewMode = ViewModes.FRONT;
 
@@ -184,10 +184,10 @@ public class ViewManager : INotifyPropertyChanged
     {
         View = view;
 
-        Controller.DC = view.DrawContext;
+        ViewModel.Controller.DC = view.DrawContext;
 
         MainWindow.SetPlotterView(view);
 
-        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
+        ViewModel.Redraw();
     }
 }
