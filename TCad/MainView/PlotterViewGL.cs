@@ -48,17 +48,10 @@ class PlotterViewGL : GLControl, IPlotterView
     private DrawContextGLPers mDrawContextPers;
 
 
-    public static PlotterViewGL Create(IPlotterController controller)
+    public PlotterViewGL(IPlotterController controller)
     {
         Log.plx("in");
-        PlotterViewGL v = new PlotterViewGL(controller);
-        v.MakeCurrent();
-        Log.plx("out");
-        return v;
-    }
 
-    private PlotterViewGL(IPlotterController controller)
-    {
         mController = controller;
 
         SetupContextMenu();
@@ -78,10 +71,14 @@ class PlotterViewGL : GLControl, IPlotterView
 
         SetupCursor();
 
+        MakeCurrent();
+
 #if MOUSE_THREAD
         mEventSequencer = new MyEventHandler(this, 100);
         mEventSequencer.Start();
 #endif
+
+        Log.plx("out");
     }
 
     private void OnDisposed(object sender, EventArgs e)
@@ -96,10 +93,10 @@ class PlotterViewGL : GLControl, IPlotterView
         GL.ClearColor(Color4.Black);
         GL.Enable(EnableCap.DepthTest);
 
-        mDrawContextOrtho = new DrawContextGLOrtho(this);
+        mDrawContextOrtho = new DrawContextGLOrtho();
         mDrawContextOrtho.SetupTools(SettingsHolder.Settings.DrawMode);
 
-        mDrawContextPers = new DrawContextGLPers(this);
+        mDrawContextPers = new DrawContextGLPers();
         mDrawContextPers.SetupTools(SettingsHolder.Settings.DrawMode);
 
         mDrawContext = mDrawContextOrtho;

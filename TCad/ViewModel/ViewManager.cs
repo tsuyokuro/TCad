@@ -55,7 +55,7 @@ public class ViewManager : INotifyPropertyChanged
     {
         Log.plx("in");
 
-        PlotterViewGL1 = PlotterViewGL.Create(Controller);
+        PlotterViewGL1 = new PlotterViewGL(Controller);
 
         ViewMode = ViewModes.FRONT;
 

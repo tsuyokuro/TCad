@@ -22,13 +22,7 @@ class DrawContextGLOrtho : DrawContextGL
 
     public DrawContextGLOrtho()
     {
-        Init(null);
-        mUnitPerMilli = 4;
-    }
-
-    public DrawContextGLOrtho(Control control)
-    {
-        Init(control);
+        Init();
         mUnitPerMilli = 4;
     }
 

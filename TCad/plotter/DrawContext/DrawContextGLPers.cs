@@ -12,13 +12,7 @@ class DrawContextGLPers : DrawContextGL
 {
     public DrawContextGLPers()
     {
-        Init(null);
-        mUnitPerMilli = 1;
-    }
-
-    public DrawContextGLPers(Control control)
-    {
-        Init(control);
+        Init();
         mUnitPerMilli = 1;
     }
 
