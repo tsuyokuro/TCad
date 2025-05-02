@@ -1,5 +1,4 @@
 using CadDataTypes;
-using TCad.Plotter;
 using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
@@ -7,38 +6,6 @@ using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
 
 namespace TCad.Plotter.Drawing;
-
-public struct DrawTextOption
-{
-    public const uint H_CENTER = 1;
-
-    public uint Option;
-
-    public DrawTextOption(uint option)
-    {
-        Option = option;
-    }
-}
-
-public class DrawSizes
-{
-    public static float HighlightPointLineWidth = 1;
-    public static float HighlightPointLineLength = 6;
-
-    public static float ExtSnapPointLineWidth = 1;
-    public static float ExtSnapPointLineLength = 6;
-
-    public static vcompo_t AxisLength = 100; // DrawingGDIでしか使っていない
-
-    public static vcompo_t NormalLen = 20;
-    public static vcompo_t NormalArrowLen = 10;
-    public static vcompo_t NormalArrowWidth = 5;
-
-    public static vcompo_t AxisArrowLen = 16;
-    public static vcompo_t AxisArrowWidth = 8;
-
-    public static float SelectedPointSize = 4;
-}
 
 public interface IDrawing : IDisposable
 {

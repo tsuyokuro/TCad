@@ -5,17 +5,13 @@ using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Searcher;
+using TCad.Plotter.Drawing;
 
 namespace TCad.Plotter.Controller;
 
 
 public class PlotterDrawer
 {
-    public const vcompo_t MARK_CURSOR_SIZE = (vcompo_t)(10.0);
-
-    public const vcompo_t CURSOR_LOCK_MARK_SIZE = (vcompo_t)(8.0);
-
-
     IPlotterController Controller;
 
     DrawContext DC
@@ -341,14 +337,14 @@ public class PlotterDrawer
         dc.Drawing.DrawMarkCursor(
             dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER),
             Input.LastDownPoint,
-            MARK_CURSOR_SIZE);
+            DrawSizes.MarkCursorSize);
 
         if (Input.ObjDownPoint.IsValid())
         {
             dc.Drawing.DrawMarkCursor(
                 dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER2),
                 Input.ObjDownPoint,
-                MARK_CURSOR_SIZE);
+                DrawSizes.MarkCursorSize);
         }
     }
 
@@ -372,7 +368,7 @@ public class PlotterDrawer
             dc.Drawing.DrawCrossScrn(
                 dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT),
                 Input.CrossCursor.Pos,
-                CURSOR_LOCK_MARK_SIZE);
+                DrawSizes.CursorLockMarkSize);
         }
     }
 
