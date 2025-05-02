@@ -14,6 +14,16 @@ using TCad.Logger;
 
 namespace TCad.Plotter.Controller;
 
+public enum ControllerStates
+{
+    NONE,
+    SELECT,
+    RUBBER_BAND_SELECT,
+    DRAGING_POINTS,
+    DRAGING_VIEW_ORG,
+    CREATE_FIGURE,
+    MEASURING,
+}
 
 public class StateContext
 {

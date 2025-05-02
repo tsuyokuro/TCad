@@ -7,6 +7,18 @@ using TCad.MainView;
 
 namespace TCad.ViewModel;
 
+public enum ViewModes
+{
+    NONE,
+    FRONT,
+    BACK,
+    TOP,
+    BOTTOM,
+    RIGHT,
+    LEFT,
+    FREE,
+}
+
 public class ViewManager : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;

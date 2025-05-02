@@ -1,5 +1,5 @@
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 using TCad.Properties;
 
 namespace TCad.Plotter.Controller;

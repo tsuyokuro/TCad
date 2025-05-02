@@ -3,7 +3,7 @@ using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 using TCad.Logger;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public struct MarkSegment
 {

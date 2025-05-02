@@ -2,7 +2,7 @@ using System;
 using TCad.Plotter.Model.Figure;
 using TCad.Logger;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public struct MarkPoint : IEquatable<MarkPoint>
 {

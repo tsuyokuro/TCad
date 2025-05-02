@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 
 namespace TCad.Plotter.Controller;
 

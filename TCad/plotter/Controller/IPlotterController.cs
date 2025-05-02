@@ -72,7 +72,7 @@ public interface IPlotterController
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
     void UpdateTreeView(bool remakeTree);
 
-    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, CursorType type);
     void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
     void CursorLocked(bool locked);
 

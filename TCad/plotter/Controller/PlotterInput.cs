@@ -6,7 +6,7 @@ using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 using TCad.ViewModel;
 using TCad.Logger;
 
@@ -511,8 +511,6 @@ public class PlotterInput
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        //DOut.tpl($"LButtonDown ({x},{y})");
-
         if (CursorLocked)
         {
             x = CrossCursor.Pos.X;

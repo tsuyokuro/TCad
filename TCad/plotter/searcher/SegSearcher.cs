@@ -6,7 +6,7 @@ using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public class SegSearcher
 {

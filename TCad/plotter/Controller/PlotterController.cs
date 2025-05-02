@@ -450,7 +450,7 @@ public class PlotterController : IPlotterController
         ViewModel.UpdateTreeView(remakeTree);
     }
 
-    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, CursorType type)
     {
         ViewModel.CursorPosChanged(pt, type);
     }
