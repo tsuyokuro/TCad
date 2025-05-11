@@ -208,7 +208,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     {
     }
 
-    public void SetWorldScale(float scale)
+    public void SetWorldScale(vcompo_t scale)
     {
     }
 

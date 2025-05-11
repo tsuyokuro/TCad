@@ -445,13 +445,13 @@ class PlotterViewGL : GLControl, IPlotterView
 
                 Vector2 prev = default;
 
-                prev.X = (float)PrevMousePos.X;
-                prev.Y = (float)PrevMousePos.Y;
+                prev.X = (vcompo_t)PrevMousePos.X;
+                prev.Y = (vcompo_t)PrevMousePos.Y;
 
                 Vector2 current = default;
 
-                current.X = (float)t.X;
-                current.Y = (float)t.Y;
+                current.X = (vcompo_t)t.X;
+                current.Y = (vcompo_t)t.Y;
 
                 if (CadKeyboard.IsCtrlKeyDown())
                 {
