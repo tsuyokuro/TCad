@@ -19,27 +19,27 @@ public class PlotterDrawer
         get => Controller.DC;
     }
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public PaperPageSize PageSize
+    PaperPageSize PageSize
     {
         get => Controller.PageSize;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
     }
 
-    public List<CadFigure> TempFigureList
+    List<CadFigure> TempFigureList
     {
         get => Controller.TempFigureList;
     }
 
-    public FigCreator MeasureFigureCreator
+    FigCreator MeasureFigureCreator
     {
         get => Controller.MeasureFigureCreator;
     }
@@ -53,7 +53,6 @@ public class PlotterDrawer
     {
         Controller = controller;
     }
-
 
     public void Redraw()
     {

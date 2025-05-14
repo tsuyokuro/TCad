@@ -12,33 +12,31 @@ using TCad.Logger;
 
 namespace TCad.Plotter.Controller;
 
-// Edit figure functions
-
 public class PlotterEditor
 {
-    private IPlotterController Controller;
+    IPlotterController Controller;
 
     PlotterInput Input
     {
         get => Controller.Input;
     }
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public HistoryManager HistoryMan
+    HistoryManager HistoryMan
     {
         get => Controller.HistoryMan;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
     }
 
-    public PlotterTaskRunner PlotterTaskRunner
+    PlotterTaskRunner PlotterTaskRunner
     {
         get => Controller.PlotterTaskRunner;
     }

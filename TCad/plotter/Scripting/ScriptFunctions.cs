@@ -1172,7 +1172,7 @@ public class ScriptFunctions
         CadRect r3 = CadUtil.GetContainsRectScrn(tdc, figList);
 
         vector3_t center = r3.Center();
-        ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
+        ViewPortUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
 
 
         DrawPen drawPen = new DrawPen((int)argb, lineW);

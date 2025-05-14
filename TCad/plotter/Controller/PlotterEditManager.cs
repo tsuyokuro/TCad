@@ -8,18 +8,18 @@ namespace TCad.Plotter.Controller;
 
 public class PlotterEditManager
 {
-    private IPlotterController Controller;
+    IPlotterController Controller;
 
-    private CadOpeFigureSnapShotList mSnapShotList;
+    CadOpeFigureSnapShotList mSnapShotList;
 
-    private List<CadFigure> mEditFigList = new List<CadFigure>();
+    List<CadFigure> mEditFigList = new List<CadFigure>();
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public HistoryManager HistoryMan
+    HistoryManager HistoryMan
     {
         get => Controller.HistoryMan;
     }

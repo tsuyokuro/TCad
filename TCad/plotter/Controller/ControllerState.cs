@@ -660,13 +660,9 @@ public class MeasuringState : ControllerState
         PutMeasure();
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
-    {
-    }
+    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
-    {
-    }
+    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
     public override void Cancel()
     {
@@ -688,7 +684,7 @@ public class MeasuringState : ControllerState
         MeasureFigureCreator.AddPointInCreating(dc, p);
     }
 
-    public void PutMeasure()
+    private void PutMeasure()
     {
         int pcnt = MeasureFigureCreator.Figure.PointCount;
 
@@ -780,7 +776,7 @@ public class DragingViewOrgState : ControllerState
 
         vector3_t op = Controller.Input.StoreViewOrg + d;
 
-        ViewUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
+        ViewPortUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
 
         Controller.Input.CrossCursor.Pos = Controller.Input.CrossCursor.StorePos + d;
     }

@@ -13,18 +13,18 @@ public class PlotterCommandProcessor
 {
     IPlotterController Controller;
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
         set => Controller.CurrentLayer = value;
     }
 
-    public HistoryManager HistoryMan
+    HistoryManager HistoryMan
     {
         get => Controller.HistoryMan;
     }

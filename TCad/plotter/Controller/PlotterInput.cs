@@ -16,47 +16,47 @@ public class PlotterInput
 {
     IPlotterController Controller;
 
-    public DrawContext DC
+    DrawContext DC
     {
         get => Controller.DC;
     }
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
     }
 
-    public SelectModes SelectMode
+    SelectModes SelectMode
     {
         get => Controller.SelectMode;
     }
 
-    public ControllerStates StateID
+    ControllerStates StateID
     {
         get => Controller.StateID;
     }
 
-    public ControllerState CurrentState
+    ControllerState CurrentState
     {
         get => Controller.CurrentState;
     }
 
-    public FigCreator FigureCreator
+    FigCreator FigureCreator
     {
         get => Controller.FigureCreator;
     }
 
-    public FigCreator MeasureFigureCreator
+    FigCreator MeasureFigureCreator
     {
         get => Controller.MeasureFigureCreator;
     }
 
-    public ControllerStateMachine StateMachine
+    ControllerStateMachine StateMachine
     {
         get => Controller.StateMachine;
     }
@@ -77,7 +77,7 @@ public class PlotterInput
     public CadMouse Mouse
     {
         get;
-        private set;
+        set;
     } = new CadMouse();
 
     public CadCursor CrossCursor = CadCursor.Create();
@@ -569,7 +569,7 @@ public class PlotterInput
 
         if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
         {
-            ViewUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
+            ViewPortUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
         }
 
         StateMachine.PopState();
@@ -596,7 +596,7 @@ public class PlotterInput
                 f = (vcompo_t)(0.8);
             }
 
-            ViewUtil.DpiUpDown(dc, f);
+            ViewPortUtil.DpiUpDown(dc, f);
         }
     }
 
