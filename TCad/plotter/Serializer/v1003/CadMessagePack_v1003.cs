@@ -54,7 +54,7 @@ public class MpCadData_v1003
 
         vcompo_t worldScale = 0;
 
-        PaperPageSize pps = null;
+        PaperPageSize? pps = null;
 
         if (ViewInfo != null)
         {
@@ -77,10 +77,10 @@ public class MpCadData_v1003
 
         if (pps == null)
         {
-            pps = new PaperPageSize();
+            pps = PaperPageSize.A4Portrate;
         }
 
-        cd.PageSize = pps;
+        cd.PageSize = pps.Value;
 
         cd.DB = MpDB.Restore(dsc);
 
@@ -118,22 +118,14 @@ public class MpPaperSettings_v1003
         Width = pp.Width;
         Height = pp.Height;
 
-        Landscape = pp.mLandscape;
+        Landscape = pp.IsLandscape;
 
-        Kind = pp.mPaperKind;
+        Kind = pp.PaperKind;
     }
 
     public PaperPageSize GetPaperPageSize()
     {
-        PaperPageSize pp = new PaperPageSize();
-
-        pp.Width = Width;
-        pp.Height = Height;
-
-        pp.mLandscape = Landscape;
-
-        pp.mPaperKind = Kind;
-
+        PaperPageSize pp = new PaperPageSize(Kind, Landscape);
         return pp;
     }
 }

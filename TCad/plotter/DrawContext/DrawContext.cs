@@ -28,37 +28,42 @@ public abstract class DrawContext : IDisposable
 
     // 視点
     public const vcompo_t STD_EYE_DIST = (vcompo_t)(250.0);
+
     protected vector3_t mEye = vector3_t.UnitZ * STD_EYE_DIST;
-    public vector3_t Eye => mEye;
+    public vector3_t Eye {
+        get => mEye;
+    }
 
     // 注視点
     protected vector3_t mLookAt = vector3_t.Zero;
-    public vector3_t LookAt => mLookAt;
+    public vector3_t LookAt {
+        get => mLookAt;
+    }
 
     // 投影面までの距離
     protected vcompo_t mProjectionNear = (vcompo_t)0.1;
-    protected vcompo_t ProjectionNear => mProjectionNear;
 
     // 視野空間の遠方側クリップ面までの距離
     protected vcompo_t mProjectionFar = (vcompo_t)2000.0;
-    protected vcompo_t ProjectionFar => mProjectionFar;
 
     // 画角 大きければ広角レンズ、小さければ望遠レンズ
     protected vcompo_t mFovY = (vcompo_t)(Math.PI / 4.0);
-    protected vcompo_t FovY => mFovY;
 
     // 上を示す Vector
     protected vector3_t mUpVector = vector3_t.UnitY;
-    public vector3_t UpVector => mUpVector;
+    public vector3_t UpVector {
+        get => mUpVector;
+    }
 
     // 投影スクリーンの向き
     protected vector3_t mViewDir = default;
-    public virtual vector3_t ViewDir => mViewDir;
+    public vector3_t ViewDir {
+        get => mViewDir;
+    }
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
     protected matrix4_t mModelViewMatrix = default;
     protected matrix4_t ModelViewMatrix => mModelViewMatrix;
-    protected ref matrix4_t ModelViewMatrixRef => ref mModelViewMatrix;
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -67,7 +72,6 @@ public abstract class DrawContext : IDisposable
     // 視点座標系から投影座標系への変換行列
     protected matrix4_t mProjectionMatrix = default;
     protected matrix4_t ProjectionMatrix => mProjectionMatrix;
-    protected ref matrix4_t ProjectionMatrixRef => ref mProjectionMatrix;
 
     // 投影座標系から視点座標系への変換行列
     protected matrix4_t mProjectionMatrixInv = default;
@@ -87,12 +91,17 @@ public abstract class DrawContext : IDisposable
         get => mViewOrg;
     }
 
-    public vcompo_t mViewWidth = 32;
-    public vcompo_t mViewHeight = 32;
+    protected vcompo_t mViewWidth = 32;
+    protected vcompo_t mViewHeight = 32;
 
     // Screenのサイズ
-    public vcompo_t ViewWidth => mViewWidth;
-    public vcompo_t ViewHeight => mViewHeight;
+    public vcompo_t ViewWidth {
+        get => mViewWidth;
+    }
+
+    public vcompo_t ViewHeight {
+        get => mViewHeight;
+    }
 
     // Viewの中心
     protected vector3_t mViewCenter;
@@ -133,7 +142,9 @@ public abstract class DrawContext : IDisposable
     }
 
     protected IDrawing mDrawing;
-    public IDrawing Drawing => mDrawing;
+    public IDrawing Drawing {
+        get => mDrawing;
+    }
 
     public DrawContext()
     {

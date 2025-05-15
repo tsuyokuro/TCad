@@ -415,13 +415,13 @@ public class SelectingState : ControllerState
         if (EditStarted)
         {
             Controller.CommandProc.MovePointsFromStored(EditFigList, moveInfo);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         }
         else
         {
             vector3_t p = Controller.Input.GetCursorPos();
             Controller.Input.SetCursorWoldPos(p + moveInfo.Delta);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         }
     }
 
@@ -434,7 +434,7 @@ public class SelectingState : ControllerState
             EditFigList = null;
             EditStarted = false;
         }
-        Controller.Drawer.Redraw();
+        Controller.Redraw();
     }
 }
 

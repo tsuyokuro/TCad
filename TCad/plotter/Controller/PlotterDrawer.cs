@@ -1,6 +1,5 @@
 using MyCollections;
 using TCad.Plotter.Settings;
-using System.Collections.Generic;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
@@ -14,41 +13,6 @@ public class PlotterDrawer
 {
     IPlotterController Controller;
 
-    DrawContext DC
-    {
-        get => Controller.DC;
-    }
-
-    CadObjectDB DB
-    {
-        get => Controller.DB;
-    }
-
-    PaperPageSize PageSize
-    {
-        get => Controller.PageSize;
-    }
-
-    CadLayer CurrentLayer
-    {
-        get => Controller.CurrentLayer;
-    }
-
-    List<CadFigure> TempFigureList
-    {
-        get => Controller.TempFigureList;
-    }
-
-    FigCreator MeasureFigureCreator
-    {
-        get => Controller.MeasureFigureCreator;
-    }
-
-    PlotterInput Input
-    {
-        get => Controller.Input;
-    }
-
     public PlotterDrawer(IPlotterController controller)
     {
         Controller = controller;
@@ -56,7 +20,7 @@ public class PlotterDrawer
 
     public void Redraw()
     {
-        Redraw(DC);
+        Redraw(Controller.DC);
     }
 
     public void Redraw(DrawContext dc)
@@ -71,7 +35,7 @@ public class PlotterDrawer
 
     public void Clear()
     {
-        Clear(DC);
+        Clear(Controller.DC);
     }
 
     public void Clear(DrawContext dc = null)
@@ -81,7 +45,7 @@ public class PlotterDrawer
 
     public void DrawAll()
     {
-        DrawAll(DC);
+        DrawAll(Controller.DC);
     }
 
     public void DrawAll(DrawContext dc)
@@ -120,7 +84,7 @@ public class PlotterDrawer
         dc.OptionSet.Update();
         DrawOption normal_dp = dc.OptionSet.Normal;
 
-        foreach (CadLayer layer in DB.LayerList)
+        foreach (CadLayer layer in Controller.DB.LayerList)
         {
             if (!layer.Visible) continue;
 
@@ -161,7 +125,7 @@ public class PlotterDrawer
             dc.Drawing.DrawCrossScrn(dc.GetPen(DrawTools.PEN_AXIS), dc.WorldPointToDevPoint(vector3_t.Zero), 8);
         }
 
-        dc.Drawing.DrawPageFrame(PageSize.Width, PageSize.Height, vector3_t.Zero);
+        dc.Drawing.DrawPageFrame(Controller.PageSize.Width, Controller.PageSize.Height, vector3_t.Zero);
         DrawGrid(dc);
     }
 
@@ -183,15 +147,15 @@ public class PlotterDrawer
         AlphaFigList.Clear();
         AlphaFigListCurrentLayer.Clear();
 
-        lock (DB)
+        lock (Controller.DB)
         {
-            foreach (CadLayer layer in DB.LayerList)
+            foreach (CadLayer layer in Controller.DB.LayerList)
             {
                 if (!layer.Visible) continue;
 
                 // Skip current layer.
                 // It will be drawn at the end of this loop.
-                if (layer == CurrentLayer) { continue; }
+                if (layer == Controller.CurrentLayer) { continue; }
 
                 foreach (CadFigure fig in layer.FigureList)
                 {
@@ -213,9 +177,9 @@ public class PlotterDrawer
             }
 
             // Draw current layer at last
-            if (CurrentLayer != null && CurrentLayer.Visible)
+            if (Controller.CurrentLayer != null && Controller.CurrentLayer.Visible)
             {
-                foreach (CadFigure fig in CurrentLayer.FigureList)
+                foreach (CadFigure fig in Controller.CurrentLayer.FigureList)
                 {
                     if (fig.Type == CadFigure.Types.DIMENTION_LINE)
                     {
@@ -234,7 +198,7 @@ public class PlotterDrawer
                 }
             }
 
-            foreach (CadFigure fig in TempFigureList)
+            foreach (CadFigure fig in Controller.TempFigureList)
             {
                 if (fig.Type == CadFigure.Types.DIMENTION_LINE)
                 {
@@ -244,11 +208,11 @@ public class PlotterDrawer
                 fig.DrawEach(dc, temp_dp);
             }
 
-            if (MeasureFigureCreator != null)
+            if (Controller.MeasureFigureCreator != null)
             {
-                if (MeasureFigureCreator.Figure.Type != CadFigure.Types.DIMENTION_LINE)
+                if (Controller.MeasureFigureCreator.Figure.Type != CadFigure.Types.DIMENTION_LINE)
                 {
-                    MeasureFigureCreator.Figure.Draw(dc, measure_dp);
+                    Controller.MeasureFigureCreator.Figure.Draw(dc, measure_dp);
                 }
             }
 
@@ -278,7 +242,7 @@ public class PlotterDrawer
             }
 
 
-            foreach (CadFigure fig in TempFigureList)
+            foreach (CadFigure fig in Controller.TempFigureList)
             {
                 if (fig.Type != CadFigure.Types.DIMENTION_LINE)
                 {
@@ -288,11 +252,11 @@ public class PlotterDrawer
                 fig.DrawEach(dc, temp_dp);
             }
 
-            if (MeasureFigureCreator != null)
+            if (Controller.MeasureFigureCreator != null)
             {
-                if (MeasureFigureCreator.Figure.Type == CadFigure.Types.DIMENTION_LINE)
+                if (Controller.MeasureFigureCreator.Figure.Type == CadFigure.Types.DIMENTION_LINE)
                 {
-                    MeasureFigureCreator.Figure.Draw(dc, measure_dp);
+                    Controller.MeasureFigureCreator.Figure.Draw(dc, measure_dp);
                 }
             }
         }
@@ -302,7 +266,7 @@ public class PlotterDrawer
     {
         if (SettingsHolder.Settings.SnapToGrid)
         {
-            dc.Drawing.DrawGrid(Input.Grid);
+            dc.Drawing.DrawGrid(Controller.Input.Grid);
         }
     }
 
@@ -313,17 +277,17 @@ public class PlotterDrawer
 
         dc.DisableLight();
 
-        foreach (CadLayer layer in DB.LayerList)
+        foreach (CadLayer layer in Controller.DB.LayerList)
         {
             foreach (CadFigure fig in layer.FigureList)
             {
                 if (fig.Current)
                 {
-                    fig.DrawSelectedEach(DC, current_dp);
+                    fig.DrawSelectedEach(Controller.DC, current_dp);
                 }
                 else
                 {
-                    fig.DrawSelectedEach(DC, normal_dp);
+                    fig.DrawSelectedEach(Controller.DC, normal_dp);
                 }
             }
         }
@@ -335,14 +299,14 @@ public class PlotterDrawer
     {
         dc.Drawing.DrawMarkCursor(
             dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER),
-            Input.LastDownPoint,
+            Controller.Input.LastDownPoint,
             DrawSizes.MarkCursorSize);
 
-        if (Input.ObjDownPoint.IsValid())
+        if (Controller.Input.ObjDownPoint.IsValid())
         {
             dc.Drawing.DrawMarkCursor(
                 dc.GetPen(DrawTools.PEN_LAST_POINT_MARKER2),
-                Input.ObjDownPoint,
+                Controller.Input.ObjDownPoint,
                 DrawSizes.MarkCursorSize);
         }
     }
@@ -355,74 +319,74 @@ public class PlotterDrawer
         }
 
         dc.Drawing.DrawLine(dc.GetPen(DrawTools.PEN_DRAG_LINE),
-            Input.LastDownPoint, dc.DevPointToWorldPoint(Input.CrossCursor.Pos));
+            Controller.Input.LastDownPoint, dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos));
     }
 
     private void DrawCrossCursor(DrawContext dc)
     {
-        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
+        dc.Drawing.DrawCrossCursorScrn(Controller.Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR));
 
-        if (Input.CursorLocked)
+        if (Controller.Input.CursorLocked)
         {
             dc.Drawing.DrawCrossScrn(
                 dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT),
-                Input.CrossCursor.Pos,
+                Controller.Input.CrossCursor.Pos,
                 DrawSizes.CursorLockMarkSize);
         }
     }
 
     private void DrawCrossCursorShort(DrawContext dc)
     {
-        dc.Drawing.DrawCrossCursorScrn(Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
+        dc.Drawing.DrawCrossCursorScrn(Controller.Input.CrossCursor, dc.GetPen(DrawTools.PEN_CROSS_CURSOR2), 12, 12);
     }
 
     private void DrawAccordingState(DrawContext dc)
     {
         Controller.CurrentState.Draw(dc);
 
-        if (Input.InteractCtrl.IsActive)
+        if (Controller.Input.InteractCtrl.IsActive)
         {
-            Input.InteractCtrl.Draw(dc, Input.SnapPoint);
+            Controller.Input.InteractCtrl.Draw(dc, Controller.Input.SnapPoint);
         }
     }
 
     private void DrawHighlightPoint(DrawContext dc)
     {
-        dc.Drawing.DrawHighlightPoints(Input.HighlightPointList);
+        dc.Drawing.DrawHighlightPoints(Controller.Input.HighlightPointList);
     }
 
     private void DrawHighlightSeg(DrawContext dc)
     {
-        foreach (MarkSegment markSeg in Input.HighlightSegList)
+        foreach (MarkSegment markSeg in Controller.Input.HighlightSegList)
         {
-            CadFigure fig = DB.GetFigure(markSeg.FigureID);
+            CadFigure fig = Controller.DB.GetFigure(markSeg.FigureID);
             fig.DrawSeg(dc, dc.GetPen(DrawTools.PEN_MATCH_SEG), markSeg.PtIndexA, markSeg.PtIndexB);
         }
     }
 
     private void DrawLastSelSeg(DrawContext dc)
     {
-        if (Input.LastSelSegment == null)
+        if (Controller.Input.LastSelSegment == null)
         {
             return;
         }
 
-        CadFigure fig = DB.GetFigure(Input.LastSelSegment.Value.FigureID);
+        CadFigure fig = Controller.DB.GetFigure(Controller.Input.LastSelSegment.Value.FigureID);
         fig.DrawSeg(
                 dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG),
-                Input.LastSelSegment.Value.PtIndexA,
-                Input.LastSelSegment.Value.PtIndexB);
+                Controller.Input.LastSelSegment.Value.PtIndexA,
+                Controller.Input.LastSelSegment.Value.PtIndexB);
     }
 
     private void DrawLastSelPoint(DrawContext dc)
     {
-        if (Input.LastSelPoint == null)
+        if (Controller.Input.LastSelPoint == null)
         {
             return;
         }
 
-        CadFigure fig = DB.GetFigure(Input.LastSelPoint.Value.FigureID);
-        int idx = Input.LastSelPoint.Value.PointIndex;
+        CadFigure fig = Controller.DB.GetFigure(Controller.Input.LastSelPoint.Value.FigureID);
+        int idx = Controller.Input.LastSelPoint.Value.PointIndex;
         var point = fig.PointList[idx];
 
 
@@ -431,9 +395,9 @@ public class PlotterDrawer
 
     private void DrawExtendSnapPoint(DrawContext dc)
     {
-        if (Input.ExtendSnapPointList.Count > 0)
+        if (Controller.Input.ExtendSnapPointList.Count > 0)
         {
-            dc.Drawing.DrawExtSnapPoints(Input.ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
+            dc.Drawing.DrawExtSnapPoints(Controller.Input.ExtendSnapPointList, dc.GetPen(DrawTools.PEN_EXT_SNAP));
         }
     }
     #endregion

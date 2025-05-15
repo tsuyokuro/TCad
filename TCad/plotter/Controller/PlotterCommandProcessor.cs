@@ -13,27 +13,6 @@ public class PlotterCommandProcessor
 {
     IPlotterController Controller;
 
-    CadObjectDB DB
-    {
-        get => Controller.DB;
-    }
-
-    CadLayer CurrentLayer
-    {
-        get => Controller.CurrentLayer;
-        set => Controller.CurrentLayer = value;
-    }
-
-    HistoryManager HistoryMan
-    {
-        get => Controller.HistoryMan;
-    }
-
-    DrawContext DC
-    {
-        get => Controller.DC;
-    }
-
     public PlotterCommandProcessor(IPlotterController controller)
     {
         Controller = controller;
@@ -47,7 +26,7 @@ public class PlotterCommandProcessor
     #region Layer
     public void SelectAllInCurrentLayer()
     {
-        foreach (CadFigure fig in CurrentLayer.FigureList)
+        foreach (CadFigure fig in Controller.CurrentLayer.FigureList)
         {
             fig.Select();
         }
@@ -57,25 +36,25 @@ public class PlotterCommandProcessor
     {
         if (layerID == 0)
         {
-            layerID = CurrentLayer.ID;
+            layerID = Controller.CurrentLayer.ID;
         }
 
-        CadLayer layer = DB.GetLayer(layerID);
+        CadLayer layer = Controller.DB.GetLayer(layerID);
 
         if (layer == null) return;
 
         CadOpeList opeList = layer.Clear();
 
-        HistoryMan.foward(opeList);
+        Controller.HistoryMan.foward(opeList);
     }
 
     public void AddLayer(string name)
     {
-        CadLayer layer = DB.NewLayer(addLayerList:true, selectCurrent:true);
+        CadLayer layer = Controller.DB.NewLayer(addLayerList:true, selectCurrent:true);
 
         layer.Name = name;
 
-        CurrentLayer = layer;
+        Controller.CurrentLayer = layer;
 
         Controller.UpdateLayerList();
 
@@ -84,25 +63,25 @@ public class PlotterCommandProcessor
 
     public void RemoveLayer(uint id)
     {
-        if (DB.LayerList.Count == 1)
+        if (Controller.DB.LayerList.Count == 1)
         {
             return;
         }
 
-        CadLayer layer = DB.GetLayer(id);
+        CadLayer layer = Controller.DB.GetLayer(id);
 
         if (layer == null)
         {
             return;
         }
 
-        int index = DB.LayerIndex(id);
+        int index = Controller.DB.LayerIndex(id);
 
 
         CadOpeRemoveLayer ope = new CadOpeRemoveLayer(layer, index);
-        HistoryMan.foward(ope);
+        Controller.HistoryMan.foward(ope);
 
-        DB.RemoveLayer(id, adjustCurrent: true);
+        Controller.DB.RemoveLayer(id, adjustCurrent: true);
 
         Controller.UpdateLayerList();
         ItConsole.println("Layer removed.  Name:" + layer.Name + " ID:" + layer.ID);
@@ -124,7 +103,7 @@ public class PlotterCommandProcessor
 
         foreach (CadFigure fig in figList)
         {
-            fig.MoveSelectedPointsFromStored(DC, moveInfo);
+            fig.MoveSelectedPointsFromStored(Controller.DC, moveInfo);
         }
     }
 
@@ -152,16 +131,16 @@ public class PlotterCommandProcessor
 
     public void AddPointToCursorPos()
     {
-        CadFigure fig = DB.NewFigure(CadFigure.Types.POINT);
+        CadFigure fig = Controller.DB.NewFigure(CadFigure.Types.POINT);
         fig.AddPoint((CadVertex)Controller.Input.GetCursorPos());
 
-        fig.EndCreate(DC);
+        fig.EndCreate(Controller.DC);
 
-        CadOpe ope = new CadOpeAddFigure(CurrentLayer.ID, fig.ID);
+        CadOpe ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
 
-        CurrentLayer.AddFigure(fig);
+        Controller.CurrentLayer.AddFigure(fig);
 
-        HistoryMan.foward(ope);
+        Controller.HistoryMan.foward(ope);
     }
 
     public void Copy()
@@ -237,7 +216,7 @@ public class PlotterCommandProcessor
 
     public void ObjOrderDown()
     {
-        ClusterInfo ci = SeparateSlectedFigs(CurrentLayer.FigureList);
+        ClusterInfo ci = SeparateSlectedFigs(Controller.CurrentLayer.FigureList);
 
         if (ci.SelFigList.Count == 0) return;
 
@@ -250,12 +229,12 @@ public class PlotterCommandProcessor
 
         ci.FigList.InsertRange(ins, ci.SelFigList);
 
-        ChangeLayerFigList(CurrentLayer, ci.FigList);
+        ChangeLayerFigList(Controller.CurrentLayer, ci.FigList);
     }
 
     public void ObjOrderUp()
     {
-        ClusterInfo ci = SeparateSlectedFigs(CurrentLayer.FigureList);
+        ClusterInfo ci = SeparateSlectedFigs(Controller.CurrentLayer.FigureList);
 
         if (ci.SelFigList.Count == 0) return;
 
@@ -268,12 +247,12 @@ public class PlotterCommandProcessor
 
         ci.FigList.InsertRange(ins, ci.SelFigList);
 
-        ChangeLayerFigList(CurrentLayer, ci.FigList);
+        ChangeLayerFigList(Controller.CurrentLayer, ci.FigList);
     }
 
     public void ObjOrderBottom()
     {
-        ClusterInfo ci = SeparateSlectedFigs(CurrentLayer.FigureList);
+        ClusterInfo ci = SeparateSlectedFigs(Controller.CurrentLayer.FigureList);
 
         if (ci.SelFigList.Count == 0) return;
 
@@ -286,12 +265,12 @@ public class PlotterCommandProcessor
 
         ci.FigList.InsertRange(ins, ci.SelFigList);
 
-        ChangeLayerFigList(CurrentLayer, ci.FigList);
+        ChangeLayerFigList(Controller.CurrentLayer, ci.FigList);
     }
 
     public void ObjOrderTop()
     {
-        ClusterInfo ci = SeparateSlectedFigs(CurrentLayer.FigureList);
+        ClusterInfo ci = SeparateSlectedFigs(Controller.CurrentLayer.FigureList);
 
         if (ci.SelFigList.Count == 0) return;
 
@@ -299,12 +278,12 @@ public class PlotterCommandProcessor
 
         ci.FigList.InsertRange(ins, ci.SelFigList);
 
-        ChangeLayerFigList(CurrentLayer, ci.FigList);
+        ChangeLayerFigList(Controller.CurrentLayer, ci.FigList);
     }
 
     private void ChangeLayerFigList(CadLayer layer, List<CadFigure> newFigList)
     {
-        HistoryMan.foward(new CadOpeChangeFigureList(layer, layer.FigureList, newFigList));
+        Controller.HistoryMan.foward(new CadOpeChangeFigureList(layer, layer.FigureList, newFigList));
 
         layer.FigureList = newFigList;
 

@@ -45,7 +45,7 @@ public class ObjectTreeViewModel
         Controller.Input.CurrentFigure =
             TreeViewUtil.GetCurrentFigure(item, Controller.Input.CurrentFigure);
 
-        Controller.Drawer.Redraw();
+        Controller.Redraw();
     }
 
     public void UpdateTreeView(bool remakeTree)

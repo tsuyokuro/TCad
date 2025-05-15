@@ -32,36 +32,57 @@ public class PaperSizes
 }
 
 
-public class PaperPageSize
+public struct PaperPageSize
 {
     // 1inchは何ミリ?
     public const vcompo_t MILLI_PER_INCH = (vcompo_t)(25.4);
+
+    // A4縦
+    public static PaperPageSize A4Portrate
+    {
+        get;
+    } = new PaperPageSize(PaperKind.A4, false);
+
+    // A4横
+    public static PaperPageSize A4Landscape
+    {
+        get;
+    } = new PaperPageSize(PaperKind.A4, true);
 
     // デフォルト A4縦
     public vcompo_t Width = (vcompo_t)(210.0);
     public vcompo_t Height = (vcompo_t)(297.0);
 
-    public PaperKind mPaperKind = PaperKind.A4;
-
-    public bool mLandscape = false;
-
-    public PaperPageSize()
+    public PaperKind PaperKind
     {
-    }
+        get;
+        set;
+    } = PaperKind.A4;
+
+    public bool IsLandscape
+    {
+        get;
+        set;
+    } = false;
 
     public PaperPageSize(PaperKind papaerKind, bool landscape)
     {
-        mPaperKind = papaerKind;
-        mLandscape = landscape;
+        PaperKind = papaerKind;
+        IsLandscape = landscape;
 
         (Width, Height) = PaperSizes.GetSize(papaerKind, landscape);
     }
 
+    public PaperPageSize(PageSettings settings)
+    {
+        Setup(settings);
+    }
+
     public void Setup(PageSettings settings)
     {
-        mPaperKind = settings.PaperSize.Kind;
+        PaperKind = settings.PaperSize.Kind;
 
-        mLandscape = settings.Landscape;
+        IsLandscape = settings.Landscape;
 
 
         // PageSettingsは、1/100 Inch単位で設定されているのでmmに変換
@@ -77,11 +98,6 @@ public class PaperPageSize
                     MidpointRounding.AwayFromZero);
     }
 
-    public bool IsLandscape()
-    {
-        return mLandscape;
-    }
-
     public PaperSize GetPaperSize()
     {
         PrintDocument pd = new PrintDocument();
@@ -91,7 +107,7 @@ public class PaperPageSize
         for (i = 0; i < cnt; i++)
         {
             PaperSize ps = pd.PrinterSettings.PaperSizes[i];
-            if (ps.Kind == mPaperKind)
+            if (ps.Kind == PaperKind)
             {
                 return ps;
             }

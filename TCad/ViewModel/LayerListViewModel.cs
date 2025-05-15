@@ -53,7 +53,7 @@ public class LayerListViewModel : INotifyPropertyChanged
             {
                 Controller.SetCurrentLayer(layerHolder.ID);
 
-                Controller.Drawer.Redraw();
+                Controller.Redraw();
             }
 
             NotifyPropertyChanged("SelectedItem");
@@ -70,7 +70,7 @@ public class LayerListViewModel : INotifyPropertyChanged
     public void LayerListItemPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         LayerHolder lh = (LayerHolder)sender;
-        Controller.Drawer.Redraw();
+        Controller.Redraw();
     }
 
     public void LayerListChanged(LayerListInfo layerListInfo)

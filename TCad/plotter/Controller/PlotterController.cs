@@ -1,7 +1,6 @@
 using TCad.Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Printing;
 
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
@@ -24,7 +23,7 @@ public class PlotterController : IPlotterController
     {
         get;
         set;
-    } = new PaperPageSize(PaperKind.A4, false);
+    } = PaperPageSize.A4Portrate;
 
     public SelectModes SelectMode
     {
@@ -389,7 +388,7 @@ public class PlotterController : IPlotterController
 
     public void ClearAll()
     {
-        PageSize = new PaperPageSize();
+        PageSize = PaperPageSize.A4Portrate;
 
         DB.ClearAll();
         HistoryMan.Clear();

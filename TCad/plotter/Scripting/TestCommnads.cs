@@ -697,7 +697,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
@@ -764,7 +764,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
@@ -795,7 +795,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
