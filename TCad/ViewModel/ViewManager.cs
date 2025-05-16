@@ -114,8 +114,6 @@ public class ViewManager : INotifyPropertyChanged
 
     private void ChangeViewMode(ViewModes newMode)
     {
-        DrawContext currentDC = View?.DrawContext;
-        DrawContext nextDC = View?.DrawContext;
         IPlotterView view = View;
 
         switch (ViewMode_)
@@ -126,7 +124,6 @@ public class ViewManager : INotifyPropertyChanged
                 view.DrawContext.SetCamera(
                     vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.BACK:
@@ -136,7 +133,6 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.TOP:
@@ -146,7 +142,6 @@ public class ViewManager : INotifyPropertyChanged
                     vector3_t.UnitY * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, -vector3_t.UnitZ);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.BOTTOM:
@@ -156,7 +151,6 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitY * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitZ);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.RIGHT:
@@ -166,7 +160,6 @@ public class ViewManager : INotifyPropertyChanged
                     vector3_t.UnitX * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.LEFT:
@@ -176,18 +169,13 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitX * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.FREE:
                 PlotterViewGL1.EnablePerse(true);
                 view = PlotterViewGL1;
-                nextDC = view.DrawContext;
                 break;
         }
-
-        if (currentDC != null) currentDC.Deactivate();
-        if (nextDC != null) nextDC.Activate();
 
         SetView(view);
     }

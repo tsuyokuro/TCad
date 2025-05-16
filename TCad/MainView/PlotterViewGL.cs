@@ -443,15 +443,15 @@ class PlotterViewGL : GLControl, IPlotterView
             {
                 vector3_t t = new vector3_t(e.X, e.Y, 0);
 
-                Vector2 prev = default;
+                vector2_t prev = default;
 
-                prev.X = (vcompo_t)PrevMousePos.X;
-                prev.Y = (vcompo_t)PrevMousePos.Y;
+                prev.X = PrevMousePos.X;
+                prev.Y = PrevMousePos.Y;
 
-                Vector2 current = default;
+                vector2_t current = default;
 
-                current.X = (vcompo_t)t.X;
-                current.Y = (vcompo_t)t.Y;
+                current.X = t.X;
+                current.Y = t.Y;
 
                 if (CadKeyboard.IsCtrlKeyDown())
                 {

@@ -26,11 +26,6 @@ class DrawContextGLOrtho : DrawContextGL
         mUnitPerMilli = 4;
     }
 
-    public override void Activate()
-    {
-        CalcProjectionMatrix();
-    }
-
     public override void StartDraw()
     {
         GL.Viewport(0, 0, (int)mViewWidth, (int)mViewHeight);
