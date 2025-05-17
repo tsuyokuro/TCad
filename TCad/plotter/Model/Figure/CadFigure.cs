@@ -49,6 +49,7 @@ public abstract partial class CadFigure
             { Types.MESH, "MESH" },
             { Types.NURBS_LINE, "NURBS-LINE" },
             { Types.NURBS_SURFACE, "NURBS-SURFACE" },
+            { Types.PICTURE, "PICTURE" },
         };
     }
 

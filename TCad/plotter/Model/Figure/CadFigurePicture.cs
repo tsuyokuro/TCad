@@ -295,11 +295,11 @@ public partial class CadFigurePicture : CadFigure
     }
 
 
-    void AdjustPoints(int mIdx, vector3_t d)
+    void AdjustPoints(int moveIdx, vector3_t d)
     {
-        int aIdx = (mIdx + 2) % 4; // 対角のIndex
-        int bIdx = (mIdx + 1) % 4; // 次のIndex
-        int cIdx = (mIdx + 3) % 4; // 前のIndex
+        int aIdx = (moveIdx + 2) % 4; // 対角のIndex
+        int bIdx = (moveIdx + 1) % 4; // 次のIndex
+        int cIdx = (moveIdx + 3) % 4; // 前のIndex
 
         bool keepAspect = true;
 
@@ -308,23 +308,23 @@ public partial class CadFigurePicture : CadFigure
         {
             ci = CadMath.PerpCrossLine(
                 vector3_t.Zero,
-                mPointList[aIdx].vector - mPointList[mIdx].vector,
+                StoreList[aIdx].vector - StoreList[moveIdx].vector,
                 d
                 );
             d = ci.CrossPoint;
         }
 
-        mPointList[mIdx] = StoreList[mIdx] + d;
+        mPointList[moveIdx] = StoreList[moveIdx] + d;
 
         ci = CadMath.PerpCrossLine(
             StoreList[aIdx].vector, StoreList[bIdx].vector,
-            mPointList[mIdx].vector
+            mPointList[moveIdx].vector
             );
         mPointList[bIdx].vector = ci.CrossPoint;
 
         ci = CadMath.PerpCrossLine(
             StoreList[cIdx].vector, StoreList[aIdx].vector,
-            mPointList[mIdx].vector
+            mPointList[moveIdx].vector
             );
         mPointList[cIdx].vector = ci.CrossPoint;
     }
