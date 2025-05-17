@@ -265,9 +265,9 @@ public abstract class DrawContext : IDisposable
 
     public virtual vcompo_t DevSizeToWoldSize(vcompo_t s)
     {
-        CadVertex vd = DevVectorToWorldVector(CadVertex.UnitX * s);
-        CadVertex v0 = DevVectorToWorldVector(CadVertex.Zero);
-        CadVertex v = vd - v0;
+        vector3_t vd = DevVectorToWorldVector(vector3_t.UnitX * s);
+        vector3_t v0 = DevVectorToWorldVector(vector3_t.Zero);
+        vector3_t v = vd - v0;
         return v.Norm();
     }
     #endregion
@@ -338,7 +338,19 @@ public abstract class DrawContext : IDisposable
 
     public virtual DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
     {
-        return null;
+        DrawContext dc = Clone();
+
+        dc.SetViewSize(deviceSize.Width, deviceSize.Height);
+
+        vector3_t org = default;
+        org.X = deviceSize.Width / (vcompo_t)(2.0);
+        org.Y = deviceSize.Height / (vcompo_t)(2.0);
+
+        dc.SetViewOrg(org);
+
+        dc.UnitPerMilli = deviceSize.Width / pageSize.Width;
+
+        return dc;
     }
 
     public abstract void CalcProjectionMatrix();
