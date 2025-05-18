@@ -31,7 +31,7 @@ public interface IPlotterController
     PlotterTaskRunner PlotterTaskRunner { get; set; }
     ScriptEnvironment ScriptEnv { get; }
     SelectModes SelectMode { get; set; }
-    ControllerStates StateID { get; }
+    ControllerStateID StateID { get; }
     ControllerStateMachine StateMachine { get; }
     List<CadFigure> TempFigureList { get; }
 
@@ -40,7 +40,7 @@ public interface IPlotterController
     void Startup();
     void Shutdown();
 
-    void ChangeState(ControllerStates state);
+    void ChangeState(ControllerStateID state);
     void ClearAll();
     void CloseFigure();
     void EndCreateFigure();

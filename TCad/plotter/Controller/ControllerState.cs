@@ -10,157 +10,14 @@ using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
-using TCad.Logger;
 
 namespace TCad.Plotter.Controller;
 
-public enum ControllerStates
-{
-    NONE,
-    SELECT,
-    RUBBER_BAND_SELECT,
-    DRAGING_POINTS,
-    DRAGING_VIEW_ORG,
-    CREATE_FIGURE,
-    MEASURING,
-}
-
-public class StateContext
-{
-    public vector3_t StoredObjDownPoint = default;
-    public IPlotterController Controller;
-
-    public ControllerState CurrentState
-    {
-        get => StateMachine.CurrentState;
-    }
-
-    private ControllerStateMachine StateMachine;
-
-    public StateContext(ControllerStateMachine stateMachine)
-    {
-        StateMachine = stateMachine;
-        Controller = stateMachine.Controller;
-    }
-
-    public void ChangeState(ControllerStates state)
-    {
-        StateMachine.ChangeState(state);
-    }
-}
-
-
-public class ControllerStateMachine
-{
-    private ControllerState[] StateList = new ControllerState[(int)ControllerStates.MEASURING + 1];
-
-
-    private Stack<ControllerState> StateStack = new(10);
-
-    public ControllerState CurrentState
-    {
-        get;
-        private set;
-    }
-
-    public ControllerStates CurrentStateID
-    {
-        get
-        {
-            return CurrentState.ID;
-        }
-    }
-
-    private StateContext Context;
-
-    public IPlotterController Controller
-    {
-        get;
-        private set;
-    }
-
-    public ControllerStateMachine(IPlotterController controller, ControllerStates initialState)
-    {
-        Controller = controller;
-        Context = new StateContext(this);
-
-        StateList[(int)ControllerStates.NONE] = new NoneState(Context);
-        StateList[(int)ControllerStates.SELECT] = new SelectingState(Context);
-        StateList[(int)ControllerStates.RUBBER_BAND_SELECT] = new RubberBandSelectState(Context);
-        StateList[(int)ControllerStates.DRAGING_POINTS] = new DragingPointsState(Context);
-        StateList[(int)ControllerStates.DRAGING_VIEW_ORG] = new DragingViewOrgState(Context);
-        StateList[(int)ControllerStates.CREATE_FIGURE] = new CreateFigureState(Context);
-        StateList[(int)ControllerStates.MEASURING] = new MeasuringState(Context);
-
-        CurrentState = StateList[(int)ControllerStates.NONE];
-        ChangeState(initialState);
-    }
-
-    public void ChangeState(ControllerStates state)
-    {
-        // If change to the same state, do nothing
-        if (CurrentState.ID == state)
-        {
-            return;
-        }
-
-        #if ENABLE_LOG
-        Log.pl(CurrentState.GetType().Name + " Exit");
-        #endif
-
-        CurrentState.Exit();
-
-        CurrentState = StateList[(int)state];
-
-        #if ENABLE_LOG
-        Log.pl(CurrentState.GetType().Name + " Enter");
-        #endif
-
-        CurrentState.Enter();
-
-        if (Controller.Input.InteractCtrl.IsActive)
-        {
-            Controller.Input.InteractCtrl.Cancel();
-        }
-    }
-
-    public void PushState(ControllerStates state)
-    {
-        #if ENABLE_LOG
-        Log.pl(CurrentState.GetType().Name + " Push");
-        #endif
-
-        StateStack.Push(CurrentState);
-
-        CurrentState = StateList[(int)state];
-
-        #if ENABLE_LOG
-        Log.pl(CurrentState.GetType().Name + " Enter");
-        #endif
-
-        CurrentState.Enter();
-    }
-
-    public void PopState()
-    {
-        ControllerState backState;
-        if (StateStack.TryPop(out backState))
-        {
-            CurrentState = backState;
-
-            #if ENABLE_LOG
-            Log.pl(CurrentState.GetType().Name + " is Poped");
-            #endif
-
-        }
-    }
-}
-
 public class ControllerState
 {
-    public virtual ControllerStates ID
+    public virtual ControllerStateID ID
     {
-        get => ControllerStates.NONE;
+        get => ControllerStateID.NONE;
     }
 
     protected IPlotterController Controller
@@ -187,6 +44,10 @@ public class ControllerState
 
     public virtual void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
+    public virtual void RButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
+
+    public virtual void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
+
     public virtual void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
     public virtual void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
@@ -202,9 +63,9 @@ public class ControllerState
 
 public class NoneState : ControllerState
 {
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.NONE;
+        get => ControllerStateID.NONE;
     }
 
     public NoneState(StateContext context) : base(context)
@@ -215,9 +76,9 @@ public class NoneState : ControllerState
 
 public class CreateFigureState : ControllerState
 {
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.CREATE_FIGURE;
+        get => ControllerStateID.CREATE_FIGURE;
     }
 
     public CreateFigureState(StateContext context) : base(context)
@@ -280,7 +141,7 @@ public class CreateFigureState : ControllerState
             Controller.UpdateObjectTree(true);
         }
 
-        Context.ChangeState(ControllerStates.SELECT);
+        Context.ChangeState(ControllerStateID.SELECT);
 
         Controller.CreatingFigType = CadFigure.Types.NONE;
         Controller.NotifyStateChange(
@@ -344,9 +205,9 @@ public class SelectingState : ControllerState
     private List<CadFigure> EditFigList = null;
 
 
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.SELECT;
+        get => ControllerStateID.SELECT;
     }
 
     public SelectingState(StateContext context) : base(context)
@@ -374,7 +235,7 @@ public class SelectingState : ControllerState
         {
             if (!Controller.Input.CursorLocked)
             {
-                Context.ChangeState(ControllerStates.DRAGING_POINTS);
+                Context.ChangeState(ControllerStateID.DRAGING_POINTS);
                 Context.CurrentState.LButtonDown(pointer, dc, x, y);
             }
 
@@ -384,7 +245,7 @@ public class SelectingState : ControllerState
         }
         else
         {
-            Context.ChangeState(ControllerStates.RUBBER_BAND_SELECT);
+            Context.ChangeState(ControllerStateID.RUBBER_BAND_SELECT);
             Context.CurrentState.LButtonDown(pointer, dc, x, y);
         }
     }
@@ -443,9 +304,9 @@ public class RubberBandSelectState : ControllerState
     private vector3_t RubberBandScrnPoint0 = VectorExt.InvalidVector3;
     private vector3_t RubberBandScrnPoint1 = default;
 
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.RUBBER_BAND_SELECT;
+        get => ControllerStateID.RUBBER_BAND_SELECT;
     }
 
     public RubberBandSelectState(StateContext context) : base(context)
@@ -486,7 +347,7 @@ public class RubberBandSelectState : ControllerState
         Controller.NotifyStateChange(
             new StateChangedParam(StateChangedType.SELECTION_CHANGED));
 
-        Context.ChangeState(ControllerStates.SELECT);
+        Context.ChangeState(ControllerStateID.SELECT);
     }
 
     public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -533,9 +394,9 @@ public class DragingPointsState : ControllerState
 {
     vector3_t StartPos;
 
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.DRAGING_POINTS;
+        get => ControllerStateID.DRAGING_POINTS;
     }
 
     public DragingPointsState(StateContext context) : base(context)
@@ -572,7 +433,7 @@ public class DragingPointsState : ControllerState
             Controller.EditManager.EndEdit();
         }
 
-        Context.ChangeState(ControllerStates.SELECT);
+        Context.ChangeState(ControllerStateID.SELECT);
     }
 
     public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -608,16 +469,16 @@ public class DragingPointsState : ControllerState
     public override void Cancel()
     {
         Controller.EditManager.CancelEdit();
-        Context.ChangeState(ControllerStates.SELECT);
+        Context.ChangeState(ControllerStateID.SELECT);
         Controller.Input.ClearSelection();
     }
 }
 
 public class MeasuringState : ControllerState
 {
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.MEASURING;
+        get => ControllerStateID.MEASURING;
     }
 
     public MeasuringState(StateContext context) : base(context)
@@ -660,13 +521,9 @@ public class MeasuringState : ControllerState
         PutMeasure();
     }
 
-    public override void LButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
-
-    public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
-
     public override void Cancel()
     {
-        Context.ChangeState(ControllerStates.SELECT);
+        Context.ChangeState(ControllerStateID.SELECT);
         Controller.MeasureMode = MeasureModes.NONE;
         Controller.MeasureFigureCreator = null;
 
@@ -730,9 +587,9 @@ public class MeasuringState : ControllerState
 
 public class DragingViewOrgState : ControllerState
 {
-    public override ControllerStates ID
+    public override ControllerStateID ID
     {
-        get => ControllerStates.DRAGING_VIEW_ORG;
+        get => ControllerStateID.DRAGING_VIEW_ORG;
     }
 
     public DragingViewOrgState(StateContext context) : base(context)

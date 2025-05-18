@@ -120,7 +120,7 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public ControllerStates StateID
+    public ControllerStateID StateID
     {
         get => StateMachine.CurrentStateID;
     }
@@ -174,7 +174,7 @@ public class PlotterController : IPlotterController
 
         Editor = new PlotterEditor(this);
 
-        StateMachine = new ControllerStateMachine(this, ControllerStates.SELECT);
+        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -211,7 +211,7 @@ public class PlotterController : IPlotterController
         Log.plx("out");
     }
 
-    public void ChangeState(ControllerStates state)
+    public void ChangeState(ControllerStateID state)
     {
         StateMachine.ChangeState(state);
     }
@@ -219,7 +219,7 @@ public class PlotterController : IPlotterController
     public void StartCreateFigure(CadFigure.Types type)
     {
         CreatingFigType = type;
-        ChangeState(ControllerStates.CREATE_FIGURE);
+        ChangeState(ControllerStateID.CREATE_FIGURE);
     }
 
     public void EndCreateFigure()
@@ -250,7 +250,7 @@ public class PlotterController : IPlotterController
 
     public void NextState()
     {
-        if (StateID == ControllerStates.CREATE_FIGURE)
+        if (StateID == ControllerStateID.CREATE_FIGURE)
         {
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
@@ -262,7 +262,7 @@ public class PlotterController : IPlotterController
             {
                 FigureCreator = null;
                 CreatingFigType = CadFigure.Types.NONE;
-                ChangeState(ControllerStates.SELECT);
+                ChangeState(ControllerStateID.SELECT);
 
                 UpdateObjectTree(true);
                 NotifyStateChange(
@@ -273,7 +273,7 @@ public class PlotterController : IPlotterController
 
     public void StartMeasure(MeasureModes mode)
     {
-        ChangeState(ControllerStates.MEASURING);
+        ChangeState(ControllerStateID.MEASURING);
         MeasureMode = mode;
         MeasureFigureCreator =
             FigCreator.Get(
@@ -284,7 +284,7 @@ public class PlotterController : IPlotterController
 
     public void EndMeasure()
     {
-        ChangeState(ControllerStates.SELECT);
+        ChangeState(ControllerStateID.SELECT);
         MeasureMode = MeasureModes.NONE;
         MeasureFigureCreator = null;
     }

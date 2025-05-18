@@ -313,7 +313,7 @@ public class PlotterDrawer
 
     private void DrawDragLine(DrawContext dc)
     {
-        if (Controller.StateID != ControllerStates.DRAGING_POINTS)
+        if (Controller.StateID != ControllerStateID.DRAGING_POINTS)
         {
             return;
         }

@@ -36,7 +36,7 @@ public class PlotterInput
         get => Controller.SelectMode;
     }
 
-    ControllerStates StateID
+    ControllerStateID StateID
     {
         get => Controller.StateID;
     }
@@ -476,9 +476,8 @@ public class PlotterInput
 
     private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        if (StateID == ControllerStates.DRAGING_VIEW_ORG)
+        if (StateID == ControllerStateID.DRAGING_VIEW_ORG)
         {
-            //ViewOrgDrag(pointer, DC, x, y);
             CurrentState.MouseMove(pointer, dc, x, y);
             return;
         }
@@ -500,13 +499,10 @@ public class PlotterInput
             SnapCursor(dc);
         }
 
-        if (CurrentState.ID == ControllerStates.DRAGING_POINTS || CurrentState.ID == ControllerStates.RUBBER_BAND_SELECT)
-        {
-            CurrentState.MouseMove(pointer, dc, x, y);
-        }
+        CurrentState.MouseMove(pointer, dc, x, y);
 
         Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        //Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -552,7 +548,7 @@ public class PlotterInput
     {
         pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
 
-        StateMachine.PushState(ControllerStates.DRAGING_VIEW_ORG);
+        StateMachine.PushState(ControllerStateID.DRAGING_VIEW_ORG);
 
         StoreViewOrg = dc.ViewOrg;
 
