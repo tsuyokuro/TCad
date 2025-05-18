@@ -12,7 +12,6 @@ namespace TCad.Plotter.Model.Figure;
 
 public abstract partial class CadFigure
 {
-    #region Enums
     public enum Types : byte
     {
         NONE,
@@ -29,8 +28,6 @@ public abstract partial class CadFigure
         PICTURE,
         MAX,
     }
-    #endregion
-
 
     private static Dictionary<CadFigure.Types, string> TypeNames;
 

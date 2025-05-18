@@ -1,4 +1,4 @@
-#define MOUSE_THREAD
+//#define MOUSE_THREAD
 
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
@@ -32,7 +32,9 @@ class PlotterViewGL : GLControl, IPlotterView
     private ContextMenuEx mCurrentContextMenu = null;
     private ContextMenuEx mContextMenu = null;
 
+#if MOUSE_THREAD
     private MyEventHandler mEventSequencer;
+#endif
 
     private Cursor PointCursorWhite;
     private Cursor PointCursorBlack;

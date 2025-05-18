@@ -8,7 +8,7 @@ namespace TCad.MathFunctions;
  *  汎用行列
  *  
  */
-public class MatrixMN
+public struct MatrixMN
 {
     public int RN = 0;
     public int CN = 0;
@@ -90,7 +90,7 @@ public class MatrixMN
     {
         if (m1.CN != m2.RN)
         {
-            return null;
+            return new MatrixMN(0, 0);
         }
 
         int row3 = Math.Min(m1.RN, m2.RN);

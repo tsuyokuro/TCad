@@ -28,7 +28,7 @@ public partial class App : Application
     {
         //Log.LogOutput = new LogVisualStudioDebug();
         //Log.LogOutput = new LogConsole();
-        Log.LogOutput = new LogDebugServer();
+        Log.LogWriter = new LogDebugServer();
 
         StartUpSW.Start();
 

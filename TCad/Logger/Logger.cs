@@ -11,8 +11,8 @@ public interface ILogWriter
     void Start();
     void Stop();
 
-    void Print(string s);
-    void PrintLn(string s);
+    void Write(string s);
+    void WriteLine(string s);
 }
 
 
@@ -30,11 +30,12 @@ public class LogConsole : ILogWriter
     }
 
 
-    public void Print(string s)
+    public void Write(string s)
     {
         Console.Write(s);
     }
-    public void PrintLn(string s)
+
+    public void WriteLine(string s)
     {
         Console.WriteLine(s);
     }
@@ -59,22 +60,21 @@ public class LogDebugServer : ILogWriter
         }
     }
 
-
     public LogDebugServer()
     {
         DServer = new DebugServer();
     }
 
-    public void Print(string s)
+    public void Write(string s)
     {
-        DServer.Print(s);
+        DServer.Write(s);
     }
-    public void PrintLn(string s)
+
+    public void WriteLine(string s)
     {
-        DServer.PrintLn(s);
+        DServer.WriteLine(s);
     }
 }
-
 
 public class LogVisualStudioDebug : ILogWriter
 {
@@ -82,12 +82,12 @@ public class LogVisualStudioDebug : ILogWriter
     public void Stop() { }
 
 
-    public void Print(string s)
+    public void Write(string s)
     {
         System.Diagnostics.Debug.Write(s);
     }
 
-    public void PrintLn(string s)
+    public void WriteLine(string s)
     {
         System.Diagnostics.Debug.WriteLine(s);
     }
@@ -103,26 +103,25 @@ public static class Log
 
     public static string space = "";
 
-    private static ILogWriter LogOutput_;
-    public static ILogWriter LogOutput
+    private static ILogWriter LogWriter_;
+    public static ILogWriter LogWriter
     {
-        get => LogOutput_;
+        get => LogWriter_;
         set
         {
-            if (LogOutput_ != null)
+            if (LogWriter_ != null)
             {
-                LogOutput_.Stop();
+                LogWriter_.Stop();
             }
 
-            LogOutput_ = value;
+            LogWriter_ = value;
 
 
-            Print = LogOutput_.Print;
-            PrintLn = LogOutput_.PrintLn;
-            LogOutput_.Start();
+            Print = LogWriter_.Write;
+            PrintLn = LogWriter_.WriteLine;
+            LogWriter_.Start();
         }
     }
-
 
     public static Action<string> Print = (s) => { /* NOP */ };
     public static Action<string> PrintLn = (s) => { /* NOP */ };
@@ -132,12 +131,12 @@ public static class Log
 
     public static void Start()
     {
-        LogOutput!.Start();
+        LogWriter!.Start();
     }
 
     public static void Stop()
     {
-        LogOutput?.Stop();
+        LogWriter?.Stop();
     }
 
 

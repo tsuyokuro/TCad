@@ -46,17 +46,7 @@ internal class DebugServer
         mlistener?.Stop();
     }
 
-    public void Print(string s)
-    {
-        Write(s);
-    }
-
-    public void PrintLn(string s)
-    {
-        WriteLn(s);
-    }
-
-    private void Write(string s)
+    public void Write(string s)
     {
         mPool.Add(s);
 
@@ -74,22 +64,25 @@ internal class DebugServer
         }
     }
 
-    private void WriteLn(string s)
+    public void WriteLine(string s)
     {
-        mPool.Add(s + "\n");
+        Write(s + "\n");
 
+        /*
+        mPool.Add(s + "\n");
         lock (mClientList)
         {
             foreach (ClientWrapper client in mClientList)
             {
                 if (client.Connected)
                 {
-                    client.WriteLn(s);
+                    client.WriteLine(s);
                 }
             }
 
             RemoveDisconnectedClient();
         }
+        */
     }
 
     private void RemoveDisconnectedClient()
@@ -138,7 +131,7 @@ internal class DebugServer
         {
         }
 
-        WriteLn("Server stopped");
+        WriteLine("Server stopped");
         Write("\n\n");
     }
 
@@ -168,7 +161,7 @@ internal class DebugServer
             get => mClient.Connected;
         }
 
-        public void WriteLn(string s)
+        public void WriteLine(string s)
         {
             if (!mClient.Connected)
             {
