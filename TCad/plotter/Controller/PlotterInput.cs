@@ -91,8 +91,6 @@ public class PlotterInput
     private CadRulerSet RulerSet = new CadRulerSet();
 
 
-    public vector3_t StoreViewOrg = default;
-
     public vector3_t SnapPoint;
 
     public SnapInfo CurrentSnapInfo;
@@ -546,33 +544,12 @@ public class PlotterInput
 
     private void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
-
-        StateMachine.PushState(ControllerStateID.DRAGING_VIEW_ORG);
-
-        StoreViewOrg = dc.ViewOrg;
-
-        UnlockCursor();
-
-        CrossCursor.Store();
-
-        Controller.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+        CurrentState.MButtonDown(pointer, dc, x, y);
     }
 
     private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        vector3_t p = DC.WorldPointToDevPoint(SnapPoint);
-
-        if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
-        {
-            ViewPortUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
-        }
-
-        StateMachine.PopState();
-
-        CrossCursor.Pos = new vector3_t(x, y, 0);
-
-        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+        CurrentState.MButtonUp(pointer, dc, x, y);
     }
 
     private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)

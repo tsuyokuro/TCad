@@ -1,7 +1,6 @@
 #define ENABLE_LOG
 
 using CadDataTypes;
-using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using TCad.Controls.CadConsole;
@@ -9,7 +8,9 @@ using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Settings;
 using TCad.Plotter.undo;
+using TCad.ViewModel;
 
 namespace TCad.Plotter.Controller;
 
@@ -48,7 +49,11 @@ public class ControllerState
 
     public virtual void RButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
-    public virtual void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
+    public virtual void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
+    {
+        Context.StateMachine.PushState(ControllerStateID.DRAGING_VIEW_ORG);
+        Context.StateMachine.CurrentState.MButtonDown(pointer, dc, x, y);
+    }
 
     public virtual void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y) { }
 
@@ -587,6 +592,9 @@ public class MeasuringState : ControllerState
 
 public class DragingViewOrgState : ControllerState
 {
+    private vector3_t StoreViewOrg = default;
+    private vector3_t StoreSnapPoint = default;
+
     public override ControllerStateID ID
     {
         get => ControllerStateID.DRAGING_VIEW_ORG;
@@ -598,6 +606,7 @@ public class DragingViewOrgState : ControllerState
 
     public override void Enter()
     {
+        StoreSnapPoint = Context.Controller.Input.SnapPoint;
     }
 
     public override void Exit()
@@ -616,13 +625,49 @@ public class DragingViewOrgState : ControllerState
     {
     }
 
+    public override void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
+    {
+        pointer.MDownPoint = dc.WorldPointToDevPoint(StoreSnapPoint);
+
+        Controller.Input.UnlockCursor();
+
+        Controller.Input.CrossCursor.Store();
+
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+
+        StoreViewOrg = dc.ViewOrg;
+    }
+
     public override void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
         ViewOrgDrag(pointer, dc, x, y);
     }
 
+    public override void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
+    {
+        vector3_t p = dc.WorldPointToDevPoint(StoreSnapPoint);
+
+        if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
+        {
+            ViewPortUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
+        }
+
+        Context.StateMachine.PopState();
+
+        Controller.Input.CrossCursor.Pos = new vector3_t(x, y, 0);
+
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+    }
+
     public override void Cancel()
     {
+        Context.StateMachine.PopState();
+
+        vector3_t op = StoreViewOrg;
+
+        ViewPortUtil.SetOrigin(Context.Controller.DC, (int)op.X, (int)op.Y);
+
+        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }
 
     private void ViewOrgDrag(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
@@ -631,7 +676,7 @@ public class DragingViewOrgState : ControllerState
 
         vector3_t d = cp - pointer.MDownPoint;
 
-        vector3_t op = Controller.Input.StoreViewOrg + d;
+        vector3_t op = StoreViewOrg + d;
 
         ViewPortUtil.SetOrigin(dc, (int)op.X, (int)op.Y);
 

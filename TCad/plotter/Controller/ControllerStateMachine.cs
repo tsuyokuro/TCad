@@ -19,14 +19,22 @@ public enum ControllerStateID
 public class StateContext
 {
     public vector3_t StoredObjDownPoint = default;
-    public IPlotterController Controller;
+
+    public IPlotterController Controller {
+        get;
+        private set;
+    }
 
     public ControllerState CurrentState
     {
         get => StateMachine.CurrentState;
     }
 
-    private ControllerStateMachine StateMachine;
+    public ControllerStateMachine StateMachine
+    {
+        get;
+        private set;
+    }
 
     public StateContext(ControllerStateMachine stateMachine)
     {
