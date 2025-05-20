@@ -1,6 +1,5 @@
 using MyCollections;
-using TCad.Plotter.Controller;
-using TCad.Plotter;
+using TCad.Util;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
@@ -236,20 +235,19 @@ public class DrawTools : IDisposable
 
         foreach (var jpen in jpenList)
         {
-            string name = jpen.GetProperty("name").GetString();
+            string id = jpen.GetProperty("id").GetString();
 
-            if (name == null) continue;
+            if (id == null) continue;
 
             var c = jpen.GetProperty("color");
 
-            ColorPack color = GetColorFromJson(c, defColor);
+            var color = GetColorFromJson(c, defColor);
 
-            int width = jpen.GetProperty("width").GetInt32();
-            if (width == 0) width = 1;
+            int width = jpen.GetInt32("width", 1);
 
-            DrawPen pen = new DrawPen(color.Argb, width);
+            var pen = new DrawPen(color.Argb, width);
 
-            SetPenTbl(name, pen);
+            SetPenTbl(id, pen);
         }
 
         // Brushes
@@ -258,16 +256,16 @@ public class DrawTools : IDisposable
 
         foreach (var jbrush in jbrushList)
         {
-            string name = jbrush.GetProperty("name").GetString();
+            string id = jbrush.GetProperty("id").GetString();
 
-            if (name == null) continue;
+            if (id == null) continue;
 
             var c = jbrush.GetProperty("color");
-            ColorPack color = GetColorFromJson(c, defColor);
+            var color = GetColorFromJson(c, defColor);
 
-            DrawBrush brush = new DrawBrush(color.Argb);
+            var brush = new DrawBrush(color.Argb);
 
-            SetBrushTbl(name, brush);
+            SetBrushTbl(id, brush);
         }
     }
 
@@ -296,11 +294,11 @@ public class DrawTools : IDisposable
             );
     }
 
-    private bool SetPenTbl(string name, DrawPen pen)
+    private bool SetPenTbl(string id, DrawPen pen)
     {
-        if (name == "") return false;
+        if (id == "") return false;
 
-        FieldInfo fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(id);
         if (fi == null) return false;
         if (fi.FieldType != typeof(int)) return false;
 
@@ -313,9 +311,9 @@ public class DrawTools : IDisposable
         return true;
     }
 
-    private bool SetBrushTbl(string name, DrawBrush brush)
+    private bool SetBrushTbl(string id, DrawBrush brush)
     {
-        FieldInfo fi = typeof(DrawTools).GetField(name);
+        FieldInfo fi = typeof(DrawTools).GetField(id);
         if (fi == null) return false;
 
         int? brushId = (int?)fi.GetValue(this);

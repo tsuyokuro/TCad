@@ -6,10 +6,49 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
 
-namespace TCad.Plotter.Serializer;
+namespace TCad.Util;
 
 public static class JsonElementExtends
 {
+    public static Int32 GetByte(this JsonElement jo, string key, byte defaultValue)
+    {
+        JsonElement prop;
+
+        if (!jo.TryGetProperty(key, out prop))
+        {
+            return defaultValue;
+        }
+
+        Byte val;
+
+        if (prop.TryGetByte(out val))
+        {
+            return val;
+        }
+
+        return defaultValue;
+    }
+
+
+    public static Int32 GetInt32(this JsonElement jo, string key, int defaultValue) 
+    {
+        JsonElement prop;
+
+        if (!jo.TryGetProperty(key, out prop))
+        {
+            return defaultValue;
+        }
+
+        Int32 val;
+
+        if (prop.TryGetInt32(out val))
+        {
+            return val;
+        }
+
+        return defaultValue;
+    }
+
     public static bool GetBool(this JsonElement jo, string key, bool defaultValue)
     {
         JsonElement prop;
