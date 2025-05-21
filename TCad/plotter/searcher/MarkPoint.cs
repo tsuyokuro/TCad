@@ -1,6 +1,6 @@
 using System;
-using TCad.Plotter.Model.Figure;
 using TCad.Logger;
+using TCad.Plotter.Model.Figure;
 
 namespace TCad.Plotter.Searcher;
 

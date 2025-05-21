@@ -1,15 +1,14 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using TCad.Controls;
+using TCad.Logger;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
-using TCad.Logger;
-
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;

@@ -1,4 +1,3 @@
-using TCad.Plotter;
 using TCad.MathFunctions;
 using TCad.Plotter.DrawToolSet;
 

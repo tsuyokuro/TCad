@@ -9,8 +9,6 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +17,7 @@ using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
@@ -103,7 +102,7 @@ public class ScriptFunctions
 
         Controller.Input.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
         Controller.Input.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
-    }   
+    }
 
     public void PrintVector(vector3_t v)
     {

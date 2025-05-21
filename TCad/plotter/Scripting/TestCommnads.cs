@@ -7,7 +7,6 @@ using MeshMakerNS;
 using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter.Controller;
 using SharpFont;
 using SplineCurve;
 using System;
@@ -21,15 +20,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TCad.Controls.CadConsole;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
-using TCad.Plotter.undo;
-using TCad.Logger;
 using TCad.Plotter.Svg;
+using TCad.Plotter.undo;
 
 namespace TCad.Plotter.Scripting;
 

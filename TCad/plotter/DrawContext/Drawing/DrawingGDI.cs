@@ -1,10 +1,9 @@
 using CadDataTypes;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;

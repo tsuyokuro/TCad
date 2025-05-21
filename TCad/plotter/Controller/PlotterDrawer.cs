@@ -1,10 +1,10 @@
 using MyCollections;
-using TCad.Plotter.Settings;
 using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Searcher;
-using TCad.Plotter.Drawing;
+using TCad.Plotter.Settings;
 
 namespace TCad.Plotter.Controller;
 

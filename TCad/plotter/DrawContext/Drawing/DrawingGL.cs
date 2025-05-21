@@ -3,16 +3,15 @@ using GLFont;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.Settings;
 
 namespace TCad.Plotter.Drawing;
 

@@ -1,7 +1,5 @@
 using CadDataTypes;
 using MyCollections;
-using TCad.Plotter;
-using TCad.Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using TCad.Plotter.Model.Figure;

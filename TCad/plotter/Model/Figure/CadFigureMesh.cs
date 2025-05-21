@@ -1,14 +1,13 @@
 using CadDataTypes;
 using MyCollections;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.HalfEdgeModel;
-using TCad.Logger;
 
 namespace TCad.Plotter.Model.Figure;
 

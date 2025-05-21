@@ -1,7 +1,5 @@
 using CadDataTypes;
 using System.Collections.Generic;
-using TCad.Plotter;
-using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
 
@@ -50,7 +48,7 @@ public class PlotterCommandProcessor
 
     public void AddLayer(string name)
     {
-        CadLayer layer = Controller.DB.NewLayer(addLayerList:true, selectCurrent:true);
+        CadLayer layer = Controller.DB.NewLayer(addLayerList: true, selectCurrent: true);
 
         layer.Name = name;
 

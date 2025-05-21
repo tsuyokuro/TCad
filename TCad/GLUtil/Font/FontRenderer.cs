@@ -1,7 +1,5 @@
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace GLFont;
 

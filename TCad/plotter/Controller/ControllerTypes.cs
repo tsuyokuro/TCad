@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Searcher;
 

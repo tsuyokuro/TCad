@@ -3,10 +3,10 @@
 using CadDataTypes;
 using System;
 using System.Collections.Generic;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
-using TCad.Logger;
 
 namespace TCad.Plotter.Model.Figure;
 

@@ -43,7 +43,7 @@ public static class JsonElementExtends
         return defaultValue;
     }
 
-    public static Int32 GetInt32(this JsonElement jo, string key, int defaultValue) 
+    public static Int32 GetInt32(this JsonElement jo, string key, int defaultValue)
     {
         JsonElement prop;
 

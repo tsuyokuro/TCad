@@ -2,7 +2,6 @@
 // ForceLinePen resource string to US
 //#define FORCE_US
 
-using TCad.Plotter;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -11,8 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using TCad.Plotter.Serializer;
 using TCad.Logger;
+using TCad.Plotter.Serializer;
 
 namespace TCad;
 

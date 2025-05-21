@@ -1,5 +1,4 @@
 using CadDataTypes;
-using TCad.Plotter;
 using System.Collections.Generic;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Serializer;
@@ -125,7 +124,7 @@ public class FigUtil
         }
     }
 
-    public static string DumpString(CadFigure fig, string margin)
+    public static string Dump(CadFigure fig, string margin)
     {
         string s = "";
 
@@ -144,7 +143,7 @@ public class FigUtil
             for (int i = 0; i < fig.ChildList.Count; i++)
             {
                 CadFigure c = fig.ChildList[i];
-                s += DumpString(c, margin + "  ");
+                s += Dump(c, margin + "  ");
             }
         }
 
@@ -159,7 +158,7 @@ public class FigUtil
 
         foreach (CadFigure fig in srcList)
         {
-            set.Add(FigUtil.GetRootFig(fig));
+            set.Add(GetRootFig(fig));
         }
 
         List<CadFigure> ret = new List<CadFigure>();
@@ -168,21 +167,6 @@ public class FigUtil
 
         return ret;
     }
-
-    //public static CadFigure Clone(CadFigure src)
-    //{
-    //    MpFigure_v1002 mpf = MpFigure_v1002.Create(src, false);
-
-    //    byte[] data = MessagePackSerializer.Serialize(mpf);
-
-    //    MpFigure_v1002 mpfCopy = MessagePackSerializer.Deserialize<MpFigure_v1002>(data);
-
-    //    CadFigure fig = mpfCopy.Restore();
-
-    //    fig.ID = 0;
-
-    //    return fig;
-    //}
 
     public static CadFigure Clone(CadFigure src)
     {

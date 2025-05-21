@@ -1,11 +1,10 @@
 using GLFont;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
+using TCad.Plotter.Controller;
 
 namespace TCad.Plotter.Scripting;
 

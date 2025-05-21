@@ -1,13 +1,12 @@
 using CadDataTypes;
+using GLUtil;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using GLUtil;
-using TCad.Plotter;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
-using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.DrawContexts;
+using TCad.Plotter.DrawToolSet;
 
 namespace TCad.Plotter.Model.Figure;
 

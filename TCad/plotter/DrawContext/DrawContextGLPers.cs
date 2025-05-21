@@ -1,9 +1,7 @@
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter;
 using System;
-using System.Windows.Forms;
 using TCad.MathFunctions;
 
 namespace TCad.Plotter.DrawContexts;

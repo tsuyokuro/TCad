@@ -1,4 +1,7 @@
 using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 
 using TCad.WindowsAPI;
@@ -93,93 +96,167 @@ public class LogVisualStudioDebug : ILogWriter
     }
 }
 
-
-public static class Log
+public class StringWriter : ILogWriter
 {
-    public static ulong PutCount = 0;
+    StringBuilder sb = new StringBuilder();
 
-    public static int mIndent = 0;
-    public static int IndentUnit = 2;
+    public void Start() { }
+    public void Stop() { }
 
-    public static string space = "";
 
-    private static ILogWriter LogWriter_;
-    public static ILogWriter LogWriter
+    public void Write(string s)
+    {
+        sb.Append(s);
+    }
+
+    public void WriteLine(string s)
+    {
+        sb.Append(s);
+        sb.Append("\n");
+    }
+
+    public string GetString()
+    {
+        return sb.ToString();
+    }
+
+    public void Clear()
+    {
+        sb.Clear();
+    }
+}
+
+public class NopLogWriter : ILogWriter
+{
+    public void Start() { }
+    public void Stop() { }
+    public void Write(string s) { }
+    public void WriteLine(string s){ }
+}
+
+
+public interface ILogPrinter
+{
+    int Indent { get; set; }
+    ILogWriter LogWriter { get; set; }
+
+    void Start();
+
+    void Stop();
+
+    void Begin();
+
+    void End();
+
+    void Reset();
+
+    void p(string s);
+
+    void pl(string s);
+
+    void plx(string s);
+
+    void tpl(string s);
+}
+
+public class LogPrinter : ILogPrinter
+{
+    public ulong PutCount = 0;
+
+    private int mIndent = 0;
+
+    public int IndentChars = 2;
+
+    private string space = "";
+
+    private ILogWriter LogWriter_;
+    public ILogWriter LogWriter
     {
         get => LogWriter_;
         set
         {
-            if (LogWriter_ != null)
-            {
-                LogWriter_.Stop();
-            }
-
+            LogWriter_?.Stop();    
             LogWriter_ = value;
 
+            if (LogWriter_ == null)
+            {
+                LogWriter_ = new NopLogWriter();
+            }
 
-            Print = LogWriter_.Write;
-            PrintLn = LogWriter_.WriteLine;
             LogWriter_.Start();
         }
     }
 
-    public static Action<string> Print = (s) => { /* NOP */ };
-    public static Action<string> PrintLn = (s) => { /* NOP */ };
+    public int UpStackFrame = 1;
 
-    public static Mutex Lock = new Mutex();
-
-
-    public static void Start()
+    public LogPrinter(ILogWriter writer, int upStackFrame = 1)
     {
-        LogWriter!.Start();
+        LogWriter = writer;
+        UpStackFrame = upStackFrame;
     }
 
-    public static void Stop()
+    public LogPrinter(int upStackFrame = 1)
+    {
+        LogWriter = new NopLogWriter();
+        UpStackFrame = upStackFrame;
+    }
+
+    public Mutex Lock = new Mutex();
+
+
+    private void Print(string s)
+    {
+        LogWriter?.Write(s);
+    }
+
+    private void PrintLn(string s)
+    {
+        LogWriter?.WriteLine(s);
+    }
+
+    public void Start()
+    {
+        LogWriter?.Start();
+    }
+
+    public void Stop()
     {
         LogWriter?.Stop();
     }
 
 
-    public static int Indent
+    public int Indent
     {
         set
         {
             mIndent = value;
-            space = new string(' ', mIndent * IndentUnit);
+            space = new string(' ', mIndent * IndentChars);
         }
 
-        get
-        {
-            return mIndent;
-        }
+        get => mIndent;
     }
 
-    public static void reset()
+    public void Reset()
     {
         Begin();
         mIndent = 0;
-        IndentUnit = 2;
+        IndentChars = 2;
         space = "";
         End();
     }
 
-    public static void Begin()
+    public void Begin()
     {
         Lock.WaitOne();
     }
 
-    public static void End()
+    public void End()
     {
         Lock.ReleaseMutex();
     }
 
-    public static void printIndent()
-    {
-        p(space);
-    }
-
     // Print without new line
-    public static void p(string s)
+    public void p(string s)
     {
         Begin();
         PutCount++;
@@ -188,7 +265,7 @@ public static class Log
     }
 
     // Print with new line
-    public static void pl(string s)
+    public void pl(string s)
     {
         Begin();
         PutCount++;
@@ -197,7 +274,7 @@ public static class Log
     }
 
     // Print with new line
-    public static void tpl(string s)
+    public void tpl(string s)
     {
         DateTime dt = DateTime.Now;
 
@@ -209,9 +286,9 @@ public static class Log
         End();
     }
 
-    public static void plx(string s)
+    public void plx(string s)
     {
-        System.Diagnostics.StackFrame stackFrame = new System.Diagnostics.StackFrame(1);
+        StackFrame stackFrame = new StackFrame(UpStackFrame);
 
         string method = stackFrame.GetMethod().Name;
         string klass = stackFrame.GetMethod().ReflectedType.Name;
@@ -225,4 +302,35 @@ public static class Log
             space + klass + "," + method + " " + s);
         End();
     }
+}
+
+
+public static class Log
+{
+    private static ILogPrinter LogPrinter_ = new LogPrinter(2);
+
+    public static ILogWriter LogWriter
+    {
+        get => LogPrinter_.LogWriter;
+
+        set
+        {
+            LogPrinter_.LogWriter = value;
+        }
+    }
+
+    public static int Indent
+    {
+        set => LogPrinter_.Indent = value;
+        get => LogPrinter_.Indent;
+    }
+    public static Action Start => LogPrinter_.Start;
+    public static Action Stop => LogPrinter_.Stop;
+    public static Action reset => LogPrinter_.Reset;
+    public static Action Begin => LogPrinter_.Begin;
+    public static Action End => LogPrinter_.End;
+    public static Action<String> p => LogPrinter_.p;
+    public static Action<String> pl => LogPrinter_.pl;
+    public static Action<String> tpl => LogPrinter_.tpl;
+    public static Action<String> plx => LogPrinter_.plx;
 }

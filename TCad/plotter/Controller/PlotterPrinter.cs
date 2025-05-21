@@ -3,12 +3,11 @@
 
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using TCad.Plotter.Settings;
 using System.Drawing;
-
+using TCad.Logger;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
-using TCad.Logger;
+using TCad.Plotter.Settings;
 
 namespace TCad.Plotter.Controller;
 

@@ -1,4 +1,3 @@
-using TCad.Plotter;
 using System;
 using System.Windows.Input;
 using TCad.Plotter.Model.Figure;

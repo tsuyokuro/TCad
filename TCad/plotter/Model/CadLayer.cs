@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using TCad.Logger;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.undo;
-using TCad.Logger;
 
 namespace TCad.Plotter;
 

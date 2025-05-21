@@ -1,10 +1,9 @@
 using CadDataTypes;
 using MyCollections;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
-using TCad.MathFunctions;
 using TCad.Logger;
+using TCad.MathFunctions;
 
 namespace TCad.Plotter.Model.HalfEdgeModel;
 

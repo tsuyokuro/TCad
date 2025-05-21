@@ -1,5 +1,4 @@
 using CadDataTypes;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;

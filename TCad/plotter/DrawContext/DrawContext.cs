@@ -1,10 +1,8 @@
 using CadDataTypes;
-using TCad.Plotter.Controller;
 using System;
-
+using TCad.Logger;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
-using TCad.Logger;
 
 namespace TCad.Plotter.DrawContexts;
 
@@ -30,13 +28,15 @@ public abstract class DrawContext : IDisposable
     public const vcompo_t STD_EYE_DIST = (vcompo_t)(250.0);
 
     protected vector3_t mEye = vector3_t.UnitZ * STD_EYE_DIST;
-    public vector3_t Eye {
+    public vector3_t Eye
+    {
         get => mEye;
     }
 
     // 注視点
     protected vector3_t mLookAt = vector3_t.Zero;
-    public vector3_t LookAt {
+    public vector3_t LookAt
+    {
         get => mLookAt;
     }
 
@@ -51,13 +51,15 @@ public abstract class DrawContext : IDisposable
 
     // 上を示す Vector
     protected vector3_t mUpVector = vector3_t.UnitY;
-    public vector3_t UpVector {
+    public vector3_t UpVector
+    {
         get => mUpVector;
     }
 
     // 投影スクリーンの向き
     protected vector3_t mViewDir = default;
-    public vector3_t ViewDir {
+    public vector3_t ViewDir
+    {
         get => mViewDir;
     }
 
@@ -95,11 +97,13 @@ public abstract class DrawContext : IDisposable
     protected vcompo_t mViewHeight = 32;
 
     // Screenのサイズ
-    public vcompo_t ViewWidth {
+    public vcompo_t ViewWidth
+    {
         get => mViewWidth;
     }
 
-    public vcompo_t ViewHeight {
+    public vcompo_t ViewHeight
+    {
         get => mViewHeight;
     }
 
@@ -142,7 +146,8 @@ public abstract class DrawContext : IDisposable
     }
 
     protected IDrawing mDrawing;
-    public IDrawing Drawing {
+    public IDrawing Drawing
+    {
         get => mDrawing;
     }
 

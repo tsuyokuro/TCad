@@ -3,19 +3,18 @@
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter.Settings;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Resources;
-
-using TCad.Plotter.Controller;
+using TCad.Logger;
 using TCad.MathFunctions;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Settings;
 using TCad.Util;
 using TCad.ViewModel;
-using TCad.Logger;
-using TCad.Plotter;
 
 namespace TCad.MainView;
 

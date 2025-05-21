@@ -1,14 +1,13 @@
 using CadDataTypes;
 using System;
 using System.Collections.Generic;
-
+using TCad.Logger;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Searcher;
 using TCad.Plotter.undo;
 using TCad.Properties;
-using TCad.Logger;
 
 namespace TCad.Plotter.Controller;
 

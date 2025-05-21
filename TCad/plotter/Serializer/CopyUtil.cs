@@ -1,6 +1,4 @@
 using MessagePack;
-using TCad.Plotter;
-using TCad.Plotter.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Threading;

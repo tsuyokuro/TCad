@@ -1,9 +1,8 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System.ComponentModel;
-using TCad.Plotter.DrawContexts;
 using TCad.Logger;
 using TCad.MainView;
+using TCad.Plotter;
+using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
 

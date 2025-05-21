@@ -1,8 +1,8 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 
 namespace TCad.ViewModel;
 

@@ -1,4 +1,3 @@
-using TCad.Plotter;
 using TCad.Controls;
 using TCad.Plotter.Model.Figure;
 

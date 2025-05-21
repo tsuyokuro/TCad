@@ -1,11 +1,10 @@
+using System.Collections.Generic;
+using System.Windows.Forms;
+using TCad.Controls;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
-using System.Collections.Generic;
-using TCad.Controls;
 using TCad.Plotter.DrawContexts;
-
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using System.Windows.Forms;
 
 namespace TCad.ViewModel;
 
@@ -75,7 +74,7 @@ public interface IPlotterViewModel
     CursorPosViewModel CursorPosVM { get; }
     DrawContext DC { get; }
 
-    void Redraw(bool waitUiThread=true);
+    void Redraw(bool waitUiThread = true);
 
 
     void StateChanged(StateChangedParam si);

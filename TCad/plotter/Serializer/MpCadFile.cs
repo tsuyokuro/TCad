@@ -5,14 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Plotter.Serializer.v1004;
-using TCad.Logger;
-
-using JObj = System.Text.Json.Nodes.JsonObject;
 using TCad.Util;
+using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace TCad.Plotter.Serializer;
 

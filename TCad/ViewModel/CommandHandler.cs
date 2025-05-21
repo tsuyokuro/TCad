@@ -1,7 +1,3 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using TCad.Plotter.Serializer;
-using TCad.Plotter.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,12 +10,16 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using TCad.Controls.CadConsole;
 using TCad.Dialogs;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer;
+using TCad.Plotter.Settings;
+using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
 using TCad.ScriptEditor;
-using TCad.Plotter.Svg;
-using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
 
