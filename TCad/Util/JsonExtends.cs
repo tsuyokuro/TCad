@@ -10,7 +10,17 @@ namespace TCad.Util;
 
 public static class JsonElementExtends
 {
-    public static Int32 GetByte(this JsonElement jo, string key, byte defaultValue)
+    public static Byte GetByte(this JsonElement jo, byte defaultValue)
+    {
+        if (jo.TryGetByte(out Byte val))
+        {
+            return val;
+        }
+
+        return defaultValue;
+    }
+
+    public static Byte GetByte(this JsonElement jo, string key, byte defaultValue)
     {
         JsonElement prop;
 
@@ -19,16 +29,19 @@ public static class JsonElementExtends
             return defaultValue;
         }
 
-        Byte val;
+        return GetByte(prop, defaultValue);
+    }
 
-        if (prop.TryGetByte(out val))
+
+    public static Int32 GetInt32(this JsonElement jo, Int32 defaultValue)
+    {
+        if (jo.TryGetInt32(out Int32 val))
         {
             return val;
         }
 
         return defaultValue;
     }
-
 
     public static Int32 GetInt32(this JsonElement jo, string key, int defaultValue) 
     {
@@ -39,11 +52,84 @@ public static class JsonElementExtends
             return defaultValue;
         }
 
-        Int32 val;
+        return GetInt32(prop, defaultValue);
+    }
 
-        if (prop.TryGetInt32(out val))
+
+    public static float GetSingle(this JsonElement jo, float defaultValue)
+    {
+        if (jo.TryGetSingle(out float val))
         {
             return val;
+        }
+
+        return defaultValue;
+    }
+
+    public static float GetSingle(this JsonElement jo, string key, float defaultValue)
+    {
+        JsonElement prop;
+
+        if (!jo.TryGetProperty(key, out prop))
+        {
+            return defaultValue;
+        }
+
+        return GetSingle(prop, defaultValue);
+    }
+
+
+    public static double GetDouble(this JsonElement jo, double defaultValue)
+    {
+        if (jo.TryGetDouble(out double val))
+        {
+            return val;
+        }
+
+        return defaultValue;
+    }
+
+    public static double GetDouble(this JsonElement jo, string key, double defaultValue)
+    {
+        JsonElement prop;
+
+        if (!jo.TryGetProperty(key, out prop))
+        {
+            return defaultValue;
+        }
+
+        return prop.GetDouble(defaultValue);
+    }
+
+
+    public static vcompo_t GetVcompo(this JsonElement jo, vcompo_t defaultValue)
+    {
+        if (jo.TryGetDouble(out double val))
+        {
+            return (vcompo_t)val;
+        }
+
+        return defaultValue;
+    }
+
+    public static vcompo_t GetVcompo(this JsonElement jo, string key, vcompo_t defaultValue)
+    {
+        JsonElement prop;
+
+        if (!jo.TryGetProperty(key, out prop))
+        {
+            return defaultValue;
+        }
+
+        return prop.GetVcompo(defaultValue);
+    }
+
+
+    public static bool GetBool(this JsonElement jo, bool defaultValue)
+    {
+        if (jo.ValueKind == JsonValueKind.True || jo.ValueKind == JsonValueKind.False)
+        {
+            return jo.GetBoolean();
         }
 
         return defaultValue;
@@ -58,20 +144,21 @@ public static class JsonElementExtends
             return defaultValue;
         }
 
-        return prop.GetBoolean();
+        return prop.GetBool(defaultValue);
     }
 
-    public static vcompo_t GetDouble(this JsonElement jo, string key, vcompo_t defaultValue)
-    {
-        JsonElement prop;
 
-        if (!jo.TryGetProperty(key, out prop))
+    public static string GetString(this JsonElement jo, string defaultValue)
+    {
+        if (jo.ValueKind == JsonValueKind.String)
         {
-            return defaultValue;
+            return jo.GetString();
         }
 
-        return (vcompo_t)prop.GetDouble();
+        return defaultValue;
     }
+
+
     public static string GetString(this JsonElement jo, string key, string defaultValue)
     {
         JsonElement prop;
@@ -81,7 +168,24 @@ public static class JsonElementExtends
             return defaultValue;
         }
 
-        return prop.GetString();
+        return prop.GetString(defaultValue);
+    }
+
+    public static T GetEnum<T>(this JsonElement jo, T defaultValue)
+    {
+        if (jo.TryGetInt32(out int num))
+        {
+            try
+            {
+                return (T)Enum.ToObject(typeof(T), num);
+            }
+            catch (ArgumentException)
+            {
+                return defaultValue;
+            }
+        }
+
+        return defaultValue;
     }
 
     public static T GetEnum<T>(this JsonElement jo, string key, T defaultValue)
@@ -93,16 +197,7 @@ public static class JsonElementExtends
             return defaultValue;
         }
 
-        int num = prop.GetInt32();
-
-        try
-        {
-            return (T)Enum.ToObject(typeof(T), num);
-        }
-        catch (ArgumentException)
-        {
-            return defaultValue;
-        }
+        return prop.GetEnum<T>(defaultValue);
     }
 }
 

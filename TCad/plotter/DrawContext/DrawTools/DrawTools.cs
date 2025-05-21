@@ -280,17 +280,17 @@ public class DrawTools : IDisposable
         {
             return new ColorPack(
                 255,
-                c[0].GetByte(),
-                c[1].GetByte(),
-                c[2].GetByte()
+                c[0].GetByte(defaultColor.R),
+                c[1].GetByte(defaultColor.G),
+                c[2].GetByte(defaultColor.B)
                 );
         }
 
         return new ColorPack(
-            c[0].GetByte(),
-            c[1].GetByte(),
-            c[2].GetByte(),
-            c[3].GetByte()
+            c[0].GetByte(defaultColor.A),
+            c[1].GetByte(defaultColor.R),
+            c[2].GetByte(defaultColor.G),
+            c[3].GetByte(defaultColor.B)
             );
     }
 
