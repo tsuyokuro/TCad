@@ -1,8 +1,7 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 

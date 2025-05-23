@@ -1,4 +1,3 @@
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -7,6 +6,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+
+using TCad.Logger;
+
 
 namespace TCad.Controls;
 

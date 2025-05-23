@@ -2,7 +2,7 @@ using TCad.Plotter.DrawContexts;
 
 namespace TCad.Plotter.Controller;
 
-public static class ViewUtil
+public static class ViewPortUtil
 {
     public static void SetOrigin(DrawContext dc, int pixX, int pixY)
     {

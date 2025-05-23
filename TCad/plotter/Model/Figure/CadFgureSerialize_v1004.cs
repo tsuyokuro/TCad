@@ -1,8 +1,7 @@
 using CadDataTypes;
-using TCad.Plotter;
-using Plotter.Serializer;
 using System;
 using System.Drawing;
+using TCad.Logger;
 using TCad.Plotter.Serializer;
 using TCad.Plotter.Serializer.v1004;
 

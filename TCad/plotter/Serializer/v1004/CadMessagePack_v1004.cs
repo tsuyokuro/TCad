@@ -1,8 +1,6 @@
 using CadDataTypes;
 using MessagePack;
 using OpenTK.Mathematics;
-using TCad.Plotter;
-using Plotter.Serializer;
 using SplineCurve;
 using System;
 using System.Collections.Generic;
@@ -106,22 +104,13 @@ public class MpPaperSettings_v1004
         Width = pp.Width;
         Height = pp.Height;
 
-        Landscape = pp.mLandscape;
-
-        Kind = pp.mPaperKind;
+        Landscape = pp.IsLandscape;
+        Kind = pp.PaperKind;
     }
 
     public PaperPageSize Restore()
     {
-        PaperPageSize pp = new PaperPageSize();
-
-        pp.Width = Width;
-        pp.Height = Height;
-
-        pp.mLandscape = Landscape;
-
-        pp.mPaperKind = Kind;
-
+        PaperPageSize pp = new PaperPageSize(Kind, Landscape);
         return pp;
     }
 }

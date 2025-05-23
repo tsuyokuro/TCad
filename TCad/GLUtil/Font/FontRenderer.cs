@@ -1,7 +1,5 @@
 using GLUtil;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace GLFont;
 
@@ -45,7 +43,7 @@ public class FontRenderer
     {
         if (TextureID == -1)
         {
-            TextureID = GLUtilContainer.TextureProvider.Instance.GetNew();
+            TextureID = GLUtilContainer.TextureProvider.Get().GetNew();
         }
 
         Counter++;

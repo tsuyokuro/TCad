@@ -1,6 +1,5 @@
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace GLUtil;
 

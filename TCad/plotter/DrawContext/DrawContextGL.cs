@@ -1,7 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
-using System.Windows.Forms;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 
@@ -13,8 +12,6 @@ public abstract class DrawContextGL : DrawContext
     public const vcompo_t DEFAULT_EYE_Z = (vcompo_t)250.0;
     public const vcompo_t DEFAULT_NEAR = (vcompo_t)0.1;
     public const vcompo_t DEFAULT_FAR = (vcompo_t)2000.0;
-
-    protected Control ViewCtrl;
 
     Vector4 LightPosition;
 
@@ -47,17 +44,11 @@ public abstract class DrawContextGL : DrawContext
     public DrawContextGL()
     {
         mUnitPerMilli = 1;
+        Init();
     }
 
-    public DrawContextGL(Control control)
+    protected void Init()
     {
-        mUnitPerMilli = 1;
-    }
-
-    protected void Init(Control control)
-    {
-        ViewCtrl = control;
-
         mUnitPerMilli = (vcompo_t)(1.0);
         WorldScale = 1.0f;
 

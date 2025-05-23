@@ -1,16 +1,14 @@
 #define LOG_DEBUG
 
 using CadDataTypes;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public class PointSearcher
 {

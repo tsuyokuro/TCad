@@ -43,6 +43,8 @@ TCad/Glu/GluCore.cs
 TCad/Glu/GluDelegates.cs
 TCad/Glu/GluEnums.cs
 TCad/Glu/GluHelper.cs
+TCad/Logger/DebugServer.cs
+TCad/Logger/Logger.cs
 TCad/MainView/ContextMenuEx.cs
 TCad/MainView/IPlotterView.cs
 TCad/MainView/PlotterViewGL.cs
@@ -72,7 +74,6 @@ TCad/SplineCurve/BSplineParam.cs
 TCad/SplineCurve/NURBSLine.cs
 TCad/SplineCurve/NURBSSurface.cs
 TCad/Util/BlockingQueue.cs
-TCad/Util/DebugServer.cs
 TCad/Util/EventHandler.cs
 TCad/Util/FastRingBuffer.cs
 TCad/Util/RingBuffer.cs
@@ -205,7 +206,6 @@ TCad/plotter/Util/ColorUtil.cs
 TCad/plotter/Util/FileUtil.cs
 TCad/plotter/Util/ImageUtil.cs
 TCad/plotter/Util/ItConsole.cs
-TCad/plotter/Util/Logger.cs
 TCad/plotter/Util/MatrixExt.cs
 TCad/plotter/Util/PlotterCommon.cs
 TCad/plotter/Util/StackArray.cs

@@ -5,14 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.Plotter.DrawContexts;
-using TCad.Plotter.Serializer;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Plotter.Serializer.v1004;
+using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
-namespace Plotter.Serializer;
+namespace TCad.Plotter.Serializer;
 
 public struct CadData
 {

@@ -7,9 +7,6 @@ using MeshMakerNS;
 using OpenGL.GLU;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using Plotter.svg;
 using SharpFont;
 using SplineCurve;
 using System;
@@ -23,12 +20,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TCad.Controls.CadConsole;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
+using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
 
 namespace TCad.Plotter.Scripting;
@@ -547,7 +547,7 @@ public class TestCommands
     private void Test3()
     {
         //FontFaceW fw = FontFaceW.Provider.GetFromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
         Outline outline = glyph.Outline;
@@ -620,7 +620,7 @@ public class TestCommands
 
     private void Test4()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         //FontFaceW fw = FontFaceW.Provider.GetFromFile("C:\\Windows\\Fonts\\msgothic.ttc", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('A');
 
@@ -672,7 +672,7 @@ public class TestCommands
 
     public void Test5()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
         GlyphSlot glyph = fw.GetGlyph('あ');
 
         Tessellator tesse = new();
@@ -697,7 +697,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
@@ -720,7 +720,7 @@ public class TestCommands
     private void Test7()
     {
         string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromFile(fontFName, 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromFile(fontFName, 48, 0);
 
         GlyphSlot glyph = fw.GetGlyph('い');
 
@@ -764,14 +764,14 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
 
     private void Test8()
     {
-        FontFaceW fw = GLUtilContainer.FontFaceProvider.Instance.FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
+        FontFaceW fw = GLUtilContainer.FontFaceProvider.Get().FromResource("/Fonts/mplus-1m-regular.ttf", 48, 0);
 
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msgothic.ttc");
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
@@ -795,7 +795,7 @@ public class TestCommands
         RunOnMainThread(() =>
         {
             Controller.UpdateObjectTree(true);
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
         });
     }
 
@@ -819,8 +819,8 @@ public class TestCommands
     {
         RunOnMainThread(() =>
         {
-            int name1 = GLUtilContainer.TextureProvider.Instance.GetNew();
-            int name2 = GLUtilContainer.TextureProvider.Instance.GetNew();
+            int name1 = GLUtilContainer.TextureProvider.Get().GetNew();
+            int name2 = GLUtilContainer.TextureProvider.Get().GetNew();
             Log.pl("end");
         });
     }

@@ -1,8 +1,6 @@
 
-using System;
 using OpenGL.GLU;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,10 +10,14 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using TCad.Dialogs;
+using TCad.Logger;
+using TCad.MainView;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using TCad.Plotter.DrawToolSet;
 using TCad.Util;
 using TCad.ViewModel;
-using TCad.Plotter.DrawToolSet;
-
+using TCad.WindowsAPI;
 
 namespace TCad;
 

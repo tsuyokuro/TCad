@@ -58,7 +58,7 @@
     <None Remove="Fonts\mplus-1m-light.ttf" />
     <None Remove="Fonts\mplus-1m-regular.ttf" />
     <None Remove="Fonts\mplus-1m-thin.ttf" />
-    <None Remove="plotter\Controller\IPlotterController.cs~RFcd12e6.TMP" />
+    <None Remove="Plotter\Controller\IPlotterController.cs~RFcd12e6.TMP" />
     <None Remove="Resources\BaseScript.py" />
     <None Remove="Resources\Cursors\cross_bk.cur" />
     <None Remove="Resources\Cursors\cross_wt.cur" />
@@ -94,17 +94,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+    <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="IronPython" Version="3.4.2" />
     <PackageReference Include="MessagePack" Version="3.1.3" />
     <PackageReference Include="MessagePackAnalyzer" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTK" Version="4.9.3" />
+    <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.2" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>

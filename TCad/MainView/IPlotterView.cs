@@ -1,8 +1,9 @@
+using TCad.Plotter;
 using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.ViewModel;
 
-namespace TCad.Plotter;
+namespace TCad.MainView;
 
 public interface IPlotterView
 {
@@ -27,10 +28,8 @@ public interface IPlotterView
     void DrawModeChanged(DrawModes mode);
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
-}
 
-public interface IPlotterViewForDC
-{
-    void GLMakeCurrent();
-    void SwapBuffers(DrawContext dc);
+    void SwapBuffers();
+
+    void MakeCurrent();
 }

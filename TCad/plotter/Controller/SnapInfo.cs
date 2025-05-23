@@ -1,4 +1,4 @@
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 
 namespace TCad.Plotter.Controller;
 

@@ -1,44 +1,41 @@
 using CadDataTypes;
-using Plotter.Controller.TaskRunner;
 using System;
 using System.Collections.Generic;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 using TCad.Plotter.undo;
 using TCad.Properties;
 
 namespace TCad.Plotter.Controller;
 
-// Edit figure functions
-
 public class PlotterEditor
 {
-    private IPlotterController Controller;
+    IPlotterController Controller;
 
     PlotterInput Input
     {
         get => Controller.Input;
     }
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public HistoryManager HistoryMan
+    HistoryManager HistoryMan
     {
         get => Controller.HistoryMan;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
     }
 
-    public PlotterTaskRunner PlotterTaskRunner
+    PlotterTaskRunner PlotterTaskRunner
     {
         get => Controller.PlotterTaskRunner;
     }

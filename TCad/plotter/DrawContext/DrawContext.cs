@@ -1,7 +1,6 @@
 using CadDataTypes;
-using TCad.Plotter.Controller;
 using System;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.Plotter.Drawing;
 using TCad.Plotter.DrawToolSet;
 
@@ -16,13 +15,6 @@ public abstract class DrawContext : IDisposable
     }
 
 
-    IPlotterViewForDC mPlotterView;
-    public IPlotterViewForDC PlotterView
-    {
-        set => mPlotterView = value;
-        get => mPlotterView;
-    }
-
     // 画素/Milli
     // 1ミリあたりの画素数
     protected vcompo_t mUnitPerMilli = 1;
@@ -34,37 +26,46 @@ public abstract class DrawContext : IDisposable
 
     // 視点
     public const vcompo_t STD_EYE_DIST = (vcompo_t)(250.0);
+
     protected vector3_t mEye = vector3_t.UnitZ * STD_EYE_DIST;
-    public vector3_t Eye => mEye;
+    public vector3_t Eye
+    {
+        get => mEye;
+    }
 
     // 注視点
     protected vector3_t mLookAt = vector3_t.Zero;
-    public vector3_t LookAt => mLookAt;
+    public vector3_t LookAt
+    {
+        get => mLookAt;
+    }
 
     // 投影面までの距離
     protected vcompo_t mProjectionNear = (vcompo_t)0.1;
-    protected vcompo_t ProjectionNear => mProjectionNear;
 
     // 視野空間の遠方側クリップ面までの距離
     protected vcompo_t mProjectionFar = (vcompo_t)2000.0;
-    protected vcompo_t ProjectionFar => mProjectionFar;
 
     // 画角 大きければ広角レンズ、小さければ望遠レンズ
     protected vcompo_t mFovY = (vcompo_t)(Math.PI / 4.0);
-    protected vcompo_t FovY => mFovY;
 
     // 上を示す Vector
     protected vector3_t mUpVector = vector3_t.UnitY;
-    public vector3_t UpVector => mUpVector;
+    public vector3_t UpVector
+    {
+        get => mUpVector;
+    }
 
     // 投影スクリーンの向き
     protected vector3_t mViewDir = default;
-    public virtual vector3_t ViewDir => mViewDir;
+    public vector3_t ViewDir
+    {
+        get => mViewDir;
+    }
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
     protected matrix4_t mModelViewMatrix = default;
     protected matrix4_t ModelViewMatrix => mModelViewMatrix;
-    protected ref matrix4_t ModelViewMatrixRef => ref mModelViewMatrix;
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -73,7 +74,6 @@ public abstract class DrawContext : IDisposable
     // 視点座標系から投影座標系への変換行列
     protected matrix4_t mProjectionMatrix = default;
     protected matrix4_t ProjectionMatrix => mProjectionMatrix;
-    protected ref matrix4_t ProjectionMatrixRef => ref mProjectionMatrix;
 
     // 投影座標系から視点座標系への変換行列
     protected matrix4_t mProjectionMatrixInv = default;
@@ -93,12 +93,19 @@ public abstract class DrawContext : IDisposable
         get => mViewOrg;
     }
 
-    public vcompo_t mViewWidth = 32;
-    public vcompo_t mViewHeight = 32;
+    protected vcompo_t mViewWidth = 32;
+    protected vcompo_t mViewHeight = 32;
 
     // Screenのサイズ
-    public vcompo_t ViewWidth => mViewWidth;
-    public vcompo_t ViewHeight => mViewHeight;
+    public vcompo_t ViewWidth
+    {
+        get => mViewWidth;
+    }
+
+    public vcompo_t ViewHeight
+    {
+        get => mViewHeight;
+    }
 
     // Viewの中心
     protected vector3_t mViewCenter;
@@ -139,7 +146,10 @@ public abstract class DrawContext : IDisposable
     }
 
     protected IDrawing mDrawing;
-    public IDrawing Drawing => mDrawing;
+    public IDrawing Drawing
+    {
+        get => mDrawing;
+    }
 
     public DrawContext()
     {
@@ -149,10 +159,6 @@ public abstract class DrawContext : IDisposable
 
         Log.plx("out");
     }
-
-    public virtual void Activate() { }
-
-    public virtual void Deactivate() { }
 
     public virtual void SetViewOrg(vector3_t org)
     {
@@ -180,16 +186,6 @@ public abstract class DrawContext : IDisposable
 
     public virtual void EndDraw()
     {
-    }
-
-    public void UpdateView()
-    {
-        mPlotterView?.SwapBuffers(this);
-    }
-
-    public void MakeCurrent()
-    {
-        mPlotterView?.GLMakeCurrent();
     }
 
     #region Point converter
@@ -274,9 +270,9 @@ public abstract class DrawContext : IDisposable
 
     public virtual vcompo_t DevSizeToWoldSize(vcompo_t s)
     {
-        CadVertex vd = DevVectorToWorldVector(CadVertex.UnitX * s);
-        CadVertex v0 = DevVectorToWorldVector(CadVertex.Zero);
-        CadVertex v = vd - v0;
+        vector3_t vd = DevVectorToWorldVector(vector3_t.UnitX * s);
+        vector3_t v0 = DevVectorToWorldVector(vector3_t.Zero);
+        vector3_t v = vd - v0;
         return v.Norm();
     }
     #endregion
@@ -347,7 +343,19 @@ public abstract class DrawContext : IDisposable
 
     public virtual DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
     {
-        return null;
+        DrawContext dc = Clone();
+
+        dc.SetViewSize(deviceSize.Width, deviceSize.Height);
+
+        vector3_t org = default;
+        org.X = deviceSize.Width / (vcompo_t)(2.0);
+        org.Y = deviceSize.Height / (vcompo_t)(2.0);
+
+        dc.SetViewOrg(org);
+
+        dc.UnitPerMilli = deviceSize.Width / pageSize.Width;
+
+        return dc;
     }
 
     public abstract void CalcProjectionMatrix();

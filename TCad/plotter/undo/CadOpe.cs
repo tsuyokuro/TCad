@@ -1,9 +1,9 @@
 using CadDataTypes;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TCad.Logger;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;

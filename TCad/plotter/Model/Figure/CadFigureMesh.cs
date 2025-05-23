@@ -1,8 +1,8 @@
 using CadDataTypes;
 using MyCollections;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.Assembler;
 using TCad.Plotter.DrawContexts;

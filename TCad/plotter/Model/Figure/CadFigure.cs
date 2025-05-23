@@ -1,9 +1,9 @@
 //#define LOG_DEBUG
 
 using CadDataTypes;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
@@ -12,7 +12,6 @@ namespace TCad.Plotter.Model.Figure;
 
 public abstract partial class CadFigure
 {
-    #region Enums
     public enum Types : byte
     {
         NONE,
@@ -29,8 +28,6 @@ public abstract partial class CadFigure
         PICTURE,
         MAX,
     }
-    #endregion
-
 
     private static Dictionary<CadFigure.Types, string> TypeNames;
 
@@ -49,6 +46,7 @@ public abstract partial class CadFigure
             { Types.MESH, "MESH" },
             { Types.NURBS_LINE, "NURBS-LINE" },
             { Types.NURBS_SURFACE, "NURBS-SURFACE" },
+            { Types.PICTURE, "PICTURE" },
         };
     }
 

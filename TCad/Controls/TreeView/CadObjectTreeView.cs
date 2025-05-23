@@ -1,4 +1,3 @@
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -6,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using TCad.Plotter;
 using TCad.ViewModel;
 
 namespace TCad.Controls;

@@ -1,12 +1,11 @@
 using CadDataTypes;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public class SegSearcher
 {

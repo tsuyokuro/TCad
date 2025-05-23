@@ -1,9 +1,9 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using Plotter.Settings;
 using TCad.Controls;
 using TCad.Dialogs;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
 using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Settings;
 
 namespace TCad.ViewModel;
 
@@ -45,7 +45,7 @@ public class ObjectTreeViewModel
         Controller.Input.CurrentFigure =
             TreeViewUtil.GetCurrentFigure(item, Controller.Input.CurrentFigure);
 
-        Controller.Drawer.Redraw();
+        Controller.Redraw();
     }
 
     public void UpdateTreeView(bool remakeTree)

@@ -1,3 +1,5 @@
+using TCad.Logger;
+
 namespace TCad.Plotter;
 
 public static class MatrixExt

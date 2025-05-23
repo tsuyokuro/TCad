@@ -1,12 +1,10 @@
-using Plotter.Controller.TaskRunner;
-using Plotter.Settings;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Printing;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Scripting;
+using TCad.Plotter.Settings;
 using TCad.Plotter.undo;
 using TCad.ViewModel;
 
@@ -24,7 +22,7 @@ public class PlotterController : IPlotterController
     {
         get;
         set;
-    } = new PaperPageSize(PaperKind.A4, false);
+    } = PaperPageSize.A4Portrate;
 
     public SelectModes SelectMode
     {
@@ -73,10 +71,10 @@ public class PlotterController : IPlotterController
     } = null;
 
 
-    private IPlotterViewModel ViewModel
+    public IPlotterViewModel ViewModel
     {
         get;
-        set;
+        private set;
     } = null;
 
     public List<CadFigure> TempFigureList
@@ -121,7 +119,7 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public ControllerStates StateID
+    public ControllerStateID StateID
     {
         get => StateMachine.CurrentStateID;
     }
@@ -175,7 +173,7 @@ public class PlotterController : IPlotterController
 
         Editor = new PlotterEditor(this);
 
-        StateMachine = new ControllerStateMachine(this, ControllerStates.SELECT);
+        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -212,7 +210,7 @@ public class PlotterController : IPlotterController
         Log.plx("out");
     }
 
-    public void ChangeState(ControllerStates state)
+    public void ChangeState(ControllerStateID state)
     {
         StateMachine.ChangeState(state);
     }
@@ -220,7 +218,7 @@ public class PlotterController : IPlotterController
     public void StartCreateFigure(CadFigure.Types type)
     {
         CreatingFigType = type;
-        ChangeState(ControllerStates.CREATE_FIGURE);
+        ChangeState(ControllerStateID.CREATE_FIGURE);
     }
 
     public void EndCreateFigure()
@@ -251,7 +249,7 @@ public class PlotterController : IPlotterController
 
     public void NextState()
     {
-        if (StateID == ControllerStates.CREATE_FIGURE)
+        if (StateID == ControllerStateID.CREATE_FIGURE)
         {
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
@@ -263,7 +261,7 @@ public class PlotterController : IPlotterController
             {
                 FigureCreator = null;
                 CreatingFigType = CadFigure.Types.NONE;
-                ChangeState(ControllerStates.SELECT);
+                ChangeState(ControllerStateID.SELECT);
 
                 UpdateObjectTree(true);
                 NotifyStateChange(
@@ -274,7 +272,7 @@ public class PlotterController : IPlotterController
 
     public void StartMeasure(MeasureModes mode)
     {
-        ChangeState(ControllerStates.MEASURING);
+        ChangeState(ControllerStateID.MEASURING);
         MeasureMode = mode;
         MeasureFigureCreator =
             FigCreator.Get(
@@ -285,7 +283,7 @@ public class PlotterController : IPlotterController
 
     public void EndMeasure()
     {
-        ChangeState(ControllerStates.SELECT);
+        ChangeState(ControllerStateID.SELECT);
         MeasureMode = MeasureModes.NONE;
         MeasureFigureCreator = null;
     }
@@ -389,7 +387,7 @@ public class PlotterController : IPlotterController
 
     public void ClearAll()
     {
-        PageSize = new PaperPageSize();
+        PageSize = PaperPageSize.A4Portrate;
 
         DB.ClearAll();
         HistoryMan.Clear();
@@ -450,7 +448,7 @@ public class PlotterController : IPlotterController
         ViewModel.UpdateTreeView(remakeTree);
     }
 
-    public void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type)
+    public void CursorPosChanged(vector3_t pt, CursorType type)
     {
         ViewModel.CursorPosChanged(pt, type);
     }

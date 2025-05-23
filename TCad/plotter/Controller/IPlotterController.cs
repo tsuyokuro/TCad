@@ -1,7 +1,5 @@
-using Plotter.Controller.TaskRunner;
 using System.Collections.Generic;
 using System.Drawing;
-using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Scripting;
@@ -12,6 +10,7 @@ namespace TCad.Plotter.Controller;
 
 public interface IPlotterController
 {
+    IPlotterViewModel ViewModel { get; }
     PlotterCommandProcessor CommandProc { get; }
     ContextMenuManager ContextMenuMan { get; }
     CadFigure.Types CreatingFigType { get; set; }
@@ -32,7 +31,7 @@ public interface IPlotterController
     PlotterTaskRunner PlotterTaskRunner { get; set; }
     ScriptEnvironment ScriptEnv { get; }
     SelectModes SelectMode { get; set; }
-    ControllerStates StateID { get; }
+    ControllerStateID StateID { get; }
     ControllerStateMachine StateMachine { get; }
     List<CadFigure> TempFigureList { get; }
 
@@ -41,7 +40,7 @@ public interface IPlotterController
     void Startup();
     void Shutdown();
 
-    void ChangeState(ControllerStates state);
+    void ChangeState(ControllerStateID state);
     void ClearAll();
     void CloseFigure();
     void EndCreateFigure();
@@ -72,7 +71,7 @@ public interface IPlotterController
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
     void UpdateTreeView(bool remakeTree);
 
-    void CursorPosChanged(vector3_t pt, Plotter.Controller.CursorType type);
+    void CursorPosChanged(vector3_t pt, CursorType type);
     void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
     void CursorLocked(bool locked);
 

@@ -1,4 +1,5 @@
 using System;
+using TCad.Logger;
 
 namespace TCad.Plotter;
 

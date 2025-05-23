@@ -1,7 +1,5 @@
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
-using TCad.Plotter;
-using System.Windows.Forms;
 
 namespace TCad.Plotter.DrawContexts;
 
@@ -22,19 +20,8 @@ class DrawContextGLOrtho : DrawContextGL
 
     public DrawContextGLOrtho()
     {
-        Init(null);
+        Init();
         mUnitPerMilli = 4;
-    }
-
-    public DrawContextGLOrtho(Control control)
-    {
-        Init(control);
-        mUnitPerMilli = 4;
-    }
-
-    public override void Activate()
-    {
-        CalcProjectionMatrix();
     }
 
     public override void StartDraw()
@@ -102,25 +89,6 @@ class DrawContextGLOrtho : DrawContextGL
                                         );
 
         mProjectionMatrixInv = mProjectionMatrix.Inv();
-    }
-
-    public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
-    {
-        DrawContextGLOrtho dc = new DrawContextGLOrtho();
-
-        dc.CopyProjectionMetrics(this);
-        dc.CopyCamera(this);
-        dc.SetViewSize(deviceSize.Width, deviceSize.Height);
-
-        vector3_t org = default;
-        org.X = deviceSize.Width / (vcompo_t)(2.0);
-        org.Y = deviceSize.Height / (vcompo_t)(2.0);
-
-        dc.SetViewOrg(org);
-
-        dc.UnitPerMilli = deviceSize.Width / pageSize.Width;
-
-        return dc;
     }
 
     public override DrawContext Clone()

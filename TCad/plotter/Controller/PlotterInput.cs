@@ -1,12 +1,12 @@
 using CadDataTypes;
-using Plotter.Settings;
 using System.Collections.Generic;
+using TCad.Logger;
 using TCad.MathFunctions;
-using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
+using TCad.Plotter.Settings;
 using TCad.ViewModel;
 
 namespace TCad.Plotter.Controller;
@@ -15,47 +15,47 @@ public class PlotterInput
 {
     IPlotterController Controller;
 
-    public DrawContext DC
+    DrawContext DC
     {
         get => Controller.DC;
     }
 
-    public CadObjectDB DB
+    CadObjectDB DB
     {
         get => Controller.DB;
     }
 
-    public CadLayer CurrentLayer
+    CadLayer CurrentLayer
     {
         get => Controller.CurrentLayer;
     }
 
-    public SelectModes SelectMode
+    SelectModes SelectMode
     {
         get => Controller.SelectMode;
     }
 
-    public ControllerStates StateID
+    ControllerStateID StateID
     {
         get => Controller.StateID;
     }
 
-    public ControllerState CurrentState
+    ControllerState CurrentState
     {
         get => Controller.CurrentState;
     }
 
-    public FigCreator FigureCreator
+    FigCreator FigureCreator
     {
         get => Controller.FigureCreator;
     }
 
-    public FigCreator MeasureFigureCreator
+    FigCreator MeasureFigureCreator
     {
         get => Controller.MeasureFigureCreator;
     }
 
-    public ControllerStateMachine StateMachine
+    ControllerStateMachine StateMachine
     {
         get => Controller.StateMachine;
     }
@@ -76,7 +76,7 @@ public class PlotterInput
     public CadMouse Mouse
     {
         get;
-        private set;
+        set;
     } = new CadMouse();
 
     public CadCursor CrossCursor = CadCursor.Create();
@@ -89,8 +89,6 @@ public class PlotterInput
 
     private CadRulerSet RulerSet = new CadRulerSet();
 
-
-    public vector3_t StoreViewOrg = default;
 
     public vector3_t SnapPoint;
 
@@ -475,9 +473,8 @@ public class PlotterInput
 
     private void MouseMove(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        if (StateID == ControllerStates.DRAGING_VIEW_ORG)
+        if (StateID == ControllerStateID.DRAGING_VIEW_ORG)
         {
-            //ViewOrgDrag(pointer, DC, x, y);
             CurrentState.MouseMove(pointer, dc, x, y);
             return;
         }
@@ -499,19 +496,14 @@ public class PlotterInput
             SnapCursor(dc);
         }
 
-        if (CurrentState.ID == ControllerStates.DRAGING_POINTS || CurrentState.ID == ControllerStates.RUBBER_BAND_SELECT)
-        {
-            CurrentState.MouseMove(pointer, dc, x, y);
-        }
+        CurrentState.MouseMove(pointer, dc, x, y);
 
         Controller.CursorPosChanged(SnapPoint, CursorType.TRACKING);
-        Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
+        //Controller.CursorPosChanged(LastDownPoint, CursorType.LAST_DOWN);
     }
 
     private void LButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        //DOut.tpl($"LButtonDown ({x},{y})");
-
         if (CursorLocked)
         {
             x = CrossCursor.Pos.X;
@@ -551,33 +543,12 @@ public class PlotterInput
 
     private void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        pointer.MDownPoint = DC.WorldPointToDevPoint(SnapPoint);
-
-        StateMachine.PushState(ControllerStates.DRAGING_VIEW_ORG);
-
-        StoreViewOrg = dc.ViewOrg;
-
-        UnlockCursor();
-
-        CrossCursor.Store();
-
-        Controller.ChangeMouseCursor(UITypes.MouseCursorType.HAND);
+        CurrentState.MButtonDown(pointer, dc, x, y);
     }
 
     private void MButtonUp(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        vector3_t p = DC.WorldPointToDevPoint(SnapPoint);
-
-        if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
-        {
-            ViewUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
-        }
-
-        StateMachine.PopState();
-
-        CrossCursor.Pos = new vector3_t(x, y, 0);
-
-        Controller.ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
+        CurrentState.MButtonUp(pointer, dc, x, y);
     }
 
     private void Wheel(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y, int delta)
@@ -597,7 +568,7 @@ public class PlotterInput
                 f = (vcompo_t)(0.8);
             }
 
-            ViewUtil.DpiUpDown(dc, f);
+            ViewPortUtil.DpiUpDown(dc, f);
         }
     }
 

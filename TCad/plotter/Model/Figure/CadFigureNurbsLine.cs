@@ -1,5 +1,4 @@
 using CadDataTypes;
-using TCad.Plotter;
 using SplineCurve;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;

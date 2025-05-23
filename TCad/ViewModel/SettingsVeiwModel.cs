@@ -1,8 +1,8 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using Plotter.Settings;
 using System.ComponentModel;
 using System.Reflection;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using TCad.Plotter.Settings;
 
 namespace TCad.ViewModel;
 

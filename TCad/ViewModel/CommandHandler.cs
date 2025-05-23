@@ -1,8 +1,3 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
-using Plotter.Serializer;
-using Plotter.Settings;
-using Plotter.svg;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,8 +10,14 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using TCad.Controls.CadConsole;
 using TCad.Dialogs;
+using TCad.Plotter;
+using TCad.Plotter.Controller;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer;
+using TCad.Plotter.Settings;
+using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
 using TCad.ScriptEditor;
 
@@ -907,7 +908,7 @@ public class CommandHandler
 
         pd.DefaultPageSettings.PaperSize = Controller.PageSize.GetPaperSize();
 
-        pd.DefaultPageSettings.Landscape = Controller.PageSize.mLandscape;
+        pd.DefaultPageSettings.Landscape = Controller.PageSize.IsLandscape;
 
         pd.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
 
@@ -945,7 +946,7 @@ public class CommandHandler
         PageSettings pageSettings = new()
         {
             PaperSize = Controller.PageSize.GetPaperSize(),
-            Landscape = Controller.PageSize.mLandscape,
+            Landscape = Controller.PageSize.IsLandscape,
             Margins = new Margins(0, 0, 0, 0)
         };
 
@@ -956,7 +957,7 @@ public class CommandHandler
 
         if (result == System.Windows.Forms.DialogResult.OK)
         {
-            Controller.PageSize.Setup(pageDlg.PageSettings);
+            Controller.PageSize = new PaperPageSize(pageDlg.PageSettings);
 
             Redraw();
         }
@@ -982,6 +983,6 @@ public class CommandHandler
 
     public void Redraw()
     {
-        ThreadUtil.RunOnMainThread(Controller.Drawer.Redraw, true);
+        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
     }
 }

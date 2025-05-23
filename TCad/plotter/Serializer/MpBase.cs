@@ -1,6 +1,4 @@
 using CadDataTypes;
-using TCad.Plotter;
-using Plotter.Serializer;
 using System.Collections.Generic;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;

@@ -1,16 +1,29 @@
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System.ComponentModel;
+using TCad.Logger;
+using TCad.MainView;
+using TCad.Plotter;
 using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
+
+public enum ViewModes
+{
+    NONE,
+    FRONT,
+    BACK,
+    TOP,
+    BOTTOM,
+    RIGHT,
+    LEFT,
+    FREE,
+}
 
 public class ViewManager : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
 
-    private IPlotterController Controller;
+    private IPlotterViewModel ViewModel;
 
     private ICadMainWindow MainWindow;
 
@@ -43,17 +56,17 @@ public class ViewManager : INotifyPropertyChanged
         get => ViewMode_;
     }
 
-    public ViewManager(ICadMainWindow mainWindow, IPlotterController controler)
+    public ViewManager(ICadMainWindow mainWindow, IPlotterViewModel viewModel)
     {
         MainWindow = mainWindow;
-        Controller = controler;
+        ViewModel = viewModel;
     }
 
     public void SetupViews()
     {
         Log.plx("in");
 
-        PlotterViewGL1 = PlotterViewGL.Create(Controller);
+        PlotterViewGL1 = new PlotterViewGL(ViewModel);
 
         ViewMode = ViewModes.FRONT;
 
@@ -100,8 +113,6 @@ public class ViewManager : INotifyPropertyChanged
 
     private void ChangeViewMode(ViewModes newMode)
     {
-        DrawContext currentDC = View?.DrawContext;
-        DrawContext nextDC = View?.DrawContext;
         IPlotterView view = View;
 
         switch (ViewMode_)
@@ -112,7 +123,6 @@ public class ViewManager : INotifyPropertyChanged
                 view.DrawContext.SetCamera(
                     vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.BACK:
@@ -122,7 +132,6 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitZ * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.TOP:
@@ -132,7 +141,6 @@ public class ViewManager : INotifyPropertyChanged
                     vector3_t.UnitY * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, -vector3_t.UnitZ);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.BOTTOM:
@@ -142,7 +150,6 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitY * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitZ);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.RIGHT:
@@ -152,7 +159,6 @@ public class ViewManager : INotifyPropertyChanged
                     vector3_t.UnitX * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.LEFT:
@@ -162,18 +168,13 @@ public class ViewManager : INotifyPropertyChanged
                     -vector3_t.UnitX * DrawContext.STD_EYE_DIST,
                     vector3_t.Zero, vector3_t.UnitY);
 
-                nextDC = view.DrawContext;
                 break;
 
             case ViewModes.FREE:
                 PlotterViewGL1.EnablePerse(true);
                 view = PlotterViewGL1;
-                nextDC = view.DrawContext;
                 break;
         }
-
-        if (currentDC != null) currentDC.Deactivate();
-        if (nextDC != null) nextDC.Activate();
 
         SetView(view);
     }
@@ -182,10 +183,10 @@ public class ViewManager : INotifyPropertyChanged
     {
         View = view;
 
-        Controller.DC = view.DrawContext;
+        ViewModel.Controller.DC = view.DrawContext;
 
         MainWindow.SetPlotterView(view);
 
-        ThreadUtil.RunOnMainThread(Controller.Redraw, true);
+        ViewModel.Redraw();
     }
 }

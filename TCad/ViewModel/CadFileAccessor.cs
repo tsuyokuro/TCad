@@ -1,8 +1,8 @@
+using System.IO;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
-using Plotter.Serializer;
-using System.IO;
 using TCad.Plotter.Model.Figure;
+using TCad.Plotter.Serializer;
 
 namespace TCad.ViewModel;
 
@@ -45,7 +45,7 @@ public class CadFileAccessor
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
 
-        vm.Controller.Drawer.Redraw();
+        vm.Controller.Redraw();
     }
 
     private static void SaveExternalData(SerializeContext sc, CadObjectDB db, string fname)

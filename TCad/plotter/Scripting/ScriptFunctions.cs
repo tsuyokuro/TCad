@@ -9,8 +9,6 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,11 +17,12 @@ using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
 using TCad.MathFunctions;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 using TCad.Plotter.undo;
 using TCad.ViewModel;
 using static TCad.Plotter.Model.Figure.CadFigure;
@@ -103,7 +102,7 @@ public class ScriptFunctions
 
         Controller.Input.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
         Controller.Input.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
-    }   
+    }
 
     public void PrintVector(vector3_t v)
     {
@@ -1172,12 +1171,12 @@ public class ScriptFunctions
         CadRect r3 = CadUtil.GetContainsRectScrn(tdc, figList);
 
         vector3_t center = r3.Center();
-        ViewUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
+        ViewPortUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
 
 
         DrawPen drawPen = new DrawPen((int)argb, lineW);
 
-        DrawOption drawParams = default;
+        DrawOption drawParams = new();
         drawParams.LinePen = drawPen;
         drawParams.MeshLinePen = DrawPen.InvalidPen;
         drawParams.MeshEdgePen = drawPen;
@@ -1218,7 +1217,7 @@ public class ScriptFunctions
 
         tdc.Dispose();
 
-        orgDC.MakeCurrent();
+        Controller.ViewModel.ViewManager.View.MakeCurrent();
 
         //tmpGLControl.Dispose();
         window.Dispose();

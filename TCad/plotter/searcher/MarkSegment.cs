@@ -1,9 +1,9 @@
 using CadDataTypes;
-using TCad.Plotter;
+using TCad.Logger;
 using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 
-namespace TCad.Plotter.searcher;
+namespace TCad.Plotter.Searcher;
 
 public struct MarkSegment
 {

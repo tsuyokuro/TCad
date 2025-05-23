@@ -1,12 +1,11 @@
-using TCad.Plotter.Controller;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
-using TCad.Plotter.Serializer;
+using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 //using JObj = Newtonsoft.Json.Linq.JObject;
 
-namespace Plotter.Settings;
+namespace TCad.Plotter.Settings;
 
 public static class SettingsHolder
 {
@@ -195,7 +194,7 @@ public class PlotterSettings
         if (root.TryGetProperty("PointSnap", out jo))
         {
             SnapToPoint = jo.GetBool("enable", SnapToPoint);
-            PointSnapRange = jo.GetDouble("range", PointSnapRange);
+            PointSnapRange = jo.GetVcompo("range", PointSnapRange);
         }
 
         if (root.TryGetProperty("SegmentSnap", out jo))
@@ -206,13 +205,13 @@ public class PlotterSettings
         if (root.TryGetProperty("LineSnap", out jo))
         {
             SnapToLine = jo.GetBool("enable", SnapToLine);
-            LineSnapRange = jo.GetDouble("range", LineSnapRange);
+            LineSnapRange = jo.GetVcompo("range", LineSnapRange);
         }
 
         if (root.TryGetProperty("MoveKey", out jo))
         {
-            MoveKeyUnitX = jo.GetDouble("unit_x", MoveKeyUnitX);
-            MoveKeyUnitY = jo.GetDouble("unit_y", MoveKeyUnitY);
+            MoveKeyUnitX = jo.GetVcompo("unit_x", MoveKeyUnitX);
+            MoveKeyUnitY = jo.GetVcompo("unit_y", MoveKeyUnitY);
         }
 
         if (root.TryGetProperty("ZeroSnap", out jo))
@@ -245,15 +244,15 @@ public class PlotterSettings
         if (root.TryGetProperty("GridInfo", out jo))
         {
             SnapToGrid = jo.GetBool("enable", SnapToSelfPoint);
-            GridSize.X = jo.GetDouble("size_x", 10);
-            GridSize.Y = jo.GetDouble("size_y", 10);
-            GridSize.Z = jo.GetDouble("size_z", 10);
+            GridSize.X = jo.GetVcompo("size_x", 10);
+            GridSize.Y = jo.GetVcompo("size_y", 10);
+            GridSize.Z = jo.GetVcompo("size_z", 10);
         }
 
         if (root.TryGetProperty("PrintSettings", out jo))
         {
             PrintWithBitmap = jo.GetBool("PrintWithBitmap", PrintWithBitmap);
-            MagnificationBitmapPrinting = jo.GetDouble("MagnificationBitmapPrinting", MagnificationBitmapPrinting);
+            MagnificationBitmapPrinting = jo.GetVcompo("MagnificationBitmapPrinting", MagnificationBitmapPrinting);
         }
 
         return true;

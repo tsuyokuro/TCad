@@ -1,10 +1,9 @@
 using CadDataTypes;
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
-using TCad.Plotter.searcher;
+using TCad.Plotter.Searcher;
 
 namespace TCad.Plotter.Assembler;
 

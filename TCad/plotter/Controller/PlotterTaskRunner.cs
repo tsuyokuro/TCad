@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 using TCad.Controls.CadConsole;
 using TCad.Dialogs;
 using TCad.MathFunctions;
-using TCad.Plotter;
-using TCad.Plotter.Controller;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.undo;
 using TCad.ViewModel;
 
-namespace Plotter.Controller.TaskRunner;
+namespace TCad.Plotter.Controller;
 
 public class PlotterTaskRunner
 {
@@ -52,7 +50,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.EditManager.EndEdit();
-                Controller.Drawer.Redraw();
+                Controller.Redraw();
             });
         });
     }
@@ -123,7 +121,7 @@ public class PlotterTaskRunner
 
         RunOnMainThread(() =>
         {
-            Controller.Drawer.Redraw();
+            Controller.Redraw();
             Controller.UpdateObjectTree(remakeTree: true);
         });
     }
@@ -164,7 +162,7 @@ public class PlotterTaskRunner
             RunOnMainThread(() =>
             {
                 Controller.Input.ClearSelection();
-                Controller.Drawer.Redraw();
+                Controller.Redraw();
             });
         });
     }
@@ -257,7 +255,7 @@ public class PlotterTaskRunner
 
             RunOnMainThread(() =>
             {
-                Controller.Drawer.Redraw();
+                Controller.Redraw();
                 Controller.UpdateObjectTree(remakeTree: false);
             });
         });

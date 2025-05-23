@@ -1,9 +1,7 @@
 using CadDataTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using TCad.Plotter;
 using System;
-using System.Windows.Forms;
 using TCad.MathFunctions;
 
 namespace TCad.Plotter.DrawContexts;
@@ -12,13 +10,7 @@ class DrawContextGLPers : DrawContextGL
 {
     public DrawContextGLPers()
     {
-        Init(null);
-        mUnitPerMilli = 1;
-    }
-
-    public DrawContextGLPers(Control control)
-    {
-        Init(control);
+        Init();
         mUnitPerMilli = 1;
     }
 
@@ -80,25 +72,6 @@ class DrawContextGLPers : DrawContextGL
                                         );
 
         mProjectionMatrixInv = mProjectionMatrix.Inv();
-    }
-
-    public override DrawContext CreatePrinterContext(CadSize2D pageSize, CadSize2D deviceSize)
-    {
-        DrawContextGL dc = new DrawContextGLPers();
-
-        dc.CopyProjectionMetrics(this);
-        dc.CopyCamera(this);
-        dc.SetViewSize(deviceSize.Width, deviceSize.Height);
-
-        vector3_t org = default;
-        org.X = deviceSize.Width / (vcompo_t)(2.0);
-        org.Y = deviceSize.Height / (vcompo_t)(2.0);
-
-        dc.SetViewOrg(org);
-
-        dc.UnitPerMilli = deviceSize.Width / pageSize.Width;
-
-        return dc;
     }
 
     public void RotateEyePoint(Vector2 prev, Vector2 current)
@@ -244,7 +217,7 @@ class DrawContextGLPers : DrawContextGL
         return DevVectorToWorldVector(pt);
     }
 
-
+    /*
     public override vector3_t WorldVectorToDevVector(vector3_t pt)
     {
         vector4_t wv = pt.ToVector4((vcompo_t)(1.0));
@@ -292,5 +265,6 @@ class DrawContextGLPers : DrawContextGL
         vector3_t v = vd - v0;
         return v.Norm();
     }
+    */
     #endregion
 }

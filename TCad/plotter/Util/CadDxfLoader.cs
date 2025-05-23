@@ -2,6 +2,7 @@ using CadDataTypes;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using TCad.Logger;
 
 namespace TCad.Plotter;
 

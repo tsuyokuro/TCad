@@ -1,8 +1,8 @@
-using TCad.Plotter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using TCad.Util;
 
 namespace TCad.Plotter.DrawToolSet;
 
@@ -11,7 +11,8 @@ public class GDIToolManager : IDisposable
     private Dictionary<DrawPen, Pen> PenMap = new();
     private Dictionary<DrawBrush, SolidBrush> BrushMap = new();
 
-    private GDIToolManager() {
+    private GDIToolManager()
+    {
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -65,7 +66,8 @@ public class GDIToolManager : IDisposable
     }
 
     public static SingleServiceProvider<GDIToolManager> Provider = new(
-        () => {
+        () =>
+        {
             return new GDIToolManager();
         });
 }
