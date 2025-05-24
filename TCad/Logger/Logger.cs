@@ -45,21 +45,15 @@ public class LogConsole : ILogWriter
 
 public class LogDebugServer : ILogWriter
 {
-    DebugServer DServer;
+    private readonly DebugServer DServer;
 
     public void Start()
     {
-        if (DServer != null)
-        {
-            DServer.Start();
-        }
+        DServer?.Start();
     }
     public void Stop()
     {
-        if (DServer != null)
-        {
-            DServer.Stop();
-        }
+        DServer?.Stop();
     }
 
     public LogDebugServer()
@@ -97,7 +91,7 @@ public class LogVisualStudioDebug : ILogWriter
 
 public class StringWriter : ILogWriter
 {
-    private StringBuilder sb = new StringBuilder();
+    private readonly StringBuilder sb = new();
 
     public void Start() { }
     public void Stop() { }
@@ -111,7 +105,7 @@ public class StringWriter : ILogWriter
     public void WriteLine(string s)
     {
         sb.Append(s);
-        sb.Append("\n");
+        sb.Append('\n');
     }
 
     public string GetString()
@@ -133,19 +127,7 @@ public class NopLogWriter : ILogWriter
     public void WriteLine(string s){ }
 }
 
-public interface ILogFormatter
-{
-    int Indent { get; set; }
-    ILogWriter LogWriter { get; set; }
-
-    void p(string s);
-    void pl(string s);
-    void plx(string s);
-    void ResetIndent();
-    void tpl(string s);
-}
-
-public class LogFormatter : ILogFormatter
+public class LogFormatter
 {
     public int IndentChars = 2;
 
@@ -169,7 +151,7 @@ public class LogFormatter : ILogFormatter
         get => Indent_;
     }
 
-    private int UpStackFrame = 1;
+    private readonly int UpStackFrame = 1;
 
     public LogFormatter(ILogWriter writer, int upStackFrame = 1)
     {
@@ -204,20 +186,20 @@ public class LogFormatter : ILogFormatter
     {
         DateTime dt = DateTime.Now;
 
-        int tid = Thread.CurrentThread.ManagedThreadId;
+        int tid = Environment.CurrentManagedThreadId;
 
         LogWriter.WriteLine(dt.ToString("HH:mm:ss.fff") + " " + tid + " " + space + s);
     }
 
     public void plx(string s)
     {
-        StackFrame stackFrame = new StackFrame(UpStackFrame);
+        StackFrame stackFrame = new(UpStackFrame);
 
         string method = stackFrame.GetMethod().Name;
         string klass = stackFrame.GetMethod().ReflectedType.Name;
 
         DateTime dt = DateTime.Now;
-        int tid = Thread.CurrentThread.ManagedThreadId;
+        int tid = Environment.CurrentManagedThreadId;
 
         LogWriter.WriteLine(
             dt.ToString("HH:mm:ss.fff") + " " + tid + " " +
@@ -228,9 +210,9 @@ public class LogFormatter : ILogFormatter
 
 public static class Log
 {
-    private static Mutex Lock = new Mutex();
+    private static readonly Mutex Lock = new();
 
-    private static ILogFormatter Formatter = new LogFormatter(upStackFrame: 2);
+    private static readonly LogFormatter Formatter = new(upStackFrame: 2);
 
     public static int Indent
     {
@@ -254,9 +236,6 @@ public static class Log
             LogWriter_.Start();
         }
     }
-
-    public static int UpStackFrame = 1;
-
 
     public static void Start()
     {

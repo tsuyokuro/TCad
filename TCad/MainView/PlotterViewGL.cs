@@ -567,7 +567,7 @@ class PlotterViewGL : GLControl, IPlotterView
     {
         base.MakeCurrent();
     }
-
+#if MOUSE_THREAD
     class MyEvent : EventHandlerEvent
     {
         public MouseEventArgs EventArgs;
@@ -621,4 +621,5 @@ class PlotterViewGL : GLControl, IPlotterView
             }
         }
     }
+#endif
 }
