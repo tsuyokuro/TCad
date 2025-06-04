@@ -216,7 +216,7 @@ public class PlotterInput
         Mouse.MButtonDown = MButtonDown;
         Mouse.MButtonUp = MButtonUp;
 
-        Mouse.PointerMoved = MouseMove;
+        Mouse.PointerMove = MouseMove;
 
         Mouse.Wheel = Wheel;
     }

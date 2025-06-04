@@ -595,6 +595,8 @@ public class DragingViewOrgState : ControllerState
     private vector3_t StoreViewOrg = default;
     private vector3_t StoreSnapPoint = default;
 
+    private vector3_t MDownPoint = default;
+
     public override ControllerStateID ID
     {
         get => ControllerStateID.DRAGING_VIEW_ORG;
@@ -627,7 +629,7 @@ public class DragingViewOrgState : ControllerState
 
     public override void MButtonDown(CadMouse pointer, DrawContext dc, vcompo_t x, vcompo_t y)
     {
-        pointer.MDownPoint = dc.WorldPointToDevPoint(StoreSnapPoint);
+        MDownPoint = dc.WorldPointToDevPoint(StoreSnapPoint);
 
         Controller.Input.UnlockCursor();
 
@@ -647,7 +649,7 @@ public class DragingViewOrgState : ControllerState
     {
         vector3_t p = dc.WorldPointToDevPoint(StoreSnapPoint);
 
-        if (pointer.MDownPoint.X == p.X && pointer.MDownPoint.Y == p.Y)
+        if (MDownPoint.X == p.X && MDownPoint.Y == p.Y)
         {
             ViewPortUtil.AdjustOrigin(dc, x, y, (int)dc.ViewWidth, (int)dc.ViewHeight);
         }
@@ -674,7 +676,7 @@ public class DragingViewOrgState : ControllerState
     {
         vector3_t cp = new vector3_t(x, y, 0);
 
-        vector3_t d = cp - pointer.MDownPoint;
+        vector3_t d = cp - MDownPoint;
 
         vector3_t op = StoreViewOrg + d;
 

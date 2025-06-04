@@ -91,7 +91,7 @@ public partial class FontFaceW
 
         if (PolyCache.TryGetValue(c, out fp))
         {
-            return new(fp);
+            return fp;
         }
 
         uint glyphIndex = FontFace.GetCharIndex(c);
@@ -105,7 +105,7 @@ public partial class FontFaceW
 
         PolyCache.Add(c, fp);
 
-        return new(fp);
+        return fp;
     }
 
     public GlyphSlot GetGlyph(char c)
@@ -141,7 +141,6 @@ public partial class FontFaceW
             {
                 ft.PosX = 0;
             }
-            ;
 
             float top = (float)FontFace.Size.Metrics.Ascender;
             float bottom = (float)(FontFace.Glyph.Metrics.Height - FontFace.Glyph.Metrics.HorizontalBearingY);

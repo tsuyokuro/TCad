@@ -777,7 +777,7 @@ public class TestCommands
         //string fontFName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "msmincho.ttc");
         //FontFaceW fw = FontFaceW.Provider.GetFromFile(fontFName, 48, 0);
 
-        FontPoly fontPoly = fw.CreatePoly('お');
+        FontPoly fontPoly = fw.CreatePoly('あ');
 
         if (fontPoly.Mesh != null)
         {
