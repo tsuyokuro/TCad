@@ -289,7 +289,7 @@ public class CommandHandler
 
     public void Remove()
     {
-        Controller.CommandProc.Remove();
+        Controller.CommandProcessor.Remove();
         Redraw();
     }
 
@@ -319,13 +319,13 @@ public class CommandHandler
 
     public void InsPoint()
     {
-        Controller.CommandProc.InsPoint();
+        Controller.CommandProcessor.InsPoint();
         Redraw();
     }
 
     public void AddPoint()
     {
-        Controller.CommandProc.AddPointToCursorPos();
+        Controller.CommandProcessor.AddPointToCursorPos();
         Redraw();
     }
 
@@ -364,19 +364,19 @@ public class CommandHandler
 
     public void ClearLayer()
     {
-        Controller.CommandProc.ClearLayer(0);
+        Controller.CommandProcessor.ClearLayer(0);
         Redraw();
     }
 
     public void Copy()
     {
-        Controller.CommandProc.Copy();
+        Controller.CommandProcessor.Copy();
         Redraw();
     }
 
     public void Paste()
     {
-        Controller.CommandProc.Paste();
+        Controller.CommandProcessor.Paste();
         Redraw();
     }
 
@@ -386,7 +386,7 @@ public class CommandHandler
 
         ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
 
-        Controller.CommandProc.ClearAll();
+        Controller.CommandProcessor.ClearAll();
         Redraw();
     }
 
@@ -809,22 +809,22 @@ public class CommandHandler
 
     public void ObjOrderDown()
     {
-        Controller.CommandProc.ObjOrderDown();
+        Controller.CommandProcessor.ObjOrderDown();
     }
 
     public void ObjOrderUp()
     {
-        Controller.CommandProc.ObjOrderUp();
+        Controller.CommandProcessor.ObjOrderUp();
     }
 
     public void ObjOrderBottom()
     {
-        Controller.CommandProc.ObjOrderBottom();
+        Controller.CommandProcessor.ObjOrderBottom();
     }
 
     public void ObjOrderTop()
     {
-        Controller.CommandProc.ObjOrderTop();
+        Controller.CommandProcessor.ObjOrderTop();
     }
 
     public void ResetCamera()
@@ -835,13 +835,13 @@ public class CommandHandler
 
     public void AddLayer()
     {
-        Controller.CommandProc.AddLayer(null);
+        Controller.CommandProcessor.AddLayer(null);
         Redraw();
     }
 
     public void RemoveLayer()
     {
-        Controller.CommandProc.RemoveLayer(Controller.CurrentLayer.ID);
+        Controller.CommandProcessor.RemoveLayer(Controller.CurrentLayer.ID);
         Redraw();
     }
 
@@ -853,7 +853,7 @@ public class CommandHandler
 
     public void SelectAll()
     {
-        Controller.CommandProc.SelectAllInCurrentLayer();
+        Controller.CommandProcessor.SelectAllInCurrentLayer();
         Redraw();
     }
 

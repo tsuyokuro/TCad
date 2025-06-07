@@ -44,9 +44,9 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Contoroller.ConnectViewModel(ViewModel);
 
-        ViewModel.Startup();
+        ViewModel.StartUp();
 
-        Contoroller.Startup();
+        Contoroller.StartUp();
 
         ViewModel.ObjectTree = ObjTree;
 
@@ -212,8 +212,8 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        Contoroller.Shutdown();
-        ViewModel.Shutdown();
+        Contoroller.ShutDown();
+        ViewModel.ShutDown();
 
         GLUtilContainer.DisposeServices();
 

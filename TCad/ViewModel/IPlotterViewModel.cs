@@ -27,9 +27,9 @@ public interface UITypes
 
 public interface IPlotterViewModel
 {
-    void Startup();
+    void StartUp();
 
-    void Shutdown();
+    void ShutDown();
 
 
     string CurrentFileName
@@ -147,7 +147,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
     {
     }
 
-    public void Shutdown()
+    public void ShutDown()
     {
     }
 
@@ -191,7 +191,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
         return false;
     }
 
-    public void Startup()
+    public void StartUp()
     {
     }
 

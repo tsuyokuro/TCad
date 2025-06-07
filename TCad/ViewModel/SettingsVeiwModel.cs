@@ -32,7 +32,7 @@ public class SettingsVeiwModel : INotifyPropertyChanged
 
                 if (!value)
                 {
-                    Controller.EndCreateFigure();
+                    Controller.EndCreatingFigure();
                 }
             }
         }

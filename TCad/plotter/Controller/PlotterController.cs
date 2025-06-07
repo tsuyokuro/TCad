@@ -141,7 +141,7 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterCommandProcessor CommandProc
+    public PlotterCommandProcessor CommandProcessor
     {
         get;
         private set;
@@ -167,13 +167,11 @@ public class PlotterController : IPlotterController
 
         Input = new PlotterInput(this);
 
-        CommandProc = new PlotterCommandProcessor(this);
+        CommandProcessor = new PlotterCommandProcessor(this);
 
         EditManager = new PlotterEditManager(this);
 
         Editor = new PlotterEditor(this);
-
-        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -185,6 +183,9 @@ public class PlotterController : IPlotterController
 
         DB.NewLayer(addLayerList: true, selectCurrent: true);
 
+
+        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
+
         Log.plx("out");
     }
 
@@ -193,7 +194,7 @@ public class PlotterController : IPlotterController
         ViewModel = viewModel;
     }
 
-    public void Startup()
+    public void StartUp()
     {
         Log.plx("in");
 
@@ -203,25 +204,25 @@ public class PlotterController : IPlotterController
         Log.plx("out");
     }
 
-    public void Shutdown()
+    public void ShutDown()
     {
         Log.plx("in");
         DC.Dispose();
         Log.plx("out");
     }
 
-    public void ChangeState(ControllerStateID state)
+    private void ChangeState(ControllerStateID state)
     {
         StateMachine.ChangeState(state);
     }
 
-    public void StartCreateFigure(CadFigure.Types type)
+    public void StartCreatingFigure(CadFigure.Types type)
     {
         CreatingFigType = type;
         ChangeState(ControllerStateID.CREATE_FIGURE);
     }
 
-    public void EndCreateFigure()
+    public void EndCreatingFigure()
     {
         if (FigureCreator != null)
         {
@@ -254,7 +255,7 @@ public class PlotterController : IPlotterController
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
                 FigureCreator = null;
-                StartCreateFigure(CreatingFigType);
+                StartCreatingFigure(CreatingFigType);
                 UpdateObjectTree(true);
             }
             else
@@ -322,21 +323,6 @@ public class PlotterController : IPlotterController
 
     public List<CadFigure> GetSelectedFigureList()
     {
-        //List<CadFigure> figList = new List<CadFigure>();
-
-        //foreach (CadLayer layer in DB.LayerList)
-        //{
-        //    layer.ForEachFig(fig =>
-        //    {
-        //        if (fig.HasSelectedPoint())
-        //        {
-        //            figList.Add(fig);
-        //        }
-        //    });
-        //}
-
-        //return figList;
-
         return DB.GetSelectedFigList();
     }
 
@@ -345,12 +331,7 @@ public class PlotterController : IPlotterController
         return DB.GetSelectedRootFigureList();
     }
 
-    public void SetDB(CadObjectDB db)
-    {
-        SetDB(db, true);
-    }
-
-    public void SetDB(CadObjectDB db, bool clearHistory)
+    public void SetDB(CadObjectDB db, bool clearHistory = true)
     {
         DB = db;
 

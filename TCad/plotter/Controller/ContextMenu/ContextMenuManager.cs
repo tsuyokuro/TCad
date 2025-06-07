@@ -119,23 +119,23 @@ public class ContextMenuManager
                 break;
 
             case "end_create":
-                Controller.EndCreateFigure();
+                Controller.EndCreatingFigure();
 
                 break;
             case "quit_create":
-                Controller.EndCreateFigure();
+                Controller.EndCreatingFigure();
                 break;
 
             case "copy":
-                Controller.CommandProc.Copy();
+                Controller.CommandProcessor.Copy();
                 break;
 
             case "paste":
-                Controller.CommandProc.Paste();
+                Controller.CommandProcessor.Paste();
                 break;
 
             case "insert_point":
-                Controller.CommandProc.InsPoint();
+                Controller.CommandProcessor.InsPoint();
                 break;
         }
     }

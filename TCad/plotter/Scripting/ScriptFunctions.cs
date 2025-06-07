@@ -842,7 +842,7 @@ public class ScriptFunctions
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            Controller.CommandProc.AddLayer(name);
+            Controller.CommandProcessor.AddLayer(name);
         }, true);
     }
 

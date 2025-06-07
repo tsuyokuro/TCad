@@ -187,7 +187,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         Log.plx("out");
     }
 
-    public void Startup()
+    public void StartUp()
     {
         Log.plx("in");
 
@@ -198,7 +198,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         Log.plx("out");
     }
 
-    public void Shutdown()
+    public void ShutDown()
     {
         Log.plx("in");
 
@@ -357,7 +357,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         if (newType != CadFigure.Types.NONE)
         {
             MeasureMode = MeasureModes.NONE;
-            Controller.StartCreateFigure(newType);
+            Controller.StartCreatingFigure(newType);
 
             Redraw();
 
