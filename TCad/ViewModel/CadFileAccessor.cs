@@ -1,6 +1,7 @@
 using System.IO;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
+using TCad.Plotter.Model;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;
 

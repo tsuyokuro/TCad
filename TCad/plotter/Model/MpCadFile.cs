@@ -6,34 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using TCad.Logger;
-using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Plotter.Serializer.v1004;
 using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace TCad.Plotter.Serializer;
-
-public class CadData
-{
-    public CadObjectDB DB;
-    public vcompo_t WorldScale;
-    public PaperPageSize PageSize;
-
-    public CadData()
-    {
-        DB = null;
-        WorldScale = (vcompo_t)1.0;
-        PageSize = PaperPageSize.A4Portrate;
-    }
-
-    public CadData(CadObjectDB db, vcompo_t worldScale, PaperPageSize pageSize)
-    {
-        DB = db;
-        WorldScale = worldScale;
-        PageSize = pageSize;
-    }
-}
 
 public class CadFileException : Exception
 {

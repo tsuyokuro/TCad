@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing.Printing;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 
@@ -50,9 +51,9 @@ public class MpCadData_v1003
     {
         CadData cd = new CadData();
 
-        vcompo_t worldScale = 0;
+        vcompo_t worldScale = (vcompo_t)1.0;
 
-        PaperPageSize? pps = null;
+        PaperPageSize pps = PaperPageSize.A4Portrate;
 
         if (ViewInfo != null)
         {
@@ -64,25 +65,9 @@ public class MpCadData_v1003
             }
         }
 
+        CadObjectDB db = MpDB.Restore(dsc);
 
-        if (worldScale == 0)
-        {
-            worldScale = (vcompo_t)1.0;
-        }
-
-        cd.WorldScale = worldScale;
-
-
-        if (pps == null)
-        {
-            pps = PaperPageSize.A4Portrate;
-        }
-
-        cd.PageSize = pps.Value;
-
-        cd.DB = MpDB.Restore(dsc);
-
-        return cd;
+        return new CadData(db, worldScale, pps);
     }
 }
 
