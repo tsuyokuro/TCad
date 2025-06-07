@@ -52,14 +52,14 @@ public class CadFileAccessor
 
     private static void LoadFromMsgPackFile(string fname, IPlotterController controller)
     {
-        CadData? cd = MpCadFile.Load(fname);
+        CadData cd = MpCadFile.Load(fname);
 
         if (cd == null)
         {
             return;
         }
 
-        CadData rcd = cd.Value;
+        CadData rcd = cd;
 
         controller.SetWorldScale(rcd.WorldScale);
         controller.PageSize = rcd.PageSize;
@@ -79,11 +79,11 @@ public class CadFileAccessor
 
     private static void LoadFromMsgPackJsonFile(string fname, IPlotterController controller)
     {
-        CadData? cd = MpCadFile.LoadJson(fname);
+        CadData cd = MpCadFile.LoadJson(fname);
 
         if (cd == null) return;
 
-        CadData rcd = cd.Value;
+        CadData rcd = cd;
 
         controller.SetWorldScale(rcd.WorldScale);
         controller.PageSize = rcd.PageSize;

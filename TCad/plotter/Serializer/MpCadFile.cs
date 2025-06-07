@@ -14,11 +14,18 @@ using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace TCad.Plotter.Serializer;
 
-public struct CadData
+public class CadData
 {
     public CadObjectDB DB;
     public vcompo_t WorldScale;
     public PaperPageSize PageSize;
+
+    public CadData()
+    {
+        DB = null;
+        WorldScale = (vcompo_t)1.0;
+        PageSize = PaperPageSize.A4Portrate;
+    }
 
     public CadData(CadObjectDB db, vcompo_t worldScale, PaperPageSize pageSize)
     {
