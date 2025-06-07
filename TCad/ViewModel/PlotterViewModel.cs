@@ -172,7 +172,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         LayerListVM = new LayerListViewModel(Controller);
 
-        ViewManager_ = new ViewManager(mainWindow, this);
+        ViewManager_ = new ViewManager(mainWindow, Controller);
 
         SettingsVM = new SettingsVeiwModel(ViewManager_, Controller);
 
@@ -193,7 +193,7 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
         Settings.Load();
 
-        ViewManager_.SetupViews();
+        ViewManager_.SetupViews(this);
 
         Log.plx("out");
     }

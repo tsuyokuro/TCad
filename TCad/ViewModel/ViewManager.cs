@@ -2,6 +2,7 @@ using System.ComponentModel;
 using TCad.Logger;
 using TCad.MainView;
 using TCad.Plotter;
+using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 
 namespace TCad.ViewModel;
@@ -23,7 +24,7 @@ public class ViewManager : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
 
-    private IPlotterViewModel ViewModel;
+    private IPlotterController Controller;
 
     private ICadMainWindow MainWindow;
 
@@ -56,17 +57,17 @@ public class ViewManager : INotifyPropertyChanged
         get => ViewMode_;
     }
 
-    public ViewManager(ICadMainWindow mainWindow, IPlotterViewModel viewModel)
+    public ViewManager(ICadMainWindow mainWindow, IPlotterController controller)
     {
         MainWindow = mainWindow;
-        ViewModel = viewModel;
+        Controller = controller;
     }
 
-    public void SetupViews()
+    public void SetupViews(PlotterViewModel viewModel)
     {
         Log.plx("in");
 
-        PlotterViewGL1 = new PlotterViewGL(ViewModel);
+        PlotterViewGL1 = new PlotterViewGL(viewModel);
 
         ViewMode = ViewModes.FRONT;
 
@@ -183,10 +184,10 @@ public class ViewManager : INotifyPropertyChanged
     {
         View = view;
 
-        ViewModel.Controller.DC = view.DrawContext;
+        Controller.DC = view.DrawContext;
 
         MainWindow.SetPlotterView(view);
 
-        ViewModel.Redraw();
+        Controller.Redraw();
     }
 }

@@ -39,9 +39,6 @@ public class CommandHandler
         }
     }
 
-    readonly IPlotterController Controller;
-    readonly IPlotterViewModel ViewModel;
-
     private Dictionary<string, Action> CommandMap;
     private Dictionary<string, KeyAction> KeyMap;
 
@@ -49,10 +46,19 @@ public class CommandHandler
 
     private readonly MoveKeyHandler mMoveKeyHandler;
 
-    public CommandHandler(IPlotterViewModel vm)
+    private IPlotterViewModel ViewModel {
+        get;
+        set;
+    }
+
+    private IPlotterController Controller
     {
-        ViewModel = vm;
-        Controller = vm.Controller;
+        get => ViewModel.Controller;
+    }
+
+    public CommandHandler(IPlotterViewModel viewModel)
+    {
+        ViewModel = viewModel;
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
@@ -384,9 +390,10 @@ public class CommandHandler
     {
         ViewModel.CurrentFileName = null;
 
-        ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
+        Controller.SetWorldScale((vcompo_t)(1.0));
 
         Controller.CommandProcessor.ClearAll();
+
         Redraw();
     }
 
