@@ -8,100 +8,35 @@ namespace TCad.ViewModel;
 
 public class CadFileAccessor
 {
-    public static void SaveFile(string fname, IPlotterViewModel vm)
+    public static void SaveFile(string fname, IPlotterController controller)
     {
-        if ((fname != null && vm.CurrentFileName != null) && fname != vm.CurrentFileName)
-        {
-            FileUtil.OverWriteExtData(vm.CurrentFileName, fname);
-        }
-
-
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
-            SaveExternalData(sc, vm.Controller.DB, fname);
-            SaveToMsgPackJsonFile(fname, vm.Controller);
+            SaveToMsgPackJsonFile(fname, controller);
         }
         else
         {
             SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
-            SaveExternalData(sc, vm.Controller.DB, fname);
-            SaveToMsgPackFile(fname, vm.Controller);
+            SaveToMsgPackFile(fname, controller);
         }
     }
 
-    public static void LoadFile(string fname, IPlotterViewModel vm)
+    public static void LoadFile(string fname, IPlotterController controller)
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
-            LoadFromMsgPackJsonFile(fname, vm.Controller);
-            LoadExternalData(dsc, vm.Controller.DB, fname);
+            LoadFromMsgPackJsonFile(fname, controller);
         }
         else
         {
             DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
-            LoadFromMsgPackFile(fname, vm.Controller);
-            LoadExternalData(dsc, vm.Controller.DB, fname);
+            LoadFromMsgPackFile(fname, controller);
         }
 
-        vm.Controller.Redraw();
+        controller.Redraw();
     }
-
-    private static void SaveExternalData(SerializeContext sc, CadObjectDB db, string fname)
-    {
-        foreach (CadLayer layer in db.LayerList)
-        {
-            foreach (CadFigure fig in layer.FigureList)
-            {
-                SaveExternalData(sc, fig, fname);
-            }
-        }
-    }
-
-    private static void SaveExternalData(SerializeContext sc, CadFigure fig, string fname)
-    {
-        fig.SaveExternalFiles(sc, fname);
-
-        foreach (CadFigure c in fig.ChildList)
-        {
-            SaveExternalData(sc, c, fname);
-        }
-    }
-
-    private static void LoadExternalData(DeserializeContext dsc, CadObjectDB db, string fname)
-    {
-        foreach (CadLayer layer in db.LayerList)
-        {
-            foreach (CadFigure fig in layer.FigureList)
-            {
-                LoadExternalData(dsc, fig, fname);
-            }
-        }
-    }
-
-    private static void LoadExternalData(DeserializeContext dsc, CadFigure fig, string fname)
-    {
-        if (!File.Exists(fname))
-        {
-            return;
-        }
-
-        fig.LoadExternalFiles(dsc, fname);
-
-        foreach (CadFigure c in fig.ChildList)
-        {
-            try
-            {
-                LoadExternalData(dsc, c, fname);
-            }
-            catch
-            {
-                continue;
-            }
-        }
-    }
-
 
     #region "MessagePack file access"
 

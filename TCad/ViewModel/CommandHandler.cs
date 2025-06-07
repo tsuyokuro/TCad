@@ -420,7 +420,7 @@ public class CommandHandler
 
             try
             {
-                CadFileAccessor.LoadFile(ofd.FileName, ViewModel);
+                CadFileAccessor.LoadFile(ofd.FileName, Controller);
                 ViewModel.CurrentFileName = ofd.FileName;
             }
             catch (CadFileException cadFileException)
@@ -439,7 +439,7 @@ public class CommandHandler
     {
         if (ViewModel.CurrentFileName != null)
         {
-            CadFileAccessor.SaveFile(ViewModel.CurrentFileName, ViewModel);
+            CadFileAccessor.SaveFile(ViewModel.CurrentFileName, Controller);
             return;
         }
 
@@ -454,7 +454,7 @@ public class CommandHandler
         {
             SettingsHolder.Settings.LastDataDir = Path.GetDirectoryName(sfd.FileName);
 
-            CadFileAccessor.SaveFile(sfd.FileName, ViewModel);
+            CadFileAccessor.SaveFile(sfd.FileName, Controller);
             ViewModel.CurrentFileName = sfd.FileName;
         }
     }

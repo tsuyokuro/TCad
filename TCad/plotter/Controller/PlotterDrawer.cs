@@ -386,6 +386,12 @@ public class PlotterDrawer
         }
 
         CadFigure fig = Controller.DB.GetFigure(Controller.Input.LastSelPoint.Value.FigureID);
+
+        if (fig == null)
+        {
+            return;
+        }
+
         int idx = Controller.Input.LastSelPoint.Value.PointIndex;
         var point = fig.PointList[idx];
 
