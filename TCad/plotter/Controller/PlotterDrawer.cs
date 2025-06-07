@@ -372,7 +372,7 @@ public class PlotterDrawer
         }
 
         CadFigure fig = Controller.DB.GetFigure(Controller.Input.LastSelSegment.Value.FigureID);
-        fig.DrawSeg(
+        fig?.DrawSeg(
                 dc, dc.GetPen(DrawTools.PEN_LAST_SEL_SEG),
                 Controller.Input.LastSelSegment.Value.PtIndexA,
                 Controller.Input.LastSelSegment.Value.PtIndexB);

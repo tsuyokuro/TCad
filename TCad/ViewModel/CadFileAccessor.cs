@@ -20,13 +20,13 @@ public class CadFileAccessor
         {
             SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             SaveExternalData(sc, vm.Controller.DB, fname);
-            SaveToMsgPackJsonFile(fname, vm);
+            SaveToMsgPackJsonFile(fname, vm.Controller);
         }
         else
         {
             SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             SaveExternalData(sc, vm.Controller.DB, fname);
-            SaveToMsgPackFile(fname, vm);
+            SaveToMsgPackFile(fname, vm.Controller);
         }
     }
 
@@ -35,13 +35,13 @@ public class CadFileAccessor
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
             DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
-            LoadFromMsgPackJsonFile(fname, vm);
+            LoadFromMsgPackJsonFile(fname, vm.Controller);
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
         else
         {
             DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
-            LoadFromMsgPackFile(fname, vm);
+            LoadFromMsgPackFile(fname, vm.Controller);
             LoadExternalData(dsc, vm.Controller.DB, fname);
         }
 
@@ -105,23 +105,18 @@ public class CadFileAccessor
 
     #region "MessagePack file access"
 
-    private static void SaveToMsgPackFile(string fname, IPlotterViewModel vm)
+    private static void SaveToMsgPackFile(string fname, IPlotterController controller)
     {
-        IPlotterController pc = vm.Controller;
-
         CadData cd = new(
-                            pc.DB,
-                            pc.DC.WorldScale,
-                            pc.PageSize
-                            );
+            controller.DB,
+            controller.DC.WorldScale,
+            controller.PageSize);
 
         MpCadFile.Save(fname, cd);
     }
 
-    private static void LoadFromMsgPackFile(string fname, IPlotterViewModel vm)
+    private static void LoadFromMsgPackFile(string fname, IPlotterController controller)
     {
-        IPlotterController pc = vm.Controller;
-
         CadData? cd = MpCadFile.Load(fname);
 
         if (cd == null)
@@ -131,29 +126,23 @@ public class CadFileAccessor
 
         CadData rcd = cd.Value;
 
-
-        vm.SetWorldScale(rcd.WorldScale);
-
-        pc.PageSize = rcd.PageSize;
-
-        pc.SetDB(rcd.DB);
+        controller.SetWorldScale(rcd.WorldScale);
+        controller.PageSize = rcd.PageSize;
+        controller.SetDB(rcd.DB);
     }
 
 
-    private static void SaveToMsgPackJsonFile(string fname, IPlotterViewModel vm)
+    private static void SaveToMsgPackJsonFile(string fname, IPlotterController controller)
     {
-        IPlotterController pc = vm.Controller;
-
         CadData cd = new(
-            pc.DB,
-            pc.DC.WorldScale,
-            pc.PageSize);
-
+            controller.DB,
+            controller.DC.WorldScale,
+            controller.PageSize);
 
         MpCadFile.SaveAsJson(fname, cd);
     }
 
-    private static void LoadFromMsgPackJsonFile(string fname, IPlotterViewModel vm)
+    private static void LoadFromMsgPackJsonFile(string fname, IPlotterController controller)
     {
         CadData? cd = MpCadFile.LoadJson(fname);
 
@@ -161,13 +150,9 @@ public class CadFileAccessor
 
         CadData rcd = cd.Value;
 
-        vm.SetWorldScale(rcd.WorldScale);
-
-        IPlotterController pc = vm.Controller;
-
-        pc.PageSize = rcd.PageSize;
-
-        pc.SetDB(rcd.DB);
+        controller.SetWorldScale(rcd.WorldScale);
+        controller.PageSize = rcd.PageSize;
+        controller.SetDB(rcd.DB);
     }
     #endregion
 }

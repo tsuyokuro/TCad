@@ -62,6 +62,8 @@ public interface IPlotterController
 
     void SetDB(CadObjectDB db, bool clearHistory = true);
 
+    void SetWorldScale(vcompo_t scale);
+
     void SetObjectTreePos(int index);
 
     void StartCreatingFigure(CadFigure.Types type);

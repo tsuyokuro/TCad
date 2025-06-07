@@ -345,6 +345,11 @@ public class PlotterController : IPlotterController
         UpdateObjectTree(true);
     }
 
+    public void SetWorldScale(vcompo_t scale)
+    {
+        ViewModel.SetWorldScale(scale);
+    }
+
     public void SetCurrentLayer(uint id)
     {
         if (DB.IsValidLayerID(id))
