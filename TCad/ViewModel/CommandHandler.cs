@@ -964,7 +964,7 @@ public class CommandHandler
 
         if (result == System.Windows.Forms.DialogResult.OK)
         {
-            Controller.PageSize = new PaperPageSize(pageDlg.PageSettings);
+            Controller.SetPaperPageSize(new PaperPageSize(pageDlg.PageSettings));
 
             Redraw();
         }
@@ -983,7 +983,7 @@ public class CommandHandler
 
         if (result ?? false)
         {
-            ViewModel.SetWorldScale(((vcompo_t)dlg.WorldScale));
+            Controller.SetWorldScale(((vcompo_t)dlg.WorldScale));
             Redraw();
         }
     }

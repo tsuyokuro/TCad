@@ -188,6 +188,9 @@ public class ViewManager : INotifyPropertyChanged
 
         MainWindow.SetPlotterView(view);
 
-        Controller.Redraw();
+        if (Controller.ViewModel != null)
+        {
+            Controller.Redraw();
+        }
     }
 }

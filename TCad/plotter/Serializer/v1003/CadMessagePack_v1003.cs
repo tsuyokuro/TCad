@@ -49,8 +49,6 @@ public class MpCadData_v1003
 
     public CadData Restore(DeserializeContext dsc)
     {
-        CadData cd = new CadData();
-
         vcompo_t worldScale = (vcompo_t)1.0;
 
         PaperPageSize pps = PaperPageSize.A4Portrate;

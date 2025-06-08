@@ -17,7 +17,11 @@ public interface IPlotterController
     string CurrentFileName { get; set; }
     CadLayer CurrentLayer { get; set; }
     ControllerState CurrentState { get; }
+
     CadObjectDB DB { get; }
+    PaperPageSize PageSize { get; }
+    vcompo_t WorldScale { get; }
+   
     DrawContext DC { get; set; }
     PlotterDrawer Drawer { get; }
     PlotterEditManager EditManager { get; }
@@ -27,7 +31,6 @@ public interface IPlotterController
     PlotterInput Input { get; }
     FigCreator MeasureFigureCreator { get; set; }
     MeasureModes MeasureMode { get; set; }
-    PaperPageSize PageSize { get; set; }
     PlotterTaskRunner PlotterTaskRunner { get; set; }
     ScriptEnvironment ScriptEnv { get; }
     SelectModes SelectMode { get; set; }
@@ -60,9 +63,13 @@ public interface IPlotterController
 
     void SetCurrentLayer(uint id);
 
+
     void SetDB(CadObjectDB db, bool clearHistory = true);
 
     void SetWorldScale(vcompo_t scale);
+
+    void SetPaperPageSize(PaperPageSize size);
+
 
     void SetObjectTreePos(int index);
 

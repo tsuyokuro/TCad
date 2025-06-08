@@ -45,7 +45,7 @@ public class CadFileAccessor
     {
         CadData cd = new(
             controller.DB,
-            controller.DC.WorldScale,
+            controller.WorldScale,
             controller.PageSize);
 
         MpCadFile.Save(fname, cd);
@@ -63,7 +63,7 @@ public class CadFileAccessor
         CadData rcd = cd;
 
         controller.SetWorldScale(rcd.WorldScale);
-        controller.PageSize = rcd.PageSize;
+        controller.SetPaperPageSize(rcd.PageSize);
         controller.SetDB(rcd.DB);
     }
 
@@ -72,7 +72,7 @@ public class CadFileAccessor
     {
         CadData cd = new(
             controller.DB,
-            controller.DC.WorldScale,
+            controller.WorldScale,
             controller.PageSize);
 
         MpCadFile.SaveAsJson(fname, cd);
@@ -87,7 +87,7 @@ public class CadFileAccessor
         CadData rcd = cd;
 
         controller.SetWorldScale(rcd.WorldScale);
-        controller.PageSize = rcd.PageSize;
+        controller.SetPaperPageSize(rcd.PageSize);
         controller.SetDB(rcd.DB);
     }
     #endregion

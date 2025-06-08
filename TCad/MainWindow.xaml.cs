@@ -41,11 +41,9 @@ public partial class MainWindow : Window, ICadMainWindow
         Contoroller = new PlotterController();
 
         ViewModel = new PlotterViewModel(this, Contoroller);
-
-        Contoroller.ConnectViewModel(ViewModel);
-
         ViewModel.StartUp();
 
+        Contoroller.ConnectViewModel(ViewModel);
         Contoroller.StartUp();
 
         ViewModel.ObjectTree = ObjTree;

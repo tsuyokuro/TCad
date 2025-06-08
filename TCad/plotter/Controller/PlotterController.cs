@@ -12,17 +12,30 @@ namespace TCad.Plotter.Controller;
 
 public class PlotterController : IPlotterController
 {
+    private CadData CadData_ = new CadData();
+
     public CadObjectDB DB
     {
-        get;
-        private set;
-    } = new CadObjectDB();
+        get => CadData_.DB;
+        set => CadData_.DB = value;
+    }
 
     public PaperPageSize PageSize
     {
+        get => CadData_.PageSize;
+        set => CadData_.PageSize = value;
+    }
+
+    public vcompo_t WorldScale
+    {
+        get => DC.WorldScale;
+    }
+
+    public DrawContext DC
+    {
         get;
         set;
-    } = PaperPageSize.A4Portrate;
+    }
 
     public SelectModes SelectMode
     {
@@ -82,12 +95,6 @@ public class PlotterController : IPlotterController
         get;
         private set;
     } = new List<CadFigure>();
-
-    public DrawContext DC
-    {
-        get;
-        set;
-    }
 
     public ScriptEnvironment ScriptEnv
     {
@@ -192,6 +199,7 @@ public class PlotterController : IPlotterController
     public void ConnectViewModel(IPlotterViewModel viewModel)
     {
         ViewModel = viewModel;
+        ViewModel.SetWorldScale(CadData_.WorldScale);
     }
 
     public void StartUp()
@@ -345,8 +353,14 @@ public class PlotterController : IPlotterController
         UpdateObjectTree(true);
     }
 
+    public void SetPaperPageSize(PaperPageSize paperSize)
+    {
+        PageSize = paperSize;
+    }
+
     public void SetWorldScale(vcompo_t scale)
     {
+        CadData_.WorldScale = scale;
         ViewModel.SetWorldScale(scale);
     }
 

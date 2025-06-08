@@ -89,7 +89,7 @@ public class MpCadFile
     {
     }
 
-    public static CadData? Load(string fname)
+    public static CadData Load(string fname)
     {
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
@@ -145,7 +145,7 @@ public class MpCadFile
         return $"{v[0]}.{v[1]}.{v[2]}.{v[3]}";
     }
 
-    public static CadData? LoadJson(string fname)
+    public static CadData LoadJson(string fname)
     {
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
