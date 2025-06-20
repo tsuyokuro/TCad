@@ -1964,16 +1964,6 @@ public class ScriptFunctions
         }, true);
     }
 
-    public void Redraw()
-    {
-        ThreadUtil.RunOnMainThread(() =>
-        {
-            Controller.Drawer.Clear();
-            Controller.Drawer.DrawAll();
-            Controller.Drawer.UpdateView();
-        }, true);
-    }
-
     public CadFigure CreatePolyLines()
     {
         CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(Types.POLY_LINES);

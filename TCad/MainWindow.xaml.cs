@@ -14,6 +14,7 @@ using TCad.Logger;
 using TCad.MainView;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Util;
 using TCad.ViewModel;
@@ -38,17 +39,19 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Glu.Initialize();
 
-        Contoroller = new PlotterController();
+        CadData cadData = new CadData(
+            new CadObjectDB(),
+            (vcompo_t)1.0,
+            PaperPageSize.A4Portrate);
+
+        Contoroller = new PlotterController(cadData);
 
         ViewModel = new PlotterViewModel(this, Contoroller);
-        ViewModel.StartUp();
-
-        Contoroller.ConnectViewModel(ViewModel);
-        Contoroller.StartUp();
-
         ViewModel.ObjectTree = ObjTree;
+        ViewModel.CommandTextBox = textCommand;
 
-        ViewModel.AttachCommandView(textCommand);
+        Contoroller.SetViewModel(ViewModel);
+
 
         SetupInteractionConsole();
 

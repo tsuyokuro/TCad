@@ -186,11 +186,9 @@ public class ViewManager : INotifyPropertyChanged
 
         Controller.DC = view.DrawContext;
 
-        MainWindow.SetPlotterView(view);
+        view.SetWorldScale(Controller.WorldScale);
 
-        if (Controller.ViewModel != null)
-        {
-            Controller.Redraw();
-        }
+        // OnPaintが呼ばれるためRedrawを呼ぶ必要はない
+        MainWindow.SetPlotterView(view);
     }
 }

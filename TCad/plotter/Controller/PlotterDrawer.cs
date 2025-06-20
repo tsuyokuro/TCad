@@ -30,7 +30,7 @@ public class PlotterDrawer
         DrawAll(dc);
         dc.EndDraw();
 
-        UpdateView();
+        Controller.SwapBuffers();
     }
 
     public void Clear()
@@ -38,7 +38,7 @@ public class PlotterDrawer
         Clear(Controller.DC);
     }
 
-    public void Clear(DrawContext dc = null)
+    public void Clear(DrawContext dc)
     {
         dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
     }
@@ -93,11 +93,6 @@ public class PlotterDrawer
                 fig.DrawEach(dc, normal_dp);
             }
         }
-    }
-
-    public void UpdateView()
-    {
-        Controller.ViewModel.ViewManager.View.SwapBuffers();
     }
 
     #region private

@@ -12,6 +12,12 @@ namespace TCad.Plotter.Controller;
 
 public class PlotterController : IPlotterController
 {
+    public bool IsStarted
+    {
+        get;
+        protected set;
+    } = false;
+
     private CadData CadData_ = new CadData();
 
     public CadObjectDB DB
@@ -28,7 +34,9 @@ public class PlotterController : IPlotterController
 
     public vcompo_t WorldScale
     {
-        get => DC.WorldScale;
+        get {
+            return CadData_.WorldScale;
+        }
     }
 
     public DrawContext DC
@@ -166,9 +174,11 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterController()
+    public PlotterController(CadData cadData)
     {
         Log.plx("in");
+
+        CadData_ = cadData;
 
         Drawer = new PlotterDrawer(this);
 
@@ -196,18 +206,28 @@ public class PlotterController : IPlotterController
         Log.plx("out");
     }
 
-    public void ConnectViewModel(IPlotterViewModel viewModel)
+    public void SetViewModel(IPlotterViewModel viewModel)
     {
         ViewModel = viewModel;
+        ViewModel.StartUp();
         ViewModel.SetWorldScale(CadData_.WorldScale);
+        StartUp();
     }
 
     public void StartUp()
     {
+        if (IsStarted)
+        {
+            Log.plx("Controller is already started.");
+            return;
+        }
+
         Log.plx("in");
 
         UpdateLayerList();
         UpdateObjectTree(true);
+
+        IsStarted = true;
 
         Log.plx("out");
     }
@@ -399,6 +419,11 @@ public class PlotterController : IPlotterController
     public void Redraw()
     {
         Drawer.Redraw(DC);
+    }
+
+    public void SwapBuffers()
+    {
+        ViewModel.SwapBuffers();
     }
 
     public void UpdateObjectTree(bool remakeTree)

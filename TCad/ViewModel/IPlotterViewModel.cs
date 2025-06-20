@@ -27,6 +27,11 @@ public interface UITypes
 
 public interface IPlotterViewModel
 {
+    bool IsStarted
+    {
+        get;
+    }
+
     void StartUp();
 
     void ShutDown();
@@ -67,6 +72,7 @@ public interface IPlotterViewModel
     IAutoCompleteTextBox CommandTextBox
     {
         get;
+        set;
     }
 
     LayerListViewModel LayerListVM { get; }
@@ -76,6 +82,7 @@ public interface IPlotterViewModel
 
     void Redraw(bool waitUiThread = true);
 
+    void SwapBuffers();
 
     void StateChanged(StateChangedParam si);
 
@@ -105,7 +112,6 @@ public interface IPlotterViewModel
 
     void ExecCommand(string cmd);
 
-    void AttachCommandView(IAutoCompleteTextBox textBox);
     bool OnKeyDown(object sender, KeyEventArgs e);
     bool OnKeyUp(object sender, KeyEventArgs e);
 
@@ -117,8 +123,13 @@ public interface IPlotterViewModel
     void MouseWheel(DrawContext dc, vcompo_t x, vcompo_t y, int delta);
 }
 
-public class DummyPlotterViewModel : IPlotterViewModel
+public class NopPlotterViewModel : IPlotterViewModel
 {
+    public bool IsStarted
+    {
+        get;
+    } = true;
+
     public string CurrentFileName { get; set; }
 
     public IPlotterController Controller { get; }
@@ -131,7 +142,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
 
     public ICadObjectTree ObjectTree { get; set; }
 
-    public IAutoCompleteTextBox CommandTextBox { get; }
+    public IAutoCompleteTextBox CommandTextBox { get; set; }
 
     public LayerListViewModel LayerListVM { get; }
 
@@ -139,9 +150,6 @@ public class DummyPlotterViewModel : IPlotterViewModel
 
     public DrawContext DC { get; }
 
-    public void AttachCommandView(IAutoCompleteTextBox textBox)
-    {
-    }
 
     public void ChangeMouseCursor(UITypes.MouseCursorType cursorType)
     {
@@ -174,7 +182,7 @@ public class DummyPlotterViewModel : IPlotterViewModel
 
     public List<string> HelpOfKey(string keyword)
     {
-        return new();
+        return null;
     }
 
     public void LayerListChanged(LayerListInfo layerListInfo)
@@ -196,6 +204,10 @@ public class DummyPlotterViewModel : IPlotterViewModel
     }
 
     public void OpenPopupMessage(string text, UITypes.MessageType messageType)
+    {
+    }
+
+    public void SwapBuffers()
     {
     }
 

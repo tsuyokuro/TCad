@@ -15,6 +15,12 @@ namespace TCad.ViewModel;
 
 public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 {
+    public bool IsStarted
+    {
+        get;
+        protected set;
+    } = false;
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     public IPlotterController Controller
@@ -139,10 +145,17 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         }
     }
 
+    IAutoCompleteTextBox CommandTextBox_ = null;
     public IAutoCompleteTextBox CommandTextBox
     {
-        get;
-        private set;
+        get => CommandTextBox_;
+        set
+        {
+            CommandTextBox_ = value;
+            CommandTextBox_.CandidateList.Clear();
+            CommandTextBox_.CandidateList.AddRange(Controller.ScriptEnv.AutoCompleteList);
+            CommandTextBox_.Determined += EvalTextCommand;
+        }
     }
 
     public CurrentFigCommand CurrentFigCmd { get; set; }
@@ -189,11 +202,19 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
 
     public void StartUp()
     {
+        if (IsStarted)
+        {
+            Log.plx("already started");
+            return;
+        }
+
         Log.plx("in");
 
         Settings.Load();
 
         ViewManager_.SetupViews(this);
+
+        IsStarted = true;
 
         Log.plx("out");
     }
@@ -395,18 +416,14 @@ public class PlotterViewModel : IPlotterViewModel, INotifyPropertyChanged
         return true;
     }
 
+    public void SwapBuffers()
+    {
+        ViewManager_.View.SwapBuffers();
+    }
 
     public void Redraw(bool waitUiThread = true)
     {
         ThreadUtil.RunOnMainThread(Controller.Redraw, waitUiThread);
-    }
-
-    public void AttachCommandView(IAutoCompleteTextBox textBox)
-    {
-        CommandTextBox = textBox;
-        CommandTextBox.CandidateList.Clear();
-        CommandTextBox.CandidateList.AddRange(Controller.ScriptEnv.AutoCompleteList);
-        CommandTextBox.Determined += EvalTextCommand;
     }
 
     #region View to Controller

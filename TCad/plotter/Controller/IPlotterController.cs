@@ -10,6 +10,7 @@ namespace TCad.Plotter.Controller;
 
 public interface IPlotterController
 {
+    public bool IsStarted { get;　}
     IPlotterViewModel ViewModel { get; }
     PlotterCommandProcessor CommandProcessor { get; }
     ContextMenuManager ContextMenuMan { get; }
@@ -39,7 +40,7 @@ public interface IPlotterController
     List<CadFigure> TempFigureList { get; }
 
 
-    void ConnectViewModel(IPlotterViewModel viewModel);
+    void SetViewModel(IPlotterViewModel viewModel);
 
     void StartUp();
     void ShutDown();
@@ -88,6 +89,7 @@ public interface IPlotterController
     int FindObjectTreeItem(uint id);
 
     void Redraw();
+    void SwapBuffers();
 
     void OpenPopupMessage(string text, UITypes.MessageType type);
     void ClosePopupMessage();

@@ -151,9 +151,7 @@ public partial class ScriptEnvironment
             RunScript(s, false);
         });
 
-        Controller.Drawer.Clear();
-        Controller.Drawer.DrawAll();
-        Controller.Drawer.UpdateView();
+        Controller.Redraw();
     }
 
     private Thread mScriptThread = null;
@@ -198,9 +196,7 @@ public partial class ScriptEnvironment
             mTraceBack = null;
         });
 
-        Controller.Drawer.Clear();
-        Controller.Drawer.DrawAll();
-        Controller.Drawer.UpdateView();
+        Controller.Redraw();
         Controller.UpdateObjectTree(true);
 
         if (callback != null)

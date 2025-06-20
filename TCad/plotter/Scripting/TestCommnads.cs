@@ -953,9 +953,7 @@ public class TestCommands
     {
         RunOnMainThread(() =>
         {
-            Controller.Drawer.Clear();
-            Controller.Drawer.DrawAll();
-            Controller.Drawer.UpdateView();
+            Controller.Redraw();
         });
     }
 

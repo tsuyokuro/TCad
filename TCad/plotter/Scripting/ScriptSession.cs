@@ -121,9 +121,7 @@ public class ScriptSession
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            Env.Controller.Drawer.Clear();
-            Env.Controller.Drawer.DrawAll();
-            Env.Controller.Drawer.UpdateView();
+            Env.Controller.Redraw();
         }, true);
     }
 }
