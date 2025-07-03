@@ -41,7 +41,7 @@ public class DrawingGDIBmp : DrawingGDI
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
-        int argb = DC.Tools.Pen(DrawTools.PEN_GRID).Argb;
+        int argb = DC.Tools.Pens[DrawTools.PEN_GRID].Argb;
 
         vcompo_t n = grid.Decimate(DC, grid, 8);
 

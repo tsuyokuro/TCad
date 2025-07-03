@@ -85,7 +85,7 @@ public class PlotterPrinter
 
         GL.LineWidth((float)upRes);
 
-        dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
+        dc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_BACKGROUND));
 
         pc.Drawer.DrawFiguresRaw(dc);
 

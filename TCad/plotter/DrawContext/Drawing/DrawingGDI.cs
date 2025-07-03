@@ -52,7 +52,7 @@ public class DrawingGDI : IDrawing
         p1.Z = 0;
 
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1);
 
         // Y軸
         p0.X = 0;
@@ -63,7 +63,7 @@ public class DrawingGDI : IDrawing
         p1.Y = len;
         p1.Z = 0;
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1);
 
         // Z軸
         p0.X = 0;
@@ -74,7 +74,7 @@ public class DrawingGDI : IDrawing
         p1.Y = 0;
         p1.Z = len;
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1);
     }
 
     public void DrawAxisLabel()
@@ -105,7 +105,7 @@ public class DrawingGDI : IDrawing
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
-        DrawPen pen = DC.GetPen(DrawTools.PEN_GRID);
+        DrawPen pen = DC.Pen(DrawTools.PEN_GRID);
 
         vector3_t p = default(vector3_t);
 
@@ -207,7 +207,7 @@ public class DrawingGDI : IDrawing
 
         p1 += DC.ViewOrg;
 
-        DrawRectScrn(DC.GetPen(DrawTools.PEN_PAGE_FRAME), p0, p1);
+        DrawRectScrn(DC.Pen(DrawTools.PEN_PAGE_FRAME), p0, p1);
     }
     #endregion
 

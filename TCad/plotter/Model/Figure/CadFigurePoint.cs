@@ -85,7 +85,7 @@ public partial class CadFigurePoint : CadFigure
         {
             if (PointList[0].Selected)
             {
-                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }

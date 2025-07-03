@@ -122,22 +122,9 @@ public class DrawContextGDI : DrawContext
         mProjectionMatrixInv = mProjectionMatrix.Inv();
     }
 
-    public Pen Pen(int id)
-    {
-        DrawPen pen = Tools.Pen(id);
-        return pen.GdiPen;
-    }
-
-
     public Font Font(int id)
     {
-        return Tools.font(id);
-    }
-
-    public Brush Brush(int id)
-    {
-        DrawBrush brush = Tools.Brush(id);
-        return brush.GdiBrush;
+        return Tools.GDIFonts[id];
     }
 
     public void Render()
@@ -150,14 +137,14 @@ public class DrawContextGDI : DrawContext
         }
     }
 
-    public override DrawPen GetPen(int idx)
+    public override DrawPen Pen(int idx)
     {
-        return Tools.Pen(idx);
+        return Tools.Pens[idx];
     }
 
-    public override DrawBrush GetBrush(int idx)
+    public override DrawBrush Brush(int idx)
     {
-        return Tools.Brush(idx);
+        return Tools.Brushes[idx];
     }
 
     public override DrawContext Clone()

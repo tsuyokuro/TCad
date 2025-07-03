@@ -362,8 +362,8 @@ public abstract class DrawContext : IDisposable
     public abstract void Dispose();
 
     public abstract DrawContext Clone();
-    public abstract DrawPen GetPen(int idx);
-    public abstract DrawBrush GetBrush(int idx);
+    public abstract DrawPen Pen(int idx);
+    public abstract DrawBrush Brush(int idx);
 
     public abstract void EnableLight();
     public abstract void DisableLight();

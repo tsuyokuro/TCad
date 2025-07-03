@@ -457,6 +457,8 @@ public class ScriptFunctions
 
         Controller.CurrentLayer.AddFigure(fig);
 
+        Session.PostRemakeObjectTree();
+
         return fig;
     }
 
@@ -480,6 +482,8 @@ public class ScriptFunctions
         }
 
         Controller.CurrentLayer.AddFigure(fig);
+
+        Session.PostRemakeObjectTree();
 
         return fig;
     }
@@ -1080,7 +1084,7 @@ public class ScriptFunctions
 
         ThreadUtil.RunOnMainThread(() =>
         {
-            tdc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
+            tdc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_TRANSPARENT));
 
             tdc.GdiGraphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -2076,7 +2080,7 @@ public class ScriptFunctions
 
         dc.StartDraw();
 
-        dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
+        dc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_BACKGROUND));
 
         Controller.Drawer.DrawFiguresRaw(dc);
 

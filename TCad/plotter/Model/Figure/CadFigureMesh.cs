@@ -205,7 +205,7 @@ public partial class CadFigureMesh : CadFigure
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        dc.Drawing.DrawSelectedPoints(PointList, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+        dc.Drawing.DrawSelectedPoints(PointList, dc.Pen(DrawTools.PEN_SELECTED_POINT));
     }
 
     public override void SelectPointAt(int index, bool sel)

@@ -101,7 +101,7 @@ public partial class CadFigureNurbsLine : CadFigure
         {
             n = PointList[i];
             dc.Drawing.DrawLine(
-                dc.GetPen(DrawTools.PEN_NURBS_CTRL_LINE), c.vector, n.vector);
+                dc.Pen(DrawTools.PEN_NURBS_CTRL_LINE), c.vector, n.vector);
 
             c = n;
         }

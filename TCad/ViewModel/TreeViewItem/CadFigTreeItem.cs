@@ -72,7 +72,7 @@ class CadFigTreeItem : CadObjTreeItem
         List<MenuItem> list = new List<MenuItem>();
 
         MenuItem menuItem = new MenuItem();
-        menuItem.Header = TCad.Properties.Resources.menu_change_fig_name;
+        menuItem.Header = Properties.Resources.menu_change_fig_name;
         menuItem.Tag = CreateContextMenuTag(ITEM_CMD_CHANGE_NAME);
 
         list.Add(menuItem);

@@ -111,7 +111,7 @@ public class CreateFigureState : ControllerState
         if (creator != null)
         {
             vector3_t p = dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
-            creator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
+            creator.DrawTemp(dc, (CadVertex)p, dc.Pen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 
@@ -329,7 +329,7 @@ public class RubberBandSelectState : ControllerState
 
     public override void Draw(DrawContext dc)
     {
-        dc.Drawing.DrawRectScrn(dc.GetPen(DrawTools.PEN_TEMP_FIGURE),
+        dc.Drawing.DrawRectScrn(dc.Pen(DrawTools.PEN_TEMP_FIGURE),
             RubberBandScrnPoint0, RubberBandScrnPoint1);
     }
 
@@ -503,7 +503,7 @@ public class MeasuringState : ControllerState
         if (Controller.MeasureFigureCreator != null)
         {
             vector3_t p = dc.DevPointToWorldPoint(Controller.Input.CrossCursor.Pos);
-            Controller.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.GetPen(DrawTools.PEN_TEMP_FIGURE));
+            Controller.MeasureFigureCreator.DrawTemp(dc, (CadVertex)p, dc.Pen(DrawTools.PEN_TEMP_FIGURE));
         }
     }
 

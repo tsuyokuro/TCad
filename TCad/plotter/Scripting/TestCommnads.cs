@@ -949,7 +949,7 @@ public class TestCommands
         return true;
     }
 
-    public void Redraw()
+    private void Redraw()
     {
         RunOnMainThread(() =>
         {
@@ -957,7 +957,7 @@ public class TestCommands
         });
     }
 
-    public void RunOnMainThread(Action action)
+    private void RunOnMainThread(Action action)
     {
         ThreadUtil.RunOnMainThread(action, true);
     }

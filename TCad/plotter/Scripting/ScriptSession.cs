@@ -109,7 +109,7 @@ public class ScriptSession
         NeedRedraw = true;
     }
 
-    public void UpdateTV(bool remakeTree)
+    private void UpdateTV(bool remakeTree)
     {
         ThreadUtil.RunOnMainThread(() =>
         {
@@ -117,7 +117,7 @@ public class ScriptSession
         }, true);
     }
 
-    public void Redraw()
+    private void Redraw()
     {
         ThreadUtil.RunOnMainThread(() =>
         {

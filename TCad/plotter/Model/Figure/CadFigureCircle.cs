@@ -88,7 +88,7 @@ public partial class CadFigureCircle : CadFigure
         if (PointList.Count == 1)
         {
             dc.Drawing.DrawCross(pen, PointList[0].vector, 2);
-            if (PointList[0].Selected) dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+            if (PointList[0].Selected) dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             return;
         }
 
@@ -107,7 +107,7 @@ public partial class CadFigureCircle : CadFigure
             if (PointList[i].Selected)
             {
                 dc.Drawing.DrawSelectedPoint(
-                    PointList[i].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                    PointList[i].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
 
         }

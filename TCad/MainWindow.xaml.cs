@@ -203,7 +203,7 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+        ColorPack cp = ViewModel.DC.Tools.Brushes[DrawTools.BRUSH_BACKGROUND].ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         Log.plx("out");
@@ -367,7 +367,7 @@ public partial class MainWindow : Window, ICadMainWindow
     public void DrawModeChanged(DrawModes drawMode)
     {
         Log.plx("in");
-        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+        ColorPack cp = ViewModel.DC.Tools.Brushes[DrawTools.BRUSH_BACKGROUND].ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         //XamlResource.SetValue("BaseColor", new SolidColorBrush(Colors.White));

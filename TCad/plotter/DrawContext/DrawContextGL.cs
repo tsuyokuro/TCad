@@ -197,14 +197,14 @@ public abstract class DrawContextGL : DrawContext
         }
     }
 
-    public override DrawPen GetPen(int idx)
+    public override DrawPen Pen(int idx)
     {
-        return Tools.Pen(idx);
+        return Tools.Pens[idx];
     }
 
-    public override DrawBrush GetBrush(int idx)
+    public override DrawBrush Brush(int idx)
     {
-        return Tools.Brush(idx);
+        return Tools.Brushes[idx];
     }
 
     protected void SetupDrawing()

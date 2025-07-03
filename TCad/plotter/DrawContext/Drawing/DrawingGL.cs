@@ -262,7 +262,7 @@ public class DrawingGL : IDrawing
                     vector3_t np0 = p;
                     vector3_t np1 = p + (nv * len);
 
-                    DrawArrowGL(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW, true);
+                    DrawArrowGL(DC.Pen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW, true);
                 }
 
                 c = next;
@@ -662,7 +662,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Y軸
@@ -671,7 +671,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Z軸
@@ -680,7 +680,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         GL.End();
@@ -706,7 +706,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_X), p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_X), p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
 
         // Y軸
         p = vector3_t.UnitY * len;
@@ -714,7 +714,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Y), p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_Y), p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
 
         // Z軸
         p = vector3_t.UnitZ * len;
@@ -722,7 +722,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Z), p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_Z), p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
     }
 
     public void DrawCompass()
@@ -774,15 +774,15 @@ public class DrawingGL : IDrawing
 
         p0 = vector3_t.UnitX * -size;
         p1 = vector3_t.UnitX * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitY * -size;
         p1 = vector3_t.UnitY * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitZ * -size;
         p1 = vector3_t.UnitZ * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         GL.End();
         GL.LineWidth(1);
@@ -802,7 +802,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_X),
             p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
 
         p = vector3_t.UnitY * size;
@@ -810,7 +810,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Y),
             p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
 
         p = vector3_t.UnitZ * size;
@@ -818,7 +818,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Z),
             p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
 
         PopMatrixes();
@@ -893,15 +893,15 @@ public class DrawingGL : IDrawing
 
         p0 = vector3_t.UnitX * -size;
         p1 = vector3_t.UnitX * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitY * -size;
         p1 = vector3_t.UnitY * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitZ * -size;
         p1 = vector3_t.UnitZ * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         GL.LineWidth(1);
         GL.End();
@@ -914,17 +914,17 @@ public class DrawingGL : IDrawing
 
         tex = mFontFaceW.CreateTexture("X");
         p1 = vector3_t.UnitX * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         tex = mFontFaceW.CreateTexture("Y");
         p1 = vector3_t.UnitY * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         tex = mFontFaceW.CreateTexture("Z");
         p1 = vector3_t.UnitZ * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         PopMatrixes();
@@ -1490,7 +1490,7 @@ public class DrawingGL : IDrawing
         vcompo_t minz = (vcompo_t)Math.Min(ltw.Z, rbw.Z);
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
-        DrawPen pen = DC.GetPen(DrawTools.PEN_GRID);
+        DrawPen pen = DC.Pen(DrawTools.PEN_GRID);
 
         vector3_t p = default;
 
@@ -1691,7 +1691,7 @@ public class DrawingGL : IDrawing
         GL.Enable(EnableCap.LineStipple);
         //GL.LineStipple(1, 0b1100110011001100);
 
-        DrawRectScrn(DC.GetPen(DrawTools.PEN_PAGE_FRAME), p0, p1);
+        DrawRectScrn(DC.Pen(DrawTools.PEN_PAGE_FRAME), p0, p1);
 
         GL.Disable(EnableCap.LineStipple);
     }

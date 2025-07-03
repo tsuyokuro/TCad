@@ -77,9 +77,21 @@ public class DrawTools : IDisposable
     public const int FONT_SIZE_DEFAULT = 11;
     public const int FONT_SIZE_SMALL = 11;
 
-    FlexArray<DrawPen> PenTbl = null;
-    FlexArray<DrawBrush> BrushTbl = null;
-    FlexArray<Font> GDIFontTbl = null; // GDI Modeでしか使わない
+    public FlexArray<DrawPen> Pens {
+        get;
+        private set;
+    } = null;
+
+    public FlexArray<DrawBrush> Brushes
+    {
+        get;
+        private set;
+    } = null;
+
+    public FlexArray<Font> GDIFonts {
+        get;
+        private set;
+    } = null;
 
     public void Setup(DrawModes t)
     {
@@ -99,45 +111,42 @@ public class DrawTools : IDisposable
         }
     }
 
-    private void FromFile(String fname, ColorPack defColor)
+    private void FromFile(String fname, ColorPack defaultColor)
     {
-        PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
-        BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
-
         var pathName = PathName(fname);
 
-        LoadTheme(pathName, defColor);
+        LoadTheme(pathName, defaultColor);
 
 
-        GDIFontTbl = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
+        GDIFonts = new FlexArray<Font>(new Font[FONT_TBL_SIZE]);
         //FontFamily fontFamily = LoadFontFamily("/Fonts/mplus-1m-thin.ttf");
         FontFamily fontFamily = new("MS UI Gothic");
         //FontFamily fontFamily = new FontFamily("ＭＳ ゴシック");
 
-        GDIFontTbl[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
-        GDIFontTbl[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
+        GDIFonts[FONT_DEFAULT] = new Font(fontFamily, FONT_SIZE_DEFAULT);
+        GDIFonts[FONT_SMALL] = new Font(fontFamily, FONT_SIZE_SMALL);
     }
 
     public void Dispose()
     {
-        if (PenTbl != null)
+        if (Pens != null)
         {
-            PenTbl = null;
+            Pens = null;
         }
 
-        if (BrushTbl != null)
+        if (Brushes != null)
         {
-            BrushTbl = null;
+            Brushes = null;
         }
 
-        if (GDIFontTbl != null)
+        if (GDIFonts != null)
         {
-            foreach (Font font in GDIFontTbl)
+            foreach (Font font in GDIFonts)
             {
                 font?.Dispose();
             }
 
-            GDIFontTbl = null;
+            GDIFonts = null;
         }
 
         GC.SuppressFinalize(this);
@@ -194,36 +203,20 @@ public class DrawTools : IDisposable
 
     #endregion
 
-    public DrawPen Pen(int id)
-    {
-        return PenTbl[id];
-    }
-
-    public DrawBrush Brush(int id)
-    {
-        return BrushTbl[id];
-    }
-
-    public Font font(int id)
-    {
-        return GDIFontTbl[id];
-    }
-
-
     private void LoadTheme(string fname, ColorPack defColor)
     {
-        PenTbl = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
-        BrushTbl = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
+        Pens = new FlexArray<DrawPen>(new DrawPen[PEN_TBL_SIZE]);
+        Brushes = new FlexArray<DrawBrush>(new DrawBrush[BRUSH_TBL_SIZE]);
 
 
         for (int i = 0; i < PEN_TBL_SIZE; i++)
         {
-            PenTbl[i] = new DrawPen(defColor.Argb, 1);
+            Pens[i] = new DrawPen(defColor.Argb, 1);
         }
 
         for (int i = 0; i < BRUSH_TBL_SIZE; i++)
         {
-            BrushTbl[i] = new DrawBrush(defColor.Argb);
+            Brushes[i] = new DrawBrush(defColor.Argb);
         }
 
         string json = File.ReadAllText(fname);
@@ -269,7 +262,7 @@ public class DrawTools : IDisposable
         }
     }
 
-    private ColorPack GetColorFromJson(JsonElement jColor, ColorPack defaultColor)
+    private static ColorPack GetColorFromJson(JsonElement jColor, ColorPack defaultColor)
     {
         var c = jColor.EnumerateArray().ToList();
         if (c == null) return defaultColor;
@@ -306,7 +299,7 @@ public class DrawTools : IDisposable
 
         if (penId == null) return false;
 
-        PenTbl[penId.Value] = pen;
+        Pens[penId.Value] = pen;
 
         return true;
     }
@@ -320,13 +313,13 @@ public class DrawTools : IDisposable
 
         if (brushId == null) return false;
 
-        BrushTbl[brushId.Value] = brush;
+        Brushes[brushId.Value] = brush;
 
         return true;
     }
 
 
-    private string PathName(string fname)
+    private static string PathName(string fname)
     {
         Assembly asm = Assembly.GetEntryAssembly();
 

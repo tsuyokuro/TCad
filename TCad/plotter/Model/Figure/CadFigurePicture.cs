@@ -196,7 +196,7 @@ public partial class CadFigurePicture : CadFigure
         {
             if (p.Selected)
             {
-                dc.Drawing.DrawSelectedPoint(p.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                dc.Drawing.DrawSelectedPoint(p.vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }
