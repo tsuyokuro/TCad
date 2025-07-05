@@ -105,7 +105,7 @@ public class ObjectTreeViewModel
 
                 InputStringDialog dlg = new()
                 {
-                    Message = TCad.Properties.Resources.string_input_fig_name
+                    Message = Properties.Resources.string_input_fig_name
                 };
 
                 if (fig.Name != null)
@@ -120,6 +120,11 @@ public class ObjectTreeViewModel
                     fig.Name = dlg.InputString;
                     UpdateTreeView(false);
                 }
+            }
+            else if (cmd == CadFigTreeItem.ITEM_CMD_COPY)
+            {
+                CadFigure fig = figItem.Fig;
+                PlotterClipboard.CopyFiguresAsBin([fig]);
             }
         }
         else if (treeItem is CadPointTreeItem)

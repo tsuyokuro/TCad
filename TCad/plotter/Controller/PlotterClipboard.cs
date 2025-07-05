@@ -16,7 +16,11 @@ public class PlotterClipboard
     public static void CopyFiguresAsBin(IPlotterController controller)
     {
         var figList = controller.GetSelectedRootFigureList();
+        CopyFiguresAsBin(figList);
+    }
 
+    public static void CopyFiguresAsBin(List<CadFigure> figList)
+    {
         if (figList.Count == 0)
         {
             return;

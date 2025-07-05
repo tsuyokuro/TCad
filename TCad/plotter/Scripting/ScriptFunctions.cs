@@ -1802,9 +1802,7 @@ public class ScriptFunctions
         qp = r * qp;
         qp = qp * q;
 
-        vector3_t rv = v;
-
-        rv = qp.ToPoint();
+        vector3_t rv = qp.ToPoint();
 
         return rv;
     }
@@ -1989,10 +1987,6 @@ public class ScriptFunctions
         }
     }
 
-    public void SetColor(float r, float g, float b)
-    {
-    }
-
     public void SetColor(uint figID, float r, float g, float b)
     {
         CadFigure fig = Controller.DB.GetFigure(figID);
@@ -2065,15 +2059,15 @@ public class ScriptFunctions
         Session.PostRemakeObjectTree();
     }
 
-    private void testDraw()
+    private void TestDraw()
     {
-        CadSize2D deviceSize = new CadSize2D(827, 1169);
-        CadSize2D pageSize = new CadSize2D(210, 297);
+        CadSize2D deviceSize = new(827, 1169);
+        CadSize2D pageSize = new(210, 297);
 
         DrawContext dc = Controller.DC.CreatePrinterContext(pageSize, deviceSize);
         dc.SetupTools(DrawModes.PRINTER);
 
-        FrameBufferW fb = new FrameBufferW();
+        FrameBufferW fb = new();
         fb.Create((int)deviceSize.Width, (int)deviceSize.Height);
 
         fb.Begin();

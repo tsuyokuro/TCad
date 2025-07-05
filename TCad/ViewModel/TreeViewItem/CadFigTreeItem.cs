@@ -9,6 +9,7 @@ namespace TCad.ViewModel;
 class CadFigTreeItem : CadObjTreeItem
 {
     public const string ITEM_CMD_CHANGE_NAME = "change_name";
+    public const string ITEM_CMD_COPY = "copy";
 
     public CadFigure Fig;
 
@@ -74,6 +75,12 @@ class CadFigTreeItem : CadObjTreeItem
         MenuItem menuItem = new MenuItem();
         menuItem.Header = Properties.Resources.menu_change_fig_name;
         menuItem.Tag = CreateContextMenuTag(ITEM_CMD_CHANGE_NAME);
+
+        list.Add(menuItem);
+
+        menuItem = new MenuItem();
+        menuItem.Header = "Copy";
+        menuItem.Tag = CreateContextMenuTag(ITEM_CMD_COPY);
 
         list.Add(menuItem);
 

@@ -31,7 +31,7 @@ public partial class ScriptEnvironment
 
     private ScriptSource Source;
 
-    private readonly List<string> mAutoCompleteList = new();
+    private readonly List<string> mAutoCompleteList = [];
     public List<string> AutoCompleteList
     {
         get => mAutoCompleteList;
@@ -131,7 +131,7 @@ public partial class ScriptEnvironment
         ItConsole.println(s);
 
         // Command is internal command 
-        if (s.StartsWith("@"))
+        if (s.StartsWith('@'))
         {
             await Task.Run(() =>
             {
@@ -168,10 +168,7 @@ public partial class ScriptEnvironment
 
         mScriptFunctions.StartSession(snapshotDB);
 
-        if (callback != null)
-        {
-            callback.OnStart();
-        }
+        callback?.OnStart();
 
         PrepareRunScript();
 
@@ -199,10 +196,7 @@ public partial class ScriptEnvironment
         Controller.Redraw();
         Controller.UpdateObjectTree(true);
 
-        if (callback != null)
-        {
-            callback.OnEnd();
-        }
+        callback?.OnEnd();
 
         mScriptFunctions.EndSession();
     }

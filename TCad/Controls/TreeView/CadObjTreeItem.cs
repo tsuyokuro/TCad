@@ -49,7 +49,6 @@ public abstract class CadObjTreeItem
         set => ItemType = value;
     }
 
-
     public virtual string Text
     {
         get
@@ -57,8 +56,6 @@ public abstract class CadObjTreeItem
             return "----";
         }
     }
-
-    protected List<CadObjTreeItem> mChildren;
 
     public int GetLevel()
     {
@@ -76,6 +73,7 @@ public abstract class CadObjTreeItem
         return i;
     }
 
+    protected List<CadObjTreeItem> mChildren;
 
     public List<CadObjTreeItem> Children
     {
