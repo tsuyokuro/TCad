@@ -92,8 +92,6 @@ public partial class ScriptEnvironment
     {
         string script = GetBaseSacript();
 
-        //string script = "";
-
         Engine = Python.CreateEngine();
 
         mScope = Engine.CreateScope();
@@ -157,12 +155,10 @@ public partial class ScriptEnvironment
     private Thread mScriptThread = null;
     private TraceBack mTraceBack = null;
 
-    public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
+    public void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
     {
         if (mScriptThread != null)
         {
-            callback.OnStart();
-            callback.OnEnd();
             return;
         }
 
@@ -174,32 +170,32 @@ public partial class ScriptEnvironment
 
         //mTraceBack = new TraceBack(this, callback);
 
-        await Task.Run(() =>
+        mScriptThread = new Thread(() =>
         {
-            mScriptThread = new Thread(() =>
+            if (mTraceBack != null)
             {
-                if (mTraceBack != null)
-                {
-                    Engine.SetTrace(mTraceBack.OnTraceback);
-                }
+                Engine.SetTrace(mTraceBack.OnTraceback);
+            }
 
-                InternalRunScript(s);
-            });
-
-            mScriptThread.Start();
-            mScriptThread.Join();
+            InternalRunScript(s);
 
             mScriptThread = null;
             mTraceBack = null;
+
+            ThreadUtil.RunOnMainThread(() => {
+                Controller.Redraw();
+                Controller.UpdateObjectTree(true);
+
+                callback?.OnEnd();
+
+                mScriptFunctions.EndSession();
+
+            }, true); 
         });
 
-        Controller.Redraw();
-        Controller.UpdateObjectTree(true);
-
-        callback?.OnEnd();
-
-        mScriptFunctions.EndSession();
+        mScriptThread.Start();
     }
+
 
     public dynamic RunScript(string s, bool snapshotDB)
     {
@@ -280,18 +276,6 @@ public partial class ScriptEnvironment
         }
         else
         {
-            if (mScriptThread != null)
-            {
-                try
-                {
-                    mScriptThread.Interrupt();
-                    mScriptThread = null;
-                }
-                catch
-                {
-                }
-            }
-
             Engine.Execute("raise_cancel()", mScope);
         }
     }
