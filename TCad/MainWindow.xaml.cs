@@ -361,6 +361,12 @@ public partial class MainWindow : Window, ICadMainWindow
             PopupMessage.IsOpen = false;
         }, true);
     }
+
+    public void FocusCommandLine()
+    {
+        textCommand.Focus();
+    }
+
     #endregion
 
     #region ViewManager Event

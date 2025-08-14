@@ -9,4 +9,5 @@ public interface ICadMainWindow
     void ClosePopupMessage();
     void SetPlotterView(IPlotterView view);
     void DrawModeChanged(DrawModes drawMode);
+    void FocusCommandLine();
 }
