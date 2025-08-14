@@ -19,9 +19,9 @@ namespace TCad.ScriptEditor
 {
     public partial class EditorWindow : Window
     {
-        ScriptEnvironment ScriptEnv;
+        private readonly ScriptEnvironment ScriptEnv;
 
-        SearchPanel mSearchPanel;
+        private readonly SearchPanel mSearchPanel;
 
         private CompletionWindow mCompletionWindow;
 
@@ -29,11 +29,11 @@ namespace TCad.ScriptEditor
 
         private bool Modified = false;
 
-        private SolidColorBrush CornerBrush = new SolidColorBrush(Color.FromArgb(0xff, 0x2d, 0x2d, 0x2d));
+        private readonly SolidColorBrush CornerBrush = new(Color.FromArgb(0xff, 0x2d, 0x2d, 0x2d));
 
         private const string FileFilter = "Python files|*.py";
 
-        private HashSet<int> BreakPoints;
+        private readonly HashSet<int> BreakPoints = [];
 
         public EditorWindow(ScriptEnvironment scriptEnvironment)
         {
@@ -62,9 +62,9 @@ namespace TCad.ScriptEditor
 
             PreviewKeyUp += EditorWindow_PreviewKeyUp;
 
-            BreakPoints = new HashSet<int>();
+            BreakPoints = [];
 
-            BreakPointMargin breakPointMargin = new BreakPointMargin(BreakPoints);
+            BreakPointMargin breakPointMargin = new(BreakPoints);
 
             textEditor.TextArea.LeftMargins.Insert(0, breakPointMargin);
 
@@ -90,10 +90,8 @@ namespace TCad.ScriptEditor
 
         private void SetupHighlightForPython()
         {
-            using (var reader = new XmlTextReader("Resources\\Python-Mode.xshd"))
-            {
-                textEditor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            }
+            using var reader = new XmlTextReader("Resources\\Python-Mode.xshd");
+            textEditor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
         }
 
         private void EditorWindow_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -170,11 +168,11 @@ namespace TCad.ScriptEditor
         {
             int offset = textEditor.TextArea.Caret.Offset;
 
-            WordData wd = getDocumentWord(offset - 1);
+            WordData wd = GetDocumentWord(offset - 1);
 
             //DOut.pl(wd.StartPos.ToString() + " " + wd.Word);
 
-            showCompletionWindow(wd);
+            ShowCompletionWindow(wd);
         }
 
         private void TextEditor_TextChanged(object sender, EventArgs e)
@@ -182,14 +180,14 @@ namespace TCad.ScriptEditor
             UpdateTitle(true, false);
         }
 
-        private void showCompletionWindow(WordData wd)
+        private void ShowCompletionWindow(WordData wd)
         {
             if (wd.Word.Length < 3)
             {
                 return;
             }
 
-            List<MyCompletionData> list = new List<MyCompletionData>();
+            List<MyCompletionData> list = [];
 
             foreach (var str in ScriptEnv.AutoCompleteList)
             {
@@ -220,17 +218,14 @@ namespace TCad.ScriptEditor
             }
             else
             {
-                if (mCompletionWindow != null)
-                {
-                    mCompletionWindow.Close();
-                }
+                mCompletionWindow?.Close();
             }
         }
 
-        private WordData getDocumentWord(int pos)
+        private WordData GetDocumentWord(int pos)
         {
             int p = pos;
-            int sp = p;
+            int sp;
             string s = "";
 
             while (p >= 0)
@@ -266,7 +261,7 @@ namespace TCad.ScriptEditor
                 }
             }
 
-            WordData ret = default(WordData);
+            WordData ret = default;
 
             ret.StartPos = sp;
             ret.Word = s;
@@ -280,32 +275,33 @@ namespace TCad.ScriptEditor
 
             BtnRun.IsEnabled = false;
 
-            var callback = new ScriptEnvironment.RunCallback();
-
-            callback.OnStart = () =>
+            ScriptEnvironment.RunCallback callback = new()
             {
-                BtnRun.IsEnabled = false;
-                BtnStop.IsEnabled = true;
-                info.Content = "Running...";
-            };
+                OnStart = () =>
+                {
+                    BtnRun.IsEnabled = false;
+                    BtnStop.IsEnabled = true;
+                    info.Content = "Running...";
+                },
 
-            callback.OnEnd = () =>
-            {
-                BtnRun.IsEnabled = true;
-                BtnStop.IsEnabled = false;
-                info.Content = "";
-            };
+                OnEnd = () =>
+                    {
+                        BtnRun.IsEnabled = true;
+                        BtnStop.IsEnabled = false;
+                        info.Content = "";
+                    },
 
-            callback.OnEnding = () =>
-            {
-                BtnRun.IsEnabled = false;
-                BtnStop.IsEnabled = false;
-                info.Content = "Ending...";
-            };
+                OnEnding = () =>
+                    {
+                        BtnRun.IsEnabled = false;
+                        BtnStop.IsEnabled = false;
+                        info.Content = "Ending...";
+                    },
 
-            callback.onTrace = (frame, result, payload) =>
-            {
-                return true;
+                onTrace = (frame, result, payload) =>
+                    {
+                        return true;
+                    }
             };
 
             ScriptEnv.RunScriptAsync(s, true, callback);
@@ -363,7 +359,7 @@ namespace TCad.ScriptEditor
             }
         }
 
-        private bool IsVaridDir(string path)
+        static private bool IsVaridDir(string path)
         {
             if (path == null)
             {
@@ -380,7 +376,7 @@ namespace TCad.ScriptEditor
 
         public void OpenFile()
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog ofd = new();
 
             if (IsVaridDir(SettingsHolder.Settings.LastScriptDir))
             {
@@ -404,7 +400,7 @@ namespace TCad.ScriptEditor
 
         public void SaveWithDialog()
         {
-            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            System.Windows.Forms.SaveFileDialog sfd = new();
 
             if (FileName != null && FileName.Length > 0)
             {

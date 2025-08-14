@@ -186,15 +186,9 @@ public abstract class DrawContextGL : DrawContext
 
     public override void Dispose()
     {
-        if (Tools != null)
-        {
-            Tools.Dispose();
-        }
-
-        if (mDrawing != null)
-        {
-            mDrawing.Dispose();
-        }
+        Tools?.Dispose();
+        mDrawing?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public override DrawPen Pen(int idx)

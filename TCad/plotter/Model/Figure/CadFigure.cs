@@ -99,14 +99,14 @@ public abstract partial class CadFigure
 
     public string Name { get; set; } = null;
 
-    public LocalCoordinate LocalCoord = new LocalCoordinate();
+    public LocalCoordinate LocalCoord = new();
 
     public DrawPen LinePen = DrawPen.InvalidPen;
     public DrawBrush FillBrush = DrawBrush.InvalidBrush;
 
     #endregion
 
-    protected VertexList mPointList = new VertexList(4);
+    protected VertexList mPointList = new(4);
 
     protected VertexList mStoreList = null;
 
@@ -120,7 +120,7 @@ public abstract partial class CadFigure
         get => mParent;
     }
 
-    protected List<CadFigure> mChildList = new List<CadFigure>();
+    protected List<CadFigure> mChildList = new();
 
     public List<CadFigure> ChildList
     {
@@ -450,7 +450,7 @@ public abstract partial class CadFigure
     public CadFigure GetGroupRoot()
     {
         CadFigure fig = this;
-        CadFigure parent = null;
+        CadFigure parent;
 
         while (fig != null)
         {
@@ -635,7 +635,7 @@ public abstract partial class CadFigure
 
     public virtual Centroid GetCentroid()
     {
-        return default(Centroid);
+        return default;
     }
 
     public virtual CadSegment GetSegmentAt(int n)

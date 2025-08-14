@@ -322,7 +322,7 @@ public partial class CadFigurePolyLines : CadFigure
 
     private Centroid GetPointListCentroid()
     {
-        Centroid ret = default;
+        Centroid ret;
 
         List<Vector3List> triangles = TriangleSplitter.Split(this);
 

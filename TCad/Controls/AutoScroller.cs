@@ -42,7 +42,7 @@ public class AutoScroller
             ScrollView = parent;
         }
 
-        Timer = new DispatcherTimer();
+        Timer = new();
         Timer.Interval = TimeSpan.FromSeconds(CheckInterval);
         Timer.Tick += TimerTick;
     }

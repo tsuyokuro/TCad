@@ -510,7 +510,7 @@ public class PlotterInput
             y = CrossCursor.Pos.Y;
         }
 
-        vector3_t pixp = new vector3_t(x, y, 0);
+        vector3_t pixp = new(x, y, 0);
 
         RawDownPoint = pixp;
 
@@ -788,12 +788,11 @@ public class PlotterInput
     {
         HighlightPointList.Clear();
 
-        SnapInfo si =
-            new SnapInfo(
-                CrossCursor,
-                SnapPoint,
-                mPointSearcher,
-                mSegSearcher
+        SnapInfo si = new(
+                    CrossCursor,
+                    SnapPoint,
+                    mPointSearcher,
+                    mSegSearcher
                 );
 
         if (SettingsHolder.Settings.SnapToGrid)
@@ -879,7 +878,7 @@ public class PlotterInput
     {
         if (mSpPointList == null)
         {
-            NearPointSearcher searcher = new NearPointSearcher(Controller);
+            NearPointSearcher searcher = new(Controller);
 
             var resList = searcher.Search((CadVertex)CrossCursor.Pos, 64);
 
