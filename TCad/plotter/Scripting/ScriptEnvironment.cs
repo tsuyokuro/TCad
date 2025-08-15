@@ -98,6 +98,7 @@ public partial class ScriptEnvironment
         Source = Engine.CreateScriptSourceFromString(script);
 
         mScope.SetVariable("SE", mScriptFunctions);
+        mScope.SetVariable("_se_", mScriptFunctions);
         Source.Execute(mScope);
 
         MatchCollection matches = AutoCompPtn.Matches(script);

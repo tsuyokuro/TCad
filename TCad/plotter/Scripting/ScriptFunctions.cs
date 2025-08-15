@@ -138,16 +138,6 @@ public class ScriptFunctions
         return Controller.Input.LastDownPoint;
     }
 
-    public CadVertex CreateVertex(vcompo_t x, vcompo_t y, vcompo_t z)
-    {
-        return CadVertex.Create(x, y, z);
-    }
-
-    public vector3_t CreateVector(vcompo_t x, vcompo_t y, vcompo_t z)
-    {
-        return new vector3_t(x, y, z);
-    }
-
     public vector3_t GetProjectionDir()
     {
         return -Controller.DC.ViewDir;

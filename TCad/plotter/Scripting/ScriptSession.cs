@@ -5,7 +5,7 @@ namespace TCad.Plotter.Scripting;
 
 public class ScriptSession
 {
-    ScriptEnvironment Env;
+    private readonly ScriptEnvironment Env;
 
     private CadOpeList mCadOpeList = null;
 
