@@ -1494,7 +1494,7 @@ public class DrawingGL : IDrawing
 
         vector3_t p = default;
 
-        vcompo_t n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, 8);
 
         vcompo_t x, y, z;
         vcompo_t sx, sy, sz;

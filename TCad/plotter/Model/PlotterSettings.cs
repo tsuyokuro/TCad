@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text.Json;
 using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
-//using JObj = Newtonsoft.Json.Linq.JObject;
 
 namespace TCad.Plotter.Settings;
 
@@ -24,7 +23,7 @@ public class PlotterSettings
 
     public bool SnapToGrid = false;
 
-    public vector3_t GridSize;
+    public vector3_t GridSize = new((vcompo_t)5, (vcompo_t)5, (vcompo_t)5);
 
     public vcompo_t PointSnapRange = 6;
 
@@ -74,7 +73,6 @@ public class PlotterSettings
 
     public PlotterSettings()
     {
-        GridSize = new vector3_t(10, 10, 10);
     }
 
     private string FileName()
@@ -94,7 +92,7 @@ public class PlotterSettings
     {
         string fileName = FileName();
 
-        JObj root = new JObj();
+        JObj root = new();
 
         JObj jo;
 
@@ -102,46 +100,45 @@ public class PlotterSettings
         root.Add("LastDataDir", LastDataDir);
         root.Add("LastScriptDir", LastScriptDir);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToPoint);
         jo.Add("range", PointSnapRange);
         root.Add("PointSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToSegment);
         root.Add("SegmentSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToLine);
         jo.Add("range", LineSnapRange);
         root.Add("LineSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("unit_x", MoveKeyUnitX);
         jo.Add("unit_y", MoveKeyUnitY);
         root.Add("MoveKey", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToZero);
         root.Add("ZeroSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToLastDownPoint);
         root.Add("LastDownSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToSelfPoint);
         root.Add("SelfPointSnap", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("enable", SnapToGrid);
         jo.Add("size_x", GridSize.X);
         jo.Add("size_y", GridSize.Y);
         jo.Add("size_z", GridSize.Z);
         root.Add("GridInfo", jo);
 
-
-        jo = new JObj();
+        jo = new();
         jo.Add("DrawModes", (int)DrawMode);
         jo.Add("DrawMeshEdge", DrawMeshEdge);
         jo.Add("DrawMeshBorder", DrawMeshBorder);
@@ -152,12 +149,12 @@ public class PlotterSettings
         jo.Add("DrawCompass", DrawCompass);
         root.Add("DrawSettings", jo);
 
-        jo = new JObj();
+        jo = new();
         jo.Add("PrintWithBitmap", PrintWithBitmap);
         jo.Add("MagnificationBitmapPrinting", MagnificationBitmapPrinting);
         root.Add("PrintSettings", jo);
 
-        StreamWriter writer = new StreamWriter(fileName);
+        StreamWriter writer = new(fileName);
 
         writer.Write(root.ToString());
         writer.Close();
@@ -174,7 +171,7 @@ public class PlotterSettings
             return true;
         }
 
-        StreamReader reader = new StreamReader(fileName);
+        StreamReader reader = new(fileName);
 
         var js = reader.ReadToEnd();
 
@@ -244,9 +241,9 @@ public class PlotterSettings
         if (root.TryGetProperty("GridInfo", out jo))
         {
             SnapToGrid = jo.GetBool("enable", SnapToSelfPoint);
-            GridSize.X = jo.GetVcompo("size_x", 10);
-            GridSize.Y = jo.GetVcompo("size_y", 10);
-            GridSize.Z = jo.GetVcompo("size_z", 10);
+            GridSize.X = jo.GetVcompo("size_x", 5);
+            GridSize.Y = jo.GetVcompo("size_y", 5);
+            GridSize.Z = jo.GetVcompo("size_z", 5);
         }
 
         if (root.TryGetProperty("PrintSettings", out jo))

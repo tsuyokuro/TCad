@@ -358,10 +358,7 @@ public partial class CadConsoleView : FrameworkElement
             e.Handled = true;
         }
 
-        if (mAutoScroller != null)
-        {
-            mAutoScroller.Start();
-        }
+        mAutoScroller?.Start();
 
         base.OnMouseDown(e);
     }
@@ -376,7 +373,10 @@ public partial class CadConsoleView : FrameworkElement
         Selecting = true;
     }
 
-    private Regex WordRegex = new(@"([^ \t,:=/\\]+)");
+    public Regex WordRegex {
+        get;
+        set;
+    } = new(@"([^ \t,:=/\\]+)");
 
     protected void SelectWord(Point p)
     {

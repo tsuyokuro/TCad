@@ -1,5 +1,6 @@
 using System;
 using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Settings;
 
 namespace TCad.Plotter.Controller;
 
@@ -7,29 +8,18 @@ public class Gridding
 {
     public vector3_t GridSize
     {
-        set;
-        get;
+        get => SettingsHolder.Settings.GridSize;
     }
-
-    public vcompo_t Range = 8;
 
     public vector3_t MatchW;
     public vector3_t MatchD;
 
     public Gridding()
     {
-        GridSize = new vector3_t(10, 10, 10);
     }
 
     public void Clear()
     {
-
-    }
-
-    public void CopyFrom(Gridding g)
-    {
-        GridSize = g.GridSize;
-        Range = g.Range;
     }
 
     public void Check(DrawContext dc, vector3_t scrp)
@@ -49,15 +39,15 @@ public class Gridding
      * 画面上での間隔が min より大きくなるように間引く為のサイズの
      * 倍率を求める
      */
-    public vcompo_t Decimate(DrawContext dc, Gridding grid, vcompo_t min)
+    public vcompo_t Decimate(DrawContext dc, vcompo_t min)
     {
         vcompo_t scaleX = (vcompo_t)(1.0);
         vcompo_t scaleY = (vcompo_t)(1.0);
         vcompo_t scaleZ = (vcompo_t)(1.0);
 
-        vcompo_t gridSizeX = grid.GridSize.X;
-        vcompo_t gridSizeY = grid.GridSize.Y;
-        vcompo_t gridSizeZ = grid.GridSize.Z;
+        vcompo_t gridSizeX = GridSize.X;
+        vcompo_t gridSizeY = GridSize.Y;
+        vcompo_t gridSizeZ = GridSize.Z;
 
         vector3_t devLen;
         vcompo_t t = 1;

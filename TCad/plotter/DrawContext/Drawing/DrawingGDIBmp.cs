@@ -43,7 +43,7 @@ public class DrawingGDIBmp : DrawingGDI
 
         int argb = DC.Tools.Pens[DrawTools.PEN_GRID].Argb;
 
-        vcompo_t n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, 8);
 
         vcompo_t sx, sy, sz;
         vcompo_t szx = grid.GridSize.X * n;
