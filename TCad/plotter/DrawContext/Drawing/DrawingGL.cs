@@ -17,7 +17,7 @@ namespace TCad.Plotter.Drawing;
 
 public class DrawingGL : IDrawing
 {
-    private DrawContextGL DC;
+    private DrawContext DC;
 
     private FontFaceW mFontFaceW;
     private FontRenderer mFontRenderer;
@@ -25,7 +25,7 @@ public class DrawingGL : IDrawing
     private vcompo_t FontTexW;
     private vcompo_t FontTexH;
 
-    public DrawingGL(DrawContextGL dc)
+    public DrawingGL(DrawContext dc)
     {
         DC = dc;
 
@@ -1116,13 +1116,13 @@ public class DrawingGL : IDrawing
         vector3_t v2 = vector3_t.Zero;
         vector3_t v3 = vector3_t.Zero;
 
-        v0.X = System.Math.Max(p0.X, p1.X);
-        v0.Y = System.Math.Min(p0.Y, p1.Y);
+        v0.X = Math.Max(p0.X, p1.X);
+        v0.Y = Math.Min(p0.Y, p1.Y);
 
         v1.X = v0.X;
-        v1.Y = System.Math.Max(p0.Y, p1.Y);
+        v1.Y = Math.Max(p0.Y, p1.Y);
 
-        v2.X = System.Math.Min(p0.X, p1.X);
+        v2.X = Math.Min(p0.X, p1.X);
         v2.Y = v1.Y;
 
         v3.X = v2.X;

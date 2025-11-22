@@ -30,8 +30,6 @@ public abstract class DrawContextGL : DrawContext
 
     public bool LightingEnable = true;
 
-    public matrix4_t Matrix2D = matrix4_t.Identity;
-
     public ProjectionType mProjectionType = ProjectionType.Perspective;
 
     public enum ViewingAngleType

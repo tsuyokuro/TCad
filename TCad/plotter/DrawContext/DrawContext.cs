@@ -85,6 +85,9 @@ public abstract class DrawContext : IDisposable
     protected vcompo_t mProjectionZ = 0;
     protected vcompo_t ProjectionZ => mProjectionZ;
 
+    // 2D描画用変換行列
+    public matrix4_t Matrix2D = matrix4_t.Identity;
+
     // Screen 座標系の原点 
     // 座標系の原点がView座標上で何処にあるかを示す
     protected vector3_t mViewOrg;
