@@ -71,6 +71,14 @@ public class DrawingGL : IDrawing
     public void DrawHarfEdgeModel(
         DrawBrush brush, DrawPen pen, DrawPen edgePen, vcompo_t edgeThreshold, HeModel model)
     {
+        var shader = GLUtilContainer.WireFrameShader.Get();
+        shader.Start();
+
+        // uniform変数設定
+        shader.SetModelViewMatrix(DC.ModelViewMatrix);
+        shader.SetProjectionMatrix(DC.ProjectionMatrix);
+
+
         //DrawHeFaces(brush, model);
         DrawHeFacesVBO(brush, model);
 
@@ -81,6 +89,8 @@ public class DrawingGL : IDrawing
         {
             DrawHeFacesNormal(model);
         }
+
+        shader.End();
     }
 
     private void DrawHeFaces(DrawBrush brush, HeModel model)

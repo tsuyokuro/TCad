@@ -65,7 +65,11 @@ public abstract class DrawContext : IDisposable
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
     protected matrix4_t mModelViewMatrix = default;
-    protected matrix4_t ModelViewMatrix => mModelViewMatrix;
+    public matrix4_t ModelViewMatrix
+    {
+        get => mModelViewMatrix;
+        protected set => mModelViewMatrix = value;
+    }
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -73,7 +77,11 @@ public abstract class DrawContext : IDisposable
 
     // 視点座標系から投影座標系への変換行列
     protected matrix4_t mProjectionMatrix = default;
-    protected matrix4_t ProjectionMatrix => mProjectionMatrix;
+    public matrix4_t ProjectionMatrix
+    {
+        get => mProjectionMatrix;
+        protected set => mProjectionMatrix = value;
+    }
 
     // 投影座標系から視点座標系への変換行列
     protected matrix4_t mProjectionMatrixInv = default;
@@ -127,7 +135,7 @@ public abstract class DrawContext : IDisposable
         set
         {
             WorldScale_ = value;
-            CalcViewMatrix();
+            CalcModelViewMatrix();
         }
 
     }
@@ -299,7 +307,7 @@ public abstract class DrawContext : IDisposable
         mProjectionZ = pv.Z;
     }
 
-    protected void CalcViewMatrix()
+    protected void CalcModelViewMatrix()
     {
         //mViewMatrix = matrix4_t.Scale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
         mModelViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
@@ -339,7 +347,7 @@ public abstract class DrawContext : IDisposable
         mLookAt = lookAt;
         mUpVector = upVector;
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcViewDir();
         CalcProjectionZW();
     }

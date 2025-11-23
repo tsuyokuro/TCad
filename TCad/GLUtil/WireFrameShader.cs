@@ -1,13 +1,38 @@
 using OpenTK.Graphics.OpenGL;
 using System;
+using TCad.Plotter.DrawContexts;
 
 namespace GLUtil;
 
+
 public class WireFrameShader
 {
+    /**
+        // 座標変換
+        public static string VertexShaderSrc =
+            """
+            # version 120
+            void main(void)
+            {
+              gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+            }
+            """;
+
+        // 赤だけ返す
+        public static string FragmentShaderSrc =
+            """
+            # version 120
+            void main (void)
+            {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+            """;
+    **/
+
+    /*
     public static string VertexShaderSrc =
         """
-        #version 460 core
+        # version 460 core
 
         layout(location = 0) in vec3 aPos;
         layout(location = 1) in vec3 incolor;
@@ -29,7 +54,7 @@ public class WireFrameShader
 
     public static string FragmentShaderSrc =
         """
-        #version 460 core
+        # version 460 core
 
         out vec4 FragColor;
         in vec4 vertexColor;
@@ -55,8 +80,42 @@ public class WireFrameShader
           );
         }
         """;
+    */
+
+    public static string VertexShaderSrc =
+        """
+        # version 460 core
+
+        layout(location = 0) in vec3 aPos;
+        layout(location = 1) in vec3 normal;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+
+        void main()
+        {
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(aPos, 1.0);
+        }
+        """;
+
+    public static string FragmentShaderSrc =
+        """
+        # version 460 core
+
+        out vec4 FragColor;
+        
+        void main()
+        {
+          FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        """;
 
     private int ShaderProgram = -1;
+
+    public int modelViewMatrixLocation = -1;
+
+    public int projectionMatrixLocation = -1;
+
 
     public WireFrameShader()
     {
@@ -116,6 +175,10 @@ public class WireFrameShader
         }
 
         ShaderProgram = shaderProgram;
+
+        // unifrom変数の位置取得
+        modelViewMatrixLocation = GL.GetUniformLocation(ShaderProgram, "modelViewMatrix");
+        projectionMatrixLocation = GL.GetUniformLocation(ShaderProgram, "projectionMatrix");
     }
 
     public void Dispose()
@@ -130,6 +193,16 @@ public class WireFrameShader
     public void Start()
     {
         GL.UseProgram(ShaderProgram);
+    }
+
+    public void SetModelViewMatrix(matrix4_t v)
+    {
+        GL.UniformMatrix4(modelViewMatrixLocation, 1, false, ref v.Row0.X);
+    }
+
+    public void SetProjectionMatrix(matrix4_t v)
+    {
+        GL.UniformMatrix4(projectionMatrixLocation, 1, false, ref v.Row0.X);
     }
 
     public void End()

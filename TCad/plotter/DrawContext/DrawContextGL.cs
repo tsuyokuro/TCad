@@ -52,7 +52,7 @@ public abstract class DrawContextGL : DrawContext
 
         InitCamera(ViewingAngleType.STANDERD);
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcViewDir();
 
         /*
