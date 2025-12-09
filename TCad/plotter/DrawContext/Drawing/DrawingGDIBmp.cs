@@ -26,7 +26,7 @@ public class DrawingGDIBmp : DrawingGDI
     public override void DrawGrid(Gridding grid)
     {
         vector3_t lt = vector3_t.Zero;
-        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t rb = new(DC.ViewWidth, DC.ViewHeight, 0);
 
         vector3_t ltw = DC.DevPointToWorldPoint(lt);
         vector3_t rbw = DC.DevPointToWorldPoint(rb);
