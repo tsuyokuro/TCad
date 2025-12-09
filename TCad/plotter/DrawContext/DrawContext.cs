@@ -8,13 +8,6 @@ namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContext : IDisposable
 {
-    public enum ProjectionType
-    {
-        Orthographic,
-        Perspective,
-    }
-
-
     // 画素/Milli
     // 1ミリあたりの画素数
     protected vcompo_t mUnitPerMilli = 1;
@@ -229,13 +222,13 @@ public abstract class DrawContext : IDisposable
     public virtual vector3_t WorldPointToDevPoint(vector3_t pt)
     {
         vector3_t p = WorldVectorToDevVector(pt);
-        p = p + mViewOrg;
+        p += mViewOrg;
         return p;
     }
 
     public virtual vector3_t DevPointToWorldPoint(vector3_t pt)
     {
-        pt = pt - mViewOrg;
+        pt -= mViewOrg;
         return DevVectorToWorldVector(pt);
     }
 
@@ -253,8 +246,8 @@ public abstract class DrawContext : IDisposable
         dv.Z = pv.Z / pv.W;
         dv.W = pv.W;
 
-        dv.X = dv.X * DeviceScaleX;
-        dv.Y = dv.Y * DeviceScaleY;
+        dv.X *= DeviceScaleX;
+        dv.Y *= DeviceScaleY;
         //dv.Z = 0;
 
         return dv.ToVector3();
@@ -262,8 +255,8 @@ public abstract class DrawContext : IDisposable
 
     public virtual vector3_t DevVectorToWorldVector(vector3_t pt)
     {
-        pt.X = pt.X / DeviceScaleX;
-        pt.Y = pt.Y / DeviceScaleY;
+        pt.X /= DeviceScaleX;
+        pt.Y /= DeviceScaleY;
 
         vector4_t wv;
 
@@ -273,8 +266,8 @@ public abstract class DrawContext : IDisposable
         wv.X = pt.X * wv.W;
         wv.Y = pt.Y * wv.W;
 
-        wv = wv * mProjectionMatrixInv;
-        wv = wv * mViewMatrixInv;
+        wv *= mProjectionMatrixInv;
+        wv *= mViewMatrixInv;
 
         return wv.ToVector3();
     }

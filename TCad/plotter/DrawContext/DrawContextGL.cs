@@ -30,7 +30,7 @@ public abstract class DrawContextGL : DrawContext
 
     public bool LightingEnable = true;
 
-    public ProjectionType mProjectionType = ProjectionType.Perspective;
+    //public ProjectionType mProjectionType = ProjectionType.Perspective;
 
     public enum ViewingAngleType
     {
