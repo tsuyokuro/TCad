@@ -20,13 +20,13 @@ namespace TCad.Plotter.Drawing;
 
 public class DrawingGL : IDrawing
 {
-    private DrawContext DC;
+    private readonly DrawContext DC;
 
-    private FontFaceW mFontFaceW;
-    private FontRenderer mFontRenderer;
+    private readonly FontFaceW mFontFaceW;
+    private readonly FontRenderer mFontRenderer;
 
-    private vcompo_t FontTexW;
-    private vcompo_t FontTexH;
+    private readonly vcompo_t FontTexW;
+    private readonly vcompo_t FontTexH;
 
     public DrawingGL(DrawContext dc)
     {
@@ -1877,7 +1877,7 @@ public class DrawingGL : IDrawing
 
     public void DrawPageFrame(vcompo_t w, vcompo_t h, vector3_t center)
     {
-        if (!(DC is DrawContextGLOrtho))
+        if (DC is not DrawContextGLOrtho)
         {
             return;
         }

@@ -1359,6 +1359,7 @@ public class ScriptFunctions
 
         if (tfig == null || tfig.Type != Types.POLY_LINES)
         {
+            ItConsole.println("POLY_LINESオブジェクトを指定してください");
             return;
         }
 
