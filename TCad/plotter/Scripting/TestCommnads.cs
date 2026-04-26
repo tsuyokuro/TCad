@@ -30,6 +30,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
+using TCad.Util;
 
 namespace TCad.Plotter.Scripting;
 

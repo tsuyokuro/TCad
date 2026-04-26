@@ -2,10 +2,10 @@ using CadDataTypes;
 using System.Windows;
 using TCad.Controls;
 using TCad.Dialogs;
-using TCad.Plotter;
 using TCad.Plotter.Controller;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Settings;
+using TCad.Util;
 
 namespace TCad.ViewModel;
 

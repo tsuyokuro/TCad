@@ -13,6 +13,7 @@ using System.Windows;
 using TCad.Controls.CadConsole;
 using TCad.Logger;
 using TCad.Plotter.Controller;
+using TCad.Util;
 using TCad.ViewModel;
 
 namespace TCad.Plotter.Scripting;

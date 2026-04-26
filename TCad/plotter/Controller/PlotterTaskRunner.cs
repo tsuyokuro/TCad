@@ -9,6 +9,7 @@ using TCad.MathFunctions;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.undo;
+using TCad.Util;
 using TCad.ViewModel;
 
 namespace TCad.Plotter.Controller;

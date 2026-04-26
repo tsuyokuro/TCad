@@ -20,6 +20,7 @@ using TCad.Plotter.Settings;
 using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
 using TCad.ScriptEditor;
+using TCad.Util;
 
 namespace TCad.ViewModel;
 

@@ -9,6 +9,7 @@ using TCad.Plotter.Controller;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Plotter.Model.Figure;
+using TCad.Util;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TCad.ViewModel;

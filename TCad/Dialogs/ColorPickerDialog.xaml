@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ctrl="clr-namespace:TCad.Controls"
     Title="Color Picker"
-    Width="480"
-    Height="380"
+    SizeToContent="WidthAndHeight"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     WindowStyle="ToolWindow"
@@ -55,17 +54,16 @@
     </Window.Resources>
 
 
-    <Grid Background="{StaticResource DialogBaseColor}" >
+    <Grid Background="{StaticResource DialogBaseColor}" HorizontalAlignment="Left">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="100*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="48" />
         </Grid.RowDefinitions>
 
         <!-- Preview -->
-        <Grid Grid.Row="0" Margin="4" HorizontalAlignment="Center">
+        <Grid Grid.Row="0" Margin="0,4,0,0" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="160" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -77,6 +75,8 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <!-- Filled Rectangle -->
@@ -85,10 +85,10 @@
                             <Rectangle Fill="{StaticResource CheckerBrush}"/>
                             <Rectangle x:Name="preview_rect" Fill="LightGray" Visibility="Collapsed"/>
                             <Label x:Name="preview_invalid_color_label" Visibility="Collapsed"
-                        Background="LightGray"
-                        Foreground="Gray"   
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center" Content="Auto"/>
+                                Background="LightGray"
+                                Foreground="Gray"   
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center" Content="Auto"/>
                         </Grid>
                     </Border>
 
@@ -100,25 +100,63 @@
                                 Height="Auto"
                                 Content="Auto"/>
                     </Border>
+
+                    <Border Grid.Row="2" Margin="4">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+
+                            <Button
+                                x:Name="add_color_button"
+                                Width="24"
+                                Height="24"
+                                Margin="0,0,8,0"
+                                Background="LightGray"
+                                BorderThickness="0"
+                                FontWeight="ExtraBold"
+                                Content="+" />
+                            <Button
+                                x:Name="remove_color_button"
+                                Width="24"
+                                Height="24"
+                                Margin="0,0,8,0"
+                                Background="LightGray"
+                                BorderThickness="0"
+                                FontWeight="ExtraBold"
+                                Content="-" />
+
+                            <Button
+                                x:Name="select_color_button"
+                                Width="24"
+                                Height="24"
+                                Margin="0,0,8,0"
+                                Background="LightGray"
+                                BorderThickness="0"
+                                FontWeight="ExtraBold"
+                                Content="C" />
+
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="3" Height="120" Margin="4">
+                        <ctrl:ColorListBox Grid.Column="1" x:Name="color_list_box"/>
+                    </Border>
+                    
                 </Grid>
             </Border>
 
             <!-- Rigt Pain -->
             <!-- ColorMaker -->
-            <Border Grid.Column="1">
+            <Border Grid.Column="1" Margin="8">
                 <ctrl:ColorMaker x:Name="color_maker"/>
             </Border>
 
         </Grid>
-        
 
         <!-- CANCEL OK -->
-        <Border Grid.Row="2" Padding="8,8,8,8" Background="White">
+        <Border Grid.Row="2" Padding="8,8,8,8" Background="White" VerticalAlignment="Bottom">
             <StackPanel
-                Width="Auto"
-                Height="Auto"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
                 Orientation="Horizontal">
                 <Button
                     x:Name="cancel_button"

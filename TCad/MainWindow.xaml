@@ -985,7 +985,7 @@
                                     ItemContainerStyle="{StaticResource SimpleListBoxItem}"
                                     ItemsSource="{Binding LayerList}"
                                     SelectedItem="{Binding SelectedItem}"
-                                    SelectionMode="Single">
+                                    SelectionMode="Single" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
