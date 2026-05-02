@@ -59,6 +59,9 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
+# IDE1006 (Naming rule violation) を非表示にする
+dotnet_diagnostic.IDE1006.severity = silent
+
 # 記号の仕様
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
