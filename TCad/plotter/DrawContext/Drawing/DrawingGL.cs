@@ -1,4 +1,4 @@
-#define USE_WIRE_FRAME_SHADER
+//#define USE_WIRE_FRAME_SHADER
 
 using CadDataTypes;
 using GLFont;
@@ -79,8 +79,8 @@ public class DrawingGL : IDrawing
                 shader.Start();
 
                 SetupShader(DC, shader, brush, pen, edgePen, edgeThreshold);
-                DrawHeFacesVBO2(shader, brush, model);
-                //DrawHeFacesVBO3(shader, brush, model);
+                //DrawHeFacesVBO2(shader, brush, model);
+                DrawHeFacesVBO3(shader, brush, model);
         #else
                 //DrawHeFaces(brush, model);
                 DrawHeFacesVBO(brush, model);
@@ -416,18 +416,18 @@ public class DrawingGL : IDrawing
             GL.VertexAttribPointer(shader.posLocation, 3, VertexAttribPointerType.Float, false, stride, 0);
             GL.VertexAttribPointer(shader.normalLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t));
 
-            if (shader.barycentriclLocation >= 0)
+            if (shader.barycentricLocation >= 0)
             {
-                GL.VertexAttribPointer(shader.barycentriclLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t) * 2);
+                GL.VertexAttribPointer(shader.barycentricLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t) * 2);
             }
 
             GL.EnableVertexAttribArray(shader.posLocation);
             GL.EnableVertexAttribArray(shader.normalLocation);
 
 
-            if (shader.barycentriclLocation >= 0)
+            if (shader.barycentricLocation >= 0)
             {
-                GL.EnableVertexAttribArray(shader.barycentriclLocation);
+                GL.EnableVertexAttribArray(shader.barycentricLocation);
             }
         }
 
@@ -436,9 +436,9 @@ public class DrawingGL : IDrawing
         GL.DisableVertexAttribArray(shader.posLocation);
         GL.DisableVertexAttribArray(shader.normalLocation);
 
-        if (shader.barycentriclLocation >= 0)
+        if (shader.barycentricLocation >= 0)
         {
-            GL.DisableVertexAttribArray(shader.barycentriclLocation);
+            GL.DisableVertexAttribArray(shader.barycentricLocation);
         }
 
         // VBO解放

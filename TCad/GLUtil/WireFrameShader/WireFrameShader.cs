@@ -25,7 +25,7 @@ public class WireFrameShader
 
     public int normalLocation = -1;
 
-    public int barycentriclLocation = -1;
+    public int barycentricLocation = -1;
 
     public WireFrameShader()
     {
@@ -36,8 +36,8 @@ public class WireFrameShader
     {
         Log.plx("in");
 
-        string vertexSrc = ResourceLoader.LoadString("/GLUtil/WireFrameShader/shader1/VertexShader.vert");
-        string fragmentSrc = ResourceLoader.LoadString("/GLUtil/WireFrameShader/shader1/FragmentShader.frag");
+        string vertexSrc = ResourceLoader.LoadString("/GLUtil/WireFrameShader/shader2/VertexShader.vert");
+        string fragmentSrc = ResourceLoader.LoadString("/GLUtil/WireFrameShader/shader2/FragmentShader.frag");
 
         int status;
 
@@ -97,7 +97,7 @@ public class WireFrameShader
 
         posLocation = GL.GetAttribLocation(ShaderProgram, "aPos");
         normalLocation = GL.GetAttribLocation(ShaderProgram, "aNormal");
-        barycentriclLocation = GL.GetAttribLocation(ShaderProgram, "aBarycentric");
+        barycentricLocation = GL.GetAttribLocation(ShaderProgram, "aBarycentric");
 
         Log.plx("out");
     }
