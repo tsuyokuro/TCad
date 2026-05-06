@@ -125,7 +125,7 @@ class DrawContextGLPers : DrawContextGL
             mUpVector = qp.ToVector3();
         }
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcViewDir();
         CalcProjectionZW();
     }
@@ -155,7 +155,7 @@ class DrawContextGLPers : DrawContextGL
             mEye += dv;
         }
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcProjectionMatrix();
         CalcProjectionZW();
         CalcViewDir();

@@ -1,11 +1,12 @@
 using TCad.Logger;
 using TCad.Plotter.undo;
+using TCad.Util;
 
 namespace TCad.Plotter.Scripting;
 
 public class ScriptSession
 {
-    ScriptEnvironment Env;
+    private readonly ScriptEnvironment Env;
 
     private CadOpeList mCadOpeList = null;
 
@@ -109,7 +110,7 @@ public class ScriptSession
         NeedRedraw = true;
     }
 
-    public void UpdateTV(bool remakeTree)
+    private void UpdateTV(bool remakeTree)
     {
         ThreadUtil.RunOnMainThread(() =>
         {
@@ -117,13 +118,11 @@ public class ScriptSession
         }, true);
     }
 
-    public void Redraw()
+    private void Redraw()
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            Env.Controller.Drawer.Clear();
-            Env.Controller.Drawer.DrawAll();
-            Env.Controller.Drawer.UpdateView();
+            Env.Controller.Redraw();
         }, true);
     }
 }

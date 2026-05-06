@@ -30,6 +30,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
+using TCad.Util;
 
 namespace TCad.Plotter.Scripting;
 
@@ -949,17 +950,15 @@ public class TestCommands
         return true;
     }
 
-    public void Redraw()
+    private void Redraw()
     {
         RunOnMainThread(() =>
         {
-            Controller.Drawer.Clear();
-            Controller.Drawer.DrawAll();
-            Controller.Drawer.UpdateView();
+            Controller.Redraw();
         });
     }
 
-    public void RunOnMainThread(Action action)
+    private void RunOnMainThread(Action action)
     {
         ThreadUtil.RunOnMainThread(action, true);
     }

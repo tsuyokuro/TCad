@@ -14,6 +14,7 @@ using TCad.Logger;
 using TCad.MainView;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
+using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
 using TCad.Util;
 using TCad.ViewModel;
@@ -38,19 +39,19 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Glu.Initialize();
 
-        Contoroller = new PlotterController();
+        CadData cadData = new(
+            new CadObjectDB(),
+            (vcompo_t)1.0,
+            PaperPageSize.A4Portrate);
+
+        Contoroller = new PlotterController(cadData);
 
         ViewModel = new PlotterViewModel(this, Contoroller);
-
-        Contoroller.ConnectViewModel(ViewModel);
-
-        ViewModel.Startup();
-
-        Contoroller.Startup();
-
         ViewModel.ObjectTree = ObjTree;
+        ViewModel.CommandTextBox = textCommand;
 
-        ViewModel.AttachCommandView(textCommand);
+        Contoroller.SetViewModel(ViewModel);
+
 
         SetupInteractionConsole();
 
@@ -80,7 +81,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
     private string PromptTextInput(string msg, string def)
     {
-        InputStringDialog dlg = new InputStringDialog();
+        InputStringDialog dlg = new();
 
         dlg.Message = msg;
 
@@ -154,17 +155,17 @@ public partial class MainWindow : Window, ICadMainWindow
             (ImageSource)TryFindResource("errorIconDrawingImage");
     }
 
-    public CustomPopupPlacement[] PlaceMessagePopup(Size popupSize,
+    public static CustomPopupPlacement[] PlaceMessagePopup(Size popupSize,
                                        Size targetSize,
                                        Point offset)
     {
         double rightOffset = 2.0;
         double topOffset = 2.0;
 
-        Point p = new Point(targetSize.Width - popupSize.Width - rightOffset, topOffset);
+        Point p = new(targetSize.Width - popupSize.Width - rightOffset, topOffset);
 
         CustomPopupPlacement placement1 =
-            new CustomPopupPlacement(p, PopupPrimaryAxis.Horizontal);
+            new(p, PopupPrimaryAxis.Horizontal);
 
         CustomPopupPlacement[] ttplaces =
                 new CustomPopupPlacement[] { placement1 };
@@ -202,7 +203,7 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+        ColorPack cp = ViewModel.DC.Tools.Brushes[DrawTools.BRUSH_BACKGROUND].ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         Log.plx("out");
@@ -212,8 +213,8 @@ public partial class MainWindow : Window, ICadMainWindow
     {
         Log.plx("in");
 
-        Contoroller.Shutdown();
-        ViewModel.Shutdown();
+        Contoroller.ShutDown();
+        ViewModel.ShutDown();
 
         GLUtilContainer.DisposeServices();
 
@@ -225,25 +226,46 @@ public partial class MainWindow : Window, ICadMainWindow
     #region "Key handling"
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (!textCommand.IsFocused && !MyConsole.IsFocused)
+        if (MyConsole.IsFocused)
         {
-            e.Handled = ViewModel.OnKeyDown(sender, e);
+            if (MyConsole.ProcessKeyEvent(e))
+            {
+                return;
+            }
         }
+
+
+        if (textCommand.IsFocused)
+        {
+            return;
+        }
+
+
+        e.Handled = ViewModel.OnKeyDown(sender, e);
     }
 
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
-        if (!textCommand.IsFocused && !MyConsole.IsFocused)
+        if  (MyConsole.IsFocused)
         {
-            e.Handled = ViewModel.OnKeyUp(sender, e);
+            if (MyConsole.ProcessKeyEvent(e))
+            {
+                return;
+            }
         }
-        else
+
+
+        if (textCommand.IsFocused)
         {
             if (e.Key == Key.Escape)
             {
                 viewContainer.Focus();
             }
+            return;
         }
+
+
+        e.Handled = ViewModel.OnKeyUp(sender, e);
     }
     #endregion
 
@@ -360,13 +382,19 @@ public partial class MainWindow : Window, ICadMainWindow
             PopupMessage.IsOpen = false;
         }, true);
     }
+
+    public void FocusCommandLine()
+    {
+        textCommand.Focus();
+    }
+
     #endregion
 
     #region ViewManager Event
     public void DrawModeChanged(DrawModes drawMode)
     {
         Log.plx("in");
-        ColorPack cp = ViewModel.DC.Tools.Brush(DrawTools.BRUSH_BACKGROUND).ColorPack;
+        ColorPack cp = ViewModel.DC.Tools.Brushes[DrawTools.BRUSH_BACKGROUND].ColorPack;
         XamlResource.SetValue("MainViewHostBGColor", new SolidColorBrush(Color.FromRgb(cp.R, cp.G, cp.B)));
 
         //XamlResource.SetValue("BaseColor", new SolidColorBrush(Colors.White));

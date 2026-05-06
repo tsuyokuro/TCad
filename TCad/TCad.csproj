@@ -84,6 +84,10 @@
     <Resource Include="Fonts\mplus-1m-light.ttf" />
     <Resource Include="Fonts\mplus-1m-regular.ttf" />
     <Resource Include="Fonts\mplus-1m-thin.ttf" />
+    <Resource Include="GLUtil\WireFrameShader\shader1\FragmentShader.frag" />
+    <Resource Include="GLUtil\WireFrameShader\shader1\VertexShader.vert" />
+    <Resource Include="GLUtil\WireFrameShader\shader2\FragmentShader.frag" />
+    <Resource Include="GLUtil\WireFrameShader\shader2\VertexShader.vert" />
     <Resource Include="Resources\Cursors\cross_bk.cur" />
     <Resource Include="Resources\Cursors\cross_wt.cur" />
     <Resource Include="Resources\Cursors\dot.cur" />

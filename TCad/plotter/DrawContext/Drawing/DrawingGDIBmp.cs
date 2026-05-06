@@ -26,7 +26,7 @@ public class DrawingGDIBmp : DrawingGDI
     public override void DrawGrid(Gridding grid)
     {
         vector3_t lt = vector3_t.Zero;
-        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t rb = new(DC.ViewWidth, DC.ViewHeight, 0);
 
         vector3_t ltw = DC.DevPointToWorldPoint(lt);
         vector3_t rbw = DC.DevPointToWorldPoint(rb);
@@ -41,9 +41,9 @@ public class DrawingGDIBmp : DrawingGDI
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
-        int argb = DC.Tools.Pen(DrawTools.PEN_GRID).Argb;
+        int argb = DC.Tools.Pens[DrawTools.PEN_GRID].Argb;
 
-        vcompo_t n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, 8);
 
         vcompo_t sx, sy, sz;
         vcompo_t szx = grid.GridSize.X * n;

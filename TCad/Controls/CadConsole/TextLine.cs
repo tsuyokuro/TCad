@@ -27,7 +27,7 @@ public struct AttrSpan
 public class TextLine
 {
     public string Data = "";
-    public List<AttrSpan> Attrs = new List<AttrSpan>();
+    public List<AttrSpan> Attrs = new();
 
     private AttrSpan LastAttrSpan
     {
@@ -74,7 +74,7 @@ public class TextLine
     {
         TextAttr attr = LastAttrSpan.Attr;
 
-        StringBuilder builder = new StringBuilder(str.Length);
+        StringBuilder builder = new(str.Length);
 
         int blen = 0;
 

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using TCad.Plotter.Controller;
+using TCad.Util;
 
 namespace TCad.Plotter.Scripting;
 

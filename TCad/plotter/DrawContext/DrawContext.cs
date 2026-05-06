@@ -8,13 +8,6 @@ namespace TCad.Plotter.DrawContexts;
 
 public abstract class DrawContext : IDisposable
 {
-    public enum ProjectionType
-    {
-        Orthographic,
-        Perspective,
-    }
-
-
     // 画素/Milli
     // 1ミリあたりの画素数
     protected vcompo_t mUnitPerMilli = 1;
@@ -65,7 +58,11 @@ public abstract class DrawContext : IDisposable
 
     // ワールド座標系から視点座標系への変換(ビュー変換)行列
     protected matrix4_t mModelViewMatrix = default;
-    protected matrix4_t ModelViewMatrix => mModelViewMatrix;
+    public matrix4_t ModelViewMatrix
+    {
+        get => mModelViewMatrix;
+        protected set => mModelViewMatrix = value;
+    }
 
     // 視点座標系からワールド座標系への変換行列
     protected matrix4_t mViewMatrixInv = default;
@@ -73,7 +70,11 @@ public abstract class DrawContext : IDisposable
 
     // 視点座標系から投影座標系への変換行列
     protected matrix4_t mProjectionMatrix = default;
-    protected matrix4_t ProjectionMatrix => mProjectionMatrix;
+    public matrix4_t ProjectionMatrix
+    {
+        get => mProjectionMatrix;
+        protected set => mProjectionMatrix = value;
+    }
 
     // 投影座標系から視点座標系への変換行列
     protected matrix4_t mProjectionMatrixInv = default;
@@ -84,6 +85,9 @@ public abstract class DrawContext : IDisposable
 
     protected vcompo_t mProjectionZ = 0;
     protected vcompo_t ProjectionZ => mProjectionZ;
+
+    // 2D描画用変換行列
+    public matrix4_t Matrix2D = matrix4_t.Identity;
 
     // Screen 座標系の原点 
     // 座標系の原点がView座標上で何処にあるかを示す
@@ -124,7 +128,7 @@ public abstract class DrawContext : IDisposable
         set
         {
             WorldScale_ = value;
-            CalcViewMatrix();
+            CalcModelViewMatrix();
         }
 
     }
@@ -218,13 +222,13 @@ public abstract class DrawContext : IDisposable
     public virtual vector3_t WorldPointToDevPoint(vector3_t pt)
     {
         vector3_t p = WorldVectorToDevVector(pt);
-        p = p + mViewOrg;
+        p += mViewOrg;
         return p;
     }
 
     public virtual vector3_t DevPointToWorldPoint(vector3_t pt)
     {
-        pt = pt - mViewOrg;
+        pt -= mViewOrg;
         return DevVectorToWorldVector(pt);
     }
 
@@ -242,8 +246,8 @@ public abstract class DrawContext : IDisposable
         dv.Z = pv.Z / pv.W;
         dv.W = pv.W;
 
-        dv.X = dv.X * DeviceScaleX;
-        dv.Y = dv.Y * DeviceScaleY;
+        dv.X *= DeviceScaleX;
+        dv.Y *= DeviceScaleY;
         //dv.Z = 0;
 
         return dv.ToVector3();
@@ -251,8 +255,8 @@ public abstract class DrawContext : IDisposable
 
     public virtual vector3_t DevVectorToWorldVector(vector3_t pt)
     {
-        pt.X = pt.X / DeviceScaleX;
-        pt.Y = pt.Y / DeviceScaleY;
+        pt.X /= DeviceScaleX;
+        pt.Y /= DeviceScaleY;
 
         vector4_t wv;
 
@@ -262,8 +266,8 @@ public abstract class DrawContext : IDisposable
         wv.X = pt.X * wv.W;
         wv.Y = pt.Y * wv.W;
 
-        wv = wv * mProjectionMatrixInv;
-        wv = wv * mViewMatrixInv;
+        wv *= mProjectionMatrixInv;
+        wv *= mViewMatrixInv;
 
         return wv.ToVector3();
     }
@@ -296,7 +300,7 @@ public abstract class DrawContext : IDisposable
         mProjectionZ = pv.Z;
     }
 
-    protected void CalcViewMatrix()
+    protected void CalcModelViewMatrix()
     {
         //mViewMatrix = matrix4_t.Scale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
         mModelViewMatrix = matrix4_t.CreateScale(WorldScale_) * matrix4_t.LookAt(mEye, mLookAt, mUpVector);
@@ -336,7 +340,7 @@ public abstract class DrawContext : IDisposable
         mLookAt = lookAt;
         mUpVector = upVector;
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcViewDir();
         CalcProjectionZW();
     }
@@ -362,8 +366,8 @@ public abstract class DrawContext : IDisposable
     public abstract void Dispose();
 
     public abstract DrawContext Clone();
-    public abstract DrawPen GetPen(int idx);
-    public abstract DrawBrush GetBrush(int idx);
+    public abstract DrawPen Pen(int idx);
+    public abstract DrawBrush Brush(int idx);
 
     public abstract void EnableLight();
     public abstract void DisableLight();

@@ -9,6 +9,7 @@ namespace TCad.ViewModel;
 class CadFigTreeItem : CadObjTreeItem
 {
     public const string ITEM_CMD_CHANGE_NAME = "change_name";
+    public const string ITEM_CMD_COPY = "copy";
 
     public CadFigure Fig;
 
@@ -53,8 +54,7 @@ class CadFigTreeItem : CadObjTreeItem
 
         for (int i = 0; i < Fig.PointList.Count; i++)
         {
-            CadVertex p = Fig.PointList[i];
-            CadPointTreeItem pi = new CadPointTreeItem(fig, idx);
+            CadPointTreeItem pi = new(fig, idx);
             Add(pi);
             idx++;
         }
@@ -62,18 +62,24 @@ class CadFigTreeItem : CadObjTreeItem
         for (int i = 0; i < Fig.ChildList.Count; i++)
         {
             CadFigure c = Fig.ChildList[i];
-            CadFigTreeItem pi = new CadFigTreeItem(c);
+            CadFigTreeItem pi = new(c);
             Add(pi);
         }
     }
 
     public override List<MenuItem> GetContextMenuItems()
     {
-        List<MenuItem> list = new List<MenuItem>();
+        List<MenuItem> list = new();
 
-        MenuItem menuItem = new MenuItem();
-        menuItem.Header = TCad.Properties.Resources.menu_change_fig_name;
+        MenuItem menuItem = new();
+        menuItem.Header = Properties.Resources.menu_change_fig_name;
         menuItem.Tag = CreateContextMenuTag(ITEM_CMD_CHANGE_NAME);
+
+        list.Add(menuItem);
+
+        menuItem = new();
+        menuItem.Header = "Copy";
+        menuItem.Tag = CreateContextMenuTag(ITEM_CMD_COPY);
 
         list.Add(menuItem);
 

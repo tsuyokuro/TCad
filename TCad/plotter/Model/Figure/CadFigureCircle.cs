@@ -42,7 +42,7 @@ public partial class CadFigureCircle : CadFigure
 
     public override void Draw(DrawContext dc, DrawOption dp)
     {
-        drawCircle(dc, dp.LinePen);
+        DrawCircle(dc, dp.LinePen);
     }
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
@@ -52,7 +52,7 @@ public partial class CadFigureCircle : CadFigure
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        drawSelected_Circle(dc);
+        DrawSelectedCircle(dc);
     }
 
     public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)
@@ -65,7 +65,7 @@ public partial class CadFigureCircle : CadFigure
         CadVertex cp = PointList[0];
 
         CadVertex a = tp;
-        CadVertex b = new CadVertex(getRP(dc, cp, tp, true));
+        CadVertex b = new(GetRightAngleP(dc, cp, tp));
 
         CadVertex c = -(a - cp) + cp;
         CadVertex d = -(b - cp) + cp;
@@ -78,7 +78,7 @@ public partial class CadFigureCircle : CadFigure
         dc.Drawing.DrawLine(pen, cp.vector, d.vector);
     }
 
-    private void drawCircle(DrawContext dc, DrawPen pen)
+    private void DrawCircle(DrawContext dc, DrawPen pen)
     {
         if (PointList.Count == 0)
         {
@@ -88,11 +88,9 @@ public partial class CadFigureCircle : CadFigure
         if (PointList.Count == 1)
         {
             dc.Drawing.DrawCross(pen, PointList[0].vector, 2);
-            if (PointList[0].Selected) dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+            if (PointList[0].Selected) dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             return;
         }
-
-        vector3_t normal = CadMath.Normal(PointList[0].vector, PointList[2].vector, PointList[1].vector);
 
         CircleExpander.Draw(PointList[0], PointList[1], PointList[2], 32, dc, pen);
 
@@ -100,14 +98,14 @@ public partial class CadFigureCircle : CadFigure
         dc.Drawing.DrawCross(pen, PointList[0].vector, size);
     }
 
-    private void drawSelected_Circle(DrawContext dc)
+    private void DrawSelectedCircle(DrawContext dc)
     {
         for (int i = 0; i < PointList.Count; i++)
         {
             if (PointList[i].Selected)
             {
                 dc.Drawing.DrawSelectedPoint(
-                    PointList[i].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                    PointList[i].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
 
         }
@@ -129,7 +127,7 @@ public partial class CadFigureCircle : CadFigure
 
         CadVertex a = mPointList[1];
 
-        CadVertex b = new CadVertex(getRP(dc, cp, a, true));
+        CadVertex b = new(GetRightAngleP(dc, cp, a));
 
         AddPoint(b);
 
@@ -261,7 +259,24 @@ public partial class CadFigureCircle : CadFigure
         return ret;
     }
 
-    private vector3_t getRP(DrawContext dc, CadVertex cp, CadVertex p, bool isA)
+    public override CadSegment GetSegmentAt(int n)
+    {
+        return new CadSegment(CadVertex.InvalidValue, CadVertex.InvalidValue);
+    }
+
+    public override FigureSegment GetFigSegmentAt(int n)
+    {
+        return new FigureSegment(null, -1, -1, -1);
+    }
+
+    //
+    // 視線ベクトルとcpによる平面上で cp->pと垂直な点を求める
+    //    rp
+    //     | 
+    //     |
+    //    cp-----p
+    //
+    private static vector3_t GetRightAngleP(DrawContext dc, CadVertex cp, CadVertex p)
     {
         if (p.Equals(cp))
         {
@@ -276,15 +291,5 @@ public partial class CadFigureCircle : CadFigure
         r = r * (p.vector - cp.vector).Norm() + cp.vector;
 
         return r;
-    }
-
-    public override CadSegment GetSegmentAt(int n)
-    {
-        return new CadSegment(CadVertex.InvalidValue, CadVertex.InvalidValue);
-    }
-
-    public override FigureSegment GetFigSegmentAt(int n)
-    {
-        return new FigureSegment(null, -1, -1, -1);
     }
 }

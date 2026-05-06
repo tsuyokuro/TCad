@@ -39,7 +39,7 @@ public partial class CadFigurePicture : CadFigure
     {
         OrgFilePathName = path;
 
-        FileStream fs = new FileStream(
+        FileStream fs = new(
             path,
             FileMode.Open,
             FileAccess.Read);
@@ -52,7 +52,7 @@ public partial class CadFigurePicture : CadFigure
 
         //mBitmap = new Bitmap(Image.FromFile(path));
 
-        Image image = ImageUtil.ByteArrayToImage(SrcData);
+        //Image image = ImageUtil.ByteArrayToImage(SrcData);
 
         mBitmap = new Bitmap(Image.FromFile(path));
 
@@ -196,7 +196,7 @@ public partial class CadFigurePicture : CadFigure
         {
             if (p.Selected)
             {
-                dc.Drawing.DrawSelectedPoint(p.vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                dc.Drawing.DrawSelectedPoint(p.vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }
@@ -366,11 +366,9 @@ public partial class CadFigurePicture : CadFigure
 
     private Centroid GetPointListCentroid()
     {
-        Centroid ret = default;
-
         List<Vector3List> triangles = TriangleSplitter.Split(this);
 
-        ret = CadUtil.TriangleListCentroid(triangles);
+        Centroid ret = CadUtil.TriangleListCentroid(triangles);
 
         return ret;
     }

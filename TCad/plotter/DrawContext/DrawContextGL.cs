@@ -30,9 +30,7 @@ public abstract class DrawContextGL : DrawContext
 
     public bool LightingEnable = true;
 
-    public matrix4_t Matrix2D = matrix4_t.Identity;
-
-    public ProjectionType mProjectionType = ProjectionType.Perspective;
+    //public ProjectionType mProjectionType = ProjectionType.Perspective;
 
     public enum ViewingAngleType
     {
@@ -54,7 +52,7 @@ public abstract class DrawContextGL : DrawContext
 
         InitCamera(ViewingAngleType.STANDERD);
 
-        CalcViewMatrix();
+        CalcModelViewMatrix();
         CalcViewDir();
 
         /*
@@ -186,25 +184,19 @@ public abstract class DrawContextGL : DrawContext
 
     public override void Dispose()
     {
-        if (Tools != null)
-        {
-            Tools.Dispose();
-        }
-
-        if (mDrawing != null)
-        {
-            mDrawing.Dispose();
-        }
+        Tools?.Dispose();
+        mDrawing?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
-    public override DrawPen GetPen(int idx)
+    public override DrawPen Pen(int idx)
     {
-        return Tools.Pen(idx);
+        return Tools.Pens[idx];
     }
 
-    public override DrawBrush GetBrush(int idx)
+    public override DrawBrush Brush(int idx)
     {
-        return Tools.Brush(idx);
+        return Tools.Brushes[idx];
     }
 
     protected void SetupDrawing()

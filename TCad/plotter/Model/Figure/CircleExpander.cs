@@ -34,7 +34,7 @@ public static class CircleExpander
 
         CadVertex p = va;
         CadVertex tp1 = pa;
-        CadVertex tp2 = pa;
+        CadVertex tp2;
 
 
         int i = 0;
@@ -79,7 +79,7 @@ public static class CircleExpander
 
         CadVertex p = va;
         CadVertex tp1 = pa;
-        CadVertex tp2 = pa;
+        CadVertex tp2;
 
 
         int i = 0;

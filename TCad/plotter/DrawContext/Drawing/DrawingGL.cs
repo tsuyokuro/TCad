@@ -1,5 +1,8 @@
+//#define USE_WIRE_FRAME_SHADER
+
 using CadDataTypes;
 using GLFont;
+using GLUtil;
 using MyCollections;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -17,15 +20,15 @@ namespace TCad.Plotter.Drawing;
 
 public class DrawingGL : IDrawing
 {
-    private DrawContextGL DC;
+    private readonly DrawContext DC;
 
-    private FontFaceW mFontFaceW;
-    private FontRenderer mFontRenderer;
+    private readonly FontFaceW mFontFaceW;
+    private readonly FontRenderer mFontRenderer;
 
-    private vcompo_t FontTexW;
-    private vcompo_t FontTexH;
+    private readonly vcompo_t FontTexW;
+    private readonly vcompo_t FontTexH;
 
-    public DrawingGL(DrawContextGL dc)
+    public DrawingGL(DrawContext dc)
     {
         DC = dc;
 
@@ -71,16 +74,62 @@ public class DrawingGL : IDrawing
     public void DrawHarfEdgeModel(
         DrawBrush brush, DrawPen pen, DrawPen edgePen, vcompo_t edgeThreshold, HeModel model)
     {
-        //DrawHeFaces(brush, model);
-        DrawHeFacesVBO(brush, model);
+        #if USE_WIRE_FRAME_SHADER
+                var shader = GLUtilContainer.WireFrameShader.Get();
+                shader.Start();
 
-        //DrawHeEdges(pen, edgePen, edgeThreshold, model);
-        DrawHeEdgesVBO(pen, edgePen, edgeThreshold, model);
+                SetupShader(DC, shader, brush, pen, edgePen, edgeThreshold);
+                //DrawHeFacesVBO2(shader, brush, model);
+                DrawHeFacesVBO3(shader, brush, model);
+        #else
+                //DrawHeFaces(brush, model);
+                DrawHeFacesVBO(brush, model);
+        #endif
+
+
+        #if !USE_WIRE_FRAME_SHADER
+                //DrawHeEdges(pen, edgePen, edgeThreshold, model);
+                DrawHeEdgesVBO(pen, edgePen, edgeThreshold, model);
+        #endif
+
+
+        #if USE_WIRE_FRAME_SHADER
+                shader.End();
+        #endif
 
         if (SettingsHolder.Settings.DrawNormal)
         {
             DrawHeFacesNormal(model);
         }
+    }
+
+    private void SetupShader(
+        DrawContext dc,
+        WireFrameShader shader,
+        DrawBrush brush,
+        DrawPen pen,
+        DrawPen edgePen,
+        vcompo_t edgeThreshold
+        )
+    {
+        matrix4_t proj = dc.ProjectionMatrix;
+
+        if (DC is DrawContextGLOrtho)
+        {
+            vcompo_t dx = dc.ViewOrg.X - (dc.ViewWidth / (vcompo_t)(2.0));
+            vcompo_t dy = dc.ViewOrg.Y - (dc.ViewHeight / (vcompo_t)(2.0));
+            proj.M41 = dx / (dc.ViewWidth / (vcompo_t)(2.0));
+            proj.M42 = -dy / (dc.ViewHeight / (vcompo_t)(2.0));
+        }
+
+        // uniform変数設定
+        shader.SetModelViewMatrix(dc.ModelViewMatrix);
+        shader.SetProjectionMatrix(proj);
+        shader.SetObjColor(brush.Color4);
+
+        // ヘッドライト
+        vector3_t lv = dc.Eye - dc.LookAt;
+        shader.SetLightDir(lv);
     }
 
     private void DrawHeFaces(DrawBrush brush, HeModel model)
@@ -124,10 +173,11 @@ public class DrawingGL : IDrawing
         GL.End();
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VboVertex
     {
-        public Vector3 Pos;
-        public Vector3 Normal;
+        public vector3_t Pos;
+        public vector3_t Normal;
     }
 
     FlexArray<int> indexes = new(1000);
@@ -182,7 +232,7 @@ public class DrawingGL : IDrawing
         GL.Color4(brush.Color4);
 
 
-        int stride = Marshal.SizeOf(typeof(VboVertex));
+        int stride = Marshal.SizeOf<VboVertex>();
 
 
         int vCnt = vboVertices.Count;
@@ -230,6 +280,174 @@ public class DrawingGL : IDrawing
         GL.DeleteBuffer(vertexBufferId);
     }
 
+    private void DrawHeFacesVBO2(WireFrameShader shader,DrawBrush brush, HeModel model)
+    {
+        if (brush.IsInvalid)
+        {
+            return;
+        }
+
+
+        vboVertices.Clear();
+        VboVertex v = new();
+
+        for (int i = 0; i < model.FaceStore.Count; i++)
+        {
+            HeFace f = model.FaceStore.Data[i];
+
+            HalfEdge head = f.Head;
+
+            HalfEdge c = head;
+
+            for (; ; )
+            {
+                v.Pos = (vector3_t)model.VertexStore.Data[c.Vertex].vector;
+                v.Normal = (vector3_t)model.NormalStore[c.Normal];
+                vboVertices.Add(v);
+
+                c = c.Next;
+
+                if (c == head)
+                {
+                    break;
+                }
+            }
+        }
+
+        int stride = Marshal.SizeOf<VboVertex>();
+        int vCnt = vboVertices.Count;
+        int vertexBufferId = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            fixed (VboVertex* ptr = &vboVertices.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+
+            GL.VertexAttribPointer(shader.posLocation, 3, VertexAttribPointerType.Float, false, stride, 0);
+            GL.VertexAttribPointer(shader.normalLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t));
+
+            GL.EnableVertexAttribArray(shader.posLocation);
+            GL.EnableVertexAttribArray(shader.normalLocation);
+        }
+
+
+        GL.DrawArrays(PrimitiveType.Triangles, 0, vboVertices.Count);
+
+        GL.DisableVertexAttribArray(0);
+        GL.DisableVertexAttribArray(1);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.DeleteBuffer(vertexBufferId);
+    }
+
+
+
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct VboVertex3
+    {
+        public vector3_t Pos;
+        public vector3_t Normal;
+        public vector3_t Barycentric;
+    }
+
+    private FlexArray<VboVertex3> vboVertices3 = new();
+
+    private vector3_t[] barycentricTbl3 = [
+            new vector3_t((vcompo_t)1, (vcompo_t)0, (vcompo_t)0),
+            new vector3_t((vcompo_t)0, (vcompo_t)1, (vcompo_t)0),
+            new vector3_t((vcompo_t)0, (vcompo_t)0, (vcompo_t)1)
+        ];
+
+
+    private void DrawHeFacesVBO3(WireFrameShader shader, DrawBrush brush, HeModel model)
+    {
+        if (brush.IsInvalid)
+        {
+            return;
+        }
+
+
+        vboVertices3.Clear();
+        VboVertex3 v = new();
+        int n = 0;
+
+        for (int i = 0; i < model.FaceStore.Count; i++)
+        {
+            HeFace f = model.FaceStore.Data[i];
+
+            HalfEdge head = f.Head;
+
+            HalfEdge c = head;
+
+            for (; ; )
+            {
+                v.Pos = (vector3_t)model.VertexStore.Data[c.Vertex].vector;
+                v.Normal = (vector3_t)model.NormalStore[c.Normal];
+                v.Barycentric = barycentricTbl3[n % 3];
+
+                n++;
+
+                vboVertices3.Add(v);
+
+                c = c.Next;
+
+                if (c == head)
+                {
+                    break;
+                }
+            }
+        }
+
+        int stride = Marshal.SizeOf<VboVertex3>();
+
+        int vCnt = vboVertices3.Count;
+        int vertexBufferId = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
+        unsafe
+        {
+            fixed (VboVertex3* ptr = &vboVertices3.Data[0])
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer, vCnt * stride, (nint)ptr, BufferUsageHint.StaticDraw);
+            }
+
+            GL.VertexAttribPointer(shader.posLocation, 3, VertexAttribPointerType.Float, false, stride, 0);
+            GL.VertexAttribPointer(shader.normalLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t));
+
+            if (shader.barycentricLocation >= 0)
+            {
+                GL.VertexAttribPointer(shader.barycentricLocation, 3, VertexAttribPointerType.Float, false, stride, sizeof(vector3_t) * 2);
+            }
+
+            GL.EnableVertexAttribArray(shader.posLocation);
+            GL.EnableVertexAttribArray(shader.normalLocation);
+
+
+            if (shader.barycentricLocation >= 0)
+            {
+                GL.EnableVertexAttribArray(shader.barycentricLocation);
+            }
+        }
+
+        GL.DrawArrays(PrimitiveType.Triangles, 0, vboVertices3.Count);
+
+        GL.DisableVertexAttribArray(shader.posLocation);
+        GL.DisableVertexAttribArray(shader.normalLocation);
+
+        if (shader.barycentricLocation >= 0)
+        {
+            GL.DisableVertexAttribArray(shader.barycentricLocation);
+        }
+
+        // VBO解放
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        // VBO破棄
+        GL.DeleteBuffer(vertexBufferId);
+    }
+
+
 
     private void DrawHeFacesNormal(HeModel model)
     {
@@ -262,7 +480,7 @@ public class DrawingGL : IDrawing
                     vector3_t np0 = p;
                     vector3_t np1 = p + (nv * len);
 
-                    DrawArrowGL(DC.GetPen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW, true);
+                    DrawArrowGL(DC.Pen(DrawTools.PEN_NORMAL), np0, np1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW, true);
                 }
 
                 c = next;
@@ -546,7 +764,7 @@ public class DrawingGL : IDrawing
         Color4 edgeColor = edgePen.Color4;
 
 
-        int stride = Marshal.SizeOf(typeof(vector3_t));
+        int stride = Marshal.SizeOf<vector3_t>();
 
         int vCnt = vboPoints.Count;
 
@@ -662,7 +880,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Y軸
@@ -671,7 +889,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         // Z軸
@@ -680,7 +898,7 @@ public class DrawingGL : IDrawing
 
         if (!CadMath.IsParallel(p1 - p0, (vector3_t)DC.ViewDir))
         {
-            DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+            DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
         }
 
         GL.End();
@@ -706,7 +924,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_X), p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_X), p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
 
         // Y軸
         p = vector3_t.UnitY * len;
@@ -714,7 +932,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Y), p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_Y), p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
 
         // Z軸
         p = vector3_t.UnitZ * len;
@@ -722,7 +940,7 @@ public class DrawingGL : IDrawing
         p = DC.WorldPointToDevPoint(p);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_AXIS_LABEL_Z), p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_AXIS_LABEL_Z), p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
     }
 
     public void DrawCompass()
@@ -774,15 +992,15 @@ public class DrawingGL : IDrawing
 
         p0 = vector3_t.UnitX * -size;
         p1 = vector3_t.UnitX * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitY * -size;
         p1 = vector3_t.UnitY * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitZ * -size;
         p1 = vector3_t.UnitZ * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_COMPASS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         GL.End();
         GL.LineWidth(1);
@@ -802,7 +1020,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_X),
             p, vector3_t.UnitX, -vector3_t.UnitY, "X", fontScale, opt);
 
         p = vector3_t.UnitY * size;
@@ -810,7 +1028,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Y),
             p, vector3_t.UnitX, -vector3_t.UnitY, "Y", fontScale, opt);
 
         p = vector3_t.UnitZ * size;
@@ -818,7 +1036,7 @@ public class DrawingGL : IDrawing
         p = WorldPointToDevPoint(p, vw, vh, mdlm, prjm);
         p.X = p.X - fw / 2;
         p.Y = p.Y + fh / 2 - 2;
-        DrawTextScrn(DrawTools.FONT_SMALL, DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z),
+        DrawTextScrn(DrawTools.FONT_SMALL, DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Z),
             p, vector3_t.UnitX, -vector3_t.UnitY, "Z", fontScale, opt);
 
         PopMatrixes();
@@ -893,15 +1111,15 @@ public class DrawingGL : IDrawing
 
         p0 = vector3_t.UnitX * -size;
         p1 = vector3_t.UnitX * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitY * -size;
         p1 = vector3_t.UnitY * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         p0 = vector3_t.UnitZ * -size;
         p1 = vector3_t.UnitZ * size;
-        DrawArrowGL(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
+        DrawArrowGL(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1, ArrowTypes.CROSS, ArrowPos.END, arrowLen, arrowW2, true);
 
         GL.LineWidth(1);
         GL.End();
@@ -914,17 +1132,17 @@ public class DrawingGL : IDrawing
 
         tex = mFontFaceW.CreateTexture("X");
         p1 = vector3_t.UnitX * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_X).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         tex = mFontFaceW.CreateTexture("Y");
         p1 = vector3_t.UnitY * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Y).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         tex = mFontFaceW.CreateTexture("Z");
         p1 = vector3_t.UnitZ * size;
-        GL.Color4(DC.GetBrush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4);
+        GL.Color4(DC.Brush(DrawTools.BRUSH_COMPASS_LABEL_Z).Color4);
         mFontRenderer.Render(tex, p1, xv * tex.ImgW * fs, DC.UpVector * tex.ImgH * fs);
 
         PopMatrixes();
@@ -1116,13 +1334,13 @@ public class DrawingGL : IDrawing
         vector3_t v2 = vector3_t.Zero;
         vector3_t v3 = vector3_t.Zero;
 
-        v0.X = System.Math.Max(p0.X, p1.X);
-        v0.Y = System.Math.Min(p0.Y, p1.Y);
+        v0.X = Math.Max(p0.X, p1.X);
+        v0.Y = Math.Min(p0.Y, p1.Y);
 
         v1.X = v0.X;
-        v1.Y = System.Math.Max(p0.Y, p1.Y);
+        v1.Y = Math.Max(p0.Y, p1.Y);
 
-        v2.X = System.Math.Min(p0.X, p1.X);
+        v2.X = Math.Min(p0.X, p1.X);
         v2.Y = v1.Y;
 
         v3.X = v2.X;
@@ -1476,7 +1694,7 @@ public class DrawingGL : IDrawing
     protected void DrawGridOrtho(Gridding grid)
     {
         vector3_t lt = vector3_t.Zero;
-        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t rb = new(DC.ViewWidth, DC.ViewHeight, 0);
 
         vector3_t ltw = DC.DevPointToWorldPoint(lt);
         vector3_t rbw = DC.DevPointToWorldPoint(rb);
@@ -1490,11 +1708,11 @@ public class DrawingGL : IDrawing
         vcompo_t minz = (vcompo_t)Math.Min(ltw.Z, rbw.Z);
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
-        DrawPen pen = DC.GetPen(DrawTools.PEN_GRID);
+        DrawPen pen = DC.Pen(DrawTools.PEN_GRID);
 
         vector3_t p = default;
 
-        vcompo_t n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, 8);
 
         vcompo_t x, y, z;
         vcompo_t sx, sy, sz;
@@ -1659,7 +1877,7 @@ public class DrawingGL : IDrawing
 
     public void DrawPageFrame(vcompo_t w, vcompo_t h, vector3_t center)
     {
-        if (!(DC is DrawContextGLOrtho))
+        if (DC is not DrawContextGLOrtho)
         {
             return;
         }
@@ -1691,7 +1909,7 @@ public class DrawingGL : IDrawing
         GL.Enable(EnableCap.LineStipple);
         //GL.LineStipple(1, 0b1100110011001100);
 
-        DrawRectScrn(DC.GetPen(DrawTools.PEN_PAGE_FRAME), p0, p1);
+        DrawRectScrn(DC.Pen(DrawTools.PEN_PAGE_FRAME), p0, p1);
 
         GL.Disable(EnableCap.LineStipple);
     }
@@ -1708,15 +1926,15 @@ public class DrawingGL : IDrawing
 
     public void DrawBouncingBox(DrawPen pen, MinMax3D mm)
     {
-        vector3_t p0 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Min.Z);
-        vector3_t p1 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Max.Z);
-        vector3_t p2 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Max.Z);
-        vector3_t p3 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p0 = new(mm.Min.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p1 = new(mm.Min.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p2 = new(mm.Max.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p3 = new(mm.Max.X, mm.Min.Y, mm.Min.Z);
 
-        vector3_t p4 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Min.Z);
-        vector3_t p5 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Max.Z);
-        vector3_t p6 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Max.Z);
-        vector3_t p7 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p4 = new(mm.Min.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p5 = new(mm.Min.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p6 = new(mm.Max.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p7 = new(mm.Max.X, mm.Max.Y, mm.Min.Z);
 
         DC.Drawing.DrawLine(pen, p0, p1);
         DC.Drawing.DrawLine(pen, p1, p2);
@@ -1798,7 +2016,7 @@ public class DrawingGL : IDrawing
         }
 
 
-        vector3_t tmp = new vector3_t(dl, 0, 0);
+        vector3_t tmp = new(dl, 0, 0);
 
         vcompo_t angle = vector3_t.CalculateAngle(tmp, d);
 
@@ -1810,7 +2028,6 @@ public class DrawingGL : IDrawing
         }
         else
         {
-            normal = normal.UnitVector();
             normal = CadMath.Normal(tmp, d);
         }
 

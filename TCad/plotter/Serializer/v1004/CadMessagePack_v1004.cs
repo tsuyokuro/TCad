@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing.Printing;
 using TCad.Plotter.DrawContexts;
 using TCad.Plotter.DrawToolSet;
+using TCad.Plotter.Model;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 
@@ -43,16 +44,15 @@ public class MpCadData_v1004
 
     public CadData Restore(DeserializeContext dsc)
     {
-        CadData cd = new CadData();
-
         var viewInfo = ViewInfo.Restore(dsc);
 
-        cd.WorldScale = viewInfo.worldScale;
-        cd.PageSize = viewInfo.paperPageSize;
+        vcompo_t worldScale = viewInfo.worldScale;
 
-        cd.DB = MpDB.Restore(dsc);
+        PaperPageSize pageSize = viewInfo.paperPageSize;
 
-        return cd;
+        CadObjectDB db = MpDB.Restore(dsc);
+
+        return new CadData(db, worldScale, pageSize);
     }
 }
 

@@ -510,7 +510,7 @@ public class PlotterInput
             y = CrossCursor.Pos.Y;
         }
 
-        vector3_t pixp = new vector3_t(x, y, 0);
+        vector3_t pixp = new(x, y, 0);
 
         RawDownPoint = pixp;
 
@@ -626,7 +626,7 @@ public class PlotterInput
         if (mx.IsValid)
         {
             HighlightPointList.Add(
-                new HighlightPointListItem(mx.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+                new HighlightPointListItem(mx.Point, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
             vector3_t tp = dc.WorldPointToDevPoint(mx.Point);
 
@@ -640,7 +640,7 @@ public class PlotterInput
         if (my.IsValid)
         {
             HighlightPointList.Add(
-                new HighlightPointListItem(my.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+                new HighlightPointListItem(my.Point, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
             vector3_t tp = dc.WorldPointToDevPoint(my.Point);
 
@@ -654,7 +654,7 @@ public class PlotterInput
         if (mxy.IsValid)
         {
             HighlightPointList.Clear();
-            HighlightPointList.Add(new HighlightPointListItem(mxy.Point, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT2)));
+            HighlightPointList.Add(new HighlightPointListItem(mxy.Point, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT2)));
             si.SnapPoint = mxy.Point;
             si.IsPointMatch = true;
 
@@ -694,7 +694,7 @@ public class PlotterInput
                     si.Cursor.Pos.Z = 0;
 
                     HighlightPointList.Clear();
-                    HighlightPointList.Add(new HighlightPointListItem(center, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT2)));
+                    HighlightPointList.Add(new HighlightPointListItem(center, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT2)));
                 }
                 else
                 {
@@ -704,7 +704,7 @@ public class PlotterInput
                     si.Cursor.Pos = dc.WorldPointToDevPoint(matchSeg.CrossPoint);
                     si.Cursor.Pos.Z = 0;
 
-                    HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+                    HighlightPointList.Add(new HighlightPointListItem(si.SnapPoint, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT)));
                 }
             }
             else
@@ -768,7 +768,7 @@ public class PlotterInput
                 }
             }
 
-            HighlightPointList.Add(new HighlightPointListItem(ri.Ruler.P1, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+            HighlightPointList.Add(new HighlightPointListItem(ri.Ruler.P1, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT)));
 
             // 点が線分上にある時は、EvalSegSeracherで登録されているのでポイントを追加しない
             vector3_t p0 = dc.WorldPointToDevPoint(ri.Ruler.P0);
@@ -777,7 +777,7 @@ public class PlotterInput
 
             if (!CadMath.IsPointInSeg2D(p0, p1, crp))
             {
-                HighlightPointList.Add(new HighlightPointListItem(ri.CrossPoint, dc.GetPen(DrawTools.PEN_POINT_HIGHLIGHT)));
+                HighlightPointList.Add(new HighlightPointListItem(ri.CrossPoint, dc.Pen(DrawTools.PEN_POINT_HIGHLIGHT)));
             }
         }
 
@@ -788,12 +788,11 @@ public class PlotterInput
     {
         HighlightPointList.Clear();
 
-        SnapInfo si =
-            new SnapInfo(
-                CrossCursor,
-                SnapPoint,
-                mPointSearcher,
-                mSegSearcher
+        SnapInfo si = new(
+                    CrossCursor,
+                    SnapPoint,
+                    mPointSearcher,
+                    mSegSearcher
                 );
 
         if (SettingsHolder.Settings.SnapToGrid)
@@ -879,7 +878,7 @@ public class PlotterInput
     {
         if (mSpPointList == null)
         {
-            NearPointSearcher searcher = new NearPointSearcher(Controller);
+            NearPointSearcher searcher = new(Controller);
 
             var resList = searcher.Search((CadVertex)CrossCursor.Pos, 64);
 

@@ -208,20 +208,34 @@ public class LogFormatter
     }
 }
 
-public static class Log
+public interface ILogDelegate
 {
-    private static readonly Mutex Lock = new();
+    int Indent { get; set; }
+    ILogWriter LogWriter { get; set; }
 
-    private static readonly LogFormatter Formatter = new(upStackFrame: 2);
+    void p(string s);
+    void pl(string s);
+    void plx(string s);
+    void ResetIndent();
+    void Start();
+    void Stop();
+    void tpl(string s);
+}
 
-    public static int Indent
+public class LogDelegate : ILogDelegate
+{
+    private readonly Mutex Lock = new();
+
+    private readonly LogFormatter Formatter = new(upStackFrame: 3);
+
+    public int Indent
     {
         get => Formatter.Indent;
         set => Formatter.Indent = value;
     }
 
-    private static ILogWriter LogWriter_;
-    public static ILogWriter LogWriter
+    private ILogWriter LogWriter_;
+    public ILogWriter LogWriter
     {
         get => LogWriter_;
         set
@@ -237,48 +251,101 @@ public static class Log
         }
     }
 
-    public static void Start()
+    public void Start()
     {
     }
 
-    public static void Stop()
+    public void Stop()
     {
         LogWriter?.Stop();
         LogWriter = null;
     }
 
-    public static void ResetIndent()
+    public void ResetIndent()
     {
         Lock.WaitOne();
         Formatter.ResetIndent();
         Lock.ReleaseMutex();
     }
 
-    public static void p(string s)
+    public void p(string s)
     {
         Lock.WaitOne();
         Formatter.p(s);
         Lock.ReleaseMutex();
     }
 
-    public static void pl(string s)
+    public void pl(string s)
     {
         Lock.WaitOne();
         Formatter.pl(s);
         Lock.ReleaseMutex();
     }
 
-    public static void tpl(string s)
+    public void tpl(string s)
     {
         Lock.WaitOne();
         Formatter.tpl(s);
         Lock.ReleaseMutex();
     }
 
-    public static void plx(string s)
+    public void plx(string s)
     {
         Lock.WaitOne();
         Formatter.plx(s);
         Lock.ReleaseMutex();
+    }
+}
+
+
+public static class Log
+{
+    private static ILogDelegate LogDelegate_ = new LogDelegate();
+
+    public static int Indent
+    {
+        get => LogDelegate_.Indent;
+        set => LogDelegate_.Indent = value;
+    }
+
+    public static ILogWriter LogWriter
+    {
+        get => LogDelegate_.LogWriter;
+        set => LogDelegate_.LogWriter = value;
+    }
+
+    public static void Start()
+    {
+        LogDelegate_.Start();
+    }
+
+    public static void Stop()
+    {
+        LogDelegate_.Stop();
+    }
+
+    public static void ResetIndent()
+    {
+        LogDelegate_.ResetIndent();
+    }
+
+    public static void p(string s)
+    {
+        LogDelegate_.p(s);
+    }
+
+    public static void pl(string s)
+    {
+        LogDelegate_.pl(s);
+    }
+
+    public static void tpl(string s)
+    {
+        LogDelegate_.tpl(s);
+    }
+
+    public static void plx(string s)
+    {
+        LogDelegate_.plx(s);
     }
 }

@@ -1,7 +1,5 @@
 using System.Windows.Forms;
-using TCad.Logger;
 using TCad.Plotter.DrawContexts;
-using Windows.AI.MachineLearning;
 
 namespace TCad.Plotter;
 

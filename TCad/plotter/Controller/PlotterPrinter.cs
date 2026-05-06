@@ -35,7 +35,7 @@ public class PlotterPrinter
         }
         else
         {
-            DrawContextPrinter dc = new DrawContextPrinter(pc.DC, printerGraphics, pageSize, deviceSize);
+            DrawContextPrinter dc = new(pc.DC, printerGraphics, pageSize, deviceSize);
             dc.SetupTools(DrawModes.PRINTER);
 
             pc.Drawer.DrawFiguresRaw(dc);
@@ -67,7 +67,7 @@ public class PlotterPrinter
 
         dc.SetViewOrg(org);
 
-        FrameBufferW frameBuffer = new FrameBufferW();
+        FrameBufferW frameBuffer = new();
         frameBuffer.Create((int)deviceSize.Width, (int)deviceSize.Height);
 
         frameBuffer.Begin();
@@ -85,7 +85,7 @@ public class PlotterPrinter
 
         GL.LineWidth((float)upRes);
 
-        dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
+        dc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_BACKGROUND));
 
         pc.Drawer.DrawFiguresRaw(dc);
 

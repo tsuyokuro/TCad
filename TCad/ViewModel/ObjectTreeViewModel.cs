@@ -1,9 +1,11 @@
+using CadDataTypes;
+using System.Windows;
 using TCad.Controls;
 using TCad.Dialogs;
-using TCad.Plotter;
 using TCad.Plotter.Controller;
 using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Settings;
+using TCad.Util;
 
 namespace TCad.ViewModel;
 
@@ -93,33 +95,50 @@ public class ObjectTreeViewModel
 
     public void ItemCommand(CadObjTreeItem treeItem, string cmd)
     {
-        if (treeItem is not CadFigTreeItem)
+        if (treeItem is CadFigTreeItem)
         {
-            return;
-        }
+            CadFigTreeItem figItem = (CadFigTreeItem)treeItem;
 
-        CadFigTreeItem figItem = (CadFigTreeItem)treeItem;
-
-        if (cmd == CadFigTreeItem.ITEM_CMD_CHANGE_NAME)
-        {
-            CadFigure fig = figItem.Fig;
-
-            InputStringDialog dlg = new()
+            if (cmd == CadFigTreeItem.ITEM_CMD_CHANGE_NAME)
             {
-                Message = TCad.Properties.Resources.string_input_fig_name
-            };
+                CadFigure fig = figItem.Fig;
 
-            if (fig.Name != null)
-            {
-                dlg.InputString = fig.Name;
+                InputStringDialog dlg = new()
+                {
+                    Message = Properties.Resources.string_input_fig_name
+                };
+
+                if (fig.Name != null)
+                {
+                    dlg.InputString = fig.Name;
+                }
+
+                bool? dlgRet = dlg.ShowDialog();
+
+                if (dlgRet.Value)
+                {
+                    fig.Name = dlg.InputString;
+                    UpdateTreeView(false);
+                }
             }
-
-            bool? dlgRet = dlg.ShowDialog();
-
-            if (dlgRet.Value)
+            else if (cmd == CadFigTreeItem.ITEM_CMD_COPY)
             {
-                fig.Name = dlg.InputString;
-                UpdateTreeView(false);
+                CadFigure fig = figItem.Fig;
+                PlotterClipboard.CopyFiguresAsBin([fig]);
+            }
+        }
+        else if (treeItem is CadPointTreeItem)
+        {
+            CadPointTreeItem pointItem = (CadPointTreeItem)treeItem;
+            if (cmd == CadPointTreeItem.ITEM_CMD_COPY_DATA)
+            {
+                CadFigure fig = pointItem.Fig;
+                if (pointItem.Index >= 0 && pointItem.Index < fig.PointCount)
+                {
+                    CadVertex v = fig.GetPointAt(pointItem.Index);
+                    var s = v.ToString();
+                    Clipboard.SetText(v.ToString());
+                }
             }
         }
     }

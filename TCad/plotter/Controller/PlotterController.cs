@@ -12,17 +12,38 @@ namespace TCad.Plotter.Controller;
 
 public class PlotterController : IPlotterController
 {
-    public CadObjectDB DB
+    public bool IsStarted
     {
         get;
-        private set;
-    } = new CadObjectDB();
+        protected set;
+    } = false;
+
+    private CadData CadData_ = new CadData();
+
+    public CadObjectDB DB
+    {
+        get => CadData_.DB;
+        set => CadData_.DB = value;
+    }
 
     public PaperPageSize PageSize
     {
+        get => CadData_.PageSize;
+        set => CadData_.PageSize = value;
+    }
+
+    public vcompo_t WorldScale
+    {
+        get {
+            return CadData_.WorldScale;
+        }
+    }
+
+    public DrawContext DC
+    {
         get;
         set;
-    } = PaperPageSize.A4Portrate;
+    }
 
     public SelectModes SelectMode
     {
@@ -83,12 +104,6 @@ public class PlotterController : IPlotterController
         private set;
     } = new List<CadFigure>();
 
-    public DrawContext DC
-    {
-        get;
-        set;
-    }
-
     public ScriptEnvironment ScriptEnv
     {
         get;
@@ -141,7 +156,7 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterCommandProcessor CommandProc
+    public PlotterCommandProcessor CommandProcessor
     {
         get;
         private set;
@@ -159,21 +174,21 @@ public class PlotterController : IPlotterController
         private set;
     }
 
-    public PlotterController()
+    public PlotterController(CadData cadData)
     {
         Log.plx("in");
+
+        CadData_ = cadData;
 
         Drawer = new PlotterDrawer(this);
 
         Input = new PlotterInput(this);
 
-        CommandProc = new PlotterCommandProcessor(this);
+        CommandProcessor = new PlotterCommandProcessor(this);
 
         EditManager = new PlotterEditManager(this);
 
         Editor = new PlotterEditor(this);
-
-        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
 
         HistoryMan = new HistoryManager(this);
 
@@ -185,43 +200,57 @@ public class PlotterController : IPlotterController
 
         DB.NewLayer(addLayerList: true, selectCurrent: true);
 
+
+        StateMachine = new ControllerStateMachine(this, ControllerStateID.SELECT);
+
         Log.plx("out");
     }
 
-    public void ConnectViewModel(IPlotterViewModel viewModel)
+    public void SetViewModel(IPlotterViewModel viewModel)
     {
         ViewModel = viewModel;
+        ViewModel.StartUp();
+        ViewModel.SetWorldScale(CadData_.WorldScale);
+        StartUp();
     }
 
-    public void Startup()
+    public void StartUp()
     {
+        if (IsStarted)
+        {
+            Log.plx("Controller is already started.");
+            return;
+        }
+
         Log.plx("in");
 
         UpdateLayerList();
         UpdateObjectTree(true);
 
+        IsStarted = true;
+
         Log.plx("out");
     }
 
-    public void Shutdown()
+    public void ShutDown()
     {
         Log.plx("in");
         DC.Dispose();
         Log.plx("out");
     }
 
-    public void ChangeState(ControllerStateID state)
+    private void ChangeState(ControllerStateID state)
     {
         StateMachine.ChangeState(state);
     }
 
-    public void StartCreateFigure(CadFigure.Types type)
+    public void StartCreatingFigure(CadFigure.Types type)
     {
         CreatingFigType = type;
         ChangeState(ControllerStateID.CREATE_FIGURE);
     }
 
-    public void EndCreateFigure()
+    public void EndCreatingFigure()
     {
         if (FigureCreator != null)
         {
@@ -254,7 +283,7 @@ public class PlotterController : IPlotterController
             if (SettingsHolder.Settings.ContinueCreateFigure)
             {
                 FigureCreator = null;
-                StartCreateFigure(CreatingFigType);
+                StartCreatingFigure(CreatingFigType);
                 UpdateObjectTree(true);
             }
             else
@@ -322,21 +351,6 @@ public class PlotterController : IPlotterController
 
     public List<CadFigure> GetSelectedFigureList()
     {
-        //List<CadFigure> figList = new List<CadFigure>();
-
-        //foreach (CadLayer layer in DB.LayerList)
-        //{
-        //    layer.ForEachFig(fig =>
-        //    {
-        //        if (fig.HasSelectedPoint())
-        //        {
-        //            figList.Add(fig);
-        //        }
-        //    });
-        //}
-
-        //return figList;
-
         return DB.GetSelectedFigList();
     }
 
@@ -345,12 +359,7 @@ public class PlotterController : IPlotterController
         return DB.GetSelectedRootFigureList();
     }
 
-    public void SetDB(CadObjectDB db)
-    {
-        SetDB(db, true);
-    }
-
-    public void SetDB(CadObjectDB db, bool clearHistory)
+    public void SetDB(CadObjectDB db, bool clearHistory = true)
     {
         DB = db;
 
@@ -362,6 +371,17 @@ public class PlotterController : IPlotterController
         UpdateLayerList();
 
         UpdateObjectTree(true);
+    }
+
+    public void SetPaperPageSize(PaperPageSize paperSize)
+    {
+        PageSize = paperSize;
+    }
+
+    public void SetWorldScale(vcompo_t scale)
+    {
+        CadData_.WorldScale = scale;
+        ViewModel.SetWorldScale(scale);
     }
 
     public void SetCurrentLayer(uint id)
@@ -399,6 +419,11 @@ public class PlotterController : IPlotterController
     public void Redraw()
     {
         Drawer.Redraw(DC);
+    }
+
+    public void SwapBuffers()
+    {
+        ViewModel.SwapBuffers();
     }
 
     public void UpdateObjectTree(bool remakeTree)

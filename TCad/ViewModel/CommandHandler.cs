@@ -20,6 +20,7 @@ using TCad.Plotter.Settings;
 using TCad.Plotter.Svg;
 using TCad.Plotter.undo;
 using TCad.ScriptEditor;
+using TCad.Util;
 
 namespace TCad.ViewModel;
 
@@ -39,9 +40,6 @@ public class CommandHandler
         }
     }
 
-    readonly IPlotterController Controller;
-    readonly IPlotterViewModel ViewModel;
-
     private Dictionary<string, Action> CommandMap;
     private Dictionary<string, KeyAction> KeyMap;
 
@@ -49,10 +47,19 @@ public class CommandHandler
 
     private readonly MoveKeyHandler mMoveKeyHandler;
 
-    public CommandHandler(IPlotterViewModel vm)
+    private IPlotterViewModel ViewModel {
+        get;
+        set;
+    }
+
+    private IPlotterController Controller
     {
-        ViewModel = vm;
-        Controller = vm.Controller;
+        get => ViewModel.Controller;
+    }
+
+    public CommandHandler(IPlotterViewModel viewModel)
+    {
+        ViewModel = viewModel;
 
         mMoveKeyHandler = new MoveKeyHandler(Controller);
 
@@ -115,31 +122,32 @@ public class CommandHandler
     {
         KeyMap = new Dictionary<string, KeyAction>
         {
-            { "ctrl+z", new KeyAction(Undo , null, "Undo")},
-            { "ctrl+y", new KeyAction(Redo , null, "Redo")},
-            { "shift+ctrl+z", new KeyAction(Redo , null, "Redo")},
-            { "ctrl+c", new KeyAction(Copy , null, "Copy")},
-            { "ctrl+insert", new KeyAction(Copy , null, "Copy")},
-            { "ctrl+v", new KeyAction(Paste ,null, "Paste")},
-            { "shift+insert", new KeyAction(Paste , null, "Paste")},
-            { "delete", new KeyAction(Remove , null, "Delete object")},
-            { "ctrl+s", new KeyAction(Save , null, "Save")},
-            { "ctrl+a", new KeyAction(SelectAll , null, "Select All")},
-            { "escape", new KeyAction(Cancel , null)},
-            { "ctrl+p", new KeyAction(InsPoint , null, "Insert Point to segment")},
-            { "p", new KeyAction(AddPoint , null, "Add Point to cursor pos")},
-            { "f3", new KeyAction(SearchNearPoint , null, "Search near Point")},
-            { "f2", new KeyAction(CursorLock , null, "Lock Cursor")},
-            { "left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
-            { "right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right")},
-            { "up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up")},
-            { "down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down")},
-            { "shift+left", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to left with 1/10 unit")},
-            { "shift+right", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to right with 1/10 unit")},
-            { "shift+up", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to up with 1/10 unit")},
-            { "shift+down", new KeyAction(MoveKeyDown, MoveKeyUp, "Move selected object to down with 1/10 unit")},
-            { "m", new KeyAction(AddMark, null, " Add snap point")},
-            { "ctrl+m", new KeyAction(CleanMark, null, " Clear snap points")},
+            { "ctrl+z", new(Undo , null, "Undo")},
+            { "ctrl+y", new(Redo , null, "Redo")},
+            { "shift+ctrl+z", new(Redo , null, "Redo")},
+            { "ctrl+c", new(Copy , null, "Copy")},
+            { "ctrl+insert", new(Copy , null, "Copy")},
+            { "ctrl+v", new(Paste ,null, "Paste")},
+            { "shift+insert", new(Paste , null, "Paste")},
+            { "delete", new(Remove , null, "Delete object")},
+            { "ctrl+s", new(Save , null, "Save")},
+            { "ctrl+a", new(SelectAll , null, "Select All")},
+            { "escape", new(Cancel , null)},
+            { "ctrl+p", new(InsPoint , null, "Insert Point to segment")},
+            { "p", new(AddPoint , null, "Add Point to cursor pos")},
+            { "f3", new(SearchNearPoint , null, "Search near Point")},
+            { "f2", new(CursorLock , null, "Lock Cursor")},
+            { "f1", new(FocusCommandLine , null, "Focus command line")},
+            { "left", new(MoveKeyDown, MoveKeyUp, "Move selected object to left")},
+            { "right", new(MoveKeyDown, MoveKeyUp, "Move selected object to right")},
+            { "up", new(MoveKeyDown, MoveKeyUp, "Move selected object to up")},
+            { "down", new(MoveKeyDown, MoveKeyUp, "Move selected object to down")},
+            { "shift+left", new(MoveKeyDown, MoveKeyUp, "Move selected object to left with 1/10 unit")},
+            { "shift+right", new(MoveKeyDown, MoveKeyUp, "Move selected object to right with 1/10 unit")},
+            { "shift+up", new(MoveKeyDown, MoveKeyUp, "Move selected object to up with 1/10 unit")},
+            { "shift+down", new(MoveKeyDown, MoveKeyUp, "Move selected object to down with 1/10 unit")},
+            { "m", new(AddMark, null, " Add snap point")},
+            { "ctrl+m", new(CleanMark, null, " Clear snap points")},
         };
     }
 
@@ -289,7 +297,7 @@ public class CommandHandler
 
     public void Remove()
     {
-        Controller.CommandProc.Remove();
+        Controller.CommandProcessor.Remove();
         Redraw();
     }
 
@@ -319,13 +327,13 @@ public class CommandHandler
 
     public void InsPoint()
     {
-        Controller.CommandProc.InsPoint();
+        Controller.CommandProcessor.InsPoint();
         Redraw();
     }
 
     public void AddPoint()
     {
-        Controller.CommandProc.AddPointToCursorPos();
+        Controller.CommandProcessor.AddPointToCursorPos();
         Redraw();
     }
 
@@ -364,19 +372,19 @@ public class CommandHandler
 
     public void ClearLayer()
     {
-        Controller.CommandProc.ClearLayer(0);
+        Controller.CommandProcessor.ClearLayer(0);
         Redraw();
     }
 
     public void Copy()
     {
-        Controller.CommandProc.Copy();
+        Controller.CommandProcessor.Copy();
         Redraw();
     }
 
     public void Paste()
     {
-        Controller.CommandProc.Paste();
+        Controller.CommandProcessor.Paste();
         Redraw();
     }
 
@@ -384,9 +392,10 @@ public class CommandHandler
     {
         ViewModel.CurrentFileName = null;
 
-        ViewModel.ViewManager.SetWorldScale((vcompo_t)(1.0));
+        Controller.SetWorldScale((vcompo_t)(1.0));
 
-        Controller.CommandProc.ClearAll();
+        Controller.CommandProcessor.ClearAll();
+
         Redraw();
     }
 
@@ -420,7 +429,7 @@ public class CommandHandler
 
             try
             {
-                CadFileAccessor.LoadFile(ofd.FileName, ViewModel);
+                CadFileAccessor.LoadFile(ofd.FileName, Controller);
                 ViewModel.CurrentFileName = ofd.FileName;
             }
             catch (CadFileException cadFileException)
@@ -439,7 +448,7 @@ public class CommandHandler
     {
         if (ViewModel.CurrentFileName != null)
         {
-            CadFileAccessor.SaveFile(ViewModel.CurrentFileName, ViewModel);
+            CadFileAccessor.SaveFile(ViewModel.CurrentFileName, Controller);
             return;
         }
 
@@ -454,7 +463,7 @@ public class CommandHandler
         {
             SettingsHolder.Settings.LastDataDir = Path.GetDirectoryName(sfd.FileName);
 
-            CadFileAccessor.SaveFile(sfd.FileName, ViewModel);
+            CadFileAccessor.SaveFile(sfd.FileName, Controller);
             ViewModel.CurrentFileName = sfd.FileName;
         }
     }
@@ -809,22 +818,22 @@ public class CommandHandler
 
     public void ObjOrderDown()
     {
-        Controller.CommandProc.ObjOrderDown();
+        Controller.CommandProcessor.ObjOrderDown();
     }
 
     public void ObjOrderUp()
     {
-        Controller.CommandProc.ObjOrderUp();
+        Controller.CommandProcessor.ObjOrderUp();
     }
 
     public void ObjOrderBottom()
     {
-        Controller.CommandProc.ObjOrderBottom();
+        Controller.CommandProcessor.ObjOrderBottom();
     }
 
     public void ObjOrderTop()
     {
-        Controller.CommandProc.ObjOrderTop();
+        Controller.CommandProcessor.ObjOrderTop();
     }
 
     public void ResetCamera()
@@ -835,13 +844,13 @@ public class CommandHandler
 
     public void AddLayer()
     {
-        Controller.CommandProc.AddLayer(null);
+        Controller.CommandProcessor.AddLayer(null);
         Redraw();
     }
 
     public void RemoveLayer()
     {
-        Controller.CommandProc.RemoveLayer(Controller.CurrentLayer.ID);
+        Controller.CommandProcessor.RemoveLayer(Controller.CurrentLayer.ID);
         Redraw();
     }
 
@@ -853,7 +862,7 @@ public class CommandHandler
 
     public void SelectAll()
     {
-        Controller.CommandProc.SelectAllInCurrentLayer();
+        Controller.CommandProcessor.SelectAllInCurrentLayer();
         Redraw();
     }
 
@@ -872,6 +881,11 @@ public class CommandHandler
     public void CursorLock()
     {
         Controller.Input.LockCursor();
+    }
+
+    public void FocusCommandLine()
+    {
+        ViewModel.MainWindow.FocusCommandLine();
     }
 
     public void MoveKeyDown()
@@ -957,7 +971,7 @@ public class CommandHandler
 
         if (result == System.Windows.Forms.DialogResult.OK)
         {
-            Controller.PageSize = new PaperPageSize(pageDlg.PageSettings);
+            Controller.SetPaperPageSize(new PaperPageSize(pageDlg.PageSettings));
 
             Redraw();
         }
@@ -976,7 +990,7 @@ public class CommandHandler
 
         if (result ?? false)
         {
-            ViewModel.SetWorldScale(((vcompo_t)dlg.WorldScale));
+            Controller.SetWorldScale(((vcompo_t)dlg.WorldScale));
             Redraw();
         }
     }

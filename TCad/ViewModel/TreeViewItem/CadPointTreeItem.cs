@@ -1,4 +1,6 @@
 using CadDataTypes;
+using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Windows.Media;
 using TCad.Controls;
 using TCad.Plotter.Model.Figure;
@@ -7,6 +9,9 @@ namespace TCad.ViewModel;
 
 class CadPointTreeItem : CadObjTreeItem
 {
+    public const string ITEM_CMD_COPY_DATA = "copy_data";
+
+
     public CadFigure Fig;
     public int Index;
 
@@ -55,5 +60,18 @@ class CadPointTreeItem : CadObjTreeItem
         Type = CadObjTreeItemType.LEAF;
         Fig = fig;
         Index = idx;
+    }
+
+    public override List<MenuItem> GetContextMenuItems()
+    {
+        List<MenuItem> list = new List<MenuItem>();
+
+        MenuItem menuItem = new MenuItem();
+        menuItem.Header = "Copy Data";
+        menuItem.Tag = CreateContextMenuTag(ITEM_CMD_COPY_DATA);
+
+        list.Add(menuItem);
+
+        return list;
     }
 }

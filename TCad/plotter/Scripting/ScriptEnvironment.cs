@@ -13,6 +13,7 @@ using System.Windows;
 using TCad.Controls.CadConsole;
 using TCad.Logger;
 using TCad.Plotter.Controller;
+using TCad.Util;
 using TCad.ViewModel;
 
 namespace TCad.Plotter.Scripting;
@@ -31,7 +32,7 @@ public partial class ScriptEnvironment
 
     private ScriptSource Source;
 
-    private readonly List<string> mAutoCompleteList = new();
+    private readonly List<string> mAutoCompleteList = [];
     public List<string> AutoCompleteList
     {
         get => mAutoCompleteList;
@@ -92,14 +93,13 @@ public partial class ScriptEnvironment
     {
         string script = GetBaseSacript();
 
-        //string script = "";
-
         Engine = Python.CreateEngine();
 
         mScope = Engine.CreateScope();
         Source = Engine.CreateScriptSourceFromString(script);
 
         mScope.SetVariable("SE", mScriptFunctions);
+        mScope.SetVariable("_se_", mScriptFunctions);
         Source.Execute(mScope);
 
         MatchCollection matches = AutoCompPtn.Matches(script);
@@ -131,7 +131,7 @@ public partial class ScriptEnvironment
         ItConsole.println(s);
 
         // Command is internal command 
-        if (s.StartsWith("@"))
+        if (s.StartsWith('@'))
         {
             await Task.Run(() =>
             {
@@ -151,65 +151,53 @@ public partial class ScriptEnvironment
             RunScript(s, false);
         });
 
-        Controller.Drawer.Clear();
-        Controller.Drawer.DrawAll();
-        Controller.Drawer.UpdateView();
+        Controller.Redraw();
     }
 
     private Thread mScriptThread = null;
     private TraceBack mTraceBack = null;
 
-    public async void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
+    public void RunScriptAsync(string s, bool snapshotDB, RunCallback callback)
     {
         if (mScriptThread != null)
         {
-            callback.OnStart();
-            callback.OnEnd();
             return;
         }
 
         mScriptFunctions.StartSession(snapshotDB);
 
-        if (callback != null)
-        {
-            callback.OnStart();
-        }
+        callback?.OnStart();
 
         PrepareRunScript();
 
         //mTraceBack = new TraceBack(this, callback);
 
-        await Task.Run(() =>
+        mScriptThread = new Thread(() =>
         {
-            mScriptThread = new Thread(() =>
+            if (mTraceBack != null)
             {
-                if (mTraceBack != null)
-                {
-                    Engine.SetTrace(mTraceBack.OnTraceback);
-                }
+                Engine.SetTrace(mTraceBack.OnTraceback);
+            }
 
-                InternalRunScript(s);
-            });
-
-            mScriptThread.Start();
-            mScriptThread.Join();
+            InternalRunScript(s);
 
             mScriptThread = null;
             mTraceBack = null;
+
+            ThreadUtil.RunOnMainThread(() => {
+                Controller.Redraw();
+                Controller.UpdateObjectTree(true);
+
+                callback?.OnEnd();
+
+                mScriptFunctions.EndSession();
+
+            }, true); 
         });
 
-        Controller.Drawer.Clear();
-        Controller.Drawer.DrawAll();
-        Controller.Drawer.UpdateView();
-        Controller.UpdateObjectTree(true);
-
-        if (callback != null)
-        {
-            callback.OnEnd();
-        }
-
-        mScriptFunctions.EndSession();
+        mScriptThread.Start();
     }
+
 
     public dynamic RunScript(string s, bool snapshotDB)
     {
@@ -290,18 +278,6 @@ public partial class ScriptEnvironment
         }
         else
         {
-            if (mScriptThread != null)
-            {
-                try
-                {
-                    mScriptThread.Interrupt();
-                    mScriptThread = null;
-                }
-                catch
-                {
-                }
-            }
-
             Engine.Execute("raise_cancel()", mScope);
         }
     }

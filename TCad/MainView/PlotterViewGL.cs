@@ -22,7 +22,7 @@ class PlotterViewGL : GLControl, IPlotterView
 {
     private DrawContextGL mDrawContext = null;
 
-    private IPlotterViewModel mViewModel = null;
+    private readonly IPlotterViewModel mViewModel;
 
     private vector3_t PrevMousePos = default;
 
@@ -310,7 +310,7 @@ class PlotterViewGL : GLControl, IPlotterView
 
     private void SetupContextMenu()
     {
-        mContextMenu = new ContextMenuEx();
+        mContextMenu = new();
 
         mContextMenu.StateChanged = (s) =>
         {
@@ -351,7 +351,7 @@ class PlotterViewGL : GLControl, IPlotterView
 
         foreach (MenuInfo.Item item in menuInfo.Items)
         {
-            ToolStripMenuItem m = new ToolStripMenuItem(item.Text);
+            ToolStripMenuItem m = new(item.Text);
             m.Tag = item;
             m.Click += ContextMenueClick;
 
@@ -442,7 +442,7 @@ class PlotterViewGL : GLControl, IPlotterView
 
             if (DownButton == MouseButtons.Middle)
             {
-                vector3_t t = new vector3_t(e.X, e.Y, 0);
+                vector3_t t = new(e.X, e.Y, 0);
 
                 vector2_t prev = default;
 
@@ -478,8 +478,8 @@ class PlotterViewGL : GLControl, IPlotterView
 
     private void MoveCamera(DrawContext dc, Vector2 prev, Vector2 current)
     {
-        vector3_t pv = new vector3_t(prev.X, prev.Y, 0);
-        vector3_t cv = new vector3_t(current.X, current.Y, 0);
+        vector3_t pv = new(prev.X, prev.Y, 0);
+        vector3_t cv = new(current.X, current.Y, 0);
 
         vector3_t dv = cv - pv;
 
@@ -517,8 +517,8 @@ class PlotterViewGL : GLControl, IPlotterView
 
         vector3_t ev = dc.LookAt - dc.Eye;
 
-        vector3_t a = new vector3_t(ev);
-        vector3_t b = new vector3_t(upv);
+        vector3_t a = new(ev);
+        vector3_t b = new(upv);
 
         vector3_t axis = CadMath.Normal(a, b);
 
@@ -545,15 +545,8 @@ class PlotterViewGL : GLControl, IPlotterView
 
     public void DrawModeChanged(DrawModes mode)
     {
-        if (mDrawContextOrtho != null)
-        {
-            mDrawContextOrtho.SetupTools(mode);
-        }
-
-        if (mDrawContextPers != null)
-        {
-            mDrawContextPers.SetupTools(mode);
-        }
+        mDrawContextOrtho?.SetupTools(mode);
+        mDrawContextPers?.SetupTools(mode);
 
         ChangeMouseCursor(UITypes.MouseCursorType.CROSS);
     }

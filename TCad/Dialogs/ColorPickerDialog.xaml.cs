@@ -1,9 +1,16 @@
-using OpenTK.Mathematics;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using OpenTK.Mathematics;
 using TCad.Controls;
 using TCad.Plotter;
+using TCad.Util;
 
 namespace TCad;
 
@@ -44,9 +51,57 @@ public partial class ColorPickerDialog : Window
         cancel_button.Click += Cancel_button_Click;
         invalid_color_button.Click += Invalid_color_button_Click;
 
+        add_color_button.Click += add_color_button_Click;
+        remove_color_button.Click += remove_color_button_Click;
+        select_color_button.Click += select_color_button_Click;
+
         Loaded += Dialog_Loaded;
+        Closed += (sender, e) =>
+        {
+            SaveColorList("color_list.json");
+        };
 
         color_maker.SelectedColorChanged += Color_maker_SelectedColorChanged;
+    }
+
+    private void add_color_button_Click(object sender, RoutedEventArgs e)
+    {
+        if (InvalidColor)
+        {
+            return;
+        }
+
+        Color wpfColor = Color.FromArgb(
+            (byte)(SelectedColor.A * 255.0f),
+            (byte)(SelectedColor.R * 255.0f),
+            (byte)(SelectedColor.G * 255.0f),
+            (byte)(SelectedColor.B * 255.0f));
+
+        string name = $"#{SelectedColor.ToArgb():X8}";
+
+        color_list_box.AddColor(name, wpfColor);
+    }
+
+    private void remove_color_button_Click(object sender, RoutedEventArgs e)
+    {
+        color_list_box.RemoveColor();
+    }
+
+    private void select_color_button_Click(object sender, RoutedEventArgs e)
+    {
+        if (color_list_box.SelectedIndex < 0)
+        {
+            return;
+        }
+
+        ColorListBox.Item listItem = color_list_box.GetAt(color_list_box.SelectedIndex);
+
+        color_maker.SelectedColor =
+            new ColorMaker.Color(
+                listItem.Brush.Color.R / 255.0f,
+                listItem.Brush.Color.G / 255.0f,
+                listItem.Brush.Color.B / 255.0f,
+                listItem.Brush.Color.A / 255.0f);
     }
 
     private void Invalid_color_button_Click(object sender, RoutedEventArgs e)
@@ -112,6 +167,9 @@ public partial class ColorPickerDialog : Window
                 SelectedColor.B,
                 SelectedColor.A);
 
+
+        LoadColorList("color_list.json");
+
         UpdatePreview();
     }
 
@@ -135,5 +193,28 @@ public partial class ColorPickerDialog : Window
         bool ret = true;
 
         DialogResult = ret;
+    }
+
+    private void SaveColorList(string fname)
+    {
+        string pathName = FileUtil.PathNameOnExeDir(fname);
+
+        string data = color_list_box.ToJson();
+
+        File.WriteAllText(pathName, data);
+    }
+
+    private void LoadColorList(string fname)
+    {
+        string pathName = FileUtil.PathNameOnExeDir(fname);
+
+        if (!File.Exists(pathName)) return;
+
+        string data = File.ReadAllText(pathName);
+
+        if (data == null) return;
+        if (data.Length == 0) return;
+
+        color_list_box.FromJson(data);
     }
 }

@@ -24,6 +24,7 @@ using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Model.HalfEdgeModel;
 using TCad.Plotter.Searcher;
 using TCad.Plotter.undo;
+using TCad.Util;
 using TCad.ViewModel;
 using static TCad.Plotter.Model.Figure.CadFigure;
 
@@ -138,16 +139,6 @@ public class ScriptFunctions
         return Controller.Input.LastDownPoint;
     }
 
-    public CadVertex CreateVertex(vcompo_t x, vcompo_t y, vcompo_t z)
-    {
-        return CadVertex.Create(x, y, z);
-    }
-
-    public vector3_t CreateVector(vcompo_t x, vcompo_t y, vcompo_t z)
-    {
-        return new vector3_t(x, y, z);
-    }
-
     public vector3_t GetProjectionDir()
     {
         return -Controller.DC.ViewDir;
@@ -217,14 +208,14 @@ public class ScriptFunctions
 
     public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
     {
-        HashSet<CadFigure> set = new HashSet<CadFigure>();
+        HashSet<CadFigure> set = [];
 
         foreach (CadFigure fig in srcList)
         {
             set.Add(FigUtil.GetRootFig(fig));
         }
 
-        List<CadFigure> ret = new List<CadFigure>();
+        List<CadFigure> ret = [];
 
         ret.AddRange(set);
 
@@ -326,7 +317,7 @@ public class ScriptFunctions
 
     public void Ungroup(int id)
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        List<CadFigure> figList = [];
 
         CadFigure fig = Controller.DB.GetFigure((uint)id);
 
@@ -391,7 +382,7 @@ public class ScriptFunctions
     {
         vector3_t p = Controller.Input.LastDownPoint;
 
-        vector3_t delta = new vector3_t(x, y, z);
+        vector3_t delta = new(x, y, z);
 
         p += delta;
 
@@ -402,7 +393,7 @@ public class ScriptFunctions
 
     public void SetLastDownPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        vector3_t p = new vector3_t(x, y, z);
+        vector3_t p = new(x, y, z);
 
         Controller.Input.LastDownPoint = p;
 
@@ -457,12 +448,14 @@ public class ScriptFunctions
 
         Controller.CurrentLayer.AddFigure(fig);
 
+        Session.PostRemakeObjectTree();
+
         return fig;
     }
 
     public CadFigure AddPoint(vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        vector3_t p = new vector3_t(x, y, z);
+        vector3_t p = new(x, y, z);
         return AddPoint(p);
     }
 
@@ -481,6 +474,8 @@ public class ScriptFunctions
 
         Controller.CurrentLayer.AddFigure(fig);
 
+        Session.PostRemakeObjectTree();
+
         return fig;
     }
 
@@ -498,7 +493,7 @@ public class ScriptFunctions
         vector3_t hd = upDir.UnitVector() * h;
 
         CadVertex p0 = (CadVertex)p;
-        CadVertex p1 = (CadVertex)p;
+        CadVertex p1;
 
         CadFigure fig = Controller.DB.NewFigure(Types.RECT);
 
@@ -630,7 +625,7 @@ public class ScriptFunctions
 
     public CadMesh CreateCadMesh(List<vector3_t> plist, List<CadFace> flist)
     {
-        CadMesh cm = new CadMesh(plist.Count, flist.Count);
+        CadMesh cm = new(plist.Count, flist.Count);
 
         foreach (vector3_t p in plist)
         {
@@ -647,7 +642,7 @@ public class ScriptFunctions
 
     public CadMesh CreateCadMesh(List<CadVertex> plist, List<CadFace> flist)
     {
-        CadMesh cm = new CadMesh(plist.Count, flist.Count);
+        CadMesh cm = new(plist.Count, flist.Count);
 
         foreach (CadVertex p in plist)
         {
@@ -842,13 +837,13 @@ public class ScriptFunctions
     {
         ThreadUtil.RunOnMainThread(() =>
         {
-            Controller.CommandProc.AddLayer(name);
+            Controller.CommandProcessor.AddLayer(name);
         }, true);
     }
 
     public void Move(uint figID, vcompo_t x, vcompo_t y, vcompo_t z)
     {
-        vector3_t delta = new vector3_t(x, y, z);
+        vector3_t delta = new(x, y, z);
 
         CadFigure fig = Controller.DB.GetFigure(figID);
 
@@ -877,7 +872,7 @@ public class ScriptFunctions
 
         StartEdit(figList);
 
-        vector3_t d = new vector3_t(x, y, z);
+        vector3_t d = new(x, y, z);
 
         foreach (CadFigure fig in figList)
         {
@@ -1041,7 +1036,7 @@ public class ScriptFunctions
         wr.p0 = dc.DevPointToWorldPoint(r.p0);
         wr.p1 = dc.DevPointToWorldPoint(r.p1);
 
-        DrawContextGDIBmp tdc = new DrawContextGDIBmp();
+        DrawContextGDIBmp tdc = new();
 
         tdc.WorldScale = dc.WorldScale;
 
@@ -1054,7 +1049,7 @@ public class ScriptFunctions
 
         tdc.SetupTools(DrawModes.DARK);
 
-        DrawPen drawPen = new DrawPen((int)argb, lineW);
+        DrawPen drawPen = new((int)argb, lineW);
 
         vcompo_t sw = r.p1.X - r.p0.X;
         vcompo_t sh = r.p1.Y - r.p0.Y;
@@ -1080,7 +1075,7 @@ public class ScriptFunctions
 
         ThreadUtil.RunOnMainThread(() =>
         {
-            tdc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_TRANSPARENT));
+            tdc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_TRANSPARENT));
 
             tdc.GdiGraphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -1139,11 +1134,11 @@ public class ScriptFunctions
         //tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         //tmpGLControl.MakeCurrent();
 
-        NativeWindowSettings settings = new NativeWindowSettings();
+        NativeWindowSettings settings = new();
         settings.Profile = ContextProfile.Compatability;
         settings.Flags = ContextFlags.Default;
 
-        NativeWindow window = new NativeWindow(settings);
+        NativeWindow window = new(settings);
         window.MakeCurrent();
 
         int paddingX = 4;
@@ -1152,7 +1147,7 @@ public class ScriptFunctions
         DrawContext orgDC = Controller.DC;
 
 
-        DrawContextGLOrtho tdc = new DrawContextGLOrtho();
+        DrawContextGLOrtho tdc = new();
 
         tdc.SetupTools(DrawModes.LIGHT);
         tdc.CopyCamera(orgDC);
@@ -1174,7 +1169,7 @@ public class ScriptFunctions
         ViewPortUtil.AdjustOrigin(tdc, center.X, center.Y, w, h);
 
 
-        DrawPen drawPen = new DrawPen((int)argb, lineW);
+        DrawPen drawPen = new((int)argb, lineW);
 
         DrawOption drawParams = new();
         drawParams.LinePen = drawPen;
@@ -1182,7 +1177,7 @@ public class ScriptFunctions
         drawParams.MeshEdgePen = drawPen;
 
 
-        FrameBufferW fb = new FrameBufferW();
+        FrameBufferW fb = new();
         fb.Create(w, h);
 
         fb.Begin();
@@ -1226,10 +1221,6 @@ public class ScriptFunctions
 
     public void FaceToDirection(vector3_t dir)
     {
-        DrawContext dc = Controller.DC;
-
-        CadObjectDB db = Controller.DB;
-
         CadFigure fig = GetTargetFigure();
 
         if (fig == null)
@@ -1340,7 +1331,6 @@ public class ScriptFunctions
             CadUtil.RotateFigure(fig, org, rotateV, -t);
         }
 
-        CadOpeList root = Session.StartWithSnapshotDB ? null : new CadOpeList();
         CadOpe ope;
 
         if (!Session.StartWithSnapshotDB)
@@ -1370,6 +1360,7 @@ public class ScriptFunctions
 
         if (tfig == null || tfig.Type != Types.POLY_LINES)
         {
+            ItConsole.println("POLY_LINESオブジェクトを指定してください");
             return;
         }
 
@@ -1388,7 +1379,7 @@ public class ScriptFunctions
 
         if (!Session.StartWithSnapshotDB)
         {
-            CadOpeList root = new CadOpeList();
+            CadOpeList root = new();
             CadOpe ope;
 
             ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, fig.ID);
@@ -1410,7 +1401,7 @@ public class ScriptFunctions
     {
         CadFigure fig = Controller.DB.GetFigure(id);
 
-        if (!(fig is CadFigureMesh))
+        if (fig is not CadFigureMesh)
         {
             return;
         }
@@ -1436,7 +1427,7 @@ public class ScriptFunctions
 
         if (!Session.StartWithSnapshotDB)
         {
-            CadOpeList opeRoot = new CadOpeList();
+            CadOpeList opeRoot = new();
             CadOpe ope;
 
             ope = new CadOpeAddFigure(Controller.CurrentLayer.ID, figPoly.ID);
@@ -1798,9 +1789,7 @@ public class ScriptFunctions
         qp = r * qp;
         qp = qp * q;
 
-        vector3_t rv = v;
-
-        rv = qp.ToPoint();
+        vector3_t rv = qp.ToPoint();
 
         return rv;
     }
@@ -1808,13 +1797,7 @@ public class ScriptFunctions
     public uint GetCurrentFigureID()
     {
         CadFigure fig = Controller.Input.CurrentFigure;
-
-        if (fig == null)
-        {
-            return 0;
-        }
-
-        return fig.ID;
+        return fig?.ID ?? 0;
     }
 
     public CadFigure GetCurrentFigure()
@@ -1964,16 +1947,6 @@ public class ScriptFunctions
         }, true);
     }
 
-    public void Redraw()
-    {
-        ThreadUtil.RunOnMainThread(() =>
-        {
-            Controller.Drawer.Clear();
-            Controller.Drawer.DrawAll();
-            Controller.Drawer.UpdateView();
-        }, true);
-    }
-
     public CadFigure CreatePolyLines()
     {
         CadFigurePolyLines fig = (CadFigurePolyLines)Controller.DB.NewFigure(Types.POLY_LINES);
@@ -1993,10 +1966,6 @@ public class ScriptFunctions
                 Session.AddOpe(ope);
             }
         }
-    }
-
-    public void SetColor(float r, float g, float b)
-    {
     }
 
     public void SetColor(uint figID, float r, float g, float b)
@@ -2071,22 +2040,22 @@ public class ScriptFunctions
         Session.PostRemakeObjectTree();
     }
 
-    private void testDraw()
+    private void TestDraw()
     {
-        CadSize2D deviceSize = new CadSize2D(827, 1169);
-        CadSize2D pageSize = new CadSize2D(210, 297);
+        CadSize2D deviceSize = new(827, 1169);
+        CadSize2D pageSize = new(210, 297);
 
         DrawContext dc = Controller.DC.CreatePrinterContext(pageSize, deviceSize);
         dc.SetupTools(DrawModes.PRINTER);
 
-        FrameBufferW fb = new FrameBufferW();
+        FrameBufferW fb = new();
         fb.Create((int)deviceSize.Width, (int)deviceSize.Height);
 
         fb.Begin();
 
         dc.StartDraw();
 
-        dc.Drawing.Clear(dc.GetBrush(DrawTools.BRUSH_BACKGROUND));
+        dc.Drawing.Clear(dc.Brush(DrawTools.BRUSH_BACKGROUND));
 
         Controller.Drawer.DrawFiguresRaw(dc);
 

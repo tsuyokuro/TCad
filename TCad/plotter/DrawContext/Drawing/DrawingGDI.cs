@@ -52,7 +52,7 @@ public class DrawingGDI : IDrawing
         p1.Z = 0;
 
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_X), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_X), p0, p1);
 
         // Y軸
         p0.X = 0;
@@ -63,7 +63,7 @@ public class DrawingGDI : IDrawing
         p1.Y = len;
         p1.Z = 0;
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Y), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_Y), p0, p1);
 
         // Z軸
         p0.X = 0;
@@ -74,7 +74,7 @@ public class DrawingGDI : IDrawing
         p1.Y = 0;
         p1.Z = len;
 
-        DrawLine(DC.GetPen(DrawTools.PEN_AXIS_Z), p0, p1);
+        DrawLine(DC.Pen(DrawTools.PEN_AXIS_Z), p0, p1);
     }
 
     public void DrawAxisLabel()
@@ -90,7 +90,7 @@ public class DrawingGDI : IDrawing
     public virtual void DrawGrid(Gridding grid)
     {
         vector3_t lt = vector3_t.Zero;
-        vector3_t rb = new vector3_t(DC.ViewWidth, DC.ViewHeight, 0);
+        vector3_t rb = new(DC.ViewWidth, DC.ViewHeight, 0);
 
         vector3_t ltw = DC.DevPointToWorldPoint(lt);
         vector3_t rbw = DC.DevPointToWorldPoint(rb);
@@ -105,12 +105,12 @@ public class DrawingGDI : IDrawing
         vcompo_t maxz = (vcompo_t)Math.Max(ltw.Z, rbw.Z);
 
 
-        DrawPen pen = DC.GetPen(DrawTools.PEN_GRID);
+        DrawPen pen = DC.Pen(DrawTools.PEN_GRID);
 
-        vector3_t p = default(vector3_t);
+        vector3_t p = default;
 
 
-        vcompo_t n = grid.Decimate(DC, grid, 8);
+        vcompo_t n = grid.Decimate(DC, 8);
 
         vcompo_t x, y, z;
         vcompo_t sx, sy, sz;
@@ -183,14 +183,14 @@ public class DrawingGDI : IDrawing
 
     public void DrawPageFrame(vcompo_t w, vcompo_t h, vector3_t center)
     {
-        vector3_t pt = default(vector3_t);
+        vector3_t pt = default;
 
         // p0
         pt.X = -w / 2 + center.X;
         pt.Y = h / 2 + center.Y;
         pt.Z = 0;
 
-        vector3_t p0 = default(vector3_t);
+        vector3_t p0 = default;
         p0.X = pt.X * DC.UnitPerMilli;
         p0.Y = pt.Y * DC.UnitPerMilli;
 
@@ -201,13 +201,13 @@ public class DrawingGDI : IDrawing
         pt.Y = -h / 2 + center.Y;
         pt.Z = 0;
 
-        vector3_t p1 = default(vector3_t);
+        vector3_t p1 = default;
         p1.X = pt.X * DC.UnitPerMilli;
         p1.Y = pt.Y * DC.UnitPerMilli;
 
         p1 += DC.ViewOrg;
 
-        DrawRectScrn(DC.GetPen(DrawTools.PEN_PAGE_FRAME), p0, p1);
+        DrawRectScrn(DC.Pen(DrawTools.PEN_PAGE_FRAME), p0, p1);
     }
     #endregion
 
@@ -451,7 +451,7 @@ public class DrawingGDI : IDrawing
 
         SizeF size = DC.GdiGraphics.MeasureString(s, DC.Font(font));
 
-        vector3_t v = new vector3_t(size.Width, size.Height, 0);
+        vector3_t v = new(size.Width, size.Height, 0);
 
         return v;
     }
@@ -580,15 +580,15 @@ public class DrawingGDI : IDrawing
 
     public void DrawBouncingBox(DrawPen pen, MinMax3D mm)
     {
-        vector3_t p0 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Min.Z);
-        vector3_t p1 = new vector3_t(mm.Min.X, mm.Min.Y, mm.Max.Z);
-        vector3_t p2 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Max.Z);
-        vector3_t p3 = new vector3_t(mm.Max.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p0 = new(mm.Min.X, mm.Min.Y, mm.Min.Z);
+        vector3_t p1 = new(mm.Min.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p2 = new(mm.Max.X, mm.Min.Y, mm.Max.Z);
+        vector3_t p3 = new(mm.Max.X, mm.Min.Y, mm.Min.Z);
 
-        vector3_t p4 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Min.Z);
-        vector3_t p5 = new vector3_t(mm.Min.X, mm.Max.Y, mm.Max.Z);
-        vector3_t p6 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Max.Z);
-        vector3_t p7 = new vector3_t(mm.Max.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p4 = new(mm.Min.X, mm.Max.Y, mm.Min.Z);
+        vector3_t p5 = new(mm.Min.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p6 = new(mm.Max.X, mm.Max.Y, mm.Max.Z);
+        vector3_t p7 = new(mm.Max.X, mm.Max.Y, mm.Min.Z);
 
         DC.Drawing.DrawLine(pen, p0, p1);
         DC.Drawing.DrawLine(pen, p1, p2);

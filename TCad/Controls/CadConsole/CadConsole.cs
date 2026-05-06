@@ -28,7 +28,7 @@ public partial class CadConsoleView : FrameworkElement
         set => mForeground = value;
     }
 
-    protected Brush mSelectedBackground = Brushes.GreenYellow;
+    protected Brush mSelectedBackground = Brushes.Aqua;
     public Brush SelectedBackground
     {
         get => mSelectedBackground;
@@ -93,15 +93,15 @@ public partial class CadConsoleView : FrameworkElement
 
     protected ScrollViewer Scroll;
 
-    protected FastRingBuffer<TextLine> mList = new FastRingBuffer<TextLine>();
+    protected FastRingBuffer<TextLine> mList = new();
 
-    protected AnsiPalette Palette = new AnsiPalette();
+    protected AnsiPalette Palette = new();
 
     protected TextAttr DefaultAttr = default;
 
     protected TextAttr CurrentAttr = default;
 
-    protected Pen FocusedBorderPen = new Pen(
+    protected Pen FocusedBorderPen = new(
             new SolidColorBrush(Color.FromArgb(0xff, 0x56, 0x9D, 0xE5)), 1.5);
 
     protected double CW = 1;
@@ -110,8 +110,8 @@ public partial class CadConsoleView : FrameworkElement
 
     protected double CH = 1;
 
-    private TextRange RawSel = new TextRange();
-    private TextRange Sel = new TextRange();
+    private TextRange RawSel = new();
+    private TextRange Sel = new();
     private bool Selecting = false;
 
     private AutoScroller mAutoScroller;
@@ -127,13 +127,49 @@ public partial class CadConsoleView : FrameworkElement
         GotFocus += CadConsoleView_GotFocus;
         LostFocus += CadConsoleView_LostFocus;
 
-        KeyUp += CadConsoleView_KeyUp;
-
         SizeChanged += CadConsoleView_SizeChanged;
 
         RawSel.Reset();
         Sel.Reset();
     }
+
+    public void HandlingKey(bool handle)
+    {
+        if (handle)
+        {
+            KeyUp -= CadConsoleView_KeyUp;
+            KeyUp += CadConsoleView_KeyUp;
+        }
+        else
+        {
+            KeyUp -= CadConsoleView_KeyUp;
+        }
+    }
+
+    public bool ProcessKeyEvent(KeyEventArgs e)
+    {
+        if (!e.IsUp)
+        {
+            return false;
+        }
+
+        if (Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            if (e.Key == Key.C || e.Key == Key.Insert)
+            {
+                CopySelected(this, null);
+                return true;
+            }
+            else if (e.Key == Key.X)
+            {
+                Clear();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     private void CadConsoleView_SizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -144,17 +180,6 @@ public partial class CadConsoleView : FrameworkElement
 
     private void CadConsoleView_KeyUp(object sender, KeyEventArgs e)
     {
-        if (Keyboard.Modifiers == ModifierKeys.Control)
-        {
-            if (e.Key == Key.C || e.Key == Key.Insert)
-            {
-                CopySelected(this, null);
-            }
-            else if (e.Key == Key.X)
-            {
-                Clear();
-            }
-        }
     }
 
     private void CadConsoleView_LostFocus(object sender, RoutedEventArgs e)
@@ -174,7 +199,7 @@ public partial class CadConsoleView : FrameworkElement
         if (FontFamily == null)
         {
             //FontFamily = new FontFamily(DefaultFontName);
-            Uri uri = new Uri("pack://application:,,,/Fonts/");
+            Uri uri = new("pack://application:,,,/Fonts/");
             FontFamily = new FontFamily(uri, "./mplus-1m-light.ttf#M+ 1m light");
         }
 
@@ -196,7 +221,7 @@ public partial class CadConsoleView : FrameworkElement
         Log.plx("");
         mIsLoaded = true;
 
-        mAutoScroller = new AutoScroller(this);
+        mAutoScroller = new(this);
         mAutoScroller.Scroll = AutoScrollEvent;
 
         Palette.Brushes[Palette.DefaultFColor] = mForeground;
@@ -267,12 +292,12 @@ public partial class CadConsoleView : FrameworkElement
 
     private void SetContextMenu()
     {
-        ContextMenu = new ContextMenu();
+        ContextMenu = new();
 
         ContextMenu.BorderBrush = Brushes.Black;
         ContextMenu.Padding = new Thickness(0, 1, 0, 1);
 
-        MenuItem menuItem = new MenuItem();
+        MenuItem menuItem = new();
 
         menuItem.Header = CadConsoleRes.menu_copy;
         menuItem.Click += CopySelected;
@@ -282,7 +307,7 @@ public partial class CadConsoleView : FrameworkElement
         ContextMenu.Items.Add(menuItem);
     }
 
-    private void SetupMenuItem(MenuItem menuItem)
+    private static void SetupMenuItem(MenuItem menuItem)
     {
         menuItem.Foreground = Brushes.White;
         menuItem.BorderThickness = new Thickness(0, 0, 0, 0);
@@ -333,10 +358,7 @@ public partial class CadConsoleView : FrameworkElement
             e.Handled = true;
         }
 
-        if (mAutoScroller != null)
-        {
-            mAutoScroller.Start();
-        }
+        mAutoScroller?.Start();
 
         base.OnMouseDown(e);
     }
@@ -351,7 +373,10 @@ public partial class CadConsoleView : FrameworkElement
         Selecting = true;
     }
 
-    private Regex WordRegex = new Regex(@"([^ \t,:=/\\]+)");
+    public Regex WordRegex {
+        get;
+        set;
+    } = new(@"([^ \t,:=/\\]+)");
 
     protected void SelectWord(Point p)
     {
@@ -390,12 +415,10 @@ public partial class CadConsoleView : FrameworkElement
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
-        if (mAutoScroller != null)
-        {
-            mAutoScroller.End();
-        }
+        mAutoScroller?.End();
 
         Point p = e.GetPosition(this);
+
         if (RawSel.IsEmpty())
         {
             if (p.X < TextLeftMargin)
@@ -432,7 +455,7 @@ public partial class CadConsoleView : FrameworkElement
 
     protected TextPos PointToTextPos(Point p)
     {
-        TextPos tp = new TextPos();
+        TextPos tp = new();
 
         int row = (int)(p.Y / mLineHeight);
 
@@ -781,13 +804,13 @@ public partial class CadConsoleView : FrameworkElement
 
         if (p.Y < rangeY)
         {
-            Rect sr = new Rect(0, p.Y, ActualWidth, rangeY - p.Y);
+            Rect sr = new(0, p.Y, ActualWidth, rangeY - p.Y);
             dc.DrawRectangle(mBackground, null, sr);
         }
 
         if (IsFocused)
         {
-            Rect sr = new Rect(0, offset + 1, ActualWidth, dispHeight - 1);
+            Rect sr = new(0, offset + 1, ActualWidth, dispHeight - 1);
             dc.DrawRectangle(null, FocusedBorderPen, sr);
         }
     }
@@ -810,7 +833,7 @@ public partial class CadConsoleView : FrameworkElement
 
         FormattedText ft = GetFormattedText(s, foreground);
 
-        Rect r = new Rect(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight);
+        Rect r = new(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight);
 
         Brush background = Palette.Brushes[attr.BColor];
 
@@ -829,7 +852,7 @@ public partial class CadConsoleView : FrameworkElement
     {
         if (Sel.IsValid && row >= Sel.SP.Row && row <= Sel.EP.Row)
         {
-            Rect r = new Rect(mTextLeftMargin, row * mLineHeight - 0.5, 0, mLineHeight);
+            Rect r = new(mTextLeftMargin, row * mLineHeight - 0.5, 0, mLineHeight);
 
             TextSpan ts = Sel.GetRowSpan(row, mList[row].Data.Length);
 
@@ -850,13 +873,13 @@ public partial class CadConsoleView : FrameworkElement
 
     protected FormattedText GetFormattedText(string s, Brush brush)
     {
-        FormattedText formattedText = new FormattedText(s,
-                                                  System.Globalization.CultureInfo.CurrentCulture,
-                                                  FlowDirection.LeftToRight,
-                                                  mTypeface,
-                                                  mFontSize,
-                                                  brush,
-                                                  VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        FormattedText formattedText = new(s,
+                                        System.Globalization.CultureInfo.CurrentCulture,
+                                        FlowDirection.LeftToRight,
+                                        mTypeface,
+                                        mFontSize,
+                                        brush,
+                                        VisualTreeHelper.GetDpi(this).PixelsPerDip);
         return formattedText;
     }
 

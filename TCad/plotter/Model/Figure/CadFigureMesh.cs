@@ -17,7 +17,7 @@ public partial class CadFigureMesh : CadFigure
 
     public static vcompo_t EDGE_THRESHOLD;
 
-    private FlexArray<IndexPair> SegList = new FlexArray<IndexPair>();
+    private readonly FlexArray<IndexPair> SegList = new();
 
 
     static CadFigureMesh()
@@ -48,7 +48,7 @@ public partial class CadFigureMesh : CadFigure
 
     public void CreateModel(CadFigure fig)
     {
-        if (!(fig is CadFigurePolyLines))
+        if (fig is not CadFigurePolyLines)
         {
             return;
         }
@@ -57,12 +57,12 @@ public partial class CadFigureMesh : CadFigure
 
         for (int i = 0; i < fig.PointCount; i++)
         {
-            int idx = mHeModel.AddVertex(fig.PointList[i]);
+            mHeModel.AddVertex(fig.PointList[i]);
         }
 
         List<Vector3List> trList = TriangleSplitter.Split(fig, 16);
 
-        HeModelBuilder mb = new HeModelBuilder();
+        HeModelBuilder mb = new();
 
         mb.Start(mHeModel);
 
@@ -100,7 +100,7 @@ public partial class CadFigureMesh : CadFigure
 
     public override FigureSegment GetFigSegmentAt(int n)
     {
-        FigureSegment seg = new FigureSegment(this, n, SegList[n].Idx0, SegList[n].Idx1);
+        FigureSegment seg = new(this, n, SegList[n].Idx0, SegList[n].Idx1);
         return seg;
     }
 
@@ -205,7 +205,7 @@ public partial class CadFigureMesh : CadFigure
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        dc.Drawing.DrawSelectedPoints(PointList, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+        dc.Drawing.DrawSelectedPoints(PointList, dc.Pen(DrawTools.PEN_SELECTED_POINT));
     }
 
     public override void SelectPointAt(int index, bool sel)
@@ -252,7 +252,7 @@ public partial class CadFigureMesh : CadFigure
 
     public override void RemoveSelected()
     {
-        List<int> removeList = new List<int>();
+        List<int> removeList = new();
 
         #region Improved performance of deleting large objects
         int cnt = 0;

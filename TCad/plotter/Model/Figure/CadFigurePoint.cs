@@ -48,7 +48,7 @@ public partial class CadFigurePoint : CadFigure
 
     public override void Draw(DrawContext dc, DrawOption dp)
     {
-        drawPoint(dc, dp.LinePen);
+        DrawPoint(dc, dp.LinePen);
     }
 
     public override void DrawSeg(DrawContext dc, DrawPen pen, int idxA, int idxB)
@@ -58,7 +58,7 @@ public partial class CadFigurePoint : CadFigure
 
     public override void DrawSelected(DrawContext dc, DrawOption dp)
     {
-        drawSelected_Point(dc);
+        DrawSelectedPoint(dc);
     }
 
     public override void DrawTemp(DrawContext dc, CadVertex tp, DrawPen pen)
@@ -67,7 +67,7 @@ public partial class CadFigurePoint : CadFigure
     }
 
 
-    private void drawPoint(DrawContext dc, DrawPen pen)
+    private void DrawPoint(DrawContext dc, DrawPen pen)
     {
         if (PointList.Count == 0)
         {
@@ -79,13 +79,13 @@ public partial class CadFigurePoint : CadFigure
         dc.Drawing.DrawCross(pen, PointList[0].vector, size);
     }
 
-    private void drawSelected_Point(DrawContext dc)
+    private void DrawSelectedPoint(DrawContext dc)
     {
         if (PointList.Count > 0)
         {
             if (PointList[0].Selected)
             {
-                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.GetPen(DrawTools.PEN_SELECTED_POINT));
+                dc.Drawing.DrawSelectedPoint(PointList[0].vector, dc.Pen(DrawTools.PEN_SELECTED_POINT));
             }
         }
     }

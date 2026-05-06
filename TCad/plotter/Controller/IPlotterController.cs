@@ -10,14 +10,19 @@ namespace TCad.Plotter.Controller;
 
 public interface IPlotterController
 {
+    public bool IsStarted { get;　}
     IPlotterViewModel ViewModel { get; }
-    PlotterCommandProcessor CommandProc { get; }
+    PlotterCommandProcessor CommandProcessor { get; }
     ContextMenuManager ContextMenuMan { get; }
     CadFigure.Types CreatingFigType { get; set; }
     string CurrentFileName { get; set; }
     CadLayer CurrentLayer { get; set; }
     ControllerState CurrentState { get; }
+
     CadObjectDB DB { get; }
+    PaperPageSize PageSize { get; }
+    vcompo_t WorldScale { get; }
+   
     DrawContext DC { get; set; }
     PlotterDrawer Drawer { get; }
     PlotterEditManager EditManager { get; }
@@ -27,7 +32,6 @@ public interface IPlotterController
     PlotterInput Input { get; }
     FigCreator MeasureFigureCreator { get; set; }
     MeasureModes MeasureMode { get; set; }
-    PaperPageSize PageSize { get; set; }
     PlotterTaskRunner PlotterTaskRunner { get; set; }
     ScriptEnvironment ScriptEnv { get; }
     SelectModes SelectMode { get; set; }
@@ -36,42 +40,64 @@ public interface IPlotterController
     List<CadFigure> TempFigureList { get; }
 
 
-    void ConnectViewModel(IPlotterViewModel viewModel);
-    void Startup();
-    void Shutdown();
+    void SetViewModel(IPlotterViewModel viewModel);
 
-    void ChangeState(ControllerStateID state);
+    void StartUp();
+    void ShutDown();
+
     void ClearAll();
+
     void CloseFigure();
-    void EndCreateFigure();
-    void EndMeasure();
+
     void EvalTextCommand(string s);
-    int FindObjectTreeItem(uint id);
+
     List<CadFigure> GetSelectedFigureList();
     List<CadFigure> GetSelectedRootFigureList();
+
     bool HasSelect();
+
     void NextState();
+
     void NotifyStateChange(StateChangedParam param);
+
     void PrintPage(Graphics printerGraphics, CadSize2D pageSize, CadSize2D deviceSize);
-    void Redo();
+
     void SetCurrentLayer(uint id);
-    void SetDB(CadObjectDB db);
-    void SetDB(CadObjectDB db, bool clearHistory);
+
+
+    void SetDB(CadObjectDB db, bool clearHistory = true);
+
+    void SetWorldScale(vcompo_t scale);
+
+    void SetPaperPageSize(PaperPageSize size);
+
+
     void SetObjectTreePos(int index);
-    void StartCreateFigure(CadFigure.Types type);
+
+    void StartCreatingFigure(CadFigure.Types type);
+    void EndCreatingFigure();
+
     void StartMeasure(MeasureModes mode);
+    void EndMeasure();
+
     void Undo();
+    void Redo();
+
     void UpdateLayerList();
     void UpdateObjectTree(bool remakeTree);
+    void UpdateTreeView(bool remakeTree);
+    int FindObjectTreeItem(uint id);
+
     void Redraw();
+    void SwapBuffers();
 
     void OpenPopupMessage(string text, UITypes.MessageType type);
     void ClosePopupMessage();
 
     void ShowContextMenu(MenuInfo menuInfo, int x, int y);
-    void UpdateTreeView(bool remakeTree);
 
     void CursorPosChanged(vector3_t pt, CursorType type);
+
     void ChangeMouseCursor(UITypes.MouseCursorType cursorType);
     void CursorLocked(bool locked);
 

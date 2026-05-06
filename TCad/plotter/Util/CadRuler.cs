@@ -56,7 +56,7 @@ public struct CadRuler
 
     public RulerInfo Capture(DrawContext dc, CadCursor cursor, vcompo_t range)
     {
-        RulerInfo ret = default(RulerInfo);
+        RulerInfo ret = default;
 
         vector3_t cwp = dc.DevPointToWorldPoint(cursor.Pos);
 
@@ -121,10 +121,12 @@ public struct CadRuler
 
     public static CadRuler Create(CadFigure fig, int idx0, int idx1)
     {
-        CadRuler ret = default(CadRuler);
-        ret.Fig = fig;
-        ret.Idx0 = idx0;
-        ret.Idx1 = idx1;
+        CadRuler ret = new()
+        {
+            Fig = fig,
+            Idx0 = idx0,
+            Idx1 = idx1
+        };
 
         return ret;
     }
@@ -193,7 +195,6 @@ public class CadRulerSet
     public RulerInfo Capture(DrawContext dc, CadCursor cursor, vcompo_t rangePixel)
     {
         RulerInfo match = default;
-        RulerInfo ri = default;
 
         vcompo_t min = rangePixel;
 
@@ -201,7 +202,12 @@ public class CadRulerSet
 
         for (int i = 0; i < RCount; i++)
         {
-            ri = Ruler[i].Capture(dc, cursor, rangePixel);
+            if (!Ruler[i].IsValid)
+            {
+                continue;
+            }
+
+            RulerInfo ri = Ruler[i].Capture(dc, cursor, rangePixel);
 
             if (ri.IsValid && ri.Distance < min)
             {

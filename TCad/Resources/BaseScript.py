@@ -16,12 +16,13 @@ clr.AddReference('CadDataTypes')
 clr.AddReference('OpenTK.Mathematics')
 
 
-import CadDataTypes.CadVertex as CadVertex
+import CadDataTypes.CadVertex as Vertex
 import CadDataTypes.VertexList as VertexList
 import CadDataTypes.CadMesh as CadMesh
 import CadDataTypes.CadFace as CadFace
 
 import OpenTK.Mathematics.Vector3 as Vector3
+import OpenTK.Mathematics.Vector3 as vector
 
 
 
@@ -31,11 +32,11 @@ import OpenTK.Mathematics.Vector3 as Vector3
 
 #[AC] layer_list()
 def layer_list():
-    SE.LayerList()
+    _se_.LayerList()
 
 #[AC] add_layer(name)
 def add_layer(name):
-    SE.AddLayer(name)
+    _se_.AddLayer(name)
 
 
 ###############################################################################
@@ -44,20 +45,20 @@ def add_layer(name):
 
 #[AC] last_down()
 def last_down():
-    return SE.GetLastDownPoint()
+    return _se_.GetLastDownPoint()
 
 #[AC] get_last_down()
 def get_last_down():
-    pt = SE.GetLastDownPoint()
+    pt = _se_.GetLastDownPoint()
     return pt
 
 #[AC] move_last_down(x=10, y=0, z=0)
 def move_last_down(x, y, z):
-    SE.MoveLastDownPoint(x, y, z)
+    _se_.MoveLastDownPoint(x, y, z)
 
 #[AC] set_last_down(x=0, y=0, z=0)
 def set_last_down(x, y, z):
-    SE.SetLastDownPoint(x, y, z)
+    _se_.SetLastDownPoint(x, y, z)
 
 
 ###############################################################################
@@ -66,23 +67,23 @@ def set_last_down(x, y, z):
 
 #[AC] get_tree_view_pos(id=current_fig_id())
 def get_tree_view_pos(id):
-    return SE.GetTreeViewPos(id)
+    return _se_.GetTreeViewPos(id)
 
 #[AC] set_tree_view_pos(idx=0)
 def set_tree_view_pos(idx):
-    return SE.SetTreeViewPos(idx)
+    return _se_.SetTreeViewPos(idx)
 
 #[AC] sel_fig(id)
 def sel_fig(id):
-    SE.SelectFigure(id)
+    _se_.SelectFigure(id)
 
 #[AC] get_selected_fig_list()
 def get_selected_fig_list():
-	return SE.GetSelectedFigList()
+	return _se_.GetSelectedFigList()
 
 #[AC] to_fig_list(id_list=[1,2])
 def to_fig_list(id_list):
-	return SE.ToFigList(id_list)
+	return _se_.ToFigList(id_list)
 
 #[AC] to_fig_id_array(list)
 def to_fig_id_array(list):
@@ -99,13 +100,13 @@ def to_fig_id_array(list):
 #[AC] group(list=get_selected_fig_list())
 #[AC] group(list=[1,2])
 def group(list):
-    SE.Group(list)
+    _se_.Group(list)
 
 #[AC] ungroup(list=get_selected_fig_list())
 #[AC] ungroup(list=[1,2])
 #[AC] ungroup(1)
 def ungroup(list):
-    SE.Ungroup(list)
+    _se_.Ungroup(list)
 
 
 ###############################################################################
@@ -114,15 +115,15 @@ def ungroup(list):
 
 #[AC] sub(l_id=1, r_id=2)
 def sub(l_id, r_id):
-    SE.AsubB(l_id, r_id)
+    _se_.AsubB(l_id, r_id)
 
 #[AC] union(id1=1, id2=2)
 def union(id1, id2):
-    SE.Union(id1, id2)
+    _se_.Union(id1, id2)
 
 #[AC] intersection(id1=1, id2=2)
 def intersection(id1, id2):
-    SE.Intersection(id1, id2)
+    _se_.Intersection(id1, id2)
 
 
 
@@ -132,69 +133,69 @@ def intersection(id1, id2):
 
 #[AC] add_rect(w=10, h=10)
 def add_rect(w=10, h=10):
-    return SE.AddRect(w, h)
+    return _se_.AddRect(w, h)
 
 #[AC] add_rect_at(pv=last_down(), w=10, h=10)
 def add_rect_at(pv, w=10, h=10):
-    return SE.AddRectAt(pv, w, h)
+    return _se_.AddRectAt(pv, w, h)
 
 
 #[AC] add_rectc(w=10, h=10, c=1)
 def add_rectc(w=10, h=10, c=1):
-    return SE.AddRectChamfer(w, h, c)
+    return _se_.AddRectChamfer(w, h, c)
 
 #[AC] add_rectc_at(pv=last_down(), w=10, h=10, c=1)
 def add_rectc_at(pv, w=10, h=10, c=1):
-    return SE.AddRectChamferAt(pv, w, h, c)
+    return _se_.AddRectChamferAt(pv, w, h, c)
 
 #[AC] add_circle(r=10)
 def add_circle(r=10):
-    return SE.AddCircle(r)
+    return _se_.AddCircle(r)
 
 #[AC] add_circle_at(cv=last_down(), r=10)
 def add_circle_at(cv, r=10):
-    return SE.AddCircleAt(cv, r)
+    return _se_.AddCircleAt(cv, r)
 
 
 #[AC] add_point(x=0, y=0, z=0)
 def add_point(x, y, z):
-    return SE.AddPoint(x, y, z)
+    return _se_.AddPoint(x, y, z)
 
 #[AC] add_point_v(last_down())
 def add_point_v(p):
-    return SE.AddPoint(p)
+    return _se_.AddPoint(p)
 
 #[AC] add_box(last_down(), size_x=40, size_y=40, size_z=20)
 def add_box(pos, size_x, size_y, size_z):
-    return SE.AddBox(pos, size_x, size_y, size_z)
+    return _se_.AddBox(pos, size_x, size_y, size_z)
 
 #[AC] add_1x4(last_down(), len=200)
 def add_1x4(pos, len):
-    return SE.AddBox(pos, w_1x4, len, t_1x4)
+    return _se_.AddBox(pos, w_1x4, len, t_1x4)
 
 #[AC] add_cylinder(pos=last_down(), circleDiv=16, slices=2, r=10, len=40)
 def add_cylinder(pos, circleDiv, slices, r, len):
-    return SE.AddCylinder(pos, circleDiv, slices, r, len)
+    return _se_.AddCylinder(pos, circleDiv, slices, r, len)
 
 #[AC] add_sphere(pos=last_down(), slices=16, r=20)
 def add_sphere(pos, slices, r):
-    return SE.AddSphere(pos, slices, r)
+    return _se_.AddSphere(pos, slices, r)
 
 #[AC] add_line(vector(0, 0, 0), vector(10, 20, 0))
 def add_line(v0, v1):
-    return SE.AddLine(v0, v1)
+    return _se_.AddLine(v0, v1)
 
 #[AC] add_tetra(last_down(), size_x=20, size_y=20, size_z=20)
 def add_tetra(pos, size_x, size_y, size_z):
-    return SE.AddTetrahedron(pos, size_x, size_y, size_z)
+    return _se_.AddTetrahedron(pos, size_x, size_y, size_z)
 
 #[AC] add_octa(last_down(), size_x=20, size_y=20, size_z=20)
 def add_octa(pos, size_x, size_y, size_z):
-    return SE.AddOctahedron(pos, size_x, size_y, size_z)
+    return _se_.AddOctahedron(pos, size_x, size_y, size_z)
 
 #[AC] add_picture(last_down(), r"H:\work4\test.png")
 def add_picture(pos, fname):
-    return SE.AddPicture(pos, fname)
+    return _se_.AddPicture(pos, fname)
 
 
 ###############################################################################
@@ -202,50 +203,50 @@ def add_picture(pos, fname):
 
 #[AC] extrude(id=current_fig_id(), dir=unit_vz, d=20, div=0)
 def extrude(id, dir, d, div):
-    SE.Extrude(id, dir, d, div)
+    _se_.Extrude(id, dir, d, div)
 
 #[AC] move(id=current_fig_id(), x=0, y=0, z=0)
 def move(id, x=0, y=0, z=0):
-    SE.Move(id, x, y, z)
+    _se_.Move(id, x, y, z)
 
 #[AC] move_selected_point(x=0, y=0, z=0)
 def move_selected_point(x=0, y=0, z=0):
-    SE.MoveSelectedPoint(x, y, z)
+    _se_.MoveSelectedPoint(x, y, z)
 
 #[AC] triangulate(id=current_fig_id(), area=10000, deg=20)
 def triangulate(id, area, deg):
-    SE.Triangulate(id, area, deg)
+    _se_.Triangulate(id, area, deg)
 
 #[AC] triangulate_opt(id=current_fig_id(), option="a10000q")
 def triangulate_opt(id, option):
-    SE.Triangulate(id, option)
+    _se_.Triangulate(id, option)
 
 #[AC] to_mesh(current_fig_id())
 def to_mesh(id):
-    SE.ToMesh(id)
+    _se_.ToMesh(id)
 
 #[AC] to_poly(current_fig_id())
 def to_poly(id):
-    SE.ToPolyLine(id)
+    _se_.ToPolyLine(id)
 
 #[AC] invert_dir()
 def invert_dir():
-    SE.InvertDir()
+    _se_.InvertDir()
 
 #[AC] scale(id=current_fig_id(), org=last_down(), ratio=1.5)
 def scale(id, org, ratio):
-    SE.Scale(id, org, ratio)
+    _se_.Scale(id, org, ratio)
 
 #[AC] rotate(id=current_fig_id(), p0=input_point(), v=view_dir(), t=45)
 def rotate(id, p0, v, t):
     if is_invalid_vector(p0):
         return
 
-    SE.Rotate(id, p0, v, t)
+    _se_.Rotate(id, p0, v, t)
 
 #[AC] make_rotating_body_itr(current_fig_id(), top_cap=True, btm_cap=True)
 def make_rotating_body_itr(id, top_cap, btm_cap):
-    print(esc_b_green_bg + esc_black + " <<<< Input Axis >>>> " + esc_reset)
+    print(esc_bg_b_green + esc_black + " <<<< Input Axis >>>> " + esc_reset)
 
     (p1, p2) = input_line();
 
@@ -254,65 +255,57 @@ def make_rotating_body_itr(id, top_cap, btm_cap):
 
     org = p1;
     axis = (p2 - p1).Normalized()
-    SE.MakeRotatingBody(id, org, axis, top_cap, btm_cap);
+    _se_.MakeRotatingBody(id, org, axis, top_cap, btm_cap);
 
 #[AC] ins_point()
 def ins_point():
-    SE.InsPoint()
+    _se_.InsPoint()
 
 #[AC] get_str(msg="Input", defStr="")
 def get_str(msg, defStr):
-    return SE.GetString(msg, defStr)
+    return _se_.GetString(msg, defStr)
 
 #[AC] set_seg_len(len)
 def set_seg_len(len):
-    SE.SetSelectedSegLen(len)
+    _se_.SetSelectedSegLen(len)
 
 #[AC] set_fig_name(id=current_fig_id(), name="name")
 def set_fig_name(id, name):
-    SE.SetFigName(id, name)
+    _se_.SetFigName(id, name)
 
 #[AC] get_point(figID=current_fig_id(), index=0)
 def get_point(figID, index):
-	return SE.GetPoint(figID, index);
+	return _se_.GetPoint(figID, index);
 
-#[AC] set_point(figID=current_fig_id(), index=0, dv=Vector3(0,0,0))
+#[AC] set_point(figID=current_fig_id(), index=0, dv=vector(0,0,0))
 def set_point(figID, index, dv):
-	return SE.SetPoint(figID, index, dv);
+	return _se_.SetPoint(figID, index, dv);
 
 ###############################################################################
 
 
 #[AC] current_fig_id()
 def current_fig_id():
-    return SE.GetCurrentFigureID()
+    return _se_.GetCurrentFigureID()
 
 #[AC] currentFig()
 def currentFig():
-    return SE.GetCurrentFigure()
+    return _se_.GetCurrentFigure()
 
 
 ###############################################################################
 
-#[AC] vector(x, y, z)
-def vector(x, y, z):
-    return SE.CreateVector(x, y, z)
-
-#[AC] vertex(x, y, z)
-def vertex(x, y, z):
-    return SE.CreateVertex(x, y, z)
-
 #[AC] rotatev(v=unit_vx, axis=unit_vz, deg=45.0)
 def rotatev(v, axis, deg):
-    return SE.RotateVector(v, axis, deg)
+    return _se_.RotateVector(v, axis, deg)
 
 #[AC] is_valid_vector(v=unit_vx)
 def is_valid_vector(v):
-    return SE.IsValidVector(v)
+    return _se_.IsValidVector(v)
 
 #[AC] is_invalid_vector(v=unit_vx)
 def is_invalid_vector(v):
-    return SE.IsInvalidVector(v)
+    return _se_.IsInvalidVector(v)
 
 ###############################################################################
 # Print information
@@ -320,19 +313,19 @@ def is_invalid_vector(v):
 
 #[AC] puts(s)
 def puts(s):
-    SE.PutMsg(s)
+    _se_.PutMsg(s)
 
 #[AC] print_vector(v)
 def print_vector(v):
-    SE.PrintVector(v)
+    _se_.PrintVector(v)
 
 #[AC] dumpv(v=unit_vx)
 def dumpv(v):
-    return SE.DumpVector(v)
+    return _se_.DumpVector(v)
 
 #[AC] dump_mesh(id=current_fig_id())
 def dump_mesh(id):
-    SE.DumpMesh(id)
+    _se_.DumpMesh(id)
 
 
 ###############################################################################
@@ -341,15 +334,15 @@ def dump_mesh(id):
 
 #[AC] input_point()
 def input_point():
-    return SE.InputPoint()
+    return _se_.InputPoint()
 
 #[AC] input_unit_v()
 def input_unit_v():
-    return SE.InputUnitVector()
+    return _se_.InputUnitVector()
 
 #[AC] input_line()
 def input_line():
-    return SE.InputLine()
+    return _se_.InputLine()
 
 ###############################################################################
 # User interface
@@ -357,19 +350,19 @@ def input_line():
 
 #[AC] update_tree()
 def update_tree():
-    SE.UpdateTV()
+    _se_.UpdateTV()
 
 #[AC] view_dir()
 def view_dir():
-	return SE.ViewDir()
+	return _se_.ViewDir()
 
 #[AC] proj_dir()
 def proj_dir():
-    return SE.GetProjectionDir()
+    return _se_.GetProjectionDir()
 
 #[AC] cut_mesh(id=current_fig_id())
 def cut_mesh(id):
-    SE.CutMesh(id)
+    _se_.CutMesh(id)
 
 ###############################################################################
 # Mesure
@@ -377,26 +370,26 @@ def cut_mesh(id):
 
 #[AC] area_of_selected()
 def area_of_selected():
-    return SE.AreaOfSelected()
+    return _se_.AreaOfSelected()
 
 #[AC] centroid_of_selected()
 def centroid_of_selected():
-	return SE.CentroidOfSelected()
+	return _se_.CentroidOfSelected()
 
 ###############################################################################
 
 #[AC] to_bmp(64, 64, 0xffffffff, 1, r"")
 #[AC] to_bmp(128, 128, 0xffffffff, 1, r"")
 def to_bmp(bw, bh, argb=0xffffffff, linew=1, fname=r""):
-    SE.CreateBitmap(bw, bh, argb, linew, fname)
+    _se_.CreateBitmap(bw, bh, argb, linew, fname)
 
 #[AC] dev_p_to_world_p(p)
 def dev_p_to_world_p(p):
-    return SE.DevPToWorldP(p)
+    return _se_.DevPToWorldP(p)
 
 #[AC] world_p_to_dev_p(p)
 def world_p_to_dev_p(p):
-    return SE.WorldPToDevP(p)
+    return _se_.WorldPToDevP(p)
 
 #[AC] rad2deg(rad)
 def rad2deg(rad):
@@ -408,32 +401,32 @@ def deg2rad(deg):
 
 #[AC] get_fig(id=1)
 def get_fig(id):
-	return SE.GetFigure(id)
+	return _se_.GetFigure(id)
 
 #[AC] get_vertex(fig, index)
 def get_vertex(fig, index):
-	return SE.FigVertexAt(fig, index)
+	return _se_.FigVertexAt(fig, index)
 
 ###############################################################################
 #[AC] set_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
 def set_color(id, r, g, b):
-    SE.SetColor(id, r, g, b)
+    _se_.SetColor(id, r, g, b)
 
 #[AC] set_fill_color(id=current_fig_id(), r=1.0, g=1.0, b=1.0)
 def set_fill_color(id, r, g, b):
-    SE.SetFillColor(id, r, g, b)
+    _se_.SetFillColor(id, r, g, b)
 
 ###############################################################################
 
 #[AC] test()
 def test():
-	SE.Test()
+	_se_.Test()
 
 ###############################################################################
 
 class MyConsoleOut:
 	def write(self, s):
-		SE.Print(s)
+		_se_.Print(s)
 
 cout = MyConsoleOut()
 
@@ -457,7 +450,7 @@ t_1x4 = 19
 #[AC] esc_reset
 esc_reset = "\x1b[0m"
 
-# Normal color
+#通常前景色
 #[AC] esc_
 esc_black = "\x1b[30m"
 esc_red = "\x1b[31m"
@@ -468,7 +461,7 @@ esc_magenta = "\x1b[35m"
 esc_cyan = "\x1b[36m"
 esc_white = "\x1b[37m"
 
-# Bright color
+#明るい前景色
 #[AC] esc_b_
 esc_b_balck = "\x1b[90m"
 esc_b_red = "\x1b[91m"
@@ -479,6 +472,7 @@ esc_b_magenta = "\x1b[95m"
 esc_b_cyan = "\x1b[96m"
 esc_b_white = "\x1b[97m"
 
+#通常背景色
 #[AC] esc_bg_
 esc_bg_black = "\x1b[40m";
 esc_bg_red = "\x1b[41m";
@@ -489,6 +483,7 @@ esc_bg_magenta = "\x1b[45m";
 esc_bg_cyan = "\x1b[46m";
 esc_bg_white = "\x1b[47m";
 
+#明るい背景色
 #[AC] esc_bg_b_
 esc_bg_b_black = "\x1b[100m";
 esc_bg_b_red = "\x1b[101m";

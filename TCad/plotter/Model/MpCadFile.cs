@@ -6,27 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using TCad.Logger;
-using TCad.Plotter.DrawContexts;
+using TCad.Plotter.Model;
 using TCad.Plotter.Serializer.v1003;
 using TCad.Plotter.Serializer.v1004;
 using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
 namespace TCad.Plotter.Serializer;
-
-public struct CadData
-{
-    public CadObjectDB DB;
-    public vcompo_t WorldScale;
-    public PaperPageSize PageSize;
-
-    public CadData(CadObjectDB db, vcompo_t worldScale, PaperPageSize pageSize)
-    {
-        DB = db;
-        WorldScale = worldScale;
-        PageSize = pageSize;
-    }
-}
 
 public class CadFileException : Exception
 {
@@ -103,7 +89,7 @@ public class MpCadFile
     {
     }
 
-    public static CadData? Load(string fname)
+    public static CadData Load(string fname)
     {
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
@@ -159,7 +145,7 @@ public class MpCadFile
         return $"{v[0]}.{v[1]}.{v[2]}.{v[3]}";
     }
 
-    public static CadData? LoadJson(string fname)
+    public static CadData LoadJson(string fname)
     {
         FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
 

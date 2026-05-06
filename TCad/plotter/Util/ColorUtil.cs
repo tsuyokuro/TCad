@@ -102,5 +102,5 @@ public static class Color4Ext
         return v.A < (vcompo_t)(0.0);
     }
 
-    public static readonly Color4 Invalid = new Color4(0, 0, 0, -1.0f);
+    public static readonly Color4 Invalid = new(0, 0, 0, -1.0f);
 }
