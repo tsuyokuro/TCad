@@ -23,32 +23,34 @@
                 <GradientStop Color="Black" Offset="1" />
             </LinearGradientBrush>
 
-            <DrawingBrush x:Key = "CheckerBrush" Viewport="0,0,0.25,0.25" TileMode="Tile">
+            <DrawingBrush  x:Key = "CheckerBrush2"
+                           Viewport="0,0,16,16"
+                           ViewportUnits="Absolute"
+                           TileMode="Tile">
+
                 <DrawingBrush.Drawing>
                     <DrawingGroup>
                         <GeometryDrawing Brush="White">
                             <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,0,100,100" />
+                                <RectangleGeometry Rect="0,0,16,16" />
                             </GeometryDrawing.Geometry>
                         </GeometryDrawing>
 
-                        <GeometryDrawing>
+                        <GeometryDrawing Brush="DarkGray">
                             <GeometryDrawing.Geometry>
-                                <GeometryGroup>
-                                    <RectangleGeometry Rect="0,0,50,50" />
-                                    <RectangleGeometry Rect="50,50,50,50" />
-                                </GeometryGroup>
+                                <RectangleGeometry Rect="0,0,8,8" />
                             </GeometryDrawing.Geometry>
-                            <GeometryDrawing.Brush>
-                                <LinearGradientBrush>
-                                    <GradientStop Offset="0.0" Color="Gray" />
-                                    <GradientStop Offset="1.0" Color="Gray" />
-                                </LinearGradientBrush>
-                            </GeometryDrawing.Brush>
+                        </GeometryDrawing>
+
+                        <GeometryDrawing Brush="DarkGray">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="8,8,8,8" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
                     </DrawingGroup>
                 </DrawingBrush.Drawing>
             </DrawingBrush>
+
 
         </ResourceDictionary>
     </Window.Resources>
@@ -82,7 +84,7 @@
                     <!-- Filled Rectangle -->
                     <Border Grid.Row = "0" Width="80" Height="80" BorderBrush="Black" BorderThickness="1">
                         <Grid Background="White">
-                            <Rectangle Fill="{StaticResource CheckerBrush}"/>
+                            <Rectangle Fill="{StaticResource CheckerBrush2}"/>
                             <Rectangle x:Name="preview_rect" Fill="LightGray" Visibility="Collapsed"/>
                             <Label x:Name="preview_invalid_color_label" Visibility="Collapsed"
                                 Background="LightGray"
@@ -124,16 +126,6 @@
                                 BorderThickness="0"
                                 FontWeight="ExtraBold"
                                 Content="-" />
-
-                            <Button
-                                x:Name="select_color_button"
-                                Width="24"
-                                Height="24"
-                                Margin="0,0,8,0"
-                                Background="LightGray"
-                                BorderThickness="0"
-                                FontWeight="ExtraBold"
-                                Content="C" />
 
                         </StackPanel>
                     </Border>

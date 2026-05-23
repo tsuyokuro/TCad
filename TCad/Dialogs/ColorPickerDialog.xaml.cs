@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using OpenTK.Mathematics;
@@ -53,7 +55,6 @@ public partial class ColorPickerDialog : Window
 
         add_color_button.Click += add_color_button_Click;
         remove_color_button.Click += remove_color_button_Click;
-        select_color_button.Click += select_color_button_Click;
 
         Loaded += Dialog_Loaded;
         Closed += (sender, e) =>
@@ -62,6 +63,8 @@ public partial class ColorPickerDialog : Window
         };
 
         color_maker.SelectedColorChanged += Color_maker_SelectedColorChanged;
+
+        color_list_box.SelectionChanged += color_list_box_SelectionChanged;
     }
 
     private void add_color_button_Click(object sender, RoutedEventArgs e)
@@ -85,23 +88,6 @@ public partial class ColorPickerDialog : Window
     private void remove_color_button_Click(object sender, RoutedEventArgs e)
     {
         color_list_box.RemoveColor();
-    }
-
-    private void select_color_button_Click(object sender, RoutedEventArgs e)
-    {
-        if (color_list_box.SelectedIndex < 0)
-        {
-            return;
-        }
-
-        ColorListBox.Item listItem = color_list_box.GetAt(color_list_box.SelectedIndex);
-
-        color_maker.SelectedColor =
-            new ColorMaker.Color(
-                listItem.Brush.Color.R / 255.0f,
-                listItem.Brush.Color.G / 255.0f,
-                listItem.Brush.Color.B / 255.0f,
-                listItem.Brush.Color.A / 255.0f);
     }
 
     private void Invalid_color_button_Click(object sender, RoutedEventArgs e)
@@ -216,5 +202,16 @@ public partial class ColorPickerDialog : Window
         if (data.Length == 0) return;
 
         color_list_box.FromJson(data);
+    }
+
+
+    private void color_list_box_SelectionChanged(object sender, ColorListBox.Item item)
+    {
+        color_maker.SelectedColor =
+            new ColorMaker.Color(
+                item.Brush.Color.R / 255.0f,
+                item.Brush.Color.G / 255.0f,
+                item.Brush.Color.B / 255.0f,
+                item.Brush.Color.A / 255.0f);
     }
 }
