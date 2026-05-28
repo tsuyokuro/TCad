@@ -29,7 +29,7 @@ public partial class MainWindow : Window, ICadMainWindow
 
     public IPlotterController Contoroller;
 
-    private ImageSource[] PopupMessageIcons = new ImageSource[3];
+    private readonly ImageSource[] PopupMessageIcons = new ImageSource[3];
 
     public MainWindow()
     {
@@ -46,9 +46,11 @@ public partial class MainWindow : Window, ICadMainWindow
 
         Contoroller = new PlotterController(cadData);
 
-        ViewModel = new PlotterViewModel(this, Contoroller);
-        ViewModel.ObjectTree = ObjTree;
-        ViewModel.CommandTextBox = textCommand;
+        ViewModel = new PlotterViewModel(this, Contoroller)
+        {
+            ObjectTree = ObjTree,
+            CommandTextBox = textCommand
+        };
 
         Contoroller.SetViewModel(ViewModel);
 
@@ -81,11 +83,12 @@ public partial class MainWindow : Window, ICadMainWindow
 
     private string PromptTextInput(string msg, string def)
     {
-        InputStringDialog dlg = new();
+        InputStringDialog dlg = new()
+        {
+            Message = msg,
 
-        dlg.Message = msg;
-
-        dlg.InputString = def;
+            InputString = def
+        };
 
         bool? dlgRet = dlg.ShowDialog();
 
@@ -167,8 +170,8 @@ public partial class MainWindow : Window, ICadMainWindow
         CustomPopupPlacement placement1 =
             new(p, PopupPrimaryAxis.Horizontal);
 
-        CustomPopupPlacement[] ttplaces =
-                new CustomPopupPlacement[] { placement1 };
+        CustomPopupPlacement[] ttplaces = [placement1];
+
         return ttplaces;
     }
 
@@ -330,7 +333,7 @@ public partial class MainWindow : Window, ICadMainWindow
         return IntPtr.Zero;
     }
 
-    private IntPtr? OnGetMinMaxInfo(IntPtr hwnd, IntPtr wParam, IntPtr lParam)
+    private static IntPtr? OnGetMinMaxInfo(IntPtr hwnd, IntPtr wParam, IntPtr lParam)
     {
         var monitor = WinAPI.Monitor.MonitorFromWindow(hwnd, WinAPI.Monitor.MONITOR_DEFAULTTONEAREST);
         if (monitor == IntPtr.Zero)
@@ -347,12 +350,16 @@ public partial class MainWindow : Window, ICadMainWindow
 
         var workingRectangle = monitorInfo.WorkRect;
         var monitorRectangle = monitorInfo.MonitorRect;
-        var minmax = (WinAPI.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(WinAPI.MINMAXINFO));
+
+        var minmax = Marshal.PtrToStructure<WinAPI.MINMAXINFO>(lParam);
+
         minmax.MaxPosition.X = Math.Abs(workingRectangle.Left - monitorRectangle.Left);
         minmax.MaxPosition.Y = Math.Abs(workingRectangle.Top - monitorRectangle.Top);
         minmax.MaxSize.X = Math.Abs(workingRectangle.Right - monitorRectangle.Left);
         minmax.MaxSize.Y = Math.Abs(workingRectangle.Bottom - monitorRectangle.Top);
+
         Marshal.StructureToPtr(minmax, lParam, true);
+
         return IntPtr.Zero;
     }
 

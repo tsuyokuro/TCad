@@ -78,10 +78,10 @@ partial class WinAPI
         public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpMonitorInfo);
     }
 
-    public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-    public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
-    public static readonly IntPtr HWND_TOP = new IntPtr(0);
-    public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+    public static readonly IntPtr HWND_TOPMOST = new(-1);
+    public static readonly IntPtr HWND_NOTOPMOST = new(-2);
+    public static readonly IntPtr HWND_TOP = new(0);
+    public static readonly IntPtr HWND_BOTTOM = new(1);
 
     public const UInt32 SWP_NOSIZE = 0x0001;
     public const UInt32 SWP_NOMOVE = 0x0002;
@@ -269,11 +269,11 @@ public class Win32Window
 
     private static WinAPI.WNDCLASSEX WindowClass;
 
-    private static readonly object lockObj = new object();
+    private static readonly object lockObj = new();
 
-    private static Dictionary<IntPtr, Win32Window> HWndMap = new Dictionary<IntPtr, Win32Window>();
+    private static readonly Dictionary<IntPtr, Win32Window> HWndMap = [];
 
-    private WndProc delegWndProc = staticWndProc;
+    private readonly WndProc delegWndProc = staticWndProc;
 
     public bool Create(string windowName)
     {
@@ -317,20 +317,21 @@ public class Win32Window
 
     private ushort RegisterWindowClass()
     {
-        WindowClass = new WinAPI.WNDCLASSEX();
-
-        WindowClass.cbSize = Marshal.SizeOf(typeof(WinAPI.WNDCLASSEX));
-        WindowClass.style = (int)(WinAPI.CS_HREDRAW | WinAPI.CS_VREDRAW);
-        WindowClass.hbrBackground = WinAPI.GetStockObject(WinAPI.BLACK_BRUSH);
-        WindowClass.cbClsExtra = 0;
-        WindowClass.cbWndExtra = 0;
-        WindowClass.hInstance = Marshal.GetHINSTANCE(this.GetType().Module); ;// alternative: Process.GetCurrentProcess().Handle;
-        WindowClass.hIcon = IntPtr.Zero;
-        WindowClass.hCursor = WinAPI.LoadCursor(IntPtr.Zero, (int)WinAPI.IDC_CROSS);// Crosshair cursor;
-        WindowClass.lpszMenuName = null;
-        WindowClass.lpszClassName = ClassName;
-        WindowClass.lpfnWndProc = Marshal.GetFunctionPointerForDelegate(delegWndProc);
-        WindowClass.hIconSm = IntPtr.Zero;
+        WindowClass = new()
+        {
+            cbSize = Marshal.SizeOf<WinAPI.WNDCLASSEX>(),
+            style = (int)(WinAPI.CS_HREDRAW | WinAPI.CS_VREDRAW),
+            hbrBackground = WinAPI.GetStockObject(WinAPI.BLACK_BRUSH),
+            cbClsExtra = 0,
+            cbWndExtra = 0,
+            hInstance = Marshal.GetHINSTANCE(this.GetType().Module),
+            hIcon = IntPtr.Zero,
+            hCursor = WinAPI.LoadCursor(IntPtr.Zero, (int)WinAPI.IDC_CROSS),
+            lpszMenuName = null,
+            lpszClassName = ClassName,
+            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(delegWndProc),
+            hIconSm = IntPtr.Zero
+        };
 
         return WinAPI.RegisterClassEx(ref WindowClass);
     }
