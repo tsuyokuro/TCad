@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
@@ -34,12 +33,13 @@ partial class WinAPI
     }
 
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    public static partial bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-    [DllImport("user32.dll")]
-    public static extern bool SetWindowPos(
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetWindowPos(
         IntPtr hWnd, IntPtr hWndInsertAfter, int X,
         int Y, int cx, int cy, uint uFlags);
 
@@ -64,8 +64,8 @@ partial class WinAPI
         //  [in] HWND hwnd,
         //  [in] DWORD dwFlags
         // );
-        [DllImport("user32.dll")]
-        public static extern IntPtr MonitorFromWindow(
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr MonitorFromWindow(
             IntPtr hWnd, UInt32 flags);
 
 
@@ -109,8 +109,9 @@ partial class WinAPI
     public const int WM_GETMINMAXINFO = 0x0024;
 
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    public static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
 
 
 
@@ -133,97 +134,81 @@ partial class WinAPI
     public const UInt32 WM_CLOSE = 0x0010;
 
 
-    [DllImport("user32.dll")]
-    public static extern bool UpdateWindow(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    public static partial bool UpdateWindow(IntPtr hWnd);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool DestroyWindow(IntPtr hWnd);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-
-    [DllImport("user32.dll", SetLastError = true, EntryPoint = "CreateWindowEx")]
-    public static extern IntPtr CreateWindowEx(
-       int dwExStyle,
-
-       [MarshalAs(UnmanagedType.LPStr)]
-       string lpClassName,
-
-       [MarshalAs(UnmanagedType.LPStr)]
-       string lpWindowName,
-
-       UInt32 dwStyle,
-
-       int x,
-       int y,
-       int nWidth,
-       int nHeight,
-
-       IntPtr hWndParent,
-       IntPtr hMenu,
-       IntPtr hInstance,
-       IntPtr lpParam);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool DestroyWindow(IntPtr hWnd);
 
 
-    [DllImport("user32.dll")]
-    public static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("user32.dll")]
-    public static extern void PostQuitMessage(int nExitCode);
+    [LibraryImport("user32.dll")]
+    public static partial void PostQuitMessage(int nExitCode);
 
-    [DllImport("user32.dll")]
-    public static extern sbyte GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin,
-       uint wMsgFilterMax);
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
-
-    [DllImport("user32.dll")]
-    public static extern bool TranslateMessage([In] ref MSG lpMsg);
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
 
 
     public const int WHITE_BRUSH = 0;
     public const int BLACK_BRUSH = 4;
 
-    [DllImport("gdi32.dll")]
-    public static extern IntPtr GetStockObject(int fnObject);
+    [LibraryImport("gdi32.dll")]
+    public static partial IntPtr GetStockObject(int fnObject);
 
 
 
-    [DllImport("kernel32.dll")]
-    public static extern uint GetLastError();
+    [LibraryImport("kernel32.dll")]
+    public static partial uint GetLastError();
 
-    [DllImport("kernel32.dll")]
-    public static extern bool AttachConsole(uint dwProcessId);
-
-    [DllImport("kernel32.dll")]
-    public static extern bool FreeConsole();
-
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool AllocConsole();
+    public static partial bool AttachConsole(uint dwProcessId);
+
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool FreeConsole();
+
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool AllocConsole();
 
     public const UInt32 STD_OUTPUT_HANDLE = 0xFFFFFFF5;
 
-    [DllImport("kernel32.dll")]
-    public static extern IntPtr GetStdHandle(UInt32 nStdHandle);
+    [LibraryImport("kernel32.dll")]
+    public static partial IntPtr GetStdHandle(UInt32 nStdHandle);
 
-    [DllImport("kernel32.dll")]
-    public static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+    [LibraryImport("kernel32.dll")]
+    public static partial void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
 
-    [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern IntPtr LoadLibrary(string lpFileName);
 
-    [DllImport("kernel32", SetLastError = true)]
-    public static extern bool FreeLibrary(IntPtr hModule);
 
-    [DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = false)]
-    public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+    [LibraryImport(
+        "kernel32",
+        SetLastError = true,
+        StringMarshalling = StringMarshalling.Utf16,
+        EntryPoint = "LoadLibraryW"
+    )]
+    public static partial IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
+
+    [LibraryImport("kernel32", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool FreeLibrary(IntPtr hModule);
+
+    [LibraryImport(
+        "kernel32",
+        SetLastError = true,
+        StringMarshalling = StringMarshalling.Custom,
+        StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller)
+    )]
+    public static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 }
 
 
