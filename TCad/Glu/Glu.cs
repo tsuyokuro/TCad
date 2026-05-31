@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace OpenGL.GLU;
 
 
-static partial class Glu
+public static partial class Glu
 {
 
     public static

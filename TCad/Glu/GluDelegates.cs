@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace OpenGL.GLU;
 
-partial class Glu
+public static partial class Glu
 {
     private static class Delegates
     {
