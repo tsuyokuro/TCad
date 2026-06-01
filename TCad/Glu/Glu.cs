@@ -2,6 +2,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Runtime.InteropServices;
+using Windows.AI.MachineLearning;
 
 namespace OpenGL.GLU;
 
@@ -294,19 +295,7 @@ public static partial class Glu
     }
 
     public static
-    void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float[] data)
-    {
-        unsafe
-        {
-            fixed (float* data_ptr = data)
-            {
-                Delegates.gluGetNurbsProperty((IntPtr)nurb, (GluNurbsProperty)property, (float*)data_ptr);
-            }
-        }
-    }
-
-    public static
-    void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] out float data)
+    void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, out float data)
     {
         unsafe
         {
@@ -319,25 +308,7 @@ public static partial class Glu
     }
 
     public static
-    unsafe void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float* data)
-    {
-        Delegates.gluGetNurbsProperty((IntPtr)nurb, (GluNurbsProperty)property, (float*)data);
-    }
-
-    public static
-    void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double[] data)
-    {
-        unsafe
-        {
-            fixed (double* data_ptr = data)
-            {
-                Delegates.gluGetTessProperty((IntPtr)tess, (GluTessParameter)which, (double*)data_ptr);
-            }
-        }
-    }
-
-    public static
-    void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] out double data)
+    void GetTessProperty(IntPtr tess, GluTessParameter which, out double data)
     {
         unsafe
         {
@@ -347,12 +318,6 @@ public static partial class Glu
                 data = *data_ptr;
             }
         }
-    }
-
-    public static
-    unsafe void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double* data)
-    {
-        Delegates.gluGetTessProperty((IntPtr)tess, (GluTessParameter)which, (double*)data);
     }
 
     public static
@@ -422,7 +387,7 @@ public static partial class Glu
     public static
     void NurbsCallback(IntPtr nurb, GluNurbsCallback which, Delegate CallBackFunc)
     {
-        Delegates.gluNurbsCallback((IntPtr)nurb, (GluNurbsCallback)which, (Delegate)CallBackFunc);
+        Delegates.gluNurbsCallback((IntPtr)nurb, (GluNurbsCallback)which, Marshal.GetFunctionPointerForDelegate(CallBackFunc));
     }
 
     public static
@@ -452,7 +417,7 @@ public static partial class Glu
     }
 
     public static
-    void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float[] knots, Int32 stride, [Out] float[] control, Int32 order, MapTarget type)
+    void NurbsCurve(IntPtr nurb, Int32 knotCount, float[] knots, Int32 stride, float[] control, Int32 order, MapTarget type)
     {
         unsafe
         {
@@ -462,27 +427,6 @@ public static partial class Glu
                 Delegates.gluNurbsCurve((IntPtr)nurb, (Int32)knotCount, (float*)knots_ptr, (Int32)stride, (float*)control_ptr, (Int32)order, (MapTarget)type);
             }
         }
-    }
-
-    public static
-    void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] out float knots, Int32 stride, [Out] out float control, Int32 order, MapTarget type)
-    {
-        unsafe
-        {
-            fixed (float* knots_ptr = &knots)
-            fixed (float* control_ptr = &control)
-            {
-                Delegates.gluNurbsCurve((IntPtr)nurb, (Int32)knotCount, (float*)knots_ptr, (Int32)stride, (float*)control_ptr, (Int32)order, (MapTarget)type);
-                knots = *knots_ptr;
-                control = *control_ptr;
-            }
-        }
-    }
-
-    public static
-    unsafe void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float* knots, Int32 stride, [Out] float* control, Int32 order, MapTarget type)
-    {
-        Delegates.gluNurbsCurve((IntPtr)nurb, (Int32)knotCount, (float*)knots, (Int32)stride, (float*)control, (Int32)order, (MapTarget)type);
     }
 
     public static
@@ -544,8 +488,10 @@ public static partial class Glu
     }
 
     public static
-    void PickMatrix(double x, double y, double delX, double delY, [Out] Int32[] viewport)
+    void PickMatrix(double x, double y, double delX, double delY, out Int32[] ret)
     {
+        Int32[] viewport = new Int32[4];
+
         unsafe
         {
             fixed (Int32* viewport_ptr = viewport)
@@ -553,26 +499,10 @@ public static partial class Glu
                 Delegates.gluPickMatrix((double)x, (double)y, (double)delX, (double)delY, (Int32*)viewport_ptr);
             }
         }
+
+        ret = viewport;
     }
 
-    public static
-    void PickMatrix(double x, double y, double delX, double delY, [Out] out Int32 viewport)
-    {
-        unsafe
-        {
-            fixed (Int32* viewport_ptr = &viewport)
-            {
-                Delegates.gluPickMatrix((double)x, (double)y, (double)delX, (double)delY, (Int32*)viewport_ptr);
-                viewport = *viewport_ptr;
-            }
-        }
-    }
-
-    public static
-    unsafe void PickMatrix(double x, double y, double delX, double delY, [Out] Int32* viewport)
-    {
-        Delegates.gluPickMatrix((double)x, (double)y, (double)delX, (double)delY, (Int32*)viewport);
-    }
 
     public static
     Int32 Project(double objX, double objY, double objZ, double[] model, double[] proj, Int32[] view, double[] winX, double[] winY, double[] winZ)
@@ -647,7 +577,7 @@ public static partial class Glu
     public static
     void QuadricCallback(IntPtr quad, GluQuadricCallback which, Delegate CallBackFunc)
     {
-        Delegates.gluQuadricCallback((IntPtr)quad, (GluQuadricCallback)which, (Delegate)CallBackFunc);
+        Delegates.gluQuadricCallback((IntPtr)quad, (GluQuadricCallback)which, Marshal.GetFunctionPointerForDelegate(CallBackFunc));
     }
 
     public static
@@ -675,31 +605,35 @@ public static partial class Glu
     }
 
     public static
-    Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, IntPtr dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, [Out] IntPtr dataOut)
+    Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, UInt32[] dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, out UInt32[] dataOut)
     {
-        unsafe
-        {
-            return Delegates.gluScaleImage((PixelFormat)format, (Int32)wIn, (Int32)hIn, (PixelType)typeIn, (IntPtr)dataIn, (Int32)wOut, (Int32)hOut, (PixelType)typeOut, (IntPtr)dataOut);
-        }
-    }
+        // TODO サイズの計算が合っているか検討する
+        int bufferSize = wOut * hOut;
 
-    public static
-    Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, [In, Out] object dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, [In, Out] object dataOut)
-    {
+        UInt32[] dout = new UInt32[bufferSize];
+
+
         unsafe
         {
-            GCHandle dataIn_ptr = GCHandle.Alloc(dataIn, GCHandleType.Pinned);
-            GCHandle dataOut_ptr = GCHandle.Alloc(dataOut, GCHandleType.Pinned);
-            try
+            fixed (UInt32* dataIn_ptr = dataIn)
+            fixed (UInt32* dataOut_ptr = dout)
             {
-                return Delegates.gluScaleImage((PixelFormat)format, (Int32)wIn, (Int32)hIn, (PixelType)typeIn, (IntPtr)dataIn_ptr.AddrOfPinnedObject(), (Int32)wOut, (Int32)hOut, (PixelType)typeOut, (IntPtr)dataOut_ptr.AddrOfPinnedObject());
-            }
-            finally
-            {
-                dataIn_ptr.Free();
-                dataOut_ptr.Free();
+                Int32 result = Delegates.gluScaleImage(
+                    (PixelFormat)format,
+                    (Int32)wIn, (Int32)hIn,
+                    (PixelType)typeIn,
+                    (IntPtr)dataIn_ptr,
+                    (Int32)wOut, (Int32)hOut,
+                    (PixelType)typeOut,
+                    (IntPtr)dataOut_ptr);
+
+                dataOut = dout;
+
+
+                return result;
             }
         }
+
     }
 
     public static
@@ -743,7 +677,7 @@ public static partial class Glu
     public static
     void TessCallback(IntPtr tess, GluTessCallback which, Delegate CallBackFunc)
     {
-        Delegates.gluTessCallback((IntPtr)tess, (GluTessCallback)which, (Delegate)CallBackFunc);
+        Delegates.gluTessCallback((IntPtr)tess, (GluTessCallback)which, Marshal.GetFunctionPointerForDelegate(CallBackFunc));
     }
 
     public static

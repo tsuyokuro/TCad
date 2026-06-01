@@ -668,6 +668,11 @@ public class TestCommands
 
         Glu.TessEndPolygon(htess);
 
+        double prop;
+
+        Glu.GetTessProperty(htess, GluTessParameter.TessWindingRule, out prop);
+
+
         Glu.DeleteTess(htess);
     }
 
