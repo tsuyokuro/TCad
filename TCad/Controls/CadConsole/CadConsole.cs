@@ -28,7 +28,7 @@ public partial class CadConsoleView : FrameworkElement
         set => mForeground = value;
     }
 
-    protected Brush mSelectedBackground = Brushes.Aqua;
+    protected Brush mSelectedBackground = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
     public Brush SelectedBackground
     {
         get => mSelectedBackground;
