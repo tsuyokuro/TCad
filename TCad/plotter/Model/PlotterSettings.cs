@@ -4,11 +4,14 @@ using System.Text.Json;
 using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
+#pragma warning disable IDE0028
+
+
 namespace TCad.Plotter.Settings;
 
 public static class SettingsHolder
 {
-    public static PlotterSettings Settings = new PlotterSettings();
+    public static readonly PlotterSettings Settings = new();
 }
 
 public class PlotterSettings

@@ -1,8 +1,5 @@
-using System.IO;
 using TCad.Plotter;
 using TCad.Plotter.Controller;
-using TCad.Plotter.Model;
-using TCad.Plotter.Model.Figure;
 using TCad.Plotter.Serializer;
 
 namespace TCad.ViewModel;
@@ -13,12 +10,10 @@ public class CadFileAccessor
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             SaveToMsgPackJsonFile(fname, controller);
         }
         else
         {
-            SerializeContext sc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             SaveToMsgPackFile(fname, controller);
         }
     }
@@ -27,12 +22,10 @@ public class CadFileAccessor
     {
         if (fname.EndsWith(".txt") || fname.EndsWith(".json"))
         {
-            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.JSON);
             LoadFromMsgPackJsonFile(fname, controller);
         }
         else
         {
-            DeserializeContext dsc = new(MpCadFile.CurrentVersion, SerializeType.MP_BIN);
             LoadFromMsgPackFile(fname, controller);
         }
 

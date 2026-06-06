@@ -7,7 +7,7 @@ public class LayerHolder : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private CadLayer mLayer;
+    private readonly CadLayer mLayer;
 
     public uint ID
     {

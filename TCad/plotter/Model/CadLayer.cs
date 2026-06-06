@@ -41,7 +41,7 @@ public class CadLayer
 
     public bool Visible = true;
 
-    private List<CadFigure> mFigureList = new List<CadFigure>();
+    private List<CadFigure> mFigureList = [];
     public List<CadFigure> FigureList
     {
         get => mFigureList;
@@ -123,7 +123,7 @@ public class CadLayer
 
     public CadOpeList Clear()
     {
-        CadOpeList opeList = new CadOpeList();
+        CadOpeList opeList = new();
 
         CadOpe ope;
 

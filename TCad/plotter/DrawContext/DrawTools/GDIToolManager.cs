@@ -8,8 +8,8 @@ namespace TCad.Plotter.DrawToolSet;
 
 public class GDIToolManager : IDisposable
 {
-    private Dictionary<DrawPen, Pen> PenMap = new();
-    private Dictionary<DrawBrush, SolidBrush> BrushMap = new();
+    private readonly Dictionary<DrawPen, Pen> PenMap = [];
+    private readonly Dictionary<DrawBrush, SolidBrush> BrushMap = [];
 
     private GDIToolManager()
     {
@@ -63,9 +63,10 @@ public class GDIToolManager : IDisposable
     public void Dispose()
     {
         Clear();
+        GC.SuppressFinalize(this);
     }
 
-    public static SingleServiceProvider<GDIToolManager> Provider = new(
+    public static readonly SingleServiceProvider<GDIToolManager> Provider = new(
         () =>
         {
             return new GDIToolManager();
