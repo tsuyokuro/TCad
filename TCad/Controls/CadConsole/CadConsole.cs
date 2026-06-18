@@ -8,6 +8,7 @@ using System.Windows.Threading;
 
 using TCad.Logger;
 using TCad.Util;
+using Windows.Media.PlayTo;
 
 namespace TCad.Controls.CadConsole;
 
@@ -797,7 +798,7 @@ public partial class CadConsoleView : FrameworkElement
 
             DrawText(dc, item, tp, n - 1);
 
-            DrawSelectedRange(dc, n - 1);
+            //DrawSelectedRange(dc, n - 1);
 
             p.Y += mLineHeight;
         }
@@ -819,11 +820,94 @@ public partial class CadConsoleView : FrameworkElement
 
     protected void DrawText(DrawingContext dc, TextLine line, Point pt, int row)
     {
+        int selS = 0;
+        int selE = int.MaxValue;
+        bool inRange = (Sel.SP.Row <= row &&  Sel.EP.Row >= row);
+
+        if (inRange)
+        {
+            if (row == Sel.SP.Row)
+            {
+                selS = Sel.SP.Col;
+            }
+
+
+            if (row == Sel.EP.Row)
+            {
+                selE = Sel.EP.Col;
+            }
+        }
+
+
+        //Log.pl($"row:{row} inRange:{inRange} sels:{selS} sele:{selE}");
+
+
+        //TextAttr selTextAttr = new TextAttr(7,1);
         foreach (AttrSpan attr in line.Attrs)
         {
-            string s = line.Data.Substring(attr.Start, attr.Len);
-            pt = RenderText(dc, attr.Attr, s, pt, row);
-        }
+            int ps = attr.Start;
+            int pe = ps + attr.Len - 1;
+
+            TextAttr selTextAttr = new TextAttr(attr.Attr.BColor, attr.Attr.FColor);
+
+
+            bool notSel = !inRange || ps > selE || pe < selS;
+
+
+            if (notSel)
+            {
+                string s = line.Data.Substring(ps, pe - ps + 1);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
+                continue;
+            }
+
+
+
+            if (ps >= selS && pe <= selE)
+            {
+                string s = line.Data.Substring(ps, pe - ps + 1);
+                pt = RenderText(dc, selTextAttr, s, pt, row);
+            }
+
+            else if (ps >= selS && pe > selE)
+            {
+                string s = line.Data.Substring(ps, selE - ps + 1);
+                pt = RenderText(dc, selTextAttr, s, pt, row);
+
+
+                s = line.Data.Substring(selE + 1, pe - selE);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
+            }
+            else if (ps < selS && pe <= selE)
+            {
+                string s = line.Data.Substring(ps, selS - ps);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
+
+
+                s = line.Data.Substring(selS, pe - selS + 1);
+                pt = RenderText(dc, selTextAttr, s, pt, row);
+            }
+            else if (ps < selS && pe > selE)
+            {
+                string s = line.Data.Substring(ps, selS - ps);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
+
+
+                s = line.Data.Substring(selS, selE - selS + 1);
+                pt = RenderText(dc, selTextAttr, s, pt, row);
+
+
+                s = line.Data.Substring(selE + 1, pe - selE);
+                pt = RenderText(dc, attr.Attr, s, pt, row);
+
+            }
+        }  
+
+        //foreach (AttrSpan attr in line.Attrs)
+        //{
+        //    string s = line.Data.Substring(attr.Start, attr.Len);
+        //    pt = RenderText(dc, attr.Attr, s, pt, row);
+        //}
     }
 
     protected Point RenderText(

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Controls.Ribbon;
 
 namespace TCad.Controls.CadConsole;
 
@@ -8,6 +9,18 @@ public struct TextAttr
 {
     public int FColor;
     public int BColor;
+
+    public TextAttr(int f, int b)
+    {
+        FColor = f;
+        BColor = b;
+    }
+
+    public TextAttr()
+    {
+        FColor = 0;
+        BColor = 0;
+    }
 }
 
 public struct AttrSpan
