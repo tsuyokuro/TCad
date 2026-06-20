@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Controls.Ribbon;
 
 namespace TCad.Controls.CadConsole;
 
@@ -83,7 +82,7 @@ public class TextLine
         LastAttrSpan = attrItem;
     }
 
-    public void Parse(string str)
+    public void Parse(string str, TextAttr defaultAttr)
     {
         TextAttr attr = LastAttrSpan.Attr;
 
@@ -142,8 +141,7 @@ public class TextLine
                     {
                         if (x == 0)
                         {
-                            attr.BColor = 0;
-                            attr.FColor = 7;
+                            attr = defaultAttr;
                         }
 
                         AppendAttr(attr);
@@ -167,8 +165,7 @@ public class TextLine
                     {
                         if (x == 0)
                         {
-                            attr.BColor = 0;
-                            attr.FColor = 7;
+                            attr = defaultAttr;
                         }
                         else if (x >= 30 && x <= 37) // front std
                         {

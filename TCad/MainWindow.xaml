@@ -836,9 +836,8 @@
                                     FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                     FontSize="14"
                                     Foreground="{StaticResource PromptTextColor}"
-                                    LineHeight="17"
-                                    SnapsToDevicePixels="True"
-                                    TextOptions.TextFormattingMode="Display" />
+                                    MaxLine="256"
+                                    />
 
                             </ScrollViewer>
                         </Border>

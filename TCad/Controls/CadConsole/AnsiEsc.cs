@@ -50,8 +50,8 @@ public class AnsiPalette
 {
     public Brush[] Brushes;
 
-    public byte DefaultFColor = 7;
-    public byte DefaultBColor = 0;
+    public byte DefaultFColor = 16;
+    public byte DefaultBColor = 17;
 
     public AnsiPalette()
     {
@@ -60,7 +60,7 @@ public class AnsiPalette
 
     public void SetupStdPalette()
     {
-        Brushes = new Brush[16];
+        Brushes = new Brush[18];
 
         Brushes[0] = new SolidColorBrush(Colors.Black);
         Brushes[1] = new SolidColorBrush(Colors.MediumVioletRed);
@@ -79,5 +79,8 @@ public class AnsiPalette
         Brushes[13] = new SolidColorBrush(Colors.MediumOrchid);
         Brushes[14] = new SolidColorBrush(Colors.Turquoise);
         Brushes[15] = new SolidColorBrush(Colors.White);
+
+        Brushes[16] = new SolidColorBrush(Colors.LightGray);
+        Brushes[17] = new SolidColorBrush(Colors.Black);
     }
 }

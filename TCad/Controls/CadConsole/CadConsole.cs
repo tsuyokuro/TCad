@@ -8,25 +8,34 @@ using System.Windows.Threading;
 
 using TCad.Logger;
 using TCad.Util;
-using Windows.Media.PlayTo;
 
 namespace TCad.Controls.CadConsole;
 
 public partial class CadConsoleView : FrameworkElement
 {
     #region Properties
-    protected Brush mBackground = Brushes.White;
     public Brush Background
     {
-        get => mBackground;
-        set => mBackground = value;
+        get
+        {
+            return Palette.Brushes[Palette.DefaultBColor];
+        }
+        set
+        {
+            Palette.Brushes[Palette.DefaultBColor] = value;
+        }
     }
 
-    protected Brush mForeground = Brushes.Black;
     public Brush Foreground
     {
-        get => mForeground;
-        set => mForeground = value;
+        get
+        {
+            return Palette.Brushes[Palette.DefaultFColor];
+        }
+        set
+        {
+            Palette.Brushes[Palette.DefaultFColor] = value;
+        }
     }
 
     protected Brush mSelectedBackground = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
@@ -54,15 +63,13 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    protected double mLineHeight = 14.0;
-    public double LineHeight
+    protected double mLineHeight = 1;
+    protected double LineHeight
     {
         get => mLineHeight;
         set => mLineHeight = value;
     }
 
-    protected string DefaultFontName = "MS Gothic";
-    protected Typeface mTypeface;
     protected FontFamily mFontFamily = null;
     public FontFamily FontFamily
     {
@@ -70,8 +77,18 @@ public partial class CadConsoleView : FrameworkElement
         set
         {
             mFontFamily = value;
-            mTypeface = new Typeface(mFontFamily, FontStyles.Normal, FontWeights.UltraLight, FontStretches.Normal);
-            RecalcCharaSize();
+            mTypeface = new Typeface(mFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            RecalcMetrics();
+        }
+    }
+
+    protected Typeface mTypeface;
+    public Typeface Typeface
+    {
+        get => mTypeface;
+        set
+        {
+            mTypeface = value;
         }
     }
 
@@ -82,7 +99,24 @@ public partial class CadConsoleView : FrameworkElement
         set
         {
             mFontSize = value;
-            RecalcCharaSize();
+            RecalcMetrics();
+        }
+    }
+
+    public int MaxLine
+    {
+        get => mList.BufferSize;
+        set
+        {
+            if (value <= 0)
+            {
+                value = 1;
+            }
+
+            RawSel.Reset();
+            Sel.Reset();
+
+            mList.CreateBuffer(value);
         }
     }
 
@@ -119,8 +153,6 @@ public partial class CadConsoleView : FrameworkElement
 
     public CadConsoleView()
     {
-        mList.CreateBuffer(200);
-
         Focusable = true;
 
         Loaded += CadConsoleView_Loaded;
@@ -134,18 +166,18 @@ public partial class CadConsoleView : FrameworkElement
         Sel.Reset();
     }
 
-    public void HandlingKey(bool handle)
-    {
-        if (handle)
-        {
-            KeyUp -= CadConsoleView_KeyUp;
-            KeyUp += CadConsoleView_KeyUp;
-        }
-        else
-        {
-            KeyUp -= CadConsoleView_KeyUp;
-        }
-    }
+    //public void HandlingKey(bool handle)
+    //{
+    //    if (handle)
+    //    {
+    //        KeyUp -= CadConsoleView_KeyUp;
+    //        KeyUp += CadConsoleView_KeyUp;
+    //    }
+    //    else
+    //    {
+    //        KeyUp -= CadConsoleView_KeyUp;
+    //    }
+    //}
 
     public bool ProcessKeyEvent(KeyEventArgs e)
     {
@@ -179,9 +211,9 @@ public partial class CadConsoleView : FrameworkElement
         SizeChanged += CadConsoleView_SizeChanged;
     }
 
-    private void CadConsoleView_KeyUp(object sender, KeyEventArgs e)
-    {
-    }
+    //private void CadConsoleView_KeyUp(object sender, KeyEventArgs e)
+    //{
+    //}
 
     private void CadConsoleView_LostFocus(object sender, RoutedEventArgs e)
     {
@@ -197,11 +229,16 @@ public partial class CadConsoleView : FrameworkElement
         base.OnInitialized(e);
         Log.plx("");
 
+        if (mList.BufferSize == 0)
+        {
+            mList.CreateBuffer(200);
+        }
+
         if (FontFamily == null)
         {
-            //FontFamily = new FontFamily(DefaultFontName);
-            Uri uri = new("pack://application:,,,/Fonts/");
-            FontFamily = new FontFamily(uri, "./mplus-1m-light.ttf#M+ 1m light");
+            FontFamily = new FontFamily("MS Gothic");
+            //Uri uri = new("pack://application:,,,/Fonts/");
+            //FontFamily = new FontFamily(uri, "./mplus-1m-light.ttf#M+ 1m light");
         }
 
         FrameworkElement parent = (FrameworkElement)Parent;
@@ -215,25 +252,22 @@ public partial class CadConsoleView : FrameworkElement
         {
             Scroll.ScrollChanged += Scroll_ScrollChanged;
         }
-    }
-
-    private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
-    {
-        Log.plx("");
-        mIsLoaded = true;
 
         mAutoScroller = new(this);
         mAutoScroller.Scroll = AutoScrollEvent;
-
-        Palette.Brushes[Palette.DefaultFColor] = mForeground;
-        Palette.Brushes[Palette.DefaultBColor] = mBackground;
 
         DefaultAttr.FColor = Palette.DefaultFColor;
         DefaultAttr.BColor = Palette.DefaultBColor;
 
         CurrentAttr = DefaultAttr;
 
-        RecalcCharaSize();
+        RecalcMetrics();
+    }
+
+    private void CadConsoleView_Loaded(object sender, RoutedEventArgs e)
+    {
+        Log.plx("");
+        mIsLoaded = true;
 
         NewLine();
 
@@ -247,21 +281,21 @@ public partial class CadConsoleView : FrameworkElement
         Scroll.ScrollToVerticalOffset(Scroll.VerticalOffset + dy);
     }
 
-    private void RecalcCharaSize()
+    private void RecalcMetrics()
     {
-        if (mTypeface == null)
+        if (Typeface == null)
         {
             return;
         }
 
-        FormattedText ft = GetFormattedText("A", mForeground);
+        FormattedText ft = GetFormattedText("A", Foreground);
 
         if (ft != null)
         {
             CW = ft.Width;
             CH = ft.Height;
 
-            FormattedText ftk = GetFormattedText("漢", mForeground);
+            FormattedText ftk = GetFormattedText("漢", Foreground);
             if (ftk != null)
             {
                 CWF = ftk.Width;
@@ -270,12 +304,15 @@ public partial class CadConsoleView : FrameworkElement
             {
                 CWF = CW * 2;
             }
+
+            LineHeight = CH;
         }
         else
         {
             CW = 1;
             CH = 1;
             CWF = 1;
+            LineHeight = 1;
         }
     }
 
@@ -324,15 +361,15 @@ public partial class CadConsoleView : FrameworkElement
         };
     }
 
-    private void RemoveContextMenu()
-    {
-        if (ContextMenu != null)
-        {
-            ContextMenu.IsOpen = false;
-        }
+    //private void RemoveContextMenu()
+    //{
+    //    if (ContextMenu != null)
+    //    {
+    //        ContextMenu.IsOpen = false;
+    //    }
 
-        ContextMenu = null;
-    }
+    //    ContextMenu = null;
+    //}
 
     //
     // MouseDown += handler ではなく、OnMouseDownをoverrideするように
@@ -446,7 +483,7 @@ public partial class CadConsoleView : FrameworkElement
 
             RawSel.End(tp.Row, tp.Col);
 
-            Sel = TextRange.Naormalized(RawSel);
+            Sel = TextRange.Normalized(RawSel);
 
             InvalidateVisual();
 
@@ -458,7 +495,7 @@ public partial class CadConsoleView : FrameworkElement
     {
         TextPos tp = new();
 
-        int row = (int)(p.Y / mLineHeight);
+        int row = (int)(p.Y / LineHeight);
 
         row = Math.Min(row, mList.Count - 1);
 
@@ -467,7 +504,7 @@ public partial class CadConsoleView : FrameworkElement
             row = 0;
         }
 
-        int col = PointToTextCol(p.X - mTextLeftMargin, mList[row].Data, CW, CWF);
+        int col = PointToTextCol(p.X - TextLeftMargin, mList[row].Data, CW, CWF);
 
         tp.Row = row;
         tp.Col = col;
@@ -573,7 +610,7 @@ public partial class CadConsoleView : FrameworkElement
 
     private void RecalcSize()
     {
-        Height = mLineHeight * mList.Count;
+        Height = LineHeight * mList.Count;
 
         if (Scroll != null)
         {
@@ -670,7 +707,7 @@ public partial class CadConsoleView : FrameworkElement
 
         line = mList[idx];
 
-        line.Parse(s);
+        line.Parse(s, DefaultAttr);
     }
 
     public void PrintF(string format, params object[] args)
@@ -745,35 +782,37 @@ public partial class CadConsoleView : FrameworkElement
 
     protected override void OnRender(DrawingContext dc)
     {
-        double offset = 0;
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+
+        double scrollOffset = 0;
         double dispHeight = ActualHeight;
 
         if (Scroll != null)
         {
-            offset = Scroll.VerticalOffset;
+            scrollOffset = Scroll.VerticalOffset;
             dispHeight = Scroll.ActualHeight;
         }
 
         Point p = default;
         Rect rect = default;
 
-        long topNumber = (long)offset / (long)mLineHeight;
+        long topNumber = (long)scrollOffset / (long)LineHeight;
 
-        double textOffset = (mLineHeight - mFontSize) / 2.0 - 3;
+        double textOffset = 0;
 
         p.X = 0;
-        p.Y = mLineHeight * topNumber;
+        p.Y = LineHeight * topNumber;
 
         Point tp;
 
         rect.X = 0;
         rect.Y = p.Y;
         rect.Width = ActualWidth;
-        rect.Height = mLineHeight + 0.5;
+        rect.Height = LineHeight;
 
         int n = (int)topNumber;
 
-        double rangeY = offset + dispHeight;
+        double rangeY = scrollOffset + dispHeight;
 
         //DOut.pl($"sr:{Sel.SP.Row} sc:{Sel.SP.Col} - er:{Sel.EP.Row} ec:{Sel.EP.Col}");
 
@@ -789,29 +828,29 @@ public partial class CadConsoleView : FrameworkElement
 
             rect.Y = p.Y;
 
-            dc.DrawRectangle(mBackground, null, rect);
+            dc.DrawRectangle(Background, null, rect);
 
             tp = p;
 
-            tp.X = mTextLeftMargin;
+            tp.X = TextLeftMargin;
             tp.Y += textOffset;
 
             DrawText(dc, item, tp, n - 1);
 
             //DrawSelectedRange(dc, n - 1);
 
-            p.Y += mLineHeight;
+            p.Y += LineHeight;
         }
 
         if (p.Y < rangeY)
         {
             Rect sr = new(0, p.Y, ActualWidth, rangeY - p.Y);
-            dc.DrawRectangle(mBackground, null, sr);
+            dc.DrawRectangle(Background, null, sr);
         }
 
         if (IsFocused)
         {
-            Rect sr = new(0, offset + 1, ActualWidth, dispHeight - 1);
+            Rect sr = new(0, scrollOffset + 1, ActualWidth, dispHeight - 1);
             dc.DrawRectangle(null, FocusedBorderPen, sr);
         }
     }
@@ -917,7 +956,7 @@ public partial class CadConsoleView : FrameworkElement
 
         FormattedText ft = GetFormattedText(s, foreground);
 
-        Rect r = new(pt.X, row * mLineHeight, ft.WidthIncludingTrailingWhitespace, mLineHeight);
+        Rect r = new(pt.X, row * LineHeight, ft.WidthIncludingTrailingWhitespace, LineHeight);
 
         Brush background = Palette.Brushes[attr.BColor];
 
@@ -925,7 +964,7 @@ public partial class CadConsoleView : FrameworkElement
 
         Point tpt = pt;
 
-        tpt.Y = pt.Y + (mLineHeight - ft.Height) / 2;
+        tpt.Y = pt.Y + (LineHeight - ft.Height) / 2;
 
         dc.DrawText(ft, tpt);
         pt.X += ft.WidthIncludingTrailingWhitespace;
@@ -936,7 +975,7 @@ public partial class CadConsoleView : FrameworkElement
     {
         if (Sel.IsValid && row >= Sel.SP.Row && row <= Sel.EP.Row)
         {
-            Rect r = new(mTextLeftMargin, row * mLineHeight - 0.5, 0, mLineHeight);
+            Rect r = new(TextLeftMargin, row * LineHeight, 0, LineHeight);
 
             TextSpan ts = Sel.GetRowSpan(row, mList[row].Data.Length);
 
@@ -945,11 +984,11 @@ public partial class CadConsoleView : FrameworkElement
             double sp = TextColToPoint(ts.Start - 1, mList[row].Data, CW, CWF);
             double ep = TextColToPoint(ts.Start + ts.Len - 1, mList[row].Data, CW, CWF);
 
-            r.X = sp + mTextLeftMargin;
+            r.X = sp + TextLeftMargin;
             r.Width = ep - sp;
 
-            dc.PushOpacity(mSelectedBackgroundOpacity);
-            dc.DrawRectangle(mSelectedBackground, null, r);
+            dc.PushOpacity(SelectedBackgroundOpacity);
+            dc.DrawRectangle(SelectedBackground, null, r);
             dc.Pop();
         }
     }
@@ -960,8 +999,8 @@ public partial class CadConsoleView : FrameworkElement
         FormattedText formattedText = new(s,
                                         System.Globalization.CultureInfo.CurrentCulture,
                                         FlowDirection.LeftToRight,
-                                        mTypeface,
-                                        mFontSize,
+                                        Typeface,
+                                        FontSize,
                                         brush,
                                         VisualTreeHelper.GetDpi(this).PixelsPerDip);
         return formattedText;

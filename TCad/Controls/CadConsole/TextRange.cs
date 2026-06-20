@@ -90,7 +90,7 @@ public struct TextRange
         return SP.Row == EP.Row && SP.Col == EP.Col;
     }
 
-    public static TextRange Naormalized(TextRange tr)
+    public static TextRange Normalized(TextRange tr)
     {
         if (tr.EP < tr.SP)
         {
