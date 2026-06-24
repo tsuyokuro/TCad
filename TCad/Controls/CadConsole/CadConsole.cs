@@ -38,20 +38,6 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    protected Brush mSelectedBackground = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
-    public Brush SelectedBackground
-    {
-        get => mSelectedBackground;
-        set => mSelectedBackground = value;
-    }
-
-    protected double mSelectedBackgroundOpacity = 0.3;
-    public double SelectedBackgroundOpacity
-    {
-        get => mSelectedBackgroundOpacity;
-        set => mSelectedBackgroundOpacity = value;
-    }
-
     protected double mTextLeftMargin = 8.0;
     public double TextLeftMargin
     {
@@ -61,6 +47,30 @@ public partial class CadConsoleView : FrameworkElement
             mTextLeftMargin = value;
             UpdateView();
         }
+    }
+
+    public string Colors
+    {
+        get => Palette.ToStr();
+        set
+        {
+            Palette.FromStr(value);
+            UpdateView();
+        }
+    }
+
+    protected Brush mSelectedBackground = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
+    public Brush SelectedBackground
+    {
+        get => mSelectedBackground;
+        set => mSelectedBackground = value;
+    }
+
+    protected double mSelectedBackgroundOpacity = 0.8;
+    public double SelectedBackgroundOpacity
+    {
+        get => mSelectedBackgroundOpacity;
+        set => mSelectedBackgroundOpacity = value;
     }
 
     protected double mLineHeight = 1;
@@ -126,7 +136,7 @@ public partial class CadConsoleView : FrameworkElement
 
     protected bool mIsLoaded = false;
 
-    protected ScrollViewer Scroll;
+    protected ScrollViewer mScrollViewer;
 
     protected FastRingBuffer<TextLine> mList = new();
 
@@ -245,12 +255,12 @@ public partial class CadConsoleView : FrameworkElement
 
         if (parent is ScrollViewer)
         {
-            Scroll = (ScrollViewer)parent;
+            mScrollViewer = (ScrollViewer)parent;
         }
 
-        if (Scroll != null)
+        if (mScrollViewer != null)
         {
-            Scroll.ScrollChanged += Scroll_ScrollChanged;
+            mScrollViewer.ScrollChanged += Scroll_ScrollChanged;
         }
 
         mAutoScroller = new(this);
@@ -278,7 +288,7 @@ public partial class CadConsoleView : FrameworkElement
 
     private void AutoScrollEvent(double dx, double dy)
     {
-        Scroll.ScrollToVerticalOffset(Scroll.VerticalOffset + dy);
+        mScrollViewer.ScrollToVerticalOffset(mScrollViewer.VerticalOffset + dy);
     }
 
     private void RecalcMetrics()
@@ -612,11 +622,11 @@ public partial class CadConsoleView : FrameworkElement
     {
         Height = LineHeight * mList.Count;
 
-        if (Scroll != null)
+        if (mScrollViewer != null)
         {
-            if (Height < Scroll.ActualHeight)
+            if (Height < mScrollViewer.ActualHeight)
             {
-                Height = Scroll.ActualHeight;
+                Height = mScrollViewer.ActualHeight;
             }
         }
     }
@@ -787,10 +797,10 @@ public partial class CadConsoleView : FrameworkElement
         double scrollOffset = 0;
         double dispHeight = ActualHeight;
 
-        if (Scroll != null)
+        if (mScrollViewer != null)
         {
-            scrollOffset = Scroll.VerticalOffset;
-            dispHeight = Scroll.ActualHeight;
+            scrollOffset = mScrollViewer.VerticalOffset;
+            dispHeight = mScrollViewer.ActualHeight;
         }
 
         Point p = default;
@@ -859,36 +869,20 @@ public partial class CadConsoleView : FrameworkElement
 
     protected void DrawText(DrawingContext dc, TextLine line, Point pt, int row)
     {
-        int selS = 0;
-        int selE = int.MaxValue;
-        bool inRange = (Sel.SP.Row <= row &&  Sel.EP.Row >= row);
+        TextSpan rowSpan = Sel.GetRowSpan(row);
 
-        if (inRange)
-        {
-            if (row == Sel.SP.Row)
-            {
-                selS = Sel.SP.Col;
-            }
-
-
-            if (row == Sel.EP.Row)
-            {
-                selE = Sel.EP.Col;
-            }
-        }
-
+        bool inRange = rowSpan.Len > 0;
+        int selS = rowSpan.Start;
+        int selE = rowSpan.Start + (rowSpan.Len - 1);
 
         //Log.pl($"row:{row} inRange:{inRange} sels:{selS} sele:{selE}");
 
-
-        //TextAttr selTextAttr = new TextAttr(7,1);
         foreach (AttrSpan attr in line.Attrs)
         {
             int ps = attr.Start;
             int pe = ps + attr.Len - 1;
 
-            TextAttr selTextAttr = new TextAttr(attr.Attr.BColor, attr.Attr.FColor);
-
+            TextAttr selTextAttr = new(attr.Attr.BColor, attr.Attr.FColor);
 
             bool notSel = !inRange || ps > selE || pe < selS;
 
@@ -899,7 +893,6 @@ public partial class CadConsoleView : FrameworkElement
                 pt = RenderText(dc, attr.Attr, s, pt, row);
                 continue;
             }
-
 
 
             if (ps >= selS && pe <= selE)
@@ -1008,12 +1001,12 @@ public partial class CadConsoleView : FrameworkElement
 
     public void ScrollToEnd()
     {
-        if (Scroll == null)
+        if (mScrollViewer == null)
         {
             return;
         }
 
-        Scroll.ScrollToEnd();
+        mScrollViewer.ScrollToEnd();
     }
 
     private void UpdateView()

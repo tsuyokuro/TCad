@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using System.Windows.Media;
 
 namespace TCad.Controls.CadConsole;
@@ -62,6 +64,24 @@ public class AnsiPalette
     {
         Brushes = new Brush[18];
 
+        // 0 Balck
+        // 1 Red
+        // 2 Green
+        // 3 Yellow
+        // 4 Blue
+        // 5 Magenta
+        // 6 Cyan
+        // 7 White
+
+        // 8 Bright Black
+        // 9 Bright Red
+        // 10 Bright Green
+        // 11 Bright Yellow
+        // 12 Bright Blue
+        // 13 Bright Magenta
+        // 14 Bright Cyan
+        // 15 Bright White
+
         Brushes[0] = new SolidColorBrush(Colors.Black);
         Brushes[1] = new SolidColorBrush(Colors.MediumVioletRed);
         Brushes[2] = new SolidColorBrush(Colors.SeaGreen);
@@ -82,5 +102,65 @@ public class AnsiPalette
 
         Brushes[16] = new SolidColorBrush(Colors.LightGray);
         Brushes[17] = new SolidColorBrush(Colors.Black);
+    }
+
+    public void FromStr(string str)
+    {
+        string[] t = str.Split(',');
+
+        int num = Math.Min(t.Length, Brushes.Length);
+
+        int nc = 0;
+
+
+        for (int i = 0; i < num; i++)
+        {
+            string v = t[i].Trim();
+            v = v.Trim('#');
+    
+
+            if (UInt32.TryParse(v, System.Globalization.NumberStyles.HexNumber, null, out UInt32 color))
+            {
+                Brushes[i] = new SolidColorBrush(
+                    Color.FromRgb(
+                        (byte)((color & 0xFF0000) >> 16),
+                        (byte)((color & 0xFF00) >> 8),
+                        (byte)(color & 0xFF)
+                    ));
+            }
+            else
+            {
+                nc++;
+            }
+        }
+    }
+
+    public string ToStr()
+    {
+        StringBuilder sb = new();
+
+        for (var i = 0; i < Brushes.Length; i++)
+        {
+            var brush = Brushes[i];
+            if (brush != null)
+            {
+                var color = ((SolidColorBrush)brush).Color;
+                sb.Append($"#{color.R:X2}{color.G:X2}{color.B:X2}");
+            }
+            else
+            {
+                sb.Append("");
+            }
+
+            sb.Append(",");
+        }
+
+        if (sb.Length > 0 && sb[sb.Length - 1] == ',')
+        {
+            sb.Remove(sb.Length - 1, 1);
+        }
+
+
+        return sb.ToString();
     }
 }

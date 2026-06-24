@@ -39,20 +39,7 @@ public struct AttrSpan
 public class TextLine
 {
     public string Data = "";
-    public List<AttrSpan> Attrs = new();
-
-    private AttrSpan LastAttrSpan
-    {
-        get
-        {
-            return Attrs[Attrs.Count - 1];
-        }
-
-        set
-        {
-            Attrs[Attrs.Count - 1] = value;
-        }
-    }
+    public List<AttrSpan> Attrs = [];
 
     public TextLine(TextAttr attr)
     {
@@ -65,6 +52,12 @@ public class TextLine
         Attrs.Clear();
         Attrs.Add(new AttrSpan(lastAttrSpan.Attr, 0, 0));
         Data = "";
+    }
+
+    private AttrSpan LastAttrSpan
+    {
+        get => Attrs[^1];
+        set => Attrs[^1] = value;
     }
 
     private void AppendAttr(TextAttr attr)
