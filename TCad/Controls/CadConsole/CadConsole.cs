@@ -1,11 +1,13 @@
+//#define USE_FORMATTED_TEXT
+
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-
 using TCad.Logger;
 using TCad.Util;
 
@@ -88,18 +90,26 @@ public partial class CadConsoleView : FrameworkElement
         {
             mFontFamily = value;
             mTypeface = new Typeface(mFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+            if (!mTypeface.TryGetGlyphTypeface(out mGlyphTypeface))
+            {
+                mGlyphTypeface = null;
+            }
+
             RecalcMetrics();
         }
     }
 
     protected Typeface mTypeface;
-    public Typeface Typeface
+    protected Typeface Typeface
     {
         get => mTypeface;
-        set
-        {
-            mTypeface = value;
-        }
+    }
+
+    protected GlyphTypeface mGlyphTypeface;
+    protected GlyphTypeface GlyphTypeface
+    {
+        get => mGlyphTypeface;
     }
 
     protected double mFontSize = 10.0;
@@ -176,19 +186,6 @@ public partial class CadConsoleView : FrameworkElement
         Sel.Reset();
     }
 
-    //public void HandlingKey(bool handle)
-    //{
-    //    if (handle)
-    //    {
-    //        KeyUp -= CadConsoleView_KeyUp;
-    //        KeyUp += CadConsoleView_KeyUp;
-    //    }
-    //    else
-    //    {
-    //        KeyUp -= CadConsoleView_KeyUp;
-    //    }
-    //}
-
     public bool ProcessKeyEvent(KeyEventArgs e)
     {
         if (!e.IsUp)
@@ -220,10 +217,6 @@ public partial class CadConsoleView : FrameworkElement
         RecalcSize();
         SizeChanged += CadConsoleView_SizeChanged;
     }
-
-    //private void CadConsoleView_KeyUp(object sender, KeyEventArgs e)
-    //{
-    //}
 
     private void CadConsoleView_LostFocus(object sender, RoutedEventArgs e)
     {
@@ -291,6 +284,8 @@ public partial class CadConsoleView : FrameworkElement
         mScrollViewer.ScrollToVerticalOffset(mScrollViewer.VerticalOffset + dy);
     }
 
+
+#if USE_FORMATTED_TEXT
     private void RecalcMetrics()
     {
         if (Typeface == null)
@@ -325,6 +320,59 @@ public partial class CadConsoleView : FrameworkElement
             LineHeight = 1;
         }
     }
+#else
+    private void RecalcMetrics()
+    {
+        if (Typeface == null)
+        {
+            return;
+        }
+
+        double w = 0;
+        double h = 0;
+
+        double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+
+        ushort i = 0;
+        if (mGlyphTypeface.CharacterToGlyphMap.TryGetValue('A', out i))
+        {
+            w = mGlyphTypeface.AdvanceWidths[i] * FontSize;
+            h = (mGlyphTypeface.Height) * FontSize;
+        }
+
+        if (w != 0 && h != 0)
+        {
+            CW = w;
+            CH = h;
+
+            w = 0;
+
+            if (mGlyphTypeface.CharacterToGlyphMap.TryGetValue('漢', out i))
+            {
+                w = mGlyphTypeface.AdvanceWidths[i] * FontSize;
+            }
+
+            if (w != 0)
+            {
+                CWF = w;
+            }
+            else
+            {
+                CWF = CW * 2;
+            }
+
+            LineHeight = CH;
+        }
+        else
+        {
+            CW = 1;
+            CH = 1;
+            CWF = 1;
+            LineHeight = 1;
+        }
+    }
+#endif
 
     private void CopySelected(object obj, RoutedEventArgs args)
     {
@@ -371,21 +419,6 @@ public partial class CadConsoleView : FrameworkElement
         };
     }
 
-    //private void RemoveContextMenu()
-    //{
-    //    if (ContextMenu != null)
-    //    {
-    //        ContextMenu.IsOpen = false;
-    //    }
-
-    //    ContextMenu = null;
-    //}
-
-    //
-    // MouseDown += handler ではなく、OnMouseDownをoverrideするように
-    // しないと、Focus()を呼んでもすぐにLostFocusしてしまう
-    // 上手くEventを処理済みに出来ないのかもしれない
-    //
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         Point p = e.GetPosition(this);
@@ -806,7 +839,7 @@ public partial class CadConsoleView : FrameworkElement
         Point p = default;
         Rect rect = default;
 
-        long topNumber = (long)scrollOffset / (long)LineHeight;
+        long topNumber = (long)(scrollOffset / LineHeight);
 
         double textOffset = 0;
 
@@ -823,8 +856,6 @@ public partial class CadConsoleView : FrameworkElement
         int n = (int)topNumber;
 
         double rangeY = scrollOffset + dispHeight;
-
-        //DOut.pl($"sr:{Sel.SP.Row} sc:{Sel.SP.Col} - er:{Sel.EP.Row} ec:{Sel.EP.Col}");
 
         while (p.Y < rangeY)
         {
@@ -933,7 +964,7 @@ public partial class CadConsoleView : FrameworkElement
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 
             }
-        }  
+        }
 
         //foreach (AttrSpan attr in line.Attrs)
         //{
@@ -942,6 +973,7 @@ public partial class CadConsoleView : FrameworkElement
         //}
     }
 
+#if USE_FORMATTED_TEXT
     protected Point RenderText(
         DrawingContext dc, TextAttr attr, string s, Point pt, int row)
     {
@@ -963,6 +995,40 @@ public partial class CadConsoleView : FrameworkElement
         pt.X += ft.WidthIncludingTrailingWhitespace;
         return pt;
     }
+#else
+    // TODO: GlyphRunを使った描画に変更する
+
+    protected Point RenderText(
+        DrawingContext dc, TextAttr attr, string s, Point pt, int row)
+    {
+        Brush foreground = Palette.Brushes[attr.FColor];
+
+        double textHeight = mGlyphTypeface.Height * FontSize;
+        double baseline = mGlyphTypeface.Baseline * FontSize;
+        double originY = ((LineHeight - textHeight) / 2.0) + baseline;
+
+        Point tpt = pt;
+
+        tpt.Y = pt.Y + originY;
+
+        GlyphRunWrapper gr = new(mGlyphTypeface, FontSize, this, s, tpt);
+
+
+        Rect r = new(pt.X, row * LineHeight, gr.Width, LineHeight);
+
+        Brush background = Palette.Brushes[attr.BColor];
+
+        dc.DrawRectangle(background, null, r);
+
+        if (gr.GlyphRun != null)
+        {
+            dc.DrawGlyphRun(foreground, gr.GlyphRun);
+        }
+
+        pt.X += gr.Width;
+        return pt;
+    }
+#endif
 
     protected void DrawSelectedRange(DrawingContext dc, int row)
     {
@@ -985,7 +1051,7 @@ public partial class CadConsoleView : FrameworkElement
             dc.Pop();
         }
     }
-    #endregion
+#endregion
 
     protected FormattedText GetFormattedText(string s, Brush brush)
     {
@@ -998,6 +1064,7 @@ public partial class CadConsoleView : FrameworkElement
                                         VisualTreeHelper.GetDpi(this).PixelsPerDip);
         return formattedText;
     }
+
 
     public void ScrollToEnd()
     {
@@ -1014,6 +1081,65 @@ public partial class CadConsoleView : FrameworkElement
         if (mIsLoaded)
         {
             InvalidateVisual();
+        }
+    }
+
+    protected class GlyphRunWrapper
+    {
+        public GlyphRun GlyphRun
+        {
+            get;
+            private set;
+        }
+
+        public double Width
+        {
+            get;
+            private set;
+        } = 0;
+
+        public GlyphRunWrapper(
+            GlyphTypeface typeface,
+            double fontSize,
+            Visual visual,
+            string s,
+            Point p)
+        {
+            Create(typeface, fontSize, visual, s, p);
+        }
+
+        void Create(
+            GlyphTypeface typeface,
+            double fontSize,
+            Visual visual,
+            string s,
+            Point p)
+        {
+            if (s.Length == 0)
+            {
+                return;
+            }
+            float pixelsPerDip = (float)VisualTreeHelper.GetDpi(visual).PixelsPerDip;
+            var glyphIndices = new List<ushort>();
+            var advanceWidths = new List<double>();
+            foreach (char ch in s)
+            {
+                ushort glyphIndex = typeface.CharacterToGlyphMap[ch];
+                glyphIndices.Add(glyphIndex);
+                double width = typeface.AdvanceWidths[glyphIndex] * fontSize;
+                advanceWidths.Add(width);
+                Width += width;
+            }
+
+
+            GlyphRun = new(
+                typeface, 0, false, fontSize,
+                pixelsPerDip,
+                glyphIndices,
+                p,
+                advanceWidths,
+                null, null, null, null, null, null
+            );
         }
     }
 }
