@@ -668,6 +668,11 @@ public class TestCommands
 
         Glu.TessEndPolygon(htess);
 
+        double prop;
+
+        Glu.GetTessProperty(htess, GluTessParameter.TessWindingRule, out prop);
+
+
         Glu.DeleteTess(htess);
     }
 
@@ -825,6 +830,20 @@ public class TestCommands
             Log.pl("end");
         });
     }
+    private void Test10()
+    {
+        Stopwatch sw = new();
+        sw.Start();
+
+
+        for (int i = 0; i < 2000; i++)
+        {
+            ItConsole.println(AnsiEsc.BGreen + $"{i}" + AnsiEsc.BMagenta + "テスト！" + AnsiEsc.BCyan + "-cyan-" + AnsiEsc.Reset + "abcdefg");
+        }
+
+        sw.Stop();
+        ItConsole.println("Test10 completed in " + sw.ElapsedMilliseconds + " ms");
+    }
 
     public bool ExecCommand(string s)
     {
@@ -942,6 +961,11 @@ public class TestCommands
             ItConsole.print("\r5/5");
             ItConsole.print("\nFinish!\n");
         }
+        else if (cmd == "@test10")
+        {
+            Test10();
+        }
+
         else
         {
             return false;

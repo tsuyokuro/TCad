@@ -4,6 +4,8 @@ using OpenTK.Mathematics;
 using System;
 using TCad.MathFunctions;
 
+#pragma warning disable IDE0054
+
 namespace TCad.Plotter.DrawContexts;
 
 class DrawContextGLPers : DrawContextGL
@@ -101,8 +103,8 @@ class DrawContextGLPers : DrawContextGL
 
         vector3_t ev = mLookAt - mEye;
 
-        vector3_t a = new vector3_t(ev);
-        vector3_t b = new vector3_t(mUpVector);
+        vector3_t a = new(ev);
+        vector3_t b = new(mUpVector);
 
         vector3_t axis = CadMath.Normal(a, b);
 
@@ -163,7 +165,7 @@ class DrawContextGLPers : DrawContextGL
 
     public override DrawContext Clone()
     {
-        DrawContextGLPers dc = new DrawContextGLPers();
+        DrawContextGLPers dc = new();
 
         dc.CopyProjectionMetrics(this);
         dc.CopyCamera(this);

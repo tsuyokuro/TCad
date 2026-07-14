@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace OpenGL.GLU;
 
-static partial class Glu
+public static partial class Glu
 {
     public delegate void TessBeginCallback(int type);
     public delegate void TessBeginDataCallback(int type, [In] IntPtr polygonData);

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using TCad.Logger;
 using TCad.Plotter.Model.Figure;
 
+#pragma warning disable IDE0028
+#pragma warning disable IDE0306
+
+
 namespace TCad.Plotter;
 
 public struct FigureBelong
@@ -30,21 +34,21 @@ public class CadObjectDB
         set => mCurrentLayer = value;
     }
 
-    private Dictionary<uint, CadLayer> mLayerIdMap = new Dictionary<uint, CadLayer>();
+    private Dictionary<uint, CadLayer> mLayerIdMap = new();
     public Dictionary<uint, CadLayer> LayerMap
     {
         get => mLayerIdMap;
         set => mLayerIdMap = value;
     }
 
-    private IdProvider mLayerIdProvider = new IdProvider();
+    private readonly IdProvider mLayerIdProvider = new();
     public IdProvider LayerIdProvider
     {
         get => mLayerIdProvider;
     }
 
 
-    private List<CadLayer> mLayerList = new List<CadLayer>();
+    private List<CadLayer> mLayerList = new();
     public List<CadLayer> LayerList
     {
         get => mLayerList;
@@ -79,7 +83,7 @@ public class CadObjectDB
 
     public CadLayer NewLayer(bool addLayerList = false, bool selectCurrent = false)
     {
-        CadLayer layer = new CadLayer();
+        CadLayer layer = new();
         AddLayer(layer);
 
         if (addLayerList)
@@ -162,14 +166,14 @@ public class CadObjectDB
 
 
     #region "Manage Figure"
-    private Dictionary<uint, CadFigure> mFigureIdMap = new Dictionary<uint, CadFigure>();
+    private Dictionary<uint, CadFigure> mFigureIdMap = new();
     public Dictionary<uint, CadFigure> FigureMap
     {
         get => mFigureIdMap;
         set => mFigureIdMap = value;
     }
 
-    IdProvider mFigIdProvider = new IdProvider();
+    readonly IdProvider mFigIdProvider = new();
     public IdProvider FigIdProvider
     {
         get => mFigIdProvider;
@@ -244,9 +248,9 @@ public class CadObjectDB
     #region Query
     public List<uint> GetSelectedFigIDList()
     {
-        List<uint> idList = new List<uint>();
+        List<uint> idList = new();
 
-        HashSet<uint> idSet = new HashSet<uint>();
+        HashSet<uint> idSet = new();
 
         foreach (CadLayer layer in LayerList)
         {
@@ -270,9 +274,9 @@ public class CadObjectDB
 
     public List<CadFigure> GetSelectedFigList()
     {
-        List<CadFigure> list = new List<CadFigure>();
+        List<CadFigure> list = new();
 
-        HashSet<CadFigure> fset = new HashSet<CadFigure>();
+        HashSet<CadFigure> fset = new();
 
         foreach (CadLayer layer in LayerList)
         {
@@ -296,7 +300,7 @@ public class CadObjectDB
 
     public List<CadFigure> GetSelectedRootFigureList()
     {
-        List<CadFigure> figList = new List<CadFigure>();
+        List<CadFigure> figList = new();
 
         foreach (CadLayer layer in LayerList)
         {
@@ -339,7 +343,7 @@ public class CadObjectDB
         Log.Indent++;
 
         {
-            List<uint> ids = new List<uint>(mLayerIdMap.Keys);
+            List<uint> ids = new(mLayerIdMap.Keys);
 
             Log.pl("Layer map {");
             Log.Indent++;
@@ -371,7 +375,7 @@ public class CadObjectDB
 
     public void dumpFigureMap()
     {
-        List<uint> ids = new List<uint>(mFigureIdMap.Keys);
+        List<uint> ids = new(mFigureIdMap.Keys);
 
         Log.pl("Figure map {");
         Log.Indent++;

@@ -55,7 +55,7 @@ class DrawContextPrinter : DrawContextGDI
 
     public override DrawContext Clone()
     {
-        DrawContextPrinter dc = new DrawContextPrinter();
+        DrawContextPrinter dc = new();
 
         dc.CopyProjectionMetrics(this);
         dc.CopyCamera(this);

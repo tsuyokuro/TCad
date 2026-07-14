@@ -12,6 +12,10 @@ using TCad.Plotter.Serializer.v1004;
 using TCad.Util;
 using JObj = System.Text.Json.Nodes.JsonObject;
 
+#pragma warning disable IDE0290
+#pragma warning disable IDE0059
+#pragma warning disable IDE0028
+
 namespace TCad.Plotter.Serializer;
 
 public class CadFileException : Exception
@@ -32,17 +36,13 @@ public class CadFileException : Exception
 
     public string getMessage()
     {
-        switch (Reason)
+        return Reason switch
         {
-            case ReasonCode.OTHER:
-                return "Unknown error";
-            case ReasonCode.INCORRECT_TYPE:
-                return "Incorrect type signature";
-            case ReasonCode.DESERIALIZE_FAILED:
-                return "Deserialize failed";
-            default:
-                return "Unknown error";
-        }
+            ReasonCode.OTHER => "Unknown error",
+            ReasonCode.INCORRECT_TYPE => "Incorrect type signature",
+            ReasonCode.DESERIALIZE_FAILED => "Deserialize failed",
+            _ => "Unknown error",
+        };
     }
 }
 
@@ -79,11 +79,11 @@ public class DeserializeContext
 
 public class MpCadFile
 {
-    public static VersionCode CurrentVersion = new VersionCode(1, 0, 0, 4);
+    public static readonly  VersionCode CurrentVersion = new(1, 0, 0, 4);
 
-    private static byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
-    private static byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
-    private static string JsonSign = "TCAD_JSON";
+    private static readonly byte[] SignOld = Encoding.ASCII.GetBytes("KCAD_BIN");
+    private static readonly byte[] Sign = Encoding.ASCII.GetBytes("TCAD_BIN");
+    private static readonly string JsonSign = "TCAD_JSON";
 
     static MpCadFile()
     {
@@ -91,7 +91,7 @@ public class MpCadFile
 
     public static CadData Load(string fname)
     {
-        FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
+        FileStream fs = new(fname, FileMode.Open, FileAccess.Read);
 
         byte[] sign = new byte[Sign.Length];
 
@@ -115,8 +115,8 @@ public class MpCadFile
 
         Log.pl($"MpCadFile.Load {fname} {VersionStr(version)}");
 
-        VersionCode fileVersion = new VersionCode(version);
-        DeserializeContext dc = new DeserializeContext(fileVersion, SerializeType.MP_BIN);
+        VersionCode fileVersion = new(version);
+        DeserializeContext dc = new(fileVersion, SerializeType.MP_BIN);
 
         try
         {
@@ -147,14 +147,14 @@ public class MpCadFile
 
     public static CadData LoadJson(string fname)
     {
-        FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read);
+        FileStream fs = new(fname, FileMode.Open, FileAccess.Read);
 
         byte[] data = new byte[fs.Length];
         fs.ReadExactly(data);
         fs.Close();
 
 
-        Utf8JsonReader jsonReader = new Utf8JsonReader(data);
+        Utf8JsonReader jsonReader = new(data);
 
         string header = GetJsonObject(data, ref jsonReader, "header");
         if (header == null) return null;
@@ -172,15 +172,15 @@ public class MpCadFile
         }
 
         if (!jheader.RootElement.TryGetProperty("version", out je)) return null;
-        string version = jheader.RootElement.GetProperty("version").GetString();
+        string version = je.GetString();
 
         string body = GetJsonObject(data, ref jsonReader, "body");
         if (body == null) return null;
 
         byte[] bin = MessagePackSerializer.ConvertFromJson(body);
 
-        VersionCode fileVersion = new VersionCode(version);
-        DeserializeContext dc = new DeserializeContext(fileVersion, SerializeType.JSON);
+        VersionCode fileVersion = new(version);
+        DeserializeContext dc = new(fileVersion, SerializeType.JSON);
 
         try
         {
@@ -256,7 +256,7 @@ public class MpCadFile
 
     public static void Save(string fname, CadData cd)
     {
-        SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.MP_BIN);
+        SerializeContext sc = new(CurrentVersion, SerializeType.MP_BIN);
 
         var mpcd = new MpCadData_v1004();
         mpcd.Store(sc, cd);
@@ -265,7 +265,7 @@ public class MpCadFile
 
         byte[] data = MessagePackSerializer.Serialize(mpcd);
 
-        FileStream fs = new FileStream(fname, FileMode.Create, FileAccess.Write);
+        FileStream fs = new(fname, FileMode.Create, FileAccess.Write);
 
         fs.Write(Sign, 0, Sign.Length);
         fs.Write(CurrentVersion.Bytes, 0, VersionCode.CodeLength);
@@ -283,7 +283,7 @@ public class MpCadFile
         header.Add("version", MpCadFile.CurrentVersion.Str);
         root.Add("header", header);
 
-        SerializeContext sc = new SerializeContext(CurrentVersion, SerializeType.JSON);
+        SerializeContext sc = new(CurrentVersion, SerializeType.JSON);
 
         var data = new MpCadData_v1004();
         data.Store(sc, cd);
@@ -296,7 +296,7 @@ public class MpCadFile
 
         string ss = root.ToIndentedString();
 
-        StreamWriter writer = new StreamWriter(fname);
+        StreamWriter writer = new(fname);
 
         writer.Write(ss);
 

@@ -836,10 +836,12 @@
                                     FontFamily="Fonts/mplus-1m-light.ttf#M+ 1m light"
                                     FontSize="14"
                                     Foreground="{StaticResource PromptTextColor}"
-                                    LineHeight="17"
-                                    SnapsToDevicePixels="True"
-                                    TextOptions.TextFormattingMode="Display" />
-
+                                    MaxLine="256">
+                                    <CadConsole:CadConsoleView.Colors>
+                                        #000000, #C71585, #2E8B57, #DAA520, #4682B4, #8B008B, #008B8B, #D3D3D3,
+                                        #000000, #F08080, #ADFF2F, #FFFF00, #6495ED, #BA55D3, #40E0D0, #FFFFFF
+                                    </CadConsole:CadConsoleView.Colors>
+                                </CadConsole:CadConsoleView>
                             </ScrollViewer>
                         </Border>
 

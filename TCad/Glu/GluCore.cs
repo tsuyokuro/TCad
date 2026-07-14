@@ -1,245 +1,245 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Runtime.InteropServices;
-#pragma warning disable 3019
-#pragma warning disable 1591
+using System.Security;
 
 namespace OpenGL.GLU;
 
-partial class Glu
+public static partial class Glu
 {
     internal static partial class Imports
     {
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBeginCurve", ExactSpelling = true)]
-        internal extern static void BeginCurve(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBeginCurve")]
+        internal static partial void BeginCurve(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBeginPolygon", ExactSpelling = true)]
-        internal extern static void BeginPolygon(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBeginPolygon")]
+        internal static partial void BeginPolygon(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBeginSurface", ExactSpelling = true)]
-        internal extern static void BeginSurface(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBeginSurface")]
+        internal static partial void BeginSurface(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBeginTrim", ExactSpelling = true)]
-        internal extern static void BeginTrim(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBeginTrim")]
+        internal static partial void BeginTrim(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild1DMipmapLevels", ExactSpelling = true)]
-        internal extern static Int32 Build1DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild1DMipmapLevels")]
+        internal static partial Int32 Build1DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild1DMipmaps", ExactSpelling = true)]
-        internal extern static Int32 Build1DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild1DMipmaps")]
+        internal static partial Int32 Build1DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, PixelFormat format, PixelType type, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild2DMipmapLevels", ExactSpelling = true)]
-        internal extern static Int32 Build2DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild2DMipmapLevels")]
+        internal static partial Int32 Build2DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild2DMipmaps", ExactSpelling = true)]
-        internal extern static Int32 Build2DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild2DMipmaps")]
+        internal static partial Int32 Build2DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, PixelFormat format, PixelType type, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild3DMipmapLevels", ExactSpelling = true)]
-        internal extern static Int32 Build3DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild3DMipmapLevels")]
+        internal static partial Int32 Build3DMipmapLevels(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, Int32 level, Int32 @base, Int32 max, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluBuild3DMipmaps", ExactSpelling = true)]
-        internal extern static Int32 Build3DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluBuild3DMipmaps")]
+        internal static partial Int32 Build3DMipmaps(TextureTarget target, Int32 internalFormat, Int32 width, Int32 height, Int32 depth, PixelFormat format, PixelType type, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluCheckExtension", ExactSpelling = true)]
-        internal extern static unsafe bool CheckExtension(Byte* extName, Byte* extString);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluCheckExtension")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static unsafe partial bool CheckExtension(Byte* extName, Byte* extString);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluCylinder", ExactSpelling = true)]
-        internal extern static void Cylinder(IntPtr quad, double @base, double top, double height, Int32 slices, Int32 stacks);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluCylinder")]
+        internal static partial void Cylinder(IntPtr quad, double @base, double top, double height, Int32 slices, Int32 stacks);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluDeleteNurbsRenderer", ExactSpelling = true)]
-        internal extern static void DeleteNurbsRenderer(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluDeleteNurbsRenderer")]
+        internal static partial void DeleteNurbsRenderer(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluDeleteQuadric", ExactSpelling = true)]
-        internal extern static void DeleteQuadric(IntPtr quad);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluDeleteQuadric")]
+        internal static partial void DeleteQuadric(IntPtr quad);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluDeleteTess", ExactSpelling = true)]
-        internal extern static void DeleteTess(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluDeleteTess")]
+        internal static partial void DeleteTess(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluDisk", ExactSpelling = true)]
-        internal extern static void Disk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluDisk")]
+        internal static partial void Disk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluEndCurve", ExactSpelling = true)]
-        internal extern static void EndCurve(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluEndCurve")]
+        internal static partial void EndCurve(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluEndPolygon", ExactSpelling = true)]
-        internal extern static void EndPolygon(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluEndPolygon")]
+        internal static partial void EndPolygon(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluEndSurface", ExactSpelling = true)]
-        internal extern static void EndSurface(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluEndSurface")]
+        internal static partial void EndSurface(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluEndTrim", ExactSpelling = true)]
-        internal extern static void EndTrim(IntPtr nurb);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluEndTrim")]
+        internal static partial void EndTrim(IntPtr nurb);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluErrorString", ExactSpelling = true)]
-        internal extern static IntPtr ErrorString(GluErrorCode error);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluErrorString")]
+        internal static partial IntPtr ErrorString(GluErrorCode error);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluGetString", ExactSpelling = true)]
-        internal extern static IntPtr GetString(GluStringName name);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluGetString")]
+        internal static partial IntPtr GetString(GluStringName name);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluGetNurbsProperty", ExactSpelling = true)]
-        internal extern static unsafe void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, [Out] float* data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluGetNurbsProperty")]
+        internal static unsafe partial void GetNurbsProperty(IntPtr nurb, GluNurbsProperty property, float* data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluGetTessProperty", ExactSpelling = true)]
-        internal extern static unsafe void GetTessProperty(IntPtr tess, GluTessParameter which, [Out] double* data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluGetTessProperty")]
+        internal static unsafe partial void GetTessProperty(IntPtr tess, GluTessParameter which, double* data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluLoadSamplingMatrices", ExactSpelling = true)]
-        internal extern static unsafe void LoadSamplingMatrices(IntPtr nurb, float* model, float* perspective, Int32* view);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluLoadSamplingMatrices")]
+        internal static unsafe partial void LoadSamplingMatrices(IntPtr nurb, float* model, float* perspective, Int32* view);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluLookAt", ExactSpelling = true)]
-        internal extern static void LookAt(double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluLookAt")]
+        internal static partial void LookAt(double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNewNurbsRenderer", ExactSpelling = true)]
-        internal extern static IntPtr NewNurbsRenderer();
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNewNurbsRenderer")]
+        internal static partial IntPtr NewNurbsRenderer();
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNewQuadric", ExactSpelling = true)]
-        internal extern static IntPtr NewQuadric();
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNewQuadric")]
+        internal static partial IntPtr NewQuadric();
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNewTess", ExactSpelling = true)]
-        internal extern static IntPtr NewTess();
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNewTess")]
+        internal static partial IntPtr NewTess();
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNextContour", ExactSpelling = true)]
-        internal extern static void NextContour(IntPtr tess, GluTessContour type);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNextContour")]
+        internal static partial void NextContour(IntPtr tess, GluTessContour type);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNurbsCallback", ExactSpelling = true)]
-        internal extern static void NurbsCallback(IntPtr nurb, GluNurbsCallback which, Delegate CallBackFunc);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNurbsCallback")]
+        internal static partial void NurbsCallback(IntPtr nurb, GluNurbsCallback which, IntPtr CallBackFunc);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNurbsCallbackData", ExactSpelling = true)]
-        internal extern static void NurbsCallbackData(IntPtr nurb, IntPtr userData);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNurbsCallbackData")]
+        internal static partial void NurbsCallbackData(IntPtr nurb, IntPtr userData);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNurbsCurve", ExactSpelling = true)]
-        internal extern static unsafe void NurbsCurve(IntPtr nurb, Int32 knotCount, [Out] float* knots, Int32 stride, [Out] float* control, Int32 order, MapTarget type);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNurbsCurve")]
+        internal static unsafe partial void NurbsCurve(IntPtr nurb, Int32 knotCount, float* knots, Int32 stride, float* control, Int32 order, MapTarget type);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNurbsProperty", ExactSpelling = true)]
-        internal extern static void NurbsProperty(IntPtr nurb, GluNurbsProperty property, float value);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNurbsProperty")]
+        internal static partial void NurbsProperty(IntPtr nurb, GluNurbsProperty property, float value);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluNurbsSurface", ExactSpelling = true)]
-        internal extern static unsafe void NurbsSurface(IntPtr nurb, Int32 sKnotCount, float* sKnots, Int32 tKnotCount, float* tKnots, Int32 sStride, Int32 tStride, float* control, Int32 sOrder, Int32 tOrder, MapTarget type);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluNurbsSurface")]
+        internal static unsafe partial void NurbsSurface(IntPtr nurb, Int32 sKnotCount, float* sKnots, Int32 tKnotCount, float* tKnots, Int32 sStride, Int32 tStride, float* control, Int32 sOrder, Int32 tOrder, MapTarget type);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluOrtho2D", ExactSpelling = true)]
-        internal extern static void Ortho2D(double left, double right, double bottom, double top);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluOrtho2D")]
+        internal static partial void Ortho2D(double left, double right, double bottom, double top);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluPartialDisk", ExactSpelling = true)]
-        internal extern static void PartialDisk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops, double start, double sweep);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluPartialDisk")]
+        internal static partial void PartialDisk(IntPtr quad, double inner, double outer, Int32 slices, Int32 loops, double start, double sweep);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluPerspective", ExactSpelling = true)]
-        internal extern static void Perspective(double fovy, double aspect, double zNear, double zFar);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluPerspective")]
+        internal static partial void Perspective(double fovy, double aspect, double zNear, double zFar);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluPickMatrix", ExactSpelling = true)]
-        internal extern static unsafe void PickMatrix(double x, double y, double delX, double delY, [Out] Int32* viewport);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluPickMatrix")]
+        internal static unsafe partial void PickMatrix(double x, double y, double delX, double delY, Int32* viewport);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluProject", ExactSpelling = true)]
-        internal extern static unsafe Int32 Project(double objX, double objY, double objZ, double* model, double* proj, Int32* view, double* winX, double* winY, double* winZ);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluProject")]
+        internal static unsafe partial Int32 Project(double objX, double objY, double objZ, double* model, double* proj, Int32* view, double* winX, double* winY, double* winZ);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluPwlCurve", ExactSpelling = true)]
-        internal extern static unsafe void PwlCurve(IntPtr nurb, Int32 count, float* data, Int32 stride, GluNurbsTrim type);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluPwlCurve")]
+        internal static unsafe partial void PwlCurve(IntPtr nurb, Int32 count, float* data, Int32 stride, GluNurbsTrim type);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluQuadricCallback", ExactSpelling = true)]
-        internal extern static void QuadricCallback(IntPtr quad, GluQuadricCallback which, Delegate CallBackFunc);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluQuadricCallback")]
+        internal static partial void QuadricCallback(IntPtr quad, GluQuadricCallback which, IntPtr CallBackFunc);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluQuadricDrawStyle", ExactSpelling = true)]
-        internal extern static void QuadricDrawStyle(IntPtr quad, GluQuadricDrawStyle draw);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluQuadricDrawStyle")]
+        internal static partial void QuadricDrawStyle(IntPtr quad, GluQuadricDrawStyle draw);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluQuadricNormals", ExactSpelling = true)]
-        internal extern static void QuadricNormals(IntPtr quad, GluQuadricNormal normal);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluQuadricNormals")]
+        internal static partial void QuadricNormals(IntPtr quad, GluQuadricNormal normal);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluQuadricOrientation", ExactSpelling = true)]
-        internal extern static void QuadricOrientation(IntPtr quad, GluQuadricOrientation orientation);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluQuadricOrientation")]
+        internal static partial void QuadricOrientation(IntPtr quad, GluQuadricOrientation orientation);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluQuadricTexture", ExactSpelling = true)]
-        internal extern static void QuadricTexture(IntPtr quad, bool texture);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluQuadricTexture")]
+        internal static partial void QuadricTexture(IntPtr quad, [MarshalAs(UnmanagedType.Bool)] bool texture);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluScaleImage", ExactSpelling = true)]
-        internal extern static Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, IntPtr dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, [Out] IntPtr dataOut);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluScaleImage")]
+        internal static partial Int32 ScaleImage(PixelFormat format, Int32 wIn, Int32 hIn, PixelType typeIn, IntPtr dataIn, Int32 wOut, Int32 hOut, PixelType typeOut, IntPtr dataOut);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluSphere", ExactSpelling = true)]
-        internal extern static void Sphere(IntPtr quad, double radius, Int32 slices, Int32 stacks);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluSphere")]
+        internal static partial void Sphere(IntPtr quad, double radius, Int32 slices, Int32 stacks);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessBeginContour", ExactSpelling = true)]
-        internal extern static void TessBeginContour(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessBeginContour")]
+        internal static partial void TessBeginContour(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessBeginPolygon", ExactSpelling = true)]
-        internal extern static void TessBeginPolygon(IntPtr tess, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessBeginPolygon")]
+        internal static partial void TessBeginPolygon(IntPtr tess, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessCallback", ExactSpelling = true)]
-        internal extern static void TessCallback(IntPtr tess, GluTessCallback which, Delegate CallBackFunc);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessCallback")]
+        internal static partial void TessCallback(IntPtr tess, GluTessCallback which, IntPtr CallBackFunc);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessEndContour", ExactSpelling = true)]
-        internal extern static void TessEndContour(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessEndContour")]
+        internal static partial void TessEndContour(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessEndPolygon", ExactSpelling = true)]
-        internal extern static void TessEndPolygon(IntPtr tess);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessEndPolygon")]
+        internal static partial void TessEndPolygon(IntPtr tess);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessNormal", ExactSpelling = true)]
-        internal extern static void TessNormal(IntPtr tess, double valueX, double valueY, double valueZ);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessNormal")]
+        internal static partial void TessNormal(IntPtr tess, double valueX, double valueY, double valueZ);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessProperty", ExactSpelling = true)]
-        internal extern static void TessProperty(IntPtr tess, GluTessParameter which, double data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessProperty")]
+        internal static partial void TessProperty(IntPtr tess, GluTessParameter which, double data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluTessVertex", ExactSpelling = true)]
-        internal extern static unsafe void TessVertex(IntPtr tess, double* location, IntPtr data);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluTessVertex")]
+        internal static unsafe partial void TessVertex(IntPtr tess, double* location, IntPtr data);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluUnProject", ExactSpelling = true)]
-        internal extern static unsafe Int32 UnProject(double winX, double winY, double winZ, double* model, double* proj, Int32* view, double* objX, double* objY, double* objZ);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluUnProject")]
+        internal static unsafe partial Int32 UnProject(double winX, double winY, double winZ, double* model, double* proj, Int32* view, double* objX, double* objY, double* objZ);
 
-        [System.Security.SuppressUnmanagedCodeSecurity()]
-        [System.Runtime.InteropServices.DllImport(Glu.Library, EntryPoint = "gluUnProject4", ExactSpelling = true)]
-        internal extern static unsafe Int32 UnProject4(double winX, double winY, double winZ, double clipW, double* model, double* proj, Int32* view, double near, double far, double* objX, double* objY, double* objZ, double* objW);
+        [SuppressUnmanagedCodeSecurity()]
+        [LibraryImport(DllName, EntryPoint = "gluUnProject4")]
+        internal static unsafe partial Int32 UnProject4(double winX, double winY, double winZ, double clipW, double* model, double* proj, Int32* view, double near, double far, double* objX, double* objY, double* objZ, double* objW);
     }
 }

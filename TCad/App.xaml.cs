@@ -19,14 +19,14 @@ public partial class App : Application
 {
     private MySplashWindow SplashWindow = null;
 
-    Stopwatch StartUpSW = new Stopwatch();
+    private readonly Stopwatch StartUpSW = new();
 
     private static bool NowExceptionHandling = false;
 
     public App()
     {
-        //Log.LogOutput = new LogVisualStudioDebug();
-        //Log.LogOutput = new LogConsole();
+        //Log.LogWriter = new LogVisualStudioDebug();
+        //Log.LogWriter = new LogConsole();
         Log.LogWriter = new LogDebugServer();
 
         StartUpSW.Start();
@@ -50,7 +50,7 @@ public partial class App : Application
         Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
 
         // アニメーションのためSplashWindowを別Threadで表示
-        Thread thread = new Thread(() =>
+        Thread thread = new(() =>
         {
             SplashWindow = new MySplashWindow();
 
@@ -71,7 +71,7 @@ public partial class App : Application
         Thread.Sleep(500);
         Log.pl($"Total Memory = {GC.GetTotalMemory(true) / 1024} KB");
 
-        Stopwatch sw = new Stopwatch();
+        Stopwatch sw = new();
         sw.Start();
 
         // MessagePack for C# は、初回の実行が遅いので、起動時にダミーを実行して
@@ -162,7 +162,7 @@ public partial class App : Application
 
     public static bool ShowExceptionDialg(string text)
     {
-        EceptionDialog dlg = new EceptionDialog();
+        EceptionDialog dlg = new();
 
         dlg.text.Text = text;
         bool? result = dlg.ShowDialog();

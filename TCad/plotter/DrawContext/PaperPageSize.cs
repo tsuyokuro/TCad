@@ -6,8 +6,7 @@ namespace TCad.Plotter.DrawContexts;
 
 public class PaperSizes
 {
-    public static Dictionary<PaperKind, (vcompo_t Width, vcompo_t Height)> SizeMap =
-        new Dictionary<PaperKind, (vcompo_t Width, vcompo_t Height)>();
+    private readonly static Dictionary<PaperKind, (vcompo_t Width, vcompo_t Height)> SizeMap = [];
 
     public static (vcompo_t Width, vcompo_t Height) GetSize(PaperKind kind, bool landscape)
     {
@@ -98,21 +97,24 @@ public struct PaperPageSize
                     MidpointRounding.AwayFromZero);
     }
 
-    public PaperSize GetPaperSize()
+    public readonly PaperSize PaperSize
     {
-        PrintDocument pd = new PrintDocument();
-        int cnt = pd.PrinterSettings.PaperSizes.Count;
-        int i;
-
-        for (i = 0; i < cnt; i++)
+        get
         {
-            PaperSize ps = pd.PrinterSettings.PaperSizes[i];
-            if (ps.Kind == PaperKind)
-            {
-                return ps;
-            }
-        }
+            PrintDocument pd = new();
+            int cnt = pd.PrinterSettings.PaperSizes.Count;
+            int i;
 
-        return null;
+            for (i = 0; i < cnt; i++)
+            {
+                PaperSize ps = pd.PrinterSettings.PaperSizes[i];
+                if (ps.Kind == PaperKind)
+                {
+                    return ps;
+                }
+            }
+
+            return null;
+        }
     }
 }

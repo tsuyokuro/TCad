@@ -93,7 +93,7 @@ class DrawContextGLOrtho : DrawContextGL
 
     public override DrawContext Clone()
     {
-        DrawContextGLOrtho dc = new DrawContextGLOrtho();
+        DrawContextGLOrtho dc = new();
 
         dc.CopyProjectionMetrics(this);
         dc.CopyCamera(this);

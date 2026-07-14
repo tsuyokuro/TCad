@@ -8,6 +8,18 @@ public struct TextAttr
 {
     public int FColor;
     public int BColor;
+
+    public TextAttr(int f, int b)
+    {
+        FColor = f;
+        BColor = b;
+    }
+
+    public TextAttr()
+    {
+        FColor = 0;
+        BColor = 0;
+    }
 }
 
 public struct AttrSpan
@@ -27,20 +39,7 @@ public struct AttrSpan
 public class TextLine
 {
     public string Data = "";
-    public List<AttrSpan> Attrs = new();
-
-    private AttrSpan LastAttrSpan
-    {
-        get
-        {
-            return Attrs[Attrs.Count - 1];
-        }
-
-        set
-        {
-            Attrs[Attrs.Count - 1] = value;
-        }
-    }
+    public List<AttrSpan> Attrs = [];
 
     public TextLine(TextAttr attr)
     {
@@ -53,6 +52,12 @@ public class TextLine
         Attrs.Clear();
         Attrs.Add(new AttrSpan(lastAttrSpan.Attr, 0, 0));
         Data = "";
+    }
+
+    private AttrSpan LastAttrSpan
+    {
+        get => Attrs[^1];
+        set => Attrs[^1] = value;
     }
 
     private void AppendAttr(TextAttr attr)
@@ -70,7 +75,7 @@ public class TextLine
         LastAttrSpan = attrItem;
     }
 
-    public void Parse(string str)
+    public void Parse(string str, TextAttr defaultAttr)
     {
         TextAttr attr = LastAttrSpan.Attr;
 
@@ -129,8 +134,7 @@ public class TextLine
                     {
                         if (x == 0)
                         {
-                            attr.BColor = 0;
-                            attr.FColor = 7;
+                            attr = defaultAttr;
                         }
 
                         AppendAttr(attr);
@@ -154,8 +158,7 @@ public class TextLine
                     {
                         if (x == 0)
                         {
-                            attr.BColor = 0;
-                            attr.FColor = 7;
+                            attr = defaultAttr;
                         }
                         else if (x >= 30 && x <= 37) // front std
                         {

@@ -42,6 +42,9 @@ public partial class ColorListBox : UserControl
     }
 
 
+    public Action<object, Item> SelectionChanged;
+
+
     ObservableCollection<Item> Items_ = new();
 
     public Collection<Item> Items
@@ -147,8 +150,13 @@ public partial class ColorListBox : UserControl
         ColorList.SelectionChanged += ColorList_SelectionChanged;
     }
 
-    private void ColorList_SelectionChanged(object sender, EventArgs e)
+    private void ColorList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (SelectedIndex < 0) return;
 
+        var item = GetAt(SelectedIndex);
+
+
+        SelectionChanged.Invoke(this, item);
     }
 }

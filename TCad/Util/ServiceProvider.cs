@@ -1,4 +1,5 @@
 using System;
+using TCad.Logger;
 
 namespace TCad.Util;
 
@@ -36,7 +37,7 @@ public class SingleServiceProvider<T> : IServiceProvider<T> where T : class
 
     public SingleServiceProvider(Func<T> creator)
     {
-        Console.WriteLine($"SingleServiceProvider<{typeof(T)}> constructor");
+        Log.tpl($"SingleServiceProvider<{typeof(T)}> constructor");
         _value = creator();
     }
 

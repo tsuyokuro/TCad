@@ -6,14 +6,13 @@ namespace TCad.Plotter.DrawToolSet;
 
 public struct DrawBrush : IEquatable<DrawBrush>
 {
-    public static DrawBrush InvalidBrush;
+    public readonly static DrawBrush InvalidBrush = new()
+    {
+        Color4 = Color4Ext.Invalid,
+    };
 
     static DrawBrush()
     {
-        InvalidBrush = new()
-        {
-            Color4 = Color4Ext.Invalid,
-        };
     }
 
     public Color4 mColor4;
@@ -23,29 +22,29 @@ public struct DrawBrush : IEquatable<DrawBrush>
         get => GDIToolManager.Provider.Get().Brush(this);
     }
 
-    public int Argb
+    public readonly int Argb
     {
         get => ColorUtil.ToArgb(mColor4);
     }
 
-    public ColorPack ColorPack
+    public readonly ColorPack ColorPack
     {
-        get => new ColorPack(Argb);
+        get => new(Argb);
     }
 
-    public bool IsInvalid
+    public readonly bool IsInvalid
     {
         get => mColor4.A < 0f;
     }
 
-    public bool IsNull
+    public readonly bool IsNull
     {
         get => mColor4.A == 0f;
     }
 
     public Color4 Color4
     {
-        get => mColor4;
+        readonly get => mColor4;
         set => mColor4 = value;
     }
 
@@ -69,17 +68,17 @@ public struct DrawBrush : IEquatable<DrawBrush>
         return !(brush1.Color4 == brush2.Color4);
     }
 
-    public bool Equals(DrawBrush other)
+    public readonly bool Equals(DrawBrush other)
     {
         return Color4 == other.Color4;
     }
 
-    public override bool Equals(object obj)
+    public override readonly bool Equals(object obj)
     {
         return obj is DrawBrush other && Equals(other);
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         return HashCode.Combine(
             Color4.A, Color4.R, Color4.G, Color4.B

@@ -1,6 +1,8 @@
 using CadDataTypes;
 using TCad.MathFunctions;
 
+#pragma warning disable IDE0054
+
 namespace TCad.Plotter.DrawToolSet;
 
 public enum ArrowTypes
@@ -26,7 +28,7 @@ public struct ArrowHead
 
     public static ArrowHead Create(ArrowTypes type, ArrowPos pos, vcompo_t len, vcompo_t width)
     {
-        ArrowHead a = default(ArrowHead);
+        ArrowHead a = default;
 
         vcompo_t w2 = width / 2;
 

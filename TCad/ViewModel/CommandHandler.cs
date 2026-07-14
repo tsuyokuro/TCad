@@ -246,7 +246,7 @@ public class CommandHandler
 
     public List<string> HelpOfKey(string keyword)
     {
-        List<string> ret = new();
+        List<string> ret = [];
 
         if (keyword == null)
         {
@@ -642,7 +642,7 @@ public class CommandHandler
 
         CadFigure parent = Controller.DB.NewFigure(CadFigure.Types.GROUP);
 
-        CadOpeList opeRoot = new CadOpeList();
+        CadOpeList opeRoot = new();
         CadOpe ope;
 
         foreach (CadFigure fig in list)
@@ -687,7 +687,7 @@ public class CommandHandler
     {
         List<CadFigure> list = FilterRootFigure(targetList);
 
-        CadOpeList opeRoot = new CadOpeList();
+        CadOpeList opeRoot = new();
 
         CadOpe ope;
 
@@ -727,14 +727,14 @@ public class CommandHandler
 
     public List<CadFigure> FilterRootFigure(List<CadFigure> srcList)
     {
-        HashSet<CadFigure> set = new();
+        HashSet<CadFigure> set = [];
 
         foreach (CadFigure fig in srcList)
         {
             set.Add(FigUtil.GetRootFig(fig));
         }
 
-        List<CadFigure> ret = new List<CadFigure>();
+        List<CadFigure> ret = [];
 
         ret.AddRange(set);
 
@@ -920,7 +920,7 @@ public class CommandHandler
 
         PageSettings storePageSettings = pd.DefaultPageSettings;
 
-        pd.DefaultPageSettings.PaperSize = Controller.PageSize.GetPaperSize();
+        pd.DefaultPageSettings.PaperSize = Controller.PageSize.PaperSize;
 
         pd.DefaultPageSettings.Landscape = Controller.PageSize.IsLandscape;
 
@@ -959,7 +959,7 @@ public class CommandHandler
 
         PageSettings pageSettings = new()
         {
-            PaperSize = Controller.PageSize.GetPaperSize(),
+            PaperSize = Controller.PageSize.PaperSize,
             Landscape = Controller.PageSize.IsLandscape,
             Margins = new Margins(0, 0, 0, 0)
         };

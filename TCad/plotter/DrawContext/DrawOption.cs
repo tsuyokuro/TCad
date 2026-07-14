@@ -5,9 +5,9 @@ namespace TCad.Plotter.DrawContexts;
 
 public class DrawOption
 {
-    public static byte FORCE_PEN = 0x01;
-    public static byte FORCE_MESH_PEN = 0x02;
-    public static byte FORCE_MESH_BREASH = 0x04;
+    public const byte FORCE_PEN = 0x01;
+    public const byte FORCE_MESH_PEN = 0x02;
+    public const byte FORCE_MESH_BREASH = 0x04;
 
     byte Flag = 0;
 
@@ -56,25 +56,25 @@ public class DrawOption
 
 public class DrawOptionSet
 {
-    private DrawContext DC;
+    private readonly DrawContext DC;
 
-    public DrawOption Normal = new DrawOption();
-    public DrawOption Pale = new DrawOption();
-    public DrawOption Temp = new DrawOption();
-    public DrawOption Current = new DrawOption();
-    public DrawOption Measure = new DrawOption();
-    public DrawOption Before = new DrawOption();
+    public DrawOption Normal = new();
+    public DrawOption Pale = new();
+    public DrawOption Temp = new();
+    public DrawOption Current = new();
+    public DrawOption Measure = new();
+    public DrawOption Before = new();
 
-    private DrawOption[] Tbl;
+    private readonly DrawOption[] Tbl;
 
     public DrawOptionSet(DrawContext dc)
     {
         DC = dc;
 
-        Tbl = new DrawOption[]
-        {
+        Tbl =
+        [
             Normal, Pale, Temp, Current, Measure, Before,
-        };
+        ];
     }
 
     public void Initialize()

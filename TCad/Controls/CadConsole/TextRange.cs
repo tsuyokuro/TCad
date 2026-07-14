@@ -44,9 +44,21 @@ public struct TextSpan
     }
 }
 
+public struct TextRowRange
+{
+    public int SP;
+    public int EP;
+
+    public TextRowRange(int start, int end)
+    {
+        SP = start;
+        EP = end;
+    }
+}
+
 public struct TextRange
 {
-    public bool IsValid
+    public readonly bool IsValid
     {
         get
         {
@@ -85,12 +97,12 @@ public struct TextRange
         EP.Col = col;
     }
 
-    public bool IsEmpty()
+    public readonly bool IsEmpty()
     {
         return SP.Row == EP.Row && SP.Col == EP.Col;
     }
 
-    public static TextRange Naormalized(TextRange tr)
+    public static TextRange Normalized(TextRange tr)
     {
         if (tr.EP < tr.SP)
         {
@@ -102,33 +114,34 @@ public struct TextRange
         return tr;
     }
 
-    public TextSpan GetRowSpan(int row, int maxLen)
+
+    public readonly TextSpan GetRowSpan(int row, int maxLen = int.MaxValue)
     {
-        TextSpan r = default;
+        TextSpan span = default;
 
-        if (row == SP.Row && row == EP.Row)
+        span.Start = 0;
+        span.Len　= 0;
+        bool inRange = (SP.Row <= row && EP.Row >= row);
+
+        if (inRange)
         {
-            r.Start = SP.Col;
-            r.Len = EP.Col - SP.Col + 1;
-        }
-        else if (row > SP.Row && row == EP.Row)
-        {
-            r.Start = 0;
-            r.Len = EP.Col + 1;
-        }
-        else if (row < EP.Row && row == SP.Row)
-        {
-            r.Start = SP.Col;
-            r.Len = maxLen - r.Start;
-        }
-        else
-        {
-            r.Start = 0;
-            r.Len = maxLen - r.Start;
+            if (row == SP.Row)
+            {
+                span.Start = SP.Col;
+            }
+
+
+            if (row == EP.Row)
+            {
+                span.Len　= EP.Col - span.Start + 1;
+            }
+            else
+            {
+                span.Len = maxLen - span.Start;
+            }
         }
 
-        if (r.Len < 0) r.Len = 0;
-
-        return r;
+        return span;
     }
+
 }

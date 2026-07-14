@@ -8,7 +8,7 @@ namespace OpenGL.GLU;
 
 public static partial class Glu
 {
-    private const string Library = "glu32.dll";
+    private const string DllName = "glu32.dll";
 
     private static Dictionary<string, bool> AvailableExtensions = new Dictionary<string, bool>();
     private static bool rebuildExtensionList = true;
@@ -19,7 +19,7 @@ public static partial class Glu
 
     public static void Initialize()
     {
-        HandleGluLibrary = WinAPI.LoadLibrary(Library);
+        HandleGluLibrary = WinAPI.LoadLibrary(DllName);
         LoadAll();
     }
 
@@ -46,8 +46,11 @@ public static partial class Glu
         foreach (FieldInfo f in delegates)
         {
             Delegate d = LoadDelegate(f.Name, f.FieldType);
+
             if (d != null)
+            {
                 ++supported;
+            }
 
             f.SetValue(null, d);
         }

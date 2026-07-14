@@ -7,9 +7,9 @@ public class CursorPosViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private StringBuilder sb1 = new StringBuilder();
-    private StringBuilder sb2 = new StringBuilder();
-    private StringBuilder sb3 = new StringBuilder();
+    private readonly StringBuilder sb1 = new();
+    private readonly StringBuilder sb2 = new();
+    private readonly StringBuilder sb3 = new();
 
 
     private string mStrCursorPos = "";
