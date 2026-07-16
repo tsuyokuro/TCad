@@ -15,7 +15,6 @@ namespace TCad.Controls.CadConsole;
 
 public partial class CadConsoleView : FrameworkElement
 {
-    #region Properties
     public Brush Background
     {
         get
@@ -140,7 +139,6 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    #endregion
 
     protected int mTopIndex = 0;
 
@@ -210,6 +208,15 @@ public partial class CadConsoleView : FrameworkElement
         return false;
     }
 
+    public void ScrollToEnd()
+    {
+        if (mScrollViewer == null)
+        {
+            return;
+        }
+
+        mScrollViewer.ScrollToEnd();
+    }
 
     private void CadConsoleView_SizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -249,6 +256,11 @@ public partial class CadConsoleView : FrameworkElement
         if (parent is ScrollViewer)
         {
             mScrollViewer = (ScrollViewer)parent;
+
+            // XAMLで VerticalScrollBarButtonHeight を設定していると作用しない
+            // Resources\ScrollBarStyle.xaml
+            // CustomScrollBarStyleで設定している
+            //mScrollViewer.Resources.Add(SystemParameters.VerticalScrollBarButtonHeightKey, 32.0);
         }
 
         if (mScrollViewer != null)
@@ -896,7 +908,6 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    #region draw text
 
     protected void DrawText(DrawingContext dc, TextLine line, Point pt, int row)
     {
@@ -996,8 +1007,6 @@ public partial class CadConsoleView : FrameworkElement
         return pt;
     }
 #else
-    // TODO: GlyphRunを使った描画に変更する
-
     protected Point RenderText(
         DrawingContext dc, TextAttr attr, string s, Point pt, int row)
     {
@@ -1011,21 +1020,21 @@ public partial class CadConsoleView : FrameworkElement
 
         tpt.Y = pt.Y + originY;
 
-        GlyphRunWrapper gr = new(mGlyphTypeface, FontSize, this, s, tpt);
+        (GlyphRun glyphRun, double width) = GetGlyphRun(mGlyphTypeface, FontSize, this, s, tpt);
 
 
-        Rect r = new(pt.X, row * LineHeight, gr.Width, LineHeight);
+        Rect r = new(pt.X, row * LineHeight, width, LineHeight);
 
         Brush background = Palette.Brushes[attr.BColor];
 
         dc.DrawRectangle(background, null, r);
 
-        if (gr.GlyphRun != null)
+        if (glyphRun != null)
         {
-            dc.DrawGlyphRun(foreground, gr.GlyphRun);
+            dc.DrawGlyphRun(foreground, glyphRun);
         }
 
-        pt.X += gr.Width;
+        pt.X += width;
         return pt;
     }
 #endif
@@ -1051,7 +1060,6 @@ public partial class CadConsoleView : FrameworkElement
             dc.Pop();
         }
     }
-#endregion
 
     protected FormattedText GetFormattedText(string s, Brush brush)
     {
@@ -1066,17 +1074,7 @@ public partial class CadConsoleView : FrameworkElement
     }
 
 
-    public void ScrollToEnd()
-    {
-        if (mScrollViewer == null)
-        {
-            return;
-        }
-
-        mScrollViewer.ScrollToEnd();
-    }
-
-    private void UpdateView()
+    protected void UpdateView()
     {
         if (mIsLoaded)
         {
@@ -1084,62 +1082,43 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    protected class GlyphRunWrapper
+    protected (GlyphRun glyphRun, double width) GetGlyphRun(
+            GlyphTypeface typeface,
+            double fontSize,
+            Visual visual,
+            string s,
+            Point p)
     {
-        public GlyphRun GlyphRun
+        if (s.Length == 0)
         {
-            get;
-            private set;
+            return (null, 0);
         }
 
-        public double Width
-        {
-            get;
-            private set;
-        } = 0;
+        double totalWidth = 0;
 
-        public GlyphRunWrapper(
-            GlyphTypeface typeface,
-            double fontSize,
-            Visual visual,
-            string s,
-            Point p)
+        float pixelsPerDip = (float)VisualTreeHelper.GetDpi(visual).PixelsPerDip;
+        var glyphIndices = new List<ushort>();
+        var advanceWidths = new List<double>();
+        foreach (char ch in s)
         {
-            Create(typeface, fontSize, visual, s, p);
+            ushort glyphIndex = typeface.CharacterToGlyphMap[ch];
+            glyphIndices.Add(glyphIndex);
+            double width = typeface.AdvanceWidths[glyphIndex] * fontSize;
+            advanceWidths.Add(width);
+            totalWidth += width;
         }
 
-        void Create(
-            GlyphTypeface typeface,
-            double fontSize,
-            Visual visual,
-            string s,
-            Point p)
-        {
-            if (s.Length == 0)
-            {
-                return;
-            }
-            float pixelsPerDip = (float)VisualTreeHelper.GetDpi(visual).PixelsPerDip;
-            var glyphIndices = new List<ushort>();
-            var advanceWidths = new List<double>();
-            foreach (char ch in s)
-            {
-                ushort glyphIndex = typeface.CharacterToGlyphMap[ch];
-                glyphIndices.Add(glyphIndex);
-                double width = typeface.AdvanceWidths[glyphIndex] * fontSize;
-                advanceWidths.Add(width);
-                Width += width;
-            }
 
+        GlyphRun gr = new(
+            typeface, 0, false, fontSize,
+            pixelsPerDip,
+            glyphIndices,
+            p,
+            advanceWidths,
+            null, null, null, null, null, null
+        );
 
-            GlyphRun = new(
-                typeface, 0, false, fontSize,
-                pixelsPerDip,
-                glyphIndices,
-                p,
-                advanceWidths,
-                null, null, null, null, null, null
-            );
-        }
+        return (gr, totalWidth);
+
     }
 }
