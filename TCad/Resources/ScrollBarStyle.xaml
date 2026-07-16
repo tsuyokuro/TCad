@@ -111,6 +111,15 @@
                                     x:Name="PART_Track"
                                     Grid.Row="1"
                                     IsDirectionReversed="true">
+
+                                    <Track.Resources>
+                                        <!-- 縦スクロール時のサム最小サイズを指定 -->
+                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}">
+                                            32
+                                        </sys:Double>
+                                    </Track.Resources>
+
+
                                     <Track.DecreaseRepeatButton>
                                         <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarTrackStyle}" />
                                     </Track.DecreaseRepeatButton>
@@ -168,6 +177,13 @@
                                     x:Name="PART_Track"
                                     Grid.Column="1"
                                     IsDirectionReversed="false">
+                                    <Track.Resources>
+                                        <!-- 横スクロール時のサム最小サイズを指定 -->
+                                        <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">
+                                            32
+                                        </sys:Double>
+                                    </Track.Resources>
+
                                     <Track.DecreaseRepeatButton>
                                         <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarTrackStyle}" />
                                     </Track.DecreaseRepeatButton>
