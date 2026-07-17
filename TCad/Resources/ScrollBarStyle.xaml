@@ -61,11 +61,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border
-                        Background="{DynamicResource ScrollBarColorBrush}"
-                        BorderBrush="{DynamicResource ScrollBarBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="0" />
+                    <Border BorderThickness="1" CornerRadius="2">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Background" Value="{DynamicResource ScrollBarColorBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource ScrollBarHoverColorBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ScrollBarHoverColorBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

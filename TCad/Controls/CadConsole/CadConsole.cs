@@ -253,9 +253,9 @@ public partial class CadConsoleView : FrameworkElement
 
         FrameworkElement parent = (FrameworkElement)Parent;
 
-        if (parent is ScrollViewer)
+        if (parent is ScrollViewer viewer)
         {
-            mScrollViewer = (ScrollViewer)parent;
+            mScrollViewer = viewer;
 
             // XAMLで VerticalScrollBarButtonHeight を設定していると作用しない
             // Resources\ScrollBarStyle.xaml
@@ -741,11 +741,6 @@ public partial class CadConsoleView : FrameworkElement
         var line = new TextLine(DefaultAttr);
         mList.Add(line);
 
-        //while (mList.Count > mMaxLine)
-        //{
-        //    mList.RemoveAt(0);
-        //}
-
         if (prevCnt != mList.Count)
         {
             RecalcSize();
@@ -781,10 +776,7 @@ public partial class CadConsoleView : FrameworkElement
         {
             try
             {
-                Dispatcher.Invoke(new Action(() =>
-                {
-                    HandleClear();
-                }));
+                Dispatcher.Invoke(() => HandleClear());
             }
             catch { }
         }
@@ -926,10 +918,10 @@ public partial class CadConsoleView : FrameworkElement
 
             TextAttr selTextAttr = new(attr.Attr.BColor, attr.Attr.FColor);
 
-            bool notSel = !inRange || ps > selE || pe < selS;
+            bool isOutsideSelection = !inRange || ps > selE || pe < selS;
 
 
-            if (notSel)
+            if (isOutsideSelection)
             {
                 string s = line.Data.Substring(ps, pe - ps + 1);
                 pt = RenderText(dc, attr.Attr, s, pt, row);
@@ -939,12 +931,16 @@ public partial class CadConsoleView : FrameworkElement
 
             if (ps >= selS && pe <= selE)
             {
+                // ps--------------pe
+                // selS------------selE
                 string s = line.Data.Substring(ps, pe - ps + 1);
                 pt = RenderText(dc, selTextAttr, s, pt, row);
             }
 
             else if (ps >= selS && pe > selE)
             {
+                // ps--------------pe
+                // selS----selE
                 string s = line.Data.Substring(ps, selE - ps + 1);
                 pt = RenderText(dc, selTextAttr, s, pt, row);
 
@@ -954,6 +950,8 @@ public partial class CadConsoleView : FrameworkElement
             }
             else if (ps < selS && pe <= selE)
             {
+                // ps--------------pe
+                // ----selS--------selE
                 string s = line.Data.Substring(ps, selS - ps);
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 
@@ -963,6 +961,8 @@ public partial class CadConsoleView : FrameworkElement
             }
             else if (ps < selS && pe > selE)
             {
+                // ps--------------pe
+                // ----selS--selE----
                 string s = line.Data.Substring(ps, selS - ps);
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 

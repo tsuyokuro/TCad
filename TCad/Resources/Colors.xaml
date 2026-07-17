@@ -85,6 +85,9 @@
     <!--  スクロールバーの色  -->
     <SolidColorBrush x:Key="ScrollBarColorBrush" Color="#44ffffff" />
 
+    <SolidColorBrush x:Key="ScrollBarHoverColorBrush" Color="#AAffffff" />
+
+
     <!--  スクロールバーボタンの色  -->
     <SolidColorBrush x:Key="ScrollBarButtonBrush" Color="#00ffffff" />
 
