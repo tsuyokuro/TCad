@@ -1,3 +1,5 @@
+using System;
+
 namespace TCad.Controls.CadConsole;
 
 public struct TextPos
@@ -29,6 +31,26 @@ public struct TextPos
         }
 
         return left.Col > right.Col;
+    }
+
+    public static bool operator ==(TextPos left, TextPos right)
+    {
+        return left.Row == right.Row && left.Col == right.Col;
+    }
+
+    public static bool operator !=(TextPos left, TextPos right)
+    {
+        return !(left == right);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj.Equals(this);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Row, Col);
     }
 }
 
@@ -144,4 +166,23 @@ public struct TextRange
         return span;
     }
 
+    public static bool operator ==(TextRange left, TextRange right)
+    {
+        return left.SP == right.SP && left.EP == right.EP;
+    }
+
+    public static bool operator !=(TextRange left, TextRange right)
+    {
+        return !(left == right);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(SP, EP);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj.Equals(this);
+    }
 }

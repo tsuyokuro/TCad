@@ -538,11 +538,14 @@ public partial class CadConsoleView : FrameworkElement
 
             RawSel.End(tp.Row, tp.Col);
 
-            Sel = TextRange.Normalized(RawSel);
+            var newSel = TextRange.Normalized(RawSel);
 
-            InvalidateVisual();
-
-            //DOut.pl($"sr:{Sel.SP.Row} sc:{Sel.SP.Col} - er:{Sel.EP.Row} ec:{Sel.EP.Col}");
+            if (Sel != newSel)
+            {
+                Sel = newSel;
+                InvalidateVisual();
+                //Log.plx($"sr:{Sel.SP.Row} sc:{Sel.SP.Col} - er:{Sel.EP.Row} ec:{Sel.EP.Col}");
+            }
         }
     }
 
@@ -785,7 +788,6 @@ public partial class CadConsoleView : FrameworkElement
     private void HandleClear()
     {
         mList.Clear();
-        //RecalcSize();
         NewLine();
         UpdateView();
     }
@@ -923,7 +925,7 @@ public partial class CadConsoleView : FrameworkElement
 
             if (isOutsideSelection)
             {
-                string s = line.Data.Substring(ps, pe - ps + 1);
+                string s = line.Data[ps..(pe + 1)];
                 pt = RenderText(dc, attr.Attr, s, pt, row);
                 continue;
             }
@@ -931,47 +933,47 @@ public partial class CadConsoleView : FrameworkElement
 
             if (ps >= selS && pe <= selE)
             {
-                // ps--------------pe
+                // ----ps--------pe----
                 // selS------------selE
-                string s = line.Data.Substring(ps, pe - ps + 1);
+                string s = line.Data[ps..(pe + 1)];
                 pt = RenderText(dc, selTextAttr, s, pt, row);
             }
 
             else if (ps >= selS && pe > selE)
             {
-                // ps--------------pe
+                // ----ps------------pe
                 // selS----selE
-                string s = line.Data.Substring(ps, selE - ps + 1);
+                string s = line.Data[ps..(selE + 1)];
                 pt = RenderText(dc, selTextAttr, s, pt, row);
 
 
-                s = line.Data.Substring(selE + 1, pe - selE);
+                s = line.Data[(selE + 1)..(pe + 1)];
                 pt = RenderText(dc, attr.Attr, s, pt, row);
             }
             else if (ps < selS && pe <= selE)
             {
-                // ps--------------pe
+                // ps------------pe----
                 // ----selS--------selE
-                string s = line.Data.Substring(ps, selS - ps);
+                string s = line.Data[ps..selS];
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 
 
-                s = line.Data.Substring(selS, pe - selS + 1);
+                s = line.Data[selS..(pe+1)];
                 pt = RenderText(dc, selTextAttr, s, pt, row);
             }
             else if (ps < selS && pe > selE)
             {
                 // ps--------------pe
                 // ----selS--selE----
-                string s = line.Data.Substring(ps, selS - ps);
+                string s = line.Data[ps..selS];
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 
 
-                s = line.Data.Substring(selS, selE - selS + 1);
+                s = line.Data[selS..(selE+1)];
                 pt = RenderText(dc, selTextAttr, s, pt, row);
 
 
-                s = line.Data.Substring(selE + 1, pe - selE);
+                s = line.Data[(selE + 1)..(pe + 1)];
                 pt = RenderText(dc, attr.Attr, s, pt, row);
 
             }
