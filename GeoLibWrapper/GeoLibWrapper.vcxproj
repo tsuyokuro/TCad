@@ -243,7 +243,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)external\libigl\include;$(SolutionDir)external\libigl\external\eigen;$(SolutionDir)external\libigl\external\triangle;$(SolutionDir)external\libigl\external\tetgen;$(SolutionDir)external\carve\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -267,7 +267,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)external\libigl\include;$(SolutionDir)external\libigl\external\eigen;$(SolutionDir)external\libigl\external\triangle;$(SolutionDir)external\libigl\external\tetgen;$(SolutionDir)external\carve\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>NetCore</CompileAsManaged>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

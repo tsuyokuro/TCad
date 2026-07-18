@@ -15,9 +15,9 @@
 //#endif
 
 // Use CadDataTypes.dll built for AnyCPU
-#ifdef _DEBUG
-	#using "..\\CadDataTypes\\bin\\Debug\\net7.0\\CadDataTypes.dll"
-#else
-	#using "..\\CadDataTypes\\bin\\Release\\net7.0\\CadDataTypes.dll"
-#endif
+//#ifdef _DEBUG
+//	#using "..\\CadDataTypes\\bin\\Debug\\net7.0\\CadDataTypes.dll"
+//#else
+//	#using "..\\CadDataTypes\\bin\\Release\\net7.0\\CadDataTypes.dll"
+//#endif
 
