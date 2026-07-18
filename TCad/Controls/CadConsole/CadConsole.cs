@@ -17,38 +17,24 @@ public partial class CadConsoleView : FrameworkElement
 {
     public Brush Background
     {
-        get
-        {
-            return Palette.Brushes[Palette.DefaultBColor];
-        }
-        set
-        {
-            Palette.Brushes[Palette.DefaultBColor] = value;
-        }
+        get => Palette.Brushes[Palette.DefaultBColor];
+        set => Palette.Brushes[Palette.DefaultBColor] = value;
     }
 
     public Brush Foreground
     {
-        get
-        {
-            return Palette.Brushes[Palette.DefaultFColor];
-        }
-        set
-        {
-            Palette.Brushes[Palette.DefaultFColor] = value;
-        }
+        get => Palette.Brushes[Palette.DefaultFColor];
+        set => Palette.Brushes[Palette.DefaultFColor] = value;
     }
 
-    protected double mTextLeftMargin = 8.0;
     public double TextLeftMargin
     {
-        get => mTextLeftMargin;
+        get;
         set
         {
-            mTextLeftMargin = value;
             UpdateView();
         }
-    }
+    } = 8.0;
 
     public string Colors
     {
@@ -60,64 +46,66 @@ public partial class CadConsoleView : FrameworkElement
         }
     }
 
-    protected Brush mSelectedBackground = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
     public Brush SelectedBackground
     {
-        get => mSelectedBackground;
-        set => mSelectedBackground = value;
-    }
+        get;
+        set;
+    } = new SolidColorBrush(Color.FromArgb(255, 68, 141, 214));
 
-    protected double mSelectedBackgroundOpacity = 0.8;
     public double SelectedBackgroundOpacity
     {
-        get => mSelectedBackgroundOpacity;
-        set => mSelectedBackgroundOpacity = value;
-    }
+        get;
+        set;
+    } = 0.8;
 
-    protected double mLineHeight = 1;
     protected double LineHeight
     {
-        get => mLineHeight;
-        set => mLineHeight = value;
-    }
+        get;
+        set;
+    } = 1.0;
 
-    protected FontFamily mFontFamily = null;
+    
     public FontFamily FontFamily
     {
-        get => mFontFamily;
+        get;
         set
         {
-            mFontFamily = value;
-            mTypeface = new Typeface(mFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            field = value;
+            Typeface = new Typeface(field, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 
-            if (!mTypeface.TryGetGlyphTypeface(out mGlyphTypeface))
+            GlyphTypeface glyphTypeface;
+
+            if (Typeface.TryGetGlyphTypeface(out glyphTypeface))
             {
-                mGlyphTypeface = null;
+                GlyphTypeface = glyphTypeface;
+            }
+            else
+            {
+                GlyphTypeface = null;
             }
 
             RecalcMetrics();
         }
-    }
+    } = null;
 
-    protected Typeface mTypeface;
     protected Typeface Typeface
     {
-        get => mTypeface;
+        get;
+        set;
     }
 
-    protected GlyphTypeface mGlyphTypeface;
     protected GlyphTypeface GlyphTypeface
     {
-        get => mGlyphTypeface;
+        get;
+        set;
     }
 
-    protected double mFontSize = 10.0;
     public double FontSize
     {
-        get => mFontSize;
+        get;
         set
         {
-            mFontSize = value;
+            field = value;
             RecalcMetrics();
         }
     }
@@ -347,10 +335,10 @@ public partial class CadConsoleView : FrameworkElement
 
 
         ushort i = 0;
-        if (mGlyphTypeface.CharacterToGlyphMap.TryGetValue('A', out i))
+        if (GlyphTypeface.CharacterToGlyphMap.TryGetValue('A', out i))
         {
-            w = mGlyphTypeface.AdvanceWidths[i] * FontSize;
-            h = (mGlyphTypeface.Height) * FontSize;
+            w = GlyphTypeface.AdvanceWidths[i] * FontSize;
+            h = (GlyphTypeface.Height) * FontSize;
         }
 
         if (w != 0 && h != 0)
@@ -360,9 +348,9 @@ public partial class CadConsoleView : FrameworkElement
 
             w = 0;
 
-            if (mGlyphTypeface.CharacterToGlyphMap.TryGetValue('漢', out i))
+            if (GlyphTypeface.CharacterToGlyphMap.TryGetValue('漢', out i))
             {
-                w = mGlyphTypeface.AdvanceWidths[i] * FontSize;
+                w = GlyphTypeface.AdvanceWidths[i] * FontSize;
             }
 
             if (w != 0)
@@ -1014,15 +1002,15 @@ public partial class CadConsoleView : FrameworkElement
     {
         Brush foreground = Palette.Brushes[attr.FColor];
 
-        double textHeight = mGlyphTypeface.Height * FontSize;
-        double baseline = mGlyphTypeface.Baseline * FontSize;
+        double textHeight = GlyphTypeface.Height * FontSize;
+        double baseline = GlyphTypeface.Baseline * FontSize;
         double originY = ((LineHeight - textHeight) / 2.0) + baseline;
 
         Point tpt = pt;
 
         tpt.Y = pt.Y + originY;
 
-        (GlyphRun glyphRun, double width) = GetGlyphRun(mGlyphTypeface, FontSize, this, s, tpt);
+        (GlyphRun glyphRun, double width) = GetGlyphRun(GlyphTypeface, FontSize, this, s, tpt);
 
 
         Rect r = new(pt.X, row * LineHeight, width, LineHeight);
