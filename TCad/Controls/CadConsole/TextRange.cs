@@ -1,8 +1,14 @@
 using System;
+using System.Windows.Media.Media3D;
+using Mono.Unix.Native;
+using OpenTK.Compute.OpenCL;
+using static IronPython.SQLite.PythonSQLite;
 
 namespace TCad.Controls.CadConsole;
 
-public struct TextPos
+#pragma warning disable CS0660
+
+public struct TextPos : IEquatable<TextPos>
 {
     public int Row;
     public int Col;
@@ -43,9 +49,9 @@ public struct TextPos
         return !(left == right);
     }
 
-    public override bool Equals(object obj)
+    public bool Equals(TextPos other)
     {
-        return obj.Equals(this);
+        return Row == other.Row && Col == other.Col;
     }
 
     public override int GetHashCode()
@@ -54,7 +60,7 @@ public struct TextPos
     }
 }
 
-public struct TextSpan
+public struct TextSpan : IEquatable<TextSpan>
 {
     public int Start;
     public int Len;
@@ -64,9 +70,28 @@ public struct TextSpan
         Start = start;
         Len = len;
     }
+
+    public bool Equals(TextSpan other)
+    {
+        return Start == other.Start && Len == other.Len;
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Start, Len);
+    }
+
+    public static bool operator ==(TextSpan left, TextSpan right)
+    {
+        return left.Start == right.Start && left.Len == right.Len;
+    }
+
+    public static bool operator !=(TextSpan left, TextSpan right)
+    {
+        return !(left == right);
+    }
 }
 
-public struct TextRowRange
+public struct TextRowRange : IEquatable<TextRowRange>
 {
     public int SP;
     public int EP;
@@ -76,16 +101,35 @@ public struct TextRowRange
         SP = start;
         EP = end;
     }
+
+    public bool Equals(TextRowRange other)
+    {
+        return SP == other.SP && EP == other.EP;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(SP, EP);
+    }
+
+    public static bool operator ==(TextRowRange left, TextRowRange right)
+    {
+        return left.SP == right.SP && left.EP == right.EP;
+    }
+
+    public static bool operator !=(TextRowRange left, TextRowRange right)
+    {
+        return !(left == right);
+    }
 }
 
-public struct TextRange
+public struct TextRange : IEquatable<TextRange>
 {
     public readonly bool IsValid
     {
         get
         {
             if (SP.Row < 0 && EP.Row < 0) return false;
-            //if (SP.Row == EP.Row && SP.Col == EP.Col) return false;
             return true;
         }
     }
@@ -128,9 +172,7 @@ public struct TextRange
     {
         if (tr.EP < tr.SP)
         {
-            TextPos t = tr.SP;
-            tr.SP = tr.EP;
-            tr.EP = t;
+            (tr.EP, tr.SP) = (tr.SP, tr.EP);
         }
 
         return tr;
@@ -176,13 +218,13 @@ public struct TextRange
         return !(left == right);
     }
 
-    public override int GetHashCode()
+    public bool Equals(TextRange other)
     {
-        return HashCode.Combine(SP, EP);
+        return SP == other.SP && EP == other.EP;
     }
 
-    public override bool Equals(object obj)
+    public override int GetHashCode()
     {
-        return obj.Equals(this);
+        return HashCode.Combine(SP.GetHashCode(), EP.GetHashCode());
     }
 }

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using TCad.Controls.CadConsole;
@@ -227,7 +228,7 @@ public class ScriptFunctions
     {
         var figList = new List<CadFigure>();
 
-        foreach (uint id in idList)
+        foreach (uint id in idList.Select(v => (uint)v))
         {
             CadFigure fig = Controller.DB.GetFigure(id);
 
@@ -1036,9 +1037,10 @@ public class ScriptFunctions
         wr.p0 = dc.DevPointToWorldPoint(r.p0);
         wr.p1 = dc.DevPointToWorldPoint(r.p1);
 
-        DrawContextGDIBmp tdc = new();
-
-        tdc.WorldScale = dc.WorldScale;
+        DrawContextGDIBmp tdc = new()
+        {
+            WorldScale = dc.WorldScale
+        };
 
         tdc.SetCamera(dc.Eye, dc.LookAt, dc.UpVector);
         tdc.CalcProjectionMatrix();
@@ -1134,9 +1136,11 @@ public class ScriptFunctions
         //tmpGLControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         //tmpGLControl.MakeCurrent();
 
-        NativeWindowSettings settings = new();
-        settings.Profile = ContextProfile.Compatability;
-        settings.Flags = ContextFlags.Default;
+        NativeWindowSettings settings = new()
+        {
+            Profile = ContextProfile.Compatability,
+            Flags = ContextFlags.Default
+        };
 
         NativeWindow window = new(settings);
         window.MakeCurrent();
@@ -1171,10 +1175,12 @@ public class ScriptFunctions
 
         DrawPen drawPen = new((int)argb, lineW);
 
-        DrawOption drawParams = new();
-        drawParams.LinePen = drawPen;
-        drawParams.MeshLinePen = DrawPen.InvalidPen;
-        drawParams.MeshEdgePen = drawPen;
+        DrawOption drawParams = new()
+        {
+            LinePen = drawPen,
+            MeshLinePen = DrawPen.InvalidPen,
+            MeshEdgePen = drawPen
+        };
 
 
         FrameBufferW fb = new();
@@ -1787,7 +1793,7 @@ public class ScriptFunctions
         qp = CadQuaternion.FromPoint(v);
 
         qp = r * qp;
-        qp = qp * q;
+        qp *= q;
 
         vector3_t rv = qp.ToPoint();
 

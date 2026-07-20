@@ -23,7 +23,7 @@ public struct FontPoly
     {
         Mesh = new CadMesh(src.Mesh);
 
-        ContourList = new();
+        ContourList = [];
         for (int i = 0; i < src.ContourList.Count; i++)
         {
             List<int> cont = new(src.ContourList[i]);

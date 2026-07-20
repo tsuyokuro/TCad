@@ -16,7 +16,7 @@ public class AutoScroller
 
     private FrameworkElement ScrollView;
 
-    private double CheckInterval = 0.05;
+    private double CheckInterval = 40;
 
     public AutoScroller(FrameworkElement view, double checkInterval)
     {
@@ -43,7 +43,7 @@ public class AutoScroller
         }
 
         Timer = new();
-        Timer.Interval = TimeSpan.FromSeconds(CheckInterval);
+        Timer.Interval = TimeSpan.FromMilliseconds(CheckInterval);
         Timer.Tick += TimerTick;
     }
 

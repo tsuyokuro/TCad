@@ -329,9 +329,8 @@ class PlotterViewGL : GLControl, IPlotterView
     {
         ToolStripMenuItem item = sender as ToolStripMenuItem;
 
-        MenuInfo.Item infoItem = item.Tag as MenuInfo.Item;
 
-        if (infoItem != null)
+        if (item.Tag is MenuInfo.Item infoItem)
         {
             mViewModel.ContextMenuEvent(infoItem);
         }

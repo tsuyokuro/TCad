@@ -241,23 +241,21 @@ public partial class CadConsoleView : FrameworkElement
 
         FrameworkElement parent = (FrameworkElement)Parent;
 
-        if (parent is ScrollViewer viewer)
+        if (parent is ScrollViewer scrollViewer)
         {
-            mScrollViewer = viewer;
+            mScrollViewer = scrollViewer;
 
+            // Thumbの最小高さを大きくするために VerticalScrollBarButtonHeight を設定する 
             // XAMLで VerticalScrollBarButtonHeight を設定していると作用しない
             // Resources\ScrollBarStyle.xaml
             // CustomScrollBarStyleで設定している
             //mScrollViewer.Resources.Add(SystemParameters.VerticalScrollBarButtonHeightKey, 32.0);
-        }
 
-        if (mScrollViewer != null)
-        {
             mScrollViewer.ScrollChanged += Scroll_ScrollChanged;
-        }
 
-        mAutoScroller = new(this);
-        mAutoScroller.Scroll = AutoScrollEvent;
+            mAutoScroller = new(this);
+            mAutoScroller.Scroll = AutoScrollEvent;
+        }
 
         DefaultAttr.FColor = Palette.DefaultFColor;
         DefaultAttr.BColor = Palette.DefaultBColor;

@@ -44,7 +44,7 @@ public class ItemCursor<T> where T : class
 
         Pos++;
 
-        Pos = Pos % ItemList.Count;
+        Pos %= ItemList.Count;
 
         return ret;
     }

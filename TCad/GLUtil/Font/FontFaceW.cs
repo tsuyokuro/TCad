@@ -13,21 +13,21 @@ namespace GLFont;
 // このクラスはその中の一つのFaceを扱う
 public partial class FontFaceW
 {
-    private Library mLib;
+    private readonly Library mLib;
 
     private Face FontFace;
 
     private float Size;
 
-    private Dictionary<char, FontTex> TextureCache = new();
+    private readonly Dictionary<char, FontTex> TextureCache = [];
 
-    private Dictionary<char, FontPoly> PolyCache = new();
+    private readonly Dictionary<char, FontPoly> PolyCache = [];
 
     private const float DefaultSize = 8.25f;
 
     public static FontFaceW FromResource(string uri, float size = DefaultSize, int faceIndex = 0)
     {
-        FontFaceW face = new FontFaceW();
+        FontFaceW face = new();
         face.SetResourceFont(uri, size, faceIndex);
 
         return face;
@@ -35,7 +35,7 @@ public partial class FontFaceW
 
     public static FontFaceW FromFile(string fname, float size = DefaultSize, int faceIndex = 0)
     {
-        FontFaceW face = new FontFaceW();
+        FontFaceW face = new();
         face.SetFileFont(fname, size, faceIndex);
 
         return face;
@@ -63,7 +63,7 @@ public partial class FontFaceW
     private void SetResourceFont(string url, float size, int face_index)
     {
         // Resource 読み込み
-        Uri fileUri = new Uri(url, UriKind.Relative);
+        Uri fileUri = new(url, UriKind.Relative);
         StreamResourceInfo info = Application.GetResourceStream(fileUri);
         Stream stream = info.Stream;
 
@@ -179,7 +179,7 @@ public partial class FontFaceW
             return CreateTexture(s[0]);
         }
 
-        List<FontTex> ta = new List<FontTex>();
+        List<FontTex> ta = [];
 
         int fw = 0;
         int fh = 0;
@@ -197,7 +197,7 @@ public partial class FontFaceW
             ta.Add(ft);
         }
 
-        FontTex mft = new FontTex(fw, fh);
+        FontTex mft = new(fw, fh);
 
         int x = 0;
         int y = 0;

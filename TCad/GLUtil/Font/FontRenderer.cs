@@ -37,16 +37,12 @@ public class FontRenderer
         Render(tex, p, xv, yv);
     }
 
-    public static int Counter = 0;
-
     public void Render(FontTex tex, vector3_t p, vector3_t xv, vector3_t yv)
     {
         if (TextureID == -1)
         {
             TextureID = GLUtilContainer.TextureProvider.Get().GetNew();
         }
-
-        Counter++;
 
         int texUnitNumber = 0;
         GL.ActiveTexture(TextureUnit.Texture0 + texUnitNumber);

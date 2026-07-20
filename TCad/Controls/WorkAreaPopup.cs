@@ -88,9 +88,9 @@ public class WorkAreaPopup : Popup
 
         if (Child == null) return;
 
-        var hwndSource = (PresentationSource.FromVisual(Child)) as HwndSource;
 
-        if (hwndSource == null) return;
+        if ((PresentationSource.FromVisual(Child)) is not HwndSource hwndSource) return;
+
         var hwnd = hwndSource.Handle;
 
         WinAPI.RECT rect;
