@@ -90,22 +90,6 @@ public class ScriptFunctions
         ItConsole.print(s);
     }
 
-    public void CursorAngleX(vcompo_t d)
-    {
-        vcompo_t t = -CadMath.Deg2Rad(d);
-
-        Controller.Input.CrossCursor.DirX.X = (vcompo_t)Math.Cos(t);
-        Controller.Input.CrossCursor.DirX.Y = (vcompo_t)Math.Sin(t);
-    }
-
-    public void CursorAngleY(vcompo_t d)
-    {
-        vcompo_t t = -CadMath.Deg2Rad(d) + (vcompo_t)Math.PI / 2;
-
-        Controller.Input.CrossCursor.DirY.X = (vcompo_t)Math.Cos(t);
-        Controller.Input.CrossCursor.DirY.Y = (vcompo_t)Math.Sin(t);
-    }
-
     public void PrintVector(vector3_t v)
     {
         var sb = new StringBuilder();
@@ -119,6 +103,41 @@ public class ScriptFunctions
         ItConsole.println(sb.ToString());
     }
 
+    public void PrintMesh(uint id)
+    {
+        CadFigureMesh fig = GetCadFigureMesh(id);
+
+        if (fig == null)
+        {
+            ItConsole.println("dumpMesh(id) error: invalid ID");
+            return;
+        }
+
+        CadMesh cm = HeModelConverter.ToCadMesh(fig.mHeModel);
+
+        ItConsole.printf("Vertex table:");
+        for (int i = 0; i < cm.VertexStore.Count; i++)
+        {
+            CadVertex v = cm.VertexStore[i];
+            ItConsole.printf("{0}:{1},{2},{3}\n", i, v.X, v.Y, v.Z);
+        }
+
+        ItConsole.printf("Face table:");
+        for (int i = 0; i < cm.FaceStore.Count; i++)
+        {
+            CadFace f = cm.FaceStore[i];
+
+            string s = "";
+
+            for (int j = 0; j < f.VList.Count; j++)
+            {
+                s += f.VList[j].ToString() + ",";
+            }
+
+            ItConsole.println(s);
+        }
+    }
+
     public vector3_t WorldPToDevP(vector3_t w)
     {
         return Controller.DC.WorldPointToDevPoint(w);
@@ -127,12 +146,6 @@ public class ScriptFunctions
     public vector3_t DevPToWorldP(vector3_t d)
     {
         return Controller.DC.DevPointToWorldPoint(d);
-    }
-
-    public void DumpVector(vector3_t v)
-    {
-        string s = v.CoordString();
-        ItConsole.println(s);
     }
 
     public vector3_t GetLastDownPoint()
@@ -1744,39 +1757,6 @@ public class ScriptFunctions
         Controller.Input.ClearSelection();
 
         Session.PostRemakeObjectTree();
-    }
-
-    public void DumpMesh(uint id)
-    {
-        CadFigureMesh fig = GetCadFigureMesh(id);
-
-        if (fig == null)
-        {
-            ItConsole.println("dumpMesh(id) error: invalid ID");
-            return;
-        }
-
-        CadMesh cm = HeModelConverter.ToCadMesh(fig.mHeModel);
-
-        for (int i = 0; i < cm.VertexStore.Count; i++)
-        {
-            CadVertex v = cm.VertexStore[i];
-            ItConsole.printf("{0}:{1},{2},{3}\n", i, v.X, v.Y, v.Z);
-        }
-
-        for (int i = 0; i < cm.FaceStore.Count; i++)
-        {
-            CadFace f = cm.FaceStore[i];
-
-            string s = "";
-
-            for (int j = 0; j < f.VList.Count; j++)
-            {
-                s += f.VList[j].ToString() + ",";
-            }
-
-            ItConsole.println(s);
-        }
     }
 
     public vector3_t RotateVector(vector3_t v, vector3_t axis, vcompo_t angle)

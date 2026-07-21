@@ -261,9 +261,6 @@
                                     Header="Separate"
                                     Command="{Binding SimpleCmd}" CommandParameter="separate" />
                                 <MenuItem
-                                    Header="Bond"
-                                    Command="{Binding SimpleCmd}" CommandParameter="bond" />
-                                <MenuItem
                                     Header="To Bezier"
                                     Command="{Binding SimpleCmd}" CommandParameter="to_bezier" />
                                 <MenuItem

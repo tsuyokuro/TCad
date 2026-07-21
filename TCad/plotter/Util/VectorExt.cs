@@ -5,7 +5,7 @@ namespace TCad.Plotter;
 
 public static class VectorExt
 {
-    public static readonly vector3_t InvalidVector3 = new vector3_t(vcompo_t.NaN, vcompo_t.NaN, vcompo_t.NaN);
+    public static readonly vector3_t InvalidVector3 = new(vcompo_t.NaN, vcompo_t.NaN, vcompo_t.NaN);
 
     public static vector4_t ToVector4(this vector3_t v, vcompo_t w)
     {

@@ -83,7 +83,6 @@ public class CommandHandler
             { "copy", Copy },
             { "paste", Paste },
             { "separate", SeparateFigure },
-            { "bond", BondFigure },
             { "to_bezier", ToBezier },
             { "cut_segment", CutSegment },
             { "ins_point", InsPoint },
@@ -304,12 +303,6 @@ public class CommandHandler
     public void SeparateFigure()
     {
         Controller.Editor.SeparateFigures();
-        Redraw();
-    }
-
-    public void BondFigure()
-    {
-        Controller.Editor.BondFigures();
         Redraw();
     }
 
