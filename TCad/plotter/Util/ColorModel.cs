@@ -100,7 +100,7 @@ public static class ColorModel
             saturation = c / max;
         }
 
-        HSV hsv = new HSV();
+        HSV hsv = new();
 
         hsv.H = hue;
         hsv.S = saturation;
@@ -170,11 +170,11 @@ public static class ColorModel
                     b = q;
                     break;
                 default:
-                    throw new ArgumentException("bad hue", "hsv");
+                    throw new ArgumentException("bad hue", nameof(hsv));
             }
         }
 
-        RGB rgb = new RGB();
+        RGB rgb = new();
 
         rgb.R = r;
         rgb.G = g;

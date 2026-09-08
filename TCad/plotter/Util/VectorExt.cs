@@ -34,22 +34,24 @@ public static class VectorExt
 
     public static vector3_t Min(vector3_t v1, vector3_t v2)
     {
-        vector3_t v = default(vector3_t);
-
-        v.X = Math.Min(v1.X, v2.X);
-        v.Y = Math.Min(v1.Y, v2.Y);
-        v.Z = Math.Min(v1.Z, v2.Z);
+        vector3_t v = new()
+        {
+            X = Math.Min(v1.X, v2.X),
+            Y = Math.Min(v1.Y, v2.Y),
+            Z = Math.Min(v1.Z, v2.Z)
+        };
 
         return v;
     }
 
     public static vector3_t Max(vector3_t v1, vector3_t v2)
     {
-        vector3_t v = default;
-
-        v.X = Math.Max(v1.X, v2.X);
-        v.Y = Math.Max(v1.Y, v2.Y);
-        v.Z = Math.Max(v1.Z, v2.Z);
+        vector3_t v = new()
+        {
+            X = Math.Max(v1.X, v2.X),
+            Y = Math.Max(v1.Y, v2.Y),
+            Z = Math.Max(v1.Z, v2.Z)
+        };
 
         return v;
     }
