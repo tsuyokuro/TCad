@@ -4,8 +4,8 @@ namespace TCad.MathFunctions;
 
 class BezierFuncs
 {
-    static vcompo_t[] FactorialTbl =
-    {
+    public static readonly vcompo_t[] FactorialTbl =
+    [
         (vcompo_t)(1.0), // 0!
         (vcompo_t)(1.0),
         (vcompo_t)(2.0) * (vcompo_t)(1.0),
@@ -13,7 +13,7 @@ class BezierFuncs
         (vcompo_t)(4.0) * (vcompo_t)(3.0) * (vcompo_t)(2.0) * (vcompo_t)(1.0),
         (vcompo_t)(5.0) * (vcompo_t)(4.0) * (vcompo_t)(3.0) * (vcompo_t)(2.0) * (vcompo_t)(1.0),
         (vcompo_t)(6.0) * (vcompo_t)(5.0) * (vcompo_t)(4.0) * (vcompo_t)(3.0) * (vcompo_t)(2.0) * (vcompo_t)(1.0),
-    };
+    ];
 
     // Bernstein basis polynomials
     public static vcompo_t BernsteinBasisF(int n, int i, vcompo_t t)

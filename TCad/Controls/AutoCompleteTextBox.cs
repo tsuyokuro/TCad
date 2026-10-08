@@ -14,44 +14,41 @@ namespace TCad.Controls;
 
 public class CandidatePopup : Popup
 {
-    private Border mBorder = new Border();
     public Border Border
     {
-        get => mBorder;
-    }
+        get;
+    } = new Border();
 
-    private ListBox mListBox = new ListBox();
     public ListBox ListBox
     {
-        get => mListBox;
-    }
+        get;
+    } = new ListBox();
 
-    private ScrollViewer mScrollViewer = new ScrollViewer();
     public ScrollViewer ScrollViewer
     {
-        get => mScrollViewer;
-    }
+        get;
+    } = new ScrollViewer();
 
     public ItemCollection Items
     {
-        get => mListBox.Items;
+        get => ListBox.Items;
     }
 
     public object SelectedItem
     {
-        get => mListBox.SelectedItem;
+        get => ListBox.SelectedItem;
     }
 
     public string SelectedItemText
     {
         get
         {
-            if (mListBox.SelectedItem == null)
+            if (ListBox.SelectedItem == null)
             {
                 return null;
             }
 
-            ListBoxItem item = (ListBoxItem)(mListBox.SelectedItem);
+            ListBoxItem item = (ListBoxItem)(ListBox.SelectedItem);
 
             return item.Content as string;
         }
@@ -59,9 +56,9 @@ public class CandidatePopup : Popup
 
     public CandidatePopup()
     {
-        Child = mBorder;
-        mBorder.Child = mScrollViewer;
-        mScrollViewer.Content = mListBox;
+        Child = Border;
+        Border.Child = ScrollViewer;
+        ScrollViewer.Content = ListBox;
 
         StaysOpen = false;
     }

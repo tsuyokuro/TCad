@@ -138,47 +138,6 @@ public class PlotterEditor
         HistoryMan.foward(opeRoot);
     }
 
-    public void BondFigures()
-    {
-        BondFigures(Input.CurrentFigure);
-        Input.ClearSelection();
-    }
-
-    public void BondFigures(CadFigure fig)
-    {
-        var res = CadFigureBonder.Bond(DB, fig);
-
-        if (!res.isValid())
-        {
-            return;
-        }
-
-        CadOpeList opeRoot = new CadOpeList();
-        CadOpe ope;
-
-        foreach (EditResult.Item ri in res.AddList)
-        {
-            CadLayer layer = DB.GetLayer(ri.LayerID);
-
-            ope = new CadOpeAddFigure(ri.LayerID, ri.FigureID);
-            opeRoot.OpeList.Add(ope);
-
-            layer.AddFigure(ri.Figure);
-        }
-
-        foreach (EditResult.Item ri in res.RemoveList)
-        {
-            CadLayer layer = DB.GetLayer(ri.LayerID);
-
-            ope = new CadOpeRemoveFigure(layer, ri.FigureID);
-            opeRoot.OpeList.Add(ope);
-
-            layer.RemoveFigureByID(ri.FigureID);
-        }
-
-        HistoryMan.foward(opeRoot);
-    }
-
     public void CutSegment()
     {
         if (Input.LastSelSegment == null)

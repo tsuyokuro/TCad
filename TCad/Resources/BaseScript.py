@@ -319,13 +319,9 @@ def puts(s):
 def print_vector(v):
     _se_.PrintVector(v)
 
-#[AC] dumpv(v=unit_vx)
-def dumpv(v):
-    return _se_.DumpVector(v)
-
-#[AC] dump_mesh(id=current_fig_id())
-def dump_mesh(id):
-    _se_.DumpMesh(id)
+#[AC] print_mesh(id=current_fig_id())
+def print_mesh(id):
+    _se_.PrintMesh(id)
 
 
 ###############################################################################

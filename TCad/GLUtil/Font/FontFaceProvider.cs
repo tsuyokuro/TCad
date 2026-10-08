@@ -5,7 +5,7 @@ namespace GLFont;
 // FontFaceWのキャッシュを管理するクラス
 public class FontFaceProvider
 {
-    private Dictionary<string, FontFaceW> FaceMap = new Dictionary<string, FontFaceW>();
+    private readonly Dictionary<string, FontFaceW> FaceMap = [];
 
     public FontFaceW FromFile(string fname, float size, int faceIndex)
     {

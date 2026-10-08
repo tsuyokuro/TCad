@@ -11,7 +11,7 @@ public struct Centroid
     // 三角形から作成
     public static Centroid Create(vector3_t p0, vector3_t p1, vector3_t p2)
     {
-        Centroid ret = default(Centroid);
+        Centroid ret = new();
         ret.set(p0, p1, p2);
         return ret;
     }
@@ -24,7 +24,7 @@ public struct Centroid
     }
 
     // 二つの重心情報から重心を求める
-    public Centroid Merge(Centroid c1)
+    public readonly Centroid Merge(Centroid c1)
     {
         return Merge(this, c1);
     }
@@ -40,7 +40,7 @@ public struct Centroid
         gpt.Y = (c1.Point.Y - c0.Point.Y) * ratio + c0.Point.Y;
         gpt.Z = (c1.Point.Z - c0.Point.Z) * ratio + c0.Point.Z;
 
-        Centroid ret = default(Centroid);
+        Centroid ret = new();
 
         ret.Area = c0.Area + c1.Area;
         ret.Point = gpt;

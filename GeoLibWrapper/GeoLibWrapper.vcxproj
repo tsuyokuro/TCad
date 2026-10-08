@@ -32,7 +32,7 @@
     <ProjectGuid>{9b7a57c2-d91e-4692-a2bc-ed6018e3d2f0}</ProjectGuid>
     <RootNamespace>GeoLibWrapper</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <TargetFrameworkVersion>
     </TargetFrameworkVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
@@ -243,7 +243,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)external\libigl\include;$(SolutionDir)external\libigl\external\eigen;$(SolutionDir)external\libigl\external\triangle;$(SolutionDir)external\libigl\external\tetgen;$(SolutionDir)external\carve\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -267,7 +267,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)external\libigl\include;$(SolutionDir)external\libigl\external\eigen;$(SolutionDir)external\libigl\external\triangle;$(SolutionDir)external\libigl\external\tetgen;$(SolutionDir)external\carve\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>NetCore</CompileAsManaged>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

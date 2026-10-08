@@ -21,7 +21,7 @@ public struct CadQuaternion
      * ノルム(長さ)
      * 
      */
-    public vcompo_t norm()
+    public readonly vcompo_t Norm()
     {
         return (vcompo_t)Math.Sqrt((t * t) + (x * x) + (y * y) + (z * z));
     }
@@ -31,7 +31,7 @@ public struct CadQuaternion
      * 
      * 
      */
-    public CadQuaternion Conjugate()
+    public readonly CadQuaternion Conjugate()
     {
         CadQuaternion q = this;
 
@@ -113,14 +113,14 @@ public struct CadQuaternion
      * 行列に変換する
      * 
      */
-    public matrix4_t Tomatrix4_t()
+    public readonly matrix4_t Tomatrix4_t()
     {
         return Tomatrix4_t(this);
     }
 
     public static matrix4_t Tomatrix4_t(CadQuaternion q)
     {
-        matrix4_t m = default(matrix4_t);
+        matrix4_t m = new();
 
         vcompo_t xx = q.x * q.x * (vcompo_t)(2.0);
         vcompo_t yy = q.y * q.y * (vcompo_t)(2.0);
@@ -183,7 +183,7 @@ public struct CadQuaternion
      */
     public static CadQuaternion RotateQuaternion(vcompo_t vx, vcompo_t vy, vcompo_t vz, vcompo_t radian)
     {
-        CadQuaternion ans = default(CadQuaternion);
+        CadQuaternion ans = new();
         vcompo_t norm;
         vcompo_t c, s;
 
@@ -248,13 +248,14 @@ public struct CadQuaternion
         return new vector3_t(q.x, q.y, q.z);
     }
 
-    public vector3_t ToPoint()
+    public readonly vector3_t ToPoint()
     {
-        vector3_t p = default;
-
-        p.X = x;
-        p.Y = y;
-        p.Z = z;
+        vector3_t p = new()
+        {
+            X = x,
+            Y = y,
+            Z = z
+        };
 
         return p;
     }
@@ -279,7 +280,7 @@ public struct CadQuaternion
         return new vector3_t(q.x, q.y, q.z);
     }
 
-    public vector3_t ToVector3()
+    public readonly vector3_t ToVector3()
     {
         return new vector3_t(x, y, z);
     }
